@@ -1,0 +1,5 @@
+*.aux
+*.out
+*.gz
+Documentation/Pflichtenheft/main.log
+*.toc
