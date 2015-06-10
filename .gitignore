@@ -3,3 +3,4 @@
 *.gz
 Documentation/Pflichtenheft/main.log
 *.toc
+*.log
