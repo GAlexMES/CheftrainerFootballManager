@@ -33,15 +33,11 @@ public class App {
 		TeamParser tp = new TeamParser();
 		List<Team> teamList = tp.getTeamlist(rootURL);
 		PlayerParser pp = new PlayerParser();
-		
 		for(Team t : teamList){
 			URL teamURL;
 			try {
 				teamURL = new URL(rootURL + t.getTeamUrl());
 				t.setPlayerList(pp.getPlayers(teamURL));
-				for(Player p : t.getPlayerList()){
-					System.out.println(p.getName());
-				}
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			}

@@ -1,38 +1,43 @@
 package de.brennecke.alexander.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertTrue;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
+import org.junit.Before;
+import org.junit.Test;
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
+import Parsers.PlayerParser;
+import Parsers.TeamParser;
+
+public class AppTest {
+
+	private static String rootURL = "http://www.ran.de/datenbank/fussball";
+	private List<Team> teamList;
+
+	@Test
+	public void generalTest() {
+		assertTrue("No correct number of teams",teamList.size()==18);
+		Team team = teamList.get(0);
+		assertTrue("No correct number of players at Koeln", team.getPlayerList().size()==26);
+
+	}
+
+	@Before
+	public void generateTeams() {
+		TeamParser tp = new TeamParser();
+		teamList = tp.getTeamlist(rootURL);
+		PlayerParser pp = new PlayerParser();
+		for (Team t : teamList) {
+			URL teamURL;
+			try {
+				teamURL = new URL(rootURL + t.getTeamUrl());
+				t.setPlayerList(pp.getPlayers(teamURL));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

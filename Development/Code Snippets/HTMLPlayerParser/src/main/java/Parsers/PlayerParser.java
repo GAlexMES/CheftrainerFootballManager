@@ -27,14 +27,14 @@ public class PlayerParser {
 
 	private List<Player> createTeamsPlayersList(List<Element> playersTable) {
 		List<Player> playerList = new ArrayList<Player>();
-		String role = "";
 		boolean validPosition = false;
+		String currentPosition = "";
 		for (Element e : playersTable) {
 			if (e.hasAttributes() && validPosition) {
-				playerList.add(createPlayer(e, role));
+				playerList.add(createPlayer(e, currentPosition));
 			}
 			else{
-				String currentPosition = e.getChildText("th");
+				currentPosition = e.getChildText("th");
 				validPosition=validPositionList.contains(currentPosition);
 			}
 		}
@@ -45,7 +45,16 @@ public class PlayerParser {
 	private Player createPlayer(Element playerElement, String role) {
 		Player player = new Player();
 		List<Element> playersAttributes = playerElement.getChildren();
+		
+		try{
+			player.setNumber(Integer.valueOf(playersAttributes.get(0).getText()));
+		}
+		catch(NumberFormatException nfe){
+			System.err.println("No valid player number.");
+		}
+		
 		player.setName(playersAttributes.get(2).getChildText("a"));
+		player.setPosition(role);
 		return player;
 	}
 
