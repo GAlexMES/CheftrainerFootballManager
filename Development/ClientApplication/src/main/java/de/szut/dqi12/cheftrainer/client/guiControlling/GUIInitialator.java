@@ -1,7 +1,8 @@
-package de.szut.dqi12.cheftrainer.client;
+package de.szut.dqi12.cheftrainer.client.guiControlling;
 
 import java.io.IOException;
 
+import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.view.fxmlControllers.SideMenuController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,14 +10,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Initialator {
+public class GUIInitialator {
 	
 	private Stage rStage;
 	private BorderPane rLayout;
 	
-	private final String FXML_RESOURCE = "view/fxmlSources/";
+	public static final String FXML_RESOURCE = "view/fxmlSources/";
 	
-	public Initialator(Stage primaryStage){
+	public GUIInitialator(Stage primaryStage){
 		this.rStage = primaryStage;
 		this.rStage.setTitle("Cheftrainer Football Manager");
 		initRootLayout();

@@ -12,12 +12,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import de.szut.dqi12.cheftrainer.client.Initialator;
 import de.szut.dqi12.cheftrainer.client.MainApp;
+import de.szut.dqi12.cheftrainer.client.guiControlling.GUIInitialator;
 
 public class SideMenuController {
 
-	private Initialator mainApp;
+	private GUIInitialator mainApp;
 	private boolean sideMenuFlag = true;
 
 	private double expandedWidth = 145.0;
@@ -28,7 +28,7 @@ public class SideMenuController {
 
 	private List<String> sideMenuButtonTitles = new ArrayList<String>();
 
-	public void setMainApp(Initialator mainApp) {
+	public void setMainApp(GUIInitialator mainApp) {
 		this.mainApp = mainApp;
 		BorderPane rLayout = mainApp.getRootlayout();
 		Image imageDecline = new Image(
@@ -69,5 +69,9 @@ public class SideMenuController {
 			((Button) buttonList.get(i)).setText(sideMenuButtonTitles.get(i));
 		}
 		sideMenuFlag = true;
+	}
+	
+	public List<String> getSideMenuButtonTitles(){
+		return sideMenuButtonTitles;
 	}
 }
