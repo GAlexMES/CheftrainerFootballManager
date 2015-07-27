@@ -27,6 +27,15 @@ public class GUIController {
 		return instance;
 	}
 	
+	public void showLogin(){
+		guiInitialator.initLoginLayout();
+	}
+	
+	public void showMainApplikation(){
+		guiInitialator.initRootLayout();
+		guiInitialator.showMenuLayout();
+	}
+	
 	/**
 	 * sets the given .fxml, which must contains an AnchorPane as the content.
 	 * @param fxmlFileName <li>must be a .fxml file</li><li>fxml must be a AnchorPane</li><li> must be lcoated in de\szut\dqi12\cheftrainer\client\view\fxmlSources </li>

@@ -14,6 +14,7 @@ public class MainApp extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		GUIController guiController = GUIController.getInstance(primaryStage);
+		guiController.showLogin();
 	}
 
 	

@@ -6,13 +6,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.image.*?>
 
-<VBox prefHeight="790.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlControllers.SideMenuController">
+<VBox prefHeight="790.0" prefWidth="200.0" styleClass="sidebar" stylesheets="@sidebar.css" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlControllers.SideMenuController">
 	<children>
-		<Button  mnemonicParsing="false" onAction="#triggerSideMenu" prefHeight="250.0"  VBox.vgrow="ALWAYS" />
-		<Button  mnemonicParsing="false" prefHeight="250.0" text="Übersicht" VBox.vgrow="ALWAYS" />
-		<Button  mnemonicParsing="false" prefHeight="250.0" text="Transfermarkt" VBox.vgrow="ALWAYS" />
-		<Button  mnemonicParsing="false" prefHeight="250.0"  text="Aufstellung" VBox.vgrow="ALWAYS" />
-		<Button  mnemonicParsing="false" prefHeight="250.0"  text="Logout" VBox.vgrow="ALWAYS" />
-		<Button  mnemonicParsing="false" prefHeight="250.0" text="Logout" VBox.vgrow="ALWAYS" />
+		<Button styleClass="button" mnemonicParsing="false" onAction="#triggerSideMenu" prefHeight="250.0" VBox.vgrow="ALWAYS" />
+		<Button mnemonicParsing="false" prefHeight="250.0" text="Übersicht" VBox.vgrow="ALWAYS" />
+		<Button mnemonicParsing="false" prefHeight="250.0" text="Transfermarkt" VBox.vgrow="ALWAYS" />
+		<Button mnemonicParsing="false" prefHeight="250.0" text="Aufstellung" VBox.vgrow="ALWAYS" />
+		<Button mnemonicParsing="false" prefHeight="250.0" text="Logout" VBox.vgrow="ALWAYS" />
+		<Button mnemonicParsing="false" prefHeight="250.0" text="Logout" VBox.vgrow="ALWAYS" />
 	</children>
 </VBox>

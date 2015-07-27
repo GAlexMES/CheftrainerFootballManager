@@ -20,7 +20,7 @@ public class SideMenuController {
 	private GUIInitialator mainApp;
 	private boolean sideMenuFlag = true;
 
-	private double expandedWidth = 145.0;
+	private double expandedWidth = 200.0;
 	private double collapsedWidth = 0.0;
 
 	private BorderPane rLayout = null;

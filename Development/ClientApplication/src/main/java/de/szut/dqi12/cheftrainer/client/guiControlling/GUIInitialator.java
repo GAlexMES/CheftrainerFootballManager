@@ -3,63 +3,86 @@ package de.szut.dqi12.cheftrainer.client.guiControlling;
 import java.io.IOException;
 
 import de.szut.dqi12.cheftrainer.client.MainApp;
+import de.szut.dqi12.cheftrainer.client.view.fxmlControllers.LoginController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlControllers.SideMenuController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class GUIInitialator {
-	
+
 	private Stage rStage;
 	private BorderPane rLayout;
-	
+	private AnchorPane loginLayout;
+
 	public static final String FXML_RESOURCE = "view/fxmlSources/";
-	
-	public GUIInitialator(Stage primaryStage){
+
+	public GUIInitialator(Stage primaryStage) {
 		this.rStage = primaryStage;
 		this.rStage.setTitle("Cheftrainer Football Manager");
-		initRootLayout();
-		showMenuLayout();
 	}
-	
-	private void initRootLayout() {
+
+	public void initLoginLayout() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class
-					.getResource(FXML_RESOURCE+"RootFrame.fxml"));
+			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE
+					+ "Login.fxml"));
+			loginLayout = (AnchorPane) loader.load();
+			
+			LoginController controller =  loader.getController();
+			controller.setStage(rStage);
+			
+			Scene scene = new Scene(loginLayout);
+			rStage.setScene(scene);
+			rStage.show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void initRootLayout() {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE
+					+ "RootFrame.fxml"));
+
 			rLayout = (BorderPane) loader.load();
 
 			Scene scene = new Scene(rLayout);
 			rStage.setScene(scene);
-
 			rStage.show();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	private void showMenuLayout(){
-		try{
+
+	public void showMenuLayout() {
+		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE+"MenuLayout.fxml"));
+			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE
+					+ "MenuLayout.fxml"));
 			VBox menuLayout = (VBox) loader.load();
+
 			rLayout.setLeft(menuLayout);
+
 			SideMenuController controller = loader.getController();
 			controller.setMainApp(this);
-		}
-		catch(IOException e){
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-
 	public Stage getPrimaryStage() {
 		return rStage;
 	}
-	
-	public BorderPane getRootlayout(){
+
+	public BorderPane getRootlayout() {
 		return this.rLayout;
 	}
 
