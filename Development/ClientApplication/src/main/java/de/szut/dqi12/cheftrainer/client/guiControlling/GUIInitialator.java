@@ -9,13 +9,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class GUIInitialator {
 
 	private Stage rStage;
-	private BorderPane rLayout;
+	private GridPane rLayout;
 	private AnchorPane loginLayout;
 
 	public static final String FXML_RESOURCE = "view/fxmlSources/";
@@ -51,12 +52,12 @@ public class GUIInitialator {
 			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE
 					+ "RootFrame.fxml"));
 
-			rLayout = (BorderPane) loader.load();
+			rLayout = (GridPane) loader.load();
 
 			Scene scene = new Scene(rLayout);
 			rStage.setScene(scene);
 			rStage.show();
-
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -69,7 +70,7 @@ public class GUIInitialator {
 					+ "MenuLayout.fxml"));
 			VBox menuLayout = (VBox) loader.load();
 
-			rLayout.setLeft(menuLayout);
+			rLayout.add(menuLayout, 0, 0);
 
 			SideMenuController controller = loader.getController();
 			controller.setMainApp(this);
@@ -82,7 +83,7 @@ public class GUIInitialator {
 		return rStage;
 	}
 
-	public BorderPane getRootlayout() {
+	public GridPane getRootlayout() {
 		return this.rLayout;
 	}
 

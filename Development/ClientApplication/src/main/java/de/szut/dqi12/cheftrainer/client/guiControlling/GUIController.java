@@ -5,6 +5,7 @@ import java.io.IOException;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class GUIController {
@@ -34,6 +35,7 @@ public class GUIController {
 	public void showMainApplikation(){
 		guiInitialator.initRootLayout();
 		guiInitialator.showMenuLayout();
+		setContentFrameByName("tets.fxml");
 	}
 	
 	/**
@@ -55,8 +57,9 @@ public class GUIController {
 			FXMLLoader loader = new FXMLLoader();
 			loader.setLocation(MainApp.class
 					.getResource(path));
-			AnchorPane contentPane = (AnchorPane) loader.load();
-			guiInitialator.getRootlayout().setCenter(contentPane);
+			GridPane contentPane = (GridPane) loader.load();
+			contentPane.autosize();
+			guiInitialator.getRootlayout().add(contentPane,1,0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
