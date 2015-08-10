@@ -35,7 +35,7 @@ public class GUIController {
 	public void showMainApplikation(){
 		guiInitialator.initRootLayout();
 		guiInitialator.showMenuLayout();
-		setContentFrameByName("tets.fxml");
+		setContentFrameByName("CommunitiesFrame.fxml");
 	}
 	
 	/**

@@ -49,7 +49,7 @@ public class SideMenuController {
 
 	@FXML
 	public void buttonPressed() {
-		String fileName = "Tets.fxml";
+		String fileName = "CommunitiesFrame.fxml";
 		GUIController.getInstance().setContentFrameByName(fileName);
 	}
 

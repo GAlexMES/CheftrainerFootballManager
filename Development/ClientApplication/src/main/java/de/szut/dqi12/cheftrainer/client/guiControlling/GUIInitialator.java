@@ -54,6 +54,7 @@ public class GUIInitialator {
 
 			rLayout = (GridPane) loader.load();
 
+			rStage.setMinWidth(600.0);
 			Scene scene = new Scene(rLayout);
 			rStage.setScene(scene);
 			rStage.show();
