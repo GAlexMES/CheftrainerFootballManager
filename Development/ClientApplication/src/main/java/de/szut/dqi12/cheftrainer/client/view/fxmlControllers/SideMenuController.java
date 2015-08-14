@@ -67,10 +67,12 @@ public class SideMenuController {
 			}
 			
 			box.getChildren().addAll(buttons);
-
 			for (Node n : box.getChildren()) {
 				box.setVgrow(((Button) n), Priority.ALWAYS);
 			}
+			box.setPrefWidth(expandedWidth);
+			box.setMaxWidth(expandedWidth);
+			box.setMinWidth(expandedWidth);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
@@ -145,7 +147,10 @@ public class SideMenuController {
 			((Button) n).setPrefWidth(collapsedWidth);
 		}
 		sideMenuFlag = false;
-
+		collapseColums();
+	}
+	
+	private void collapseColums(){
 		ColumnConstraints menuColoum = rLayout.getColumnConstraints().get(0);
 		menuColoum.setMaxWidth(collapsedWidth);
 
@@ -165,7 +170,12 @@ public class SideMenuController {
 			((Button) buttonList.get(i)).setPrefWidth(expandedWidth);
 		}
 		sideMenuFlag = true;
-
+		expandColums();
+		
+	}
+	
+	public void expandColums(){
+		rLayout = mainApp.getRootlayout();
 		ColumnConstraints menuColoum = rLayout.getColumnConstraints().get(0);
 		menuColoum.setMaxWidth(expandedWidth);
 

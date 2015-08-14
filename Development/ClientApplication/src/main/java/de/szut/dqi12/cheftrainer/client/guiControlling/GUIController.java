@@ -36,6 +36,7 @@ public class GUIController {
 		guiInitialator.initRootLayout();
 		guiInitialator.showMenuLayout();
 		setContentFrameByName("CommunitiesFrame.fxml");
+		guiInitialator.getSideMenuController().expandColums();
 	}
 	
 	/**

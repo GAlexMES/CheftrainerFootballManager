@@ -18,6 +18,8 @@ public class GUIInitialator {
 	private Stage rStage;
 	private GridPane rLayout;
 	private AnchorPane loginLayout;
+	
+	private SideMenuController controller;
 
 	public static final String FXML_RESOURCE = "view/fxmlSources/";
 
@@ -73,7 +75,7 @@ public class GUIInitialator {
 
 			rLayout.add(menuLayout, 0, 0);
 
-			SideMenuController controller = loader.getController();
+			controller = loader.getController();
 			controller.setMainApp(this);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -86,6 +88,10 @@ public class GUIInitialator {
 
 	public GridPane getRootlayout() {
 		return this.rLayout;
+	}
+	
+	public SideMenuController getSideMenuController(){
+		return this.controller;
 	}
 
 }
