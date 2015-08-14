@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Buttons>
+	<button position="0">
+		<text></text>
+		<imageName>dummyMenuIcon.png</imageName>
+		<triggerButton>true</triggerButton>
+	</button>
+	<button position="1">
+		<text>Übersicht</text>
+		<imageName>dummyMenuIcon.png</imageName>
+		<triggerButton>false</triggerButton>
+	</button>
+	<button position="2">
+		<text>Transfermarkt</text>
+		<imageName>dummyMenuIcon.png</imageName>
+		<triggerButton>false</triggerButton>
+	</button>
+	<button position="3">
+		<text>Aufstellung</text>
+		<imageName>dummyMenuIcon.png</imageName>
+		<triggerButton>false</triggerButton>
+	</button>
+	<button position="4">
+		<text>Logout</text>
+		<imageName>dummyMenuIcon.png</imageName>
+		<triggerButton>false</triggerButton>
+	</button>
+	<button position="5">
+		<text>Login</text>
+		<imageName>dummyMenuIcon.png</imageName>
+		<triggerButton>false</triggerButton>
+	</button>
+</Buttons>
