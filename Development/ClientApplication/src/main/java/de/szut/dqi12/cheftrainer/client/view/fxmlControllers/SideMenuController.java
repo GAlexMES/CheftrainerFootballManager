@@ -258,7 +258,7 @@ public class SideMenuController {
 		contentColoum.setPrefWidth(rLayout.getWidth() - expandedWidth - 100);
 		contentColoum.setMinWidth(rLayout.getWidth() - expandedWidth - 100);
 	}
-
+	
 	
 	//GETTER AND SETTER
 	public List<String> getSideMenuButtonTitles() {

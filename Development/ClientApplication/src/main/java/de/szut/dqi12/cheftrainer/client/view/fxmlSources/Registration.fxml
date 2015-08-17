@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="registrationPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="555.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlControllers.RegistrationController">
+	<children>
+		<Text layoutX="24.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cheftrainer Football Manager" textAlignment="CENTER">
+			<font>
+				<Font size="31.0" />
+			</font>
+		</Text>
+
+		<Text layoutX="148.0" layoutY="138.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Registration" textAlignment="CENTER">
+			<font>
+				<Font size="31.0" />
+			</font>
+		</Text>
+
+		<AnchorPane layoutX="24.0" layoutY="163.0" prefHeight="230.0" prefWidth="402.0">
+			<children>
+				<Text layoutX="50.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Vorname">
+					<font>
+						<Font size="20.0" />
+					</font>
+				</Text>
+				<TextField fx:id="vornameField" layoutX="201.0" layoutY="7.0" />
+
+				<Text layoutX="50.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nachname">
+					<font>
+						<Font size="20.0" />
+					</font>
+				</Text>
+				<TextField fx:id="nachnameField" layoutX="201.0" layoutY="49.0" />
+
+				<Text layoutX="50.0" layoutY="110.0" strokeType="OUTSIDE" strokeWidth="0.0" text="E-Mail">
+					<font>
+						<Font size="20.0" />
+					</font>
+				</Text>
+				<TextField fx:id="mailField" layoutX="201.0" layoutY="90.0" />
+
+				<Text layoutX="50.0" layoutY="149.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login">
+					<font>
+						<Font size="20.0" />
+					</font>
+				</Text>
+				<TextField fx:id="loginField" layoutX="201.0" layoutY="132.0" />
+
+				<Text layoutX="50.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Passwort">
+					<font>
+						<Font size="20.0" />
+					</font>
+				</Text>
+
+				<PasswordField fx:id="passwordField" layoutX="201.0" layoutY="178.0" />
+      
+      		<AnchorPane fx:id="serverDetailsPane" layoutY="224.0" prefHeight="111.0" prefWidth="413.0">
+      			<children>
+      				<Text layoutX="50.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port">
+      					<font>
+      						<Font size="20.0" />
+      					</font>
+      				</Text>
+      				<TextField layoutX="200.0" layoutY="66.0" />
+      
+      				<Text layoutX="50.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IP Adresse">
+      					<font>
+      						<Font size="20.0" />
+      					</font>
+      				</Text>
+      				<TextField layoutX="200.0" layoutY="21.0" />
+      			</children>
+      		</AnchorPane>
+      		<CheckBox fx:id="showDetailsCheck" layoutX="51.0" layoutY="213.0" onAction="#triggerFrameSize" text="Server Details" />
+
+			</children>
+		</AnchorPane>
+		<AnchorPane fx:id="buttonPane" layoutX="34.0" layoutY="498.0" maxHeight="574.0" prefHeight="41.0" prefWidth="382.0">
+		<ButtonBar buttonMinWidth="0.0" prefHeight="41.0" prefWidth="320.0">
+			<buttons>
+				<Button mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Abbrechen" />
+				<Button mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Registrieren" />
+			</buttons>
+		</ButtonBar>
+		</AnchorPane>
+	</children>
+</AnchorPane>

@@ -56,6 +56,7 @@ public class GUIInitialator {
 			//definition of the login controller
 			LoginController controller =  loader.getController();
 			controller.setStage(rStage);
+			rStage.setResizable(false);
 			
 			// displays the Login.fxml on screen
 			Scene scene = new Scene(loginLayout);

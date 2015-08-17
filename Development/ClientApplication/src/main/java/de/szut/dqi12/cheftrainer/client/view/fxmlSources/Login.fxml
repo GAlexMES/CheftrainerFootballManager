@@ -54,7 +54,7 @@
 		
       <AnchorPane fx:id="buttonPane" layoutX="57.0" layoutY="467.0" prefHeight="72.0" prefWidth="347.0">
          <children>
-            <Button layoutX="247.0" layoutY="33.0" mnemonicParsing="false" text="Registrieren" />
+            <Button layoutX="247.0" layoutY="33.0" mnemonicParsing="false" text="Registrieren" onAction="#register"/>
             <Text layoutX="217.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Noch keinen Account? " />
       
       		<ButtonBar layoutX="24.0" layoutY="32.0" prefHeight="27.0" prefWidth="149.0">
