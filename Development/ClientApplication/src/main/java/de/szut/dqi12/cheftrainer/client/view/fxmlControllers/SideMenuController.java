@@ -4,17 +4,15 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
+import java.util.Map;
 
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -25,7 +23,12 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.event.ActionEvent;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guiControlling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guiControlling.GUIInitialator;
@@ -44,6 +47,8 @@ public class SideMenuController {
 	private GridPane rLayout = null;
 
 	private List<String> sideMenuButtonTitles = new ArrayList<String>();
+	
+	private Map<String,String> button_FXMLComponent =  new HashMap<>();
 
 	public void setMainApp(GUIInitialator mainApp) {
 		this.mainApp = mainApp;
@@ -81,7 +86,8 @@ public class SideMenuController {
 	}
 	
 	private Button generateButtonFromXML(Element e){
-		Button tempButton = new Button(e.getChildText("text"));
+		String buttonName = e.getChildText("text");
+		Button tempButton = new Button(buttonName);
 		Image image = new Image(
 				MainApp.class.getResourceAsStream("/images/"
 						+ e.getChildText("imageName")));
@@ -91,6 +97,8 @@ public class SideMenuController {
 		tempButton.setAlignment(Pos.BASELINE_LEFT);
 		tempButton.setPrefWidth(expandedWidth);
 		tempButton.setStyle("button");
+		tempButton.setId(buttonName);
+		button_FXMLComponent.put(buttonName,e.getChildText("fxmlComponent"));
 
 		if (e.getChildText("triggerButton").equals("true")) {
 			tempButton.setOnAction(this::triggerSideMenu);
@@ -120,8 +128,10 @@ public class SideMenuController {
 
 	@FXML
 	public void buttonPressed(ActionEvent evt) {
-		String fileName = "CommunitiesFrame.fxml";
-		GUIController.getInstance().setContentFrameByName(fileName);
+		String sourceID = ((Button)evt.getSource()).getId();
+		String fxmlComponent = button_FXMLComponent.get(sourceID);
+		String fileName = fxmlComponent+".fxml";
+		GUIController.getInstance().setContentFrameByName(fileName,true);
 	}
 
 	@FXML
