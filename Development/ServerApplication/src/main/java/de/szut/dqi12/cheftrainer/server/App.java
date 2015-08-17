@@ -1,5 +1,7 @@
 package de.szut.dqi12.cheftrainer.server;
 
+import de.szut.dqi12.cheftrainer.server.UserCommunication.Server;
+
 /**
  * Hello world!
  *
@@ -8,6 +10,8 @@ public class App
 {
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+    	Server server = new Server();
+    	server.run();
+    	
     }
 }
