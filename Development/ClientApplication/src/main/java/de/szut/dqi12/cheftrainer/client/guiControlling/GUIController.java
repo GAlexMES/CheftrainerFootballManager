@@ -8,6 +8,11 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 
+/**
+ * The GUIController controlles the GUIInitialator to replacement GUI components.
+ * @author Alexander Brennecke
+ *
+ */
 public class GUIController {
 
 	private static GUIController instance = null;
@@ -17,10 +22,18 @@ public class GUIController {
 		guiInitialator = new GUIInitialator(primaryStage);
 	}
 
+	/**
+	 * return the instance of this class.
+	 */
 	public static GUIController getInstance() {
 		return instance;
 	}
 
+	/**
+	 * Should be used to initialize this class for singleton pattern.
+	 * @param primaryStage
+	 * @return
+	 */
 	public static GUIController getInstance(Stage primaryStage) {
 		if (instance == null) {
 			instance = new GUIController(primaryStage);
@@ -28,11 +41,17 @@ public class GUIController {
 		return instance;
 	}
 
+	/**
+	 * Shows the Login Frame
+	 */
 	public void showLogin() {
 		guiInitialator.initLoginLayout();
 	}
 
-	public void showMainApplikation() {
+	/**
+	 * Shows the main application, including side menu and content pane
+	 */
+	public void showMainApplication() {
 		guiInitialator.initRootLayout();
 		guiInitialator.showMenuLayout();
 		setContentFrameByName("CommunitiesFrame.fxml", false);
