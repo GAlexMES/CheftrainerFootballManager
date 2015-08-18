@@ -26,6 +26,13 @@
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.8.7</version>
 		</dependency>
+		<dependency>
+			<groupId>de.szut.dqi12.cheftrainer</groupId>
+			<artifactId>ConnectorLib</artifactId>
+			<version>0.0.1</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/../ConnectorLib/target/ConnectorLib-0.0.1.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 	<build>

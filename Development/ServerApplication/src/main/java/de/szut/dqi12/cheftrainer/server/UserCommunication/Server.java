@@ -11,6 +11,7 @@ public class Server {
 
 	private final int PORT = 5000;
 	private KeyPair keyPair;
+	private CipherFactory rsaCipherFactory;
 	
 	public Server(){
 		KeyPairGenerator kpg;
@@ -18,6 +19,11 @@ public class Server {
 			kpg = KeyPairGenerator.getInstance("RSA");
 			kpg.initialize(1024);
 			keyPair = kpg.genKeyPair();
+			try {
+				rsaCipherFactory = new CipherFactory(keyPair.getPrivate(), "RSA");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
