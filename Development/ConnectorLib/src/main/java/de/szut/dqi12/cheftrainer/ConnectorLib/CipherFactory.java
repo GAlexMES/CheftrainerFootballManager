@@ -10,6 +10,7 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -18,6 +19,12 @@ public class CipherFactory {
 
 	private Key key = null;
 	private String algorithm = null;
+
+	private final static String RSA_ALGORITHM = "RSA";
+	private final static String AES_ALGORITHM = "AES";
+	
+	private byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+	private IvParameterSpec ivspec = new IvParameterSpec(iv);
 
 	/**
 	 * Constructer
@@ -38,9 +45,10 @@ public class CipherFactory {
 	 * @param os
 	 *            the output stream that should be encrypted
 	 * @return and encrypted output stream
-	 * @exception throws NoSuchAlgorithm, NoSuchPadding or InvalidKeyException. All three comes from the Cipher Class
+	 * @exception throws NoSuchAlgorithm, NoSuchPadding or InvalidKeyException.
+	 *            All three comes from the Cipher Class
 	 */
-	public OutputStream encryptOutputStream(OutputStream os) throws Exception{
+	public OutputStream encryptOutputStream(OutputStream os) throws Exception {
 		// encode stream with RSA
 		Cipher cipher;
 		cipher = Cipher.getInstance(algorithm);
@@ -71,12 +79,23 @@ public class CipherFactory {
 	 * @param text
 	 *            the text, that should be encrypted
 	 * @return the input paramater encrypted
-	 * @exception throws NoSuchAlgorithm, NoSuchPadding or InvalidKeyException. All three comes from the Cipher Class
+	 * @exception throws NoSuchAlgorithm, NoSuchPadding or InvalidKeyException.
+	 *            All three comes from the Cipher Class
 	 */
 	public String encrypt(String text) throws Exception {
-
-		Cipher cipher = Cipher.getInstance(algorithm);
-		cipher.init(Cipher.ENCRYPT_MODE, key);
+		Cipher cipher;
+		if (algorithm.equals(RSA_ALGORITHM)) {
+			 cipher = Cipher.getInstance(RSA_ALGORITHM);
+			 cipher.init(Cipher.ENCRYPT_MODE, key);
+		}
+		else if (algorithm.equals(AES_ALGORITHM)){
+			 cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			 cipher.init(Cipher.ENCRYPT_MODE, key,ivspec);
+		}
+		else{
+			throw new Exception("Invalid Algorithmus");
+		}
+		
 		byte[] encrypted = cipher.doFinal(text.getBytes());
 
 		BASE64Encoder myEncoder = new BASE64Encoder();
@@ -87,7 +106,9 @@ public class CipherFactory {
 
 	/**
 	 * Decrypts an single String with the defined algorithm and key
-	 * @param encodedString the String, that should be decrypted
+	 * 
+	 * @param encodedString
+	 *            the String, that should be decrypted
 	 * @return the decrypted string og the given parameter
 	 * @throws Exception
 	 */
@@ -98,8 +119,19 @@ public class CipherFactory {
 		byte[] crypted = myDecoder.decodeBuffer(encodedString);
 
 		// decode
-		Cipher cipher = Cipher.getInstance(algorithm);
-		cipher.init(Cipher.DECRYPT_MODE, key);
+		Cipher cipher;
+		if (algorithm.equals(RSA_ALGORITHM)) {
+			 cipher = Cipher.getInstance(RSA_ALGORITHM);
+			 cipher.init(Cipher.DECRYPT_MODE, key);
+		}
+		else if (algorithm.equals(AES_ALGORITHM)){
+			 cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			 cipher.init(Cipher.DECRYPT_MODE, key,ivspec);
+		}
+		else{
+			throw new Exception("Invalid Algorithmus");
+		}
+		
 		byte[] cipherData = cipher.doFinal(crypted);
 		return new String(cipherData);
 	}

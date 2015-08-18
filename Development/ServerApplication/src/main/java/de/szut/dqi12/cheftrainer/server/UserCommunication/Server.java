@@ -1,11 +1,12 @@
 package de.szut.dqi12.cheftrainer.server.UserCommunication;
 
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+
+import de.szut.dqi12.cheftrainer.ConnectorLib.CipherFactory;
 
 public class Server {
 
@@ -35,7 +36,7 @@ public class Server {
 			ServerSocket serverSock = new ServerSocket(PORT);
 			while(true) {
 				Socket clientSocket = serverSock.accept();
-				Thread t = new Thread(new ClientHandler(clientSocket, keyPair.getPublic()));
+				Thread t = new Thread(new ClientHandler(clientSocket, keyPair));
 				t.start();
 			}
 			
@@ -43,4 +44,5 @@ public class Server {
 			ex.printStackTrace();
 		}
 	}
+	
 }
