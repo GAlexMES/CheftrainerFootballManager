@@ -84,7 +84,10 @@ public class ServerConnection implements Runnable {
 			sendMessage(rsaEncryptedEASKey);
 			cipherFactory.setKey(secKey);
 			cipherFactory.setAlgorithm("AES");
-			sendMessage("Hallo Server!");
+			
+			String testMessage = "Hallo Server!";
+			
+			sendMessage(cipherFactory.encrypt(testMessage));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

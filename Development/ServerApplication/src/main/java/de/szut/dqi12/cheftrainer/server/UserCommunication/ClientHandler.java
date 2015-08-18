@@ -49,15 +49,19 @@ public class ClientHandler implements Runnable {
 				}
 				if(counter==2){
 					System.out.println("verschlüsselt:"+key);
+					
 					key = cipherFactory.decrypt(key);
 					System.out.println("unverschlüsselt:"+key);
+					
 					byte[] decodedKey = Base64.getDecoder().decode(key);
 					aesSymetricKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
+					
 					cipherFactory.setKey(aesSymetricKey);
 					cipherFactory.setAlgorithm("AES");
 				}
 				if(counter==3){
-					cipherFactory.decrypt(message);
+					String text = cipherFactory.decrypt(message);
+					System.out.println(text);
 				}
 				counter ++;
 			}
