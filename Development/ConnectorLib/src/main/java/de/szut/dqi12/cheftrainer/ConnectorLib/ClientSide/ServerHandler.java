@@ -29,6 +29,8 @@ public class ServerHandler implements Runnable {
 	private BigInteger modulus = null;
 	private BigInteger exponent = null;
 
+	private boolean allowMessageSending = false;
+
 	/**
 	 * Constructor
 	 * 
@@ -55,8 +57,7 @@ public class ServerHandler implements Runnable {
 				if (counter < 3) {
 					handshakek(message, counter);
 					counter++;
-				}
-				else if (cipherFactory != null) {
+				} else if (cipherFactory != null) {
 					String encodedMessage = cipherFactory.decrypt(message);
 					conInterface.receiveMessage(encodedMessage);
 				}
@@ -67,13 +68,15 @@ public class ServerHandler implements Runnable {
 	}
 
 	public void sendMessage(String message) {
-		try {
-			String encryptedMessage = cipherFactory.encrypt(message);
-			writer.println(encryptedMessage);
-			writer.flush();
+		if (allowMessageSending) {
+			try {
+				String encryptedMessage = cipherFactory.encrypt(message);
+				writer.println(encryptedMessage);
+				writer.flush();
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 	}
 
@@ -98,9 +101,13 @@ public class ServerHandler implements Runnable {
 			SecretKey secKey = KeyGenerator.getRandomAESKey();
 			String encodedKey = Base64.getEncoder().encodeToString(
 					secKey.getEncoded());
-			sendMessage(encodedKey);
+
+			String encryptedKey = cipherFactory.encrypt(encodedKey);
+			writer.println(encryptedKey);
+			writer.flush();
 			cipherFactory.setKey(secKey);
 			cipherFactory.setAlgorithm("AES");
+			allowMessageSending = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

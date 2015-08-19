@@ -21,6 +21,8 @@ public class ClientHandler implements Runnable {
 	private CipherFactory cipherFactory;
 	private ServerInterface servInterface;
 
+	private boolean allowMessageSending = false;
+
 	public ClientHandler(Socket clientSocket, KeyPair rsaKeyPair,
 			ServerInterface servInterface) {
 		this.servInterface = servInterface;
@@ -40,15 +42,16 @@ public class ClientHandler implements Runnable {
 	}
 
 	public void sendMessage(String message) {
-		String encryptedMessage;
-		try {
-			encryptedMessage = cipherFactory.encrypt(message);
-			writer.println(encryptedMessage);
-			writer.flush();
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (allowMessageSending) {
+			String encryptedMessage;
+			try {
+				encryptedMessage = cipherFactory.encrypt(message);
+				writer.println(encryptedMessage);
+				writer.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-
 	}
 
 	public void run() {
@@ -83,6 +86,9 @@ public class ClientHandler implements Runnable {
 
 		cipherFactory.setKey(aesSymetricKey);
 		cipherFactory.setAlgorithm("AES");
+
+		allowMessageSending = true;
+
 	}
 
 }
