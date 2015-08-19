@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib;
+package de.szut.dqi12.cheftrainer.ConnectorLib.Cipher;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;

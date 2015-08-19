@@ -1,9 +1,6 @@
-package de.szut.dqi12.cheftrainer.client.serverCommunication;
+package de.szut.dqi12.cheftrainer.ConnectorLib.ClientSide;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
@@ -11,9 +8,16 @@ import java.net.Socket;
  * @author Alexander Brennecke
  *
  */
-public class ServerHandler {
+public class Client {
 
-	Socket socket;
+	private Socket socket;
+	private ClientInterface conInterface;
+	ServerHandler servHandler;
+	
+	
+	public Client(ClientInterface conInterface){
+		this.conInterface = conInterface;
+	}
 
 	/**
 	 * Initializes a new Server Connection 
@@ -28,7 +32,8 @@ public class ServerHandler {
 	private void startConnection(String serverIP, int serverPort) {
 		try {
 			socket = new Socket(serverIP,serverPort);
-			Thread readerThread = new Thread(new ServerConnection(socket));
+			servHandler = new ServerHandler(socket,conInterface);
+			Thread readerThread = new Thread(servHandler);
 			readerThread.start();
 			System.out.println("Verbindung Aufgebaut");
 		} catch (IOException ex) {
@@ -37,6 +42,12 @@ public class ServerHandler {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public void sendMesage(String message){
+		if(servHandler!=null){
+			servHandler.sendMessage(message);
 		}
 	}
 }

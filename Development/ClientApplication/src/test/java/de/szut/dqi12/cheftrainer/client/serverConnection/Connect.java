@@ -4,38 +4,26 @@ import javax.crypto.SecretKey;
 
 import org.junit.Test;
 
-import de.szut.dqi12.cheftrainer.ConnectorLib.CipherFactory;
-import de.szut.dqi12.cheftrainer.ConnectorLib.KeyGenerator;
-import de.szut.dqi12.cheftrainer.client.serverCommunication.ServerHandler;
+import de.szut.dqi12.cheftrainer.client.serverCommunication.ClientController;
 
 public class Connect{
 	
 	@Test
 	public void testConnection(){
-		ServerHandler serverHandler = new ServerHandler();
-		serverHandler.run();
+		ClientController  clController = new ClientController();
+		clController.createClient();
 		try {
-			Thread.sleep(20000000);
+			Thread.sleep(20000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	@Test
-	public void cipherTest(){
-		String text = "hallo ich bin ein text";
+		clController.sendMessage("Hallo Server!");
 		try {
-			SecretKey key = KeyGenerator.getRandomAESKey();
-			CipherFactory c = new CipherFactory(key, "AES");
-			String geheim = c.encrypt(text);
-			System.out.println(geheim);
-			String neu = c.decrypt(geheim);
-			System.out.println(neu);
-		} catch (Exception e) {
+			Thread.sleep(200000000);
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 }

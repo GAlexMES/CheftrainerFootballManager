@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib;
+package de.szut.dqi12.cheftrainer.ConnectorLib.Cipher;
 
 import java.io.InputStream;
 import java.io.OutputStream;

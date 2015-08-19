@@ -1,2 +1,8 @@
-D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\KeyGenerator.java
-D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\CipherFactory.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\ServerSide\ServerInterface.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\Cipher\KeyGenerator.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\ClientSide\ClientInterface.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\ServerSide\Server.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\ClientSide\Client.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\ClientSide\ServerHandler.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\ServerSide\ClientHandler.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\ConnectorLib\Cipher\CipherFactory.java
