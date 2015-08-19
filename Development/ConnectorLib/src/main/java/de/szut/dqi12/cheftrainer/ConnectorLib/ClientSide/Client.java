@@ -12,9 +12,12 @@ public class Client {
 
 	private Socket socket;
 	private ClientInterface conInterface;
-	ServerHandler servHandler;
+	private ServerHandler servHandler;
 	
-	
+	/**
+	 * Constructor
+	 * @param conInterface
+	 */
 	public Client(ClientInterface conInterface){
 		this.conInterface = conInterface;
 	}
@@ -45,6 +48,11 @@ public class Client {
 		}
 	}
 	
+	
+	/**
+	 * Is used to forward a message to the serverHandler
+	 * @param message the decrypted message that should be send.
+	 */
 	public void sendMesage(String message){
 		if(servHandler!=null){
 			servHandler.sendMessage(message);

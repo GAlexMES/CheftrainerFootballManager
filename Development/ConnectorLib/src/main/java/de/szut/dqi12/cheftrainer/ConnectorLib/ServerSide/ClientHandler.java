@@ -12,6 +12,12 @@ import javax.crypto.spec.SecretKeySpec;
 
 import de.szut.dqi12.cheftrainer.ConnectorLib.Cipher.CipherFactory;
 
+/**
+ * The ClientHandler class is the direct connection to the clients. The server class has a ClientHandler object for every open connection.
+ * This class creates the handshake with the client, stores the symmetric key for AES cipher and encrypts/decrypts the sent/received messages.
+ * @author Alexander Brennecke
+ *
+ */
 public class ClientHandler implements Runnable {
 
 	private BufferedReader reader;
@@ -23,6 +29,12 @@ public class ClientHandler implements Runnable {
 
 	private boolean allowMessageSending = false;
 
+	/**
+	 * Constructor. Generates a cipherFactory and sends the RSA Public Key to the new client.
+	 * @param clientSocket a new Socket to a new client
+	 * @param rsaKeyPair the server KeyPair for RSA cipher
+	 * @param servInterface received messages will be forwarded to that object
+	 */
 	public ClientHandler(Socket clientSocket, KeyPair rsaKeyPair,
 			ServerInterface servInterface) {
 		this.servInterface = servInterface;
@@ -41,6 +53,10 @@ public class ClientHandler implements Runnable {
 		}
 	}
 
+	/**
+	 * Is used to send a message. The handshake must be completed otherwise there will nothing happen.
+	 * @param message the decrypted message that should be send to the client
+	 */
 	public void sendMessage(String message) {
 		if (allowMessageSending) {
 			String encryptedMessage;
@@ -54,6 +70,9 @@ public class ClientHandler implements Runnable {
 		}
 	}
 
+	/**
+	 * Starts the thread for the connection. Receives the messages, which were sent by the client.
+	 */
 	public void run() {
 		String message;
 		int counter = 0;
@@ -76,6 +95,10 @@ public class ClientHandler implements Runnable {
 		}
 	}
 
+	/**
+	 * Creates the handshake with the new client. Builds a decrypts the AES key, which was sent by the client and configures the cipherFactory for further AES cipher. 
+	 * @param key the aes key, which is encrypted with the public rsa key.
+	 */
 	private void handshake(String key) throws Exception {
 
 		String aesKey = cipherFactory.decrypt(key);

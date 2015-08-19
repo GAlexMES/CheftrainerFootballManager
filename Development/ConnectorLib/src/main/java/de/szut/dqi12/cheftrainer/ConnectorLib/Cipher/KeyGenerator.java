@@ -30,6 +30,10 @@ public class KeyGenerator {
 		return pub;
 	}
 	
+	/**
+	 * Generates a new AES Key with a length of 128 bit .
+	 * @return a new SecretKey for AES cipher
+	 */
 	public static SecretKey getRandomAESKey() throws Exception{
 		javax.crypto.KeyGenerator keyGen = javax.crypto.KeyGenerator.getInstance("AES");
 		keyGen.init(128); // for example

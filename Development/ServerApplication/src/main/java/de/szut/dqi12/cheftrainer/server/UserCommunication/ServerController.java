@@ -6,18 +6,31 @@ import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.ClientHandler;
 import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.Server;
 import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.ServerInterface;
 
+
+/**
+ * This Class uses the ConnectorLib to create a new server.
+ * @author Alexander Brennecke
+ *
+ */
 public class ServerController implements ServerInterface {
 
 	private Server server;
 
 	private ArrayList<ClientHandler> clientList = new ArrayList<>();
 
+	/**
+	 * Is called, when a new message was send to the server by any client.
+	 */
 	@Override
 	public void receiveMessage(String message) {
 		System.out.println(message);
 		sendMessage("Hallo Client!");
 	}
 
+	/**
+	 * This method sends the given String to the first ClientHandler in the list
+	 * Code must be updated so that it is possible to send to every ClientHandler
+	 */
 	@Override
 	public void sendMessage(String message) {
 		if (server != null) {
@@ -28,12 +41,20 @@ public class ServerController implements ServerInterface {
 		}
 	}
 
+	
+	/**
+	 * This methos creates a new server and starts it.
+	 */
 	@Override
 	public void createServer() {
 		server = new Server(this);
 		server.run();
 	}
 
+	
+	/**
+	 * This method is called by the server, when a new Client registers himself to the server.
+	 */
 	@Override
 	public void updateClientHandlerList(ArrayList<ClientHandler> clientList) {
 		this.clientList = clientList;

@@ -47,6 +47,10 @@ public class ServerHandler implements Runnable {
 		writer = new PrintWriter(socket.getOutputStream());
 	}
 
+	
+	/**
+	 * This method runs the client thread. It also receives every message, which will be sent to the client from the server.
+	 */
 	@SuppressWarnings("unused")
 	public void run() {
 		String message;
@@ -67,6 +71,10 @@ public class ServerHandler implements Runnable {
 		}
 	}
 
+	/**
+	 * This method will sent the given message, if the handshake was already completed.
+	 * @param message the message, that should be sended to the server
+	 */
 	public void sendMessage(String message) {
 		if (allowMessageSending) {
 			try {
@@ -80,6 +88,12 @@ public class ServerHandler implements Runnable {
 		}
 	}
 
+	
+	/**
+	 * Is used to parse the Server RSA Public Key and to call the sendSymetricKey function.
+	 * @param message modulus or exponent of the RSA Public Key in X.509 Format
+	 * @param counter 1 = modulus message is the modulus; 2 = message is the exponent and key is complete
+	 */
 	private void handshakek(String message, int counter) throws Exception {
 		switch (counter) {
 		case 1:
@@ -91,11 +105,15 @@ public class ServerHandler implements Runnable {
 					exponent);
 			modulus = null;
 			exponent = null;
-			sendSymetricKey(rsaPublicKey);
+			sendSymmetricKey(rsaPublicKey);
 		}
 	}
 
-	private void sendSymetricKey(PublicKey rsaPublicKey) {
+	/**
+	 * Generates a symmetric key for AES cipher. Encrypts the symmetric key with given RSA Key and sent the encrypted symmetric key back to the server.
+	 * @param rsaPublicKey
+	 */
+	private void sendSymmetricKey(PublicKey rsaPublicKey) {
 		cipherFactory = new CipherFactory(rsaPublicKey, "RSA");
 		try {
 			SecretKey secKey = KeyGenerator.getRandomAESKey();
