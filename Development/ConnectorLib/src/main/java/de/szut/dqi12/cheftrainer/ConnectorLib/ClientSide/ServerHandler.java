@@ -13,6 +13,7 @@ import javax.crypto.SecretKey;
 import de.szut.dqi12.cheftrainer.ConnectorLib.Cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.ConnectorLib.Cipher.KeyGenerator;
 
+
 /**
  * This class is the direct connection class to a java server. It receives and
  * sends messages to the server.
