@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib.messages;
+package de.szut.dqi12.cheftrainer.connectorlib.messages;
 
 public class MessageException extends Exception {
 

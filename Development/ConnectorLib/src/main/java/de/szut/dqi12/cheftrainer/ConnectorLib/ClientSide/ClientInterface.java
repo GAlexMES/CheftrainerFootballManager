@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib.ClientSide;
+package de.szut.dqi12.cheftrainer.connectorlib.clientside;
 
 /**
  * Interface for the user of the lib.

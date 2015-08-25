@@ -2,9 +2,9 @@ package de.szut.dqi12.cheftrainer.server.UserCommunication;
 
 import java.util.ArrayList;
 
-import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.ClientHandler;
-import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.Server;
-import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.ServerInterface;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.Server;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerInterface;
 
 
 /**

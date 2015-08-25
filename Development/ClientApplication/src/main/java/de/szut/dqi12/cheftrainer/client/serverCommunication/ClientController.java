@@ -1,7 +1,8 @@
 package de.szut.dqi12.cheftrainer.client.serverCommunication;
 
-import de.szut.dqi12.cheftrainer.ConnectorLib.ClientSide.Client;
-import de.szut.dqi12.cheftrainer.ConnectorLib.ClientSide.ClientInterface;
+import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
+import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientInterface;
+
 
 public class ClientController implements ClientInterface {
 	

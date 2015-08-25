@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib.ClientSide;
+package de.szut.dqi12.cheftrainer.connectorlib.clientside;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,8 +10,8 @@ import java.util.Base64;
 
 import javax.crypto.SecretKey;
 
-import de.szut.dqi12.cheftrainer.ConnectorLib.Cipher.CipherFactory;
-import de.szut.dqi12.cheftrainer.ConnectorLib.Cipher.KeyGenerator;
+import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.cipher.KeyGenerator;
 
 
 /**

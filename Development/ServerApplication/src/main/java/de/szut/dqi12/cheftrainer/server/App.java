@@ -1,6 +1,5 @@
 package de.szut.dqi12.cheftrainer.server;
 
-import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.Server;
 import de.szut.dqi12.cheftrainer.server.UserCommunication.ServerController;
 
 

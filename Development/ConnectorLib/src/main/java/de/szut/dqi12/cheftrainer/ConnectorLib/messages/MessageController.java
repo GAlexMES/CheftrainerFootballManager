@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib.messages;
+package de.szut.dqi12.cheftrainer.connectorlib.messages;
 
 import java.util.HashMap;
 
@@ -6,7 +6,7 @@ import org.json.JSONObject;
 
 public class MessageController {
 
-	private HashMap<String, CallableInterface> callableMap = new HashMap<String, CallableInterface>();
+	private HashMap<String, CallableAbstract> callableMap = new HashMap<String, CallableAbstract>();
 
 	private final static String JSON_IDENTIFIER_ID = "m_ID";
 
@@ -30,7 +30,7 @@ public class MessageController {
 
 	}
 
-	public void registerCallable(String messageID, CallableInterface call) {
+	public void registerCallable(String messageID, CallableAbstract call) {
 		callableMap.put(messageID, call);
 	}
 

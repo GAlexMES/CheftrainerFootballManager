@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide;
+package de.szut.dqi12.cheftrainer.connectorlib.serverside;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,7 +10,7 @@ import java.util.Base64;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import de.szut.dqi12.cheftrainer.ConnectorLib.Cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 
 /**
  * The ClientHandler class is the direct connection to the clients. The server class has a ClientHandler object for every open connection.

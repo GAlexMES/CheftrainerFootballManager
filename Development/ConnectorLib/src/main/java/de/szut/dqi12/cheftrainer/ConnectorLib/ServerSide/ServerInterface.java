@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide;
+package de.szut.dqi12.cheftrainer.connectorlib.serverside;
 
 import java.util.ArrayList;
 
