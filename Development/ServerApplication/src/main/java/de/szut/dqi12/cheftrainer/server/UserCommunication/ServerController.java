@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.Server;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerInterface;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
 
 
 /**
@@ -43,11 +44,12 @@ public class ServerController implements ServerInterface {
 
 	
 	/**
-	 * This methos creates a new server and starts it.
+	 * This method creates a new server and starts it.
 	 */
 	@Override
-	public void createServer() {
-		server = new Server(this);
+	public void createServer(ServerProperties serverProps) {
+		serverProps.setServInterface(this);
+		server = new Server(serverProps);
 		server.run();
 	}
 

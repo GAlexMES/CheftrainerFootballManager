@@ -14,19 +14,17 @@ import java.util.ArrayList;
  */
 public class Server {
 
-	private final int PORT = 5000;
 	private KeyPair keyPair;
-	private ServerInterface serverInterface;
 	private ArrayList<Thread> clientList = new ArrayList<Thread>();
 	private ArrayList<ClientHandler> clientHandlerList = new ArrayList<ClientHandler>();
-	
+	private ServerProperties serverProps;
 
 	/**
 	 * Constructor. Generates a new RSA KeyPair.
 	 * @param serverInterface
 	 */
-	public Server(ServerInterface serverInterface) {
-		this.serverInterface = serverInterface;
+	public Server(ServerProperties serverProps) {
+		this.serverProps = serverProps;
 		KeyPairGenerator kpg;
 		try {
 			kpg = KeyPairGenerator.getInstance("RSA");
@@ -43,7 +41,7 @@ public class Server {
 	 */
 	public void run() {
 		try {
-			ServerSocket serverSock = new ServerSocket(PORT);
+			ServerSocket serverSock = new ServerSocket(serverProps.getPort());
 			while (true) {
 				Socket clientSocket = serverSock.accept();
 				newClient(clientSocket);
@@ -60,13 +58,12 @@ public class Server {
 	 */
 	private void newClient(Socket clientSocket){
 		ClientHandler tempClientHandler = new ClientHandler(clientSocket, keyPair,
-				serverInterface);
+				serverProps);
 		clientHandlerList.add(tempClientHandler);
 		Thread t = new Thread(tempClientHandler);
 		clientList.add(t);
-		serverInterface.updateClientHandlerList(clientHandlerList);
+		serverProps.getServInterface().updateClientHandlerList(clientHandlerList);
 		t.run();
-
 	}
 
 }

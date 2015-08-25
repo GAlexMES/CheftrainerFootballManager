@@ -3,14 +3,20 @@ package de.szut.dqi12.cheftrainer.connectorlib.serverside;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.Socket;
 import java.security.KeyPair;
-import java.util.Base64;
+import java.security.PublicKey;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+
+import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.MessageController;
 
 /**
  * The ClientHandler class is the direct connection to the clients. The server class has a ClientHandler object for every open connection.
@@ -23,9 +29,8 @@ public class ClientHandler implements Runnable {
 	private BufferedReader reader;
 	private PrintWriter writer;
 	private Socket socket;
-	private SecretKey aesSymetricKey;
 	private CipherFactory cipherFactory;
-	private ServerInterface servInterface;
+	private MessageController messageController;
 
 	private boolean allowMessageSending = false;
 
@@ -33,11 +38,14 @@ public class ClientHandler implements Runnable {
 	 * Constructor. Generates a cipherFactory and sends the RSA Public Key to the new client.
 	 * @param clientSocket a new Socket to a new client
 	 * @param rsaKeyPair the server KeyPair for RSA cipher
-	 * @param servInterface received messages will be forwarded to that object
+	 * @param serverProps received messages will be forwarded to that object
 	 */
 	public ClientHandler(Socket clientSocket, KeyPair rsaKeyPair,
-			ServerInterface servInterface) {
-		this.servInterface = servInterface;
+			ServerProperties serverProps) {
+		
+		ClientToServer_MessageIDs cts_MessageIDs = new ClientToServer_MessageIDs();
+		messageController = new MessageController(cts_MessageIDs.getIDs(),serverProps.getPathToCallableDir(),serverProps.getPackagePathToCallableDir());
+		messageController.setRsaKeyPair(rsaKeyPair);
 
 		try {
 			cipherFactory = new CipherFactory(rsaKeyPair.getPrivate(), "RSA");
@@ -45,12 +53,28 @@ public class ClientHandler implements Runnable {
 			InputStreamReader isReader = new InputStreamReader(
 					socket.getInputStream());
 			writer = new PrintWriter(socket.getOutputStream());
+			messageController.setWriter(writer);
 			reader = new BufferedReader(isReader);
-			writer.println(rsaKeyPair.getPublic());
-			writer.flush();
+			
+			Message rsaMessage = generateRSAMessage(rsaKeyPair.getPublic());
+			
+			messageController.sendMessage(rsaMessage);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+	}
+
+	private Message generateRSAMessage(PublicKey publicKey) {
+		Message rsaMessage = new Message(Handshake_MessageIDs.RSA_PUBLIC_KEY);
+		String pKString = publicKey.toString();
+		String[] pkStringSplitted = pKString.split("\n");
+		BigInteger modulus  = new BigInteger(pkStringSplitted[1].split(" ")[3]);
+		BigInteger exponent = new BigInteger(pkStringSplitted[2].split(" ")[4]);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("modulus", modulus.toString());
+		jsonObject.put("exponent", exponent.toString());
+		rsaMessage.setMessageContent(jsonObject.toString());
+		return rsaMessage;
 	}
 
 	/**
@@ -75,43 +99,13 @@ public class ClientHandler implements Runnable {
 	 */
 	public void run() {
 		String message;
-		int counter = 0;
-		String key = "";
 		try {
 			while ((message = reader.readLine()) != null) {
-				if (counter < 3) {
-					key += message;
-					if (counter == 2) {
-						handshake(key);
-					}
-					counter++;
-				} else {
-					String decryptedMessage = cipherFactory.decrypt(message);
-					servInterface.receiveMessage(decryptedMessage);
-				}
+				messageController.receiveMessage(message);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
-
-	/**
-	 * Creates the handshake with the new client. Builds a decrypts the AES key, which was sent by the client and configures the cipherFactory for further AES cipher. 
-	 * @param key the aes key, which is encrypted with the public rsa key.
-	 */
-	private void handshake(String key) throws Exception {
-
-		String aesKey = cipherFactory.decrypt(key);
-
-		byte[] decodedKey = Base64.getDecoder().decode(aesKey);
-		aesSymetricKey = new SecretKeySpec(decodedKey, 0, decodedKey.length,
-				"AES");
-
-		cipherFactory.setKey(aesSymetricKey);
-		cipherFactory.setAlgorithm("AES");
-
-		allowMessageSending = true;
-
 	}
 
 }

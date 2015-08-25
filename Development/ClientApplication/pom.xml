@@ -41,6 +41,12 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/../ConnectorLib/target/ConnectorLib-0.0.1.jar</systemPath>
 		</dependency>
+		
+				<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20141113</version>
+		</dependency>
 	</dependencies>
 
 	<build>

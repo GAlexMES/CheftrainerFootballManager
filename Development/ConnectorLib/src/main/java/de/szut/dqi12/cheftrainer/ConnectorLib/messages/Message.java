@@ -5,12 +5,15 @@ import org.json.JSONObject;
 public class Message {
 	
 	private String messageID;
-	private JSONObject messageContent;
+	private String messageContent;
 	
+	public Message(String messageID){
+		this.messageID=messageID;
+	}
 	
-	public Message(String messageID, JSONObject jsonContent) {
+	public Message(String messageID, String content) {
 		this.messageID = messageID;
-		this.messageContent = jsonContent;
+		this.messageContent = content;
 	}
 
 
@@ -24,12 +27,12 @@ public class Message {
 	}
 
 
-	public JSONObject getMessageContent() {
+	public String getMessageContent() {
 		return messageContent;
 	}
 
 
-	public void setMessageContent(JSONObject messageContent) {
+	public void setMessageContent(String messageContent) {
 		this.messageContent = messageContent;
 	}
 	

@@ -2,6 +2,7 @@ package de.szut.dqi12.cheftrainer.client.serverCommunication;
 
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientInterface;
+import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 
 
 public class ClientController implements ClientInterface {
@@ -21,8 +22,9 @@ public class ClientController implements ClientInterface {
 	}
 	
 	@Override
-	public void createClient(){
-		client = new Client(this);
+	public void createClient(ClientProperties clientProps ){
+		clientProps.setClientInterface(this);
+		client = new Client(clientProps);
 		client.run();
 	}
 

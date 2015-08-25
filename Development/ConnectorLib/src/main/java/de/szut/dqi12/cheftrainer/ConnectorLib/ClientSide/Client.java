@@ -11,22 +11,22 @@ import java.net.Socket;
 public class Client {
 
 	private Socket socket;
-	private ClientInterface conInterface;
+	private ClientProperties clientProps;
 	private ServerHandler servHandler;
 	
 	/**
 	 * Constructor
 	 * @param conInterface
 	 */
-	public Client(ClientInterface conInterface){
-		this.conInterface = conInterface;
+	public Client(ClientProperties clientProps){
+		this.clientProps = clientProps;
 	}
 
 	/**
 	 * Initializes a new Server Connection 
 	 */
 	public void run() {
-		startConnection("127.0.0.1",5000);
+		startConnection(clientProps.getServer_ip(),clientProps.getPort());
 	}
 
 	/**
@@ -35,15 +35,14 @@ public class Client {
 	private void startConnection(String serverIP, int serverPort) {
 		try {
 			socket = new Socket(serverIP,serverPort);
-			servHandler = new ServerHandler(socket,conInterface);
+			servHandler = new ServerHandler(socket,clientProps);
 			Thread readerThread = new Thread(servHandler);
-			readerThread.start();
+			readerThread.run();
 			System.out.println("Verbindung Aufgebaut");
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			System.out.println("Keine Verbindung Aufgebaut");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
