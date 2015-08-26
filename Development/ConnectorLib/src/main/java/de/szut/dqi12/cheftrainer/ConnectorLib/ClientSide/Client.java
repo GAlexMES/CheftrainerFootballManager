@@ -3,6 +3,8 @@ package de.szut.dqi12.cheftrainer.connectorlib.clientside;
 import java.io.IOException;
 import java.net.Socket;
 
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+
 /**
  * Handles the Server Connection
  * @author Alexander Brennecke
@@ -20,12 +22,6 @@ public class Client {
 	 */
 	public Client(ClientProperties clientProps){
 		this.clientProps = clientProps;
-	}
-
-	/**
-	 * Initializes a new Server Connection 
-	 */
-	public void run() {
 		startConnection(clientProps.getServer_ip(),clientProps.getPort());
 	}
 
@@ -37,7 +33,7 @@ public class Client {
 			socket = new Socket(serverIP,serverPort);
 			servHandler = new ServerHandler(socket,clientProps);
 			Thread readerThread = new Thread(servHandler);
-			readerThread.run();
+			readerThread.start();
 			System.out.println("Verbindung Aufgebaut");
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -52,7 +48,7 @@ public class Client {
 	 * Is used to forward a message to the serverHandler
 	 * @param message the decrypted message that should be send.
 	 */
-	public void sendMesage(String message){
+	public void sendMesage(Message message){
 		if(servHandler!=null){
 			servHandler.sendMessage(message);
 		}

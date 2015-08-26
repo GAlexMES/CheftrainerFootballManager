@@ -37,10 +37,12 @@ public class CallableController {
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
+		} catch (CallableMappingException e) {
+			e.printStackTrace();
 		}
 	}
 
-	private static CallableAbstract generateInstance(URL path, String className) {
+	private static CallableAbstract generateInstance(URL path, String className) throws CallableMappingException{
 		CallableAbstract classInstance = null;
 		try {
 
@@ -53,10 +55,13 @@ public class CallableController {
 					.loadClass(fullQualifiedName);
 			classInstance = c.newInstance();
 			cl.close();
-		} catch (ClassNotFoundException | InstantiationException
-				| IllegalAccessException e) {
-			e.printStackTrace();
+		} catch (ClassNotFoundException cne) {
+			throw new CallableMappingException("The class: "+className+"  Was not found in: "+path.toString());
 		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		return classInstance;

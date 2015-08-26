@@ -19,11 +19,10 @@ public class RSAPublicKey extends CallableAbstract {
 	CipherFactory cipherFactory;
 	
 	public void messageArrived(Message message) {
-		System.out.println("rsa public empfangen");
 		JSONObject jsonObject = new JSONObject(message.getMessageContent());
 		PublicKey rsaKey = readRSAKey(jsonObject);
-		sendSymmetricKey(rsaKey);
-		System.out.println("eas gesendet!");
+		SecretKey secKey = sendSymmetricKey(rsaKey);
+		mesController.setAESKey(secKey);
 	}
 
 	public static CallableAbstract newInstance() {
@@ -38,7 +37,6 @@ public class RSAPublicKey extends CallableAbstract {
 		try {
 			rsaPublicKey = KeyGenerator.generatePublicKey(modulus,exponent);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return rsaPublicKey;
@@ -49,23 +47,23 @@ public class RSAPublicKey extends CallableAbstract {
 	 * Generates a symmetric key for AES cipher. Encrypts the symmetric key with given RSA Key and sent the encrypted symmetric key back to the server.
 	 * @param rsaPublicKey
 	 */
-	private void sendSymmetricKey(PublicKey rsaPublicKey) {
+	private SecretKey sendSymmetricKey(PublicKey rsaPublicKey) {
 		cipherFactory = new CipherFactory(rsaPublicKey, "RSA");
+		SecretKey secKey = null;
 		try {
-			SecretKey secKey = KeyGenerator.getRandomAESKey();
+			secKey = KeyGenerator.getRandomAESKey();
 			String encodedKey = Base64.getEncoder().encodeToString(
 					secKey.getEncoded());
-
 			String encryptedKey = cipherFactory.encrypt(encodedKey);
-			
 			mesController.sendMessage(generateAESKeyMessage(encryptedKey));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return secKey;
 	}
 	
 	private Message generateAESKeyMessage(String encryptedKey){
-		Message aesMessage = new Message(Handshake_MessageIDs.HANDSHAKE_ACK);
+		Message aesMessage = new Message(Handshake_MessageIDs.AES_KEY);
 		aesMessage.setMessageContent(encryptedKey);
 		return aesMessage;
 	}

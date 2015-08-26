@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ServerToClient_MessageIDs {
 	
-	public String TEST ="Test";
+//	public String TEST ="Test";
 	
 	public List<String> getIDs(){
 		Field[] fields = ServerToClient_MessageIDs.class.getFields();

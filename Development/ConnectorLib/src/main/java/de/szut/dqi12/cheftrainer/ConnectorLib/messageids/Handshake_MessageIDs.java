@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Handshake_MessageIDs {
-	public static final String ESA_KEY = "ESAKey";
+	public static final String AES_KEY = "AESKey";
 	public static final String RSA_PUBLIC_KEY = "RSAPublicKey";
 	public static final String HANDSHAKE_ACK = "HandshakeAck";
 	

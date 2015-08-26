@@ -6,7 +6,6 @@ public class ServerProperties {
 	private int port;
 	private URL pathToCallableDir;
 	private String packagePathToCallableDir;
-	private ServerInterface servInterface;
 	
 	public int getPort() {
 		return port;
@@ -26,13 +25,4 @@ public class ServerProperties {
 	public void setPackagePathToCallableDir(String packagePathToCallableDir) {
 		this.packagePathToCallableDir = packagePathToCallableDir;
 	}
-	public ServerInterface getServInterface() {
-		return servInterface;
-	}
-	public void setServInterface(ServerInterface servInterface) {
-		this.servInterface = servInterface;
-	}
-	
-	
-
 }

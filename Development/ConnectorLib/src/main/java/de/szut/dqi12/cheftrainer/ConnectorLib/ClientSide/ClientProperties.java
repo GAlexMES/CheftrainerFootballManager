@@ -7,7 +7,6 @@ public class ClientProperties {
 	private int port;
 	private URL pathToCallableDir;
 	private String packagePathToCallableDir;
-	private ClientInterface clientInterface;
 	public String getServer_ip() {
 		return server_ip;
 	}
@@ -31,11 +30,5 @@ public class ClientProperties {
 	}
 	public void setPackagePathToCallableDir(String packagePathToCallableDir) {
 		this.packagePathToCallableDir = packagePathToCallableDir;
-	}
-	public ClientInterface getClientInterface() {
-		return clientInterface;
-	}
-	public void setClientInterface(ClientInterface clientInterface) {
-		this.clientInterface = clientInterface;
 	}
 }

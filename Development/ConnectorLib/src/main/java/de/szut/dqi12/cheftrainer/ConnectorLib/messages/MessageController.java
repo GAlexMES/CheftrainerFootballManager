@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.crypto.SecretKey;
+
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
@@ -76,11 +78,20 @@ public class MessageController {
 		JSONObject tempJsonObj = new JSONObject();
 
 		tempJsonObj.put(JSON_IDENTIFIER_ID, message.getMessageID());
-		tempJsonObj.put(JSON_IDENTIFIER_CONTENT, message.getMessageContent());
+
+		String encryptedMessage = message.getMessageContent();
+		if (completedHandshake) {
+			try {
+				encryptedMessage = cipherFactory.encrypt(encryptedMessage);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		tempJsonObj.put(JSON_IDENTIFIER_CONTENT, encryptedMessage);
 
 		writer.println(tempJsonObj.toString());
 		writer.flush();
-		
+
 	}
 
 	public void registerCallable(String messageID, CallableAbstract call) {
@@ -97,14 +108,14 @@ public class MessageController {
 		String messageID = jsonObj.getString(JSON_IDENTIFIER_ID);
 		String jsonMessage = jsonObj.getString(JSON_IDENTIFIER_CONTENT);
 		String content = "";
-		if(completedHandshake){
+
+		if (completedHandshake) {
 			try {
 				content = cipherFactory.decrypt(jsonMessage);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		else{
+		} else {
 			content = jsonMessage;
 		}
 		Message tempMessage = new Message(messageID, content);
@@ -119,8 +130,16 @@ public class MessageController {
 		this.rsaKeyPair = rsaKeyPair;
 	}
 
-	public void setWriter(PrintWriter writer){
+	public void setWriter(PrintWriter writer) {
 		this.writer = writer;
 	}
-	
+
+	public void setCompletedHandshake(boolean completedHandshake) {
+		this.completedHandshake = completedHandshake;
+	}
+
+	public void setAESKey(SecretKey aesKey) {
+		cipherFactory = new CipherFactory(aesKey, "AES");
+	}
+
 }

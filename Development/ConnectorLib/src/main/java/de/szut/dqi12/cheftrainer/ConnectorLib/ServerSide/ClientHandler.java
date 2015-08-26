@@ -81,17 +81,8 @@ public class ClientHandler implements Runnable {
 	 * Is used to send a message. The handshake must be completed otherwise there will nothing happen.
 	 * @param message the decrypted message that should be send to the client
 	 */
-	public void sendMessage(String message) {
-		if (allowMessageSending) {
-			String encryptedMessage;
-			try {
-				encryptedMessage = cipherFactory.encrypt(message);
-				writer.println(encryptedMessage);
-				writer.flush();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+	public void sendMessage(Message message) {
+		messageController.sendMessage(message);
 	}
 
 	/**

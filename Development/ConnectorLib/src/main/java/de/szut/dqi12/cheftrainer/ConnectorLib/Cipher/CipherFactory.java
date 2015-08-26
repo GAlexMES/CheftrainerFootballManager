@@ -2,14 +2,11 @@ package de.szut.dqi12.cheftrainer.connectorlib.cipher;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
 import sun.misc.BASE64Decoder;

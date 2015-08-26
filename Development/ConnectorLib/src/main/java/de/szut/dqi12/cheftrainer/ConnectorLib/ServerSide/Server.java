@@ -62,8 +62,14 @@ public class Server {
 		clientHandlerList.add(tempClientHandler);
 		Thread t = new Thread(tempClientHandler);
 		clientList.add(t);
-		serverProps.getServInterface().updateClientHandlerList(clientHandlerList);
 		t.run();
 	}
 
+	public ArrayList<Thread> getClientList() {
+		return clientList;
+	}
+
+	public ArrayList<ClientHandler> getClientHandlerList() {
+		return clientHandlerList;
+	}
 }
