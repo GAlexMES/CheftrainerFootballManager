@@ -4,17 +4,25 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.net.Socket;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.KeyPair;
 import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.crypto.SecretKey;
 
 import org.json.JSONObject;
 
+import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.HandshakeMapperCreator;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.MessageController;
 
@@ -29,10 +37,7 @@ public class ClientHandler implements Runnable {
 	private BufferedReader reader;
 	private PrintWriter writer;
 	private Socket socket;
-	private CipherFactory cipherFactory;
 	private MessageController messageController;
-
-	private boolean allowMessageSending = false;
 
 	/**
 	 * Constructor. Generates a cipherFactory and sends the RSA Public Key to the new client.
@@ -44,11 +49,16 @@ public class ClientHandler implements Runnable {
 			ServerProperties serverProps) {
 		
 		ClientToServer_MessageIDs cts_MessageIDs = new ClientToServer_MessageIDs();
-		messageController = new MessageController(cts_MessageIDs.getIDs(),serverProps.getPathToCallableDir(),serverProps.getPackagePathToCallableDir());
+		
+		
+		List<IDClass_Path_Mapper> idMappers = new ArrayList<IDClass_Path_Mapper>();
+		idMappers.add(new IDClass_Path_Mapper(cts_MessageIDs, serverProps.getPathToCallableDir(), serverProps.getPackagePathToCallableDir()));
+		idMappers.add(HandshakeMapperCreator.getIDClassPathMapperForHandshake());
+		
+		messageController = new MessageController(idMappers);
 		messageController.setRsaKeyPair(rsaKeyPair);
 
 		try {
-			cipherFactory = new CipherFactory(rsaKeyPair.getPrivate(), "RSA");
 			socket = clientSocket;
 			InputStreamReader isReader = new InputStreamReader(
 					socket.getInputStream());
@@ -63,7 +73,12 @@ public class ClientHandler implements Runnable {
 			ex.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Generates the RSAMessage, which includes the modulus and exponent of the RSA Public Key
+	 * @param publicKey the RSA Public key, which should be send to the client.
+	 * @return
+	 */
 	private Message generateRSAMessage(PublicKey publicKey) {
 		Message rsaMessage = new Message(Handshake_MessageIDs.RSA_PUBLIC_KEY);
 		String pKString = publicKey.toString();

@@ -1,10 +1,6 @@
 package de.szut.dqi12.cheftrainer.connectorlib.messages;
 
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -18,8 +14,12 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
 
+/**
+ * The MessageController Class is important for sending and receiving Message objects. It could be used from both, client and server. It says the ID <-> Class Mapper to map the IDs to the correct classes and forwards new message to the correct callable.
+ * @author Alexander Brennecke
+ *
+ */
 public class MessageController {
 
 	private HashMap<String, CallableAbstract> callableMap;
@@ -30,40 +30,40 @@ public class MessageController {
 	private KeyPair rsaKeyPair;
 	private PrintWriter writer;
 
-	public MessageController(List<String> fieldList, URL pathToCallableDir,
-			String packagePathToCallableDir) {
-		Handshake_MessageIDs hm = new Handshake_MessageIDs();
+	/**
+	 * Constructor. Tries to generate a ID<->Class Map for each element in the idMappers list. After that it sets the messageController of each instance to itself.
+	 * @param idMappers
+	 */
+	public MessageController(List<IDClass_Path_Mapper> idMappers) {
 		callableMap = new HashMap<String, CallableAbstract>();
-		List<String> idList = hm.getIDs();
 
-		URL pathToHandshakeDir = null;
-		try {
-			pathToHandshakeDir = CallableController.class.getResource(".")
-					.toURI().toURL();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
-		String pathToHandshakePackage = CallableController.class.getName();
+		idMappers.forEach(element -> mapIDsToCallableAbstract(element));
+		
 
-		HashMap<String, CallableAbstract> callableHandshakeMap = CallableController
-				.getInstancesForIDs(idList, pathToHandshakeDir,
-						pathToHandshakePackage);
-		HashMap<String, CallableAbstract> callabelOtherMap = CallableController
-				.getInstancesForIDs(fieldList, pathToCallableDir,
-						packagePathToCallableDir);
-
-		callableMap.putAll(callableHandshakeMap);
-		callableMap.putAll(callabelOtherMap);
-
-		Iterator it = callableMap.entrySet().iterator();
+		Iterator<?> it = callableMap.entrySet().iterator();
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();
 			((CallableAbstract) pair.getValue()).setMessageController(this);
 		}
 	}
+	
+	/**
+	 * Creates a ID<->CallableAbstract Map for the given idClassPathMapper.
+	 * @param idClassPathMapper the IDClass_Path_Mapper, which should be mapped.
+	 */
+	private void mapIDsToCallableAbstract(IDClass_Path_Mapper idClassPathMapper){
+		
+		List<String> idList = idClassPathMapper.getMesIDabs().getIDs();
+		HashMap<String, CallableAbstract> callableIDMap = CallableController
+				.getInstancesForIDs(idList, idClassPathMapper.getPathToDir(),
+						idClassPathMapper.getPackagePathToDir());
+		callableMap.putAll(callableIDMap);
+	}
 
+	/**
+	 * Is called from the Client/ServerHandler, when a new message comes through the InputStream. Tries to transform the String to a Message and handles it.
+	 * @param jsonString the String, that should be parsed.
+	 */
 	public void receiveMessage(String jsonString) {
 		try {
 			Message message = parseJSON(jsonString);
@@ -74,6 +74,10 @@ public class MessageController {
 
 	}
 
+	/**
+	 * Is called to send a message. Creates a new JSONObject with the given message object and a String out of the JSONObject.
+	 * @param message the Message, that should be send.
+	 */
 	public void sendMessage(Message message) {
 		JSONObject tempJsonObj = new JSONObject();
 
@@ -94,15 +98,22 @@ public class MessageController {
 
 	}
 
-	public void registerCallable(String messageID, CallableAbstract call) {
-		callableMap.put(messageID, call);
-	}
-
+	/**
+	 * Calls the massageArrived() function of the Callable, which belongs to the ID of the message.
+	 * @param message the received message.
+	 * @throws MessageException
+	 */
 	private void handleMessage(Message message) throws MessageException {
 		String messageID = message.getMessageID();
 		callableMap.get(messageID).messageArrived(message);
 	}
 
+	/**
+	 * Tries to parse the incoming JSON String and maps it to a new Message Object.
+	 * @param jsonString the String, that should be parsed.
+	 * @return a new Message object, to which the incoming String was mapped.
+	 * @throws MessageException
+	 */
 	private Message parseJSON(String jsonString) throws MessageException {
 		JSONObject jsonObj = new JSONObject(jsonString);
 		String messageID = jsonObj.getString(JSON_IDENTIFIER_ID);
@@ -122,6 +133,9 @@ public class MessageController {
 		return tempMessage;
 	}
 
+	
+	// GETTER AND SETTER
+	
 	public KeyPair getRsaKeyPair() {
 		return rsaKeyPair;
 	}

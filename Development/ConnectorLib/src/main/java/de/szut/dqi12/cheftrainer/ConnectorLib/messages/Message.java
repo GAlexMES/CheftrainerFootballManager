@@ -1,7 +1,10 @@
 package de.szut.dqi12.cheftrainer.connectorlib.messages;
 
-import org.json.JSONObject;
-
+/**
+ * A Message object contains and ID and the Content. The ID should be one of the IDs, defined in an class extends MessageIDAbstract.
+ * @author Alexander Brennecke
+ *
+ */
 public class Message {
 	
 	private String messageID;

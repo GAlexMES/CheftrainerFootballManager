@@ -65,6 +65,7 @@ public class Server {
 		t.run();
 	}
 
+	// GETTER AND SETTER
 	public ArrayList<Thread> getClientList() {
 		return clientList;
 	}

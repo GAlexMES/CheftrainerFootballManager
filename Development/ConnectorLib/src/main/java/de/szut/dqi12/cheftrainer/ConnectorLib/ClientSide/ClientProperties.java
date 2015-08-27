@@ -2,11 +2,18 @@ package de.szut.dqi12.cheftrainer.connectorlib.clientside;
 
 import java.net.URL;
 
+/**
+ * The ClientProperties class is used to save properties, which are required to generate a client socket connection to a server socket.
+ * @author Alexander Brennecke
+ *
+ */
 public class ClientProperties {
 	private String server_ip;
 	private int port;
 	private URL pathToCallableDir;
 	private String packagePathToCallableDir;
+	
+	// GETTER AND SETTER
 	public String getServer_ip() {
 		return server_ip;
 	}

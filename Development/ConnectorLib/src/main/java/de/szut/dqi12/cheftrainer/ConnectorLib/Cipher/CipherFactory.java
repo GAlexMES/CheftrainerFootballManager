@@ -12,6 +12,11 @@ import javax.crypto.spec.IvParameterSpec;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+/**
+ * The CipherFactory should be used to easy encrypt/decrypt Strings with the given algorithm and key.
+ * @author Alexander Brennecke
+ *
+ */
 public class CipherFactory {
 
 	private Key key = null;
