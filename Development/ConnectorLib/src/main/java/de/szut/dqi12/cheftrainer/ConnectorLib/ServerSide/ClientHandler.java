@@ -48,11 +48,8 @@ public class ClientHandler implements Runnable {
 	public ClientHandler(Socket clientSocket, KeyPair rsaKeyPair,
 			ServerProperties serverProps) {
 		
-		ClientToServer_MessageIDs cts_MessageIDs = new ClientToServer_MessageIDs();
-		
-		
 		List<IDClass_Path_Mapper> idMappers = new ArrayList<IDClass_Path_Mapper>();
-		idMappers.add(new IDClass_Path_Mapper(cts_MessageIDs, serverProps.getPathToCallableDir(), serverProps.getPackagePathToCallableDir()));
+		idMappers.addAll(serverProps.getIDMappers());
 		idMappers.add(HandshakeMapperCreator.getIDClassPathMapperForHandshake());
 		
 		messageController = new MessageController(idMappers);

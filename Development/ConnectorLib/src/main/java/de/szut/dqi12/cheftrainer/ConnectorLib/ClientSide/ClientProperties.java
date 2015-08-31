@@ -1,6 +1,10 @@
 package de.szut.dqi12.cheftrainer.connectorlib.clientside;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 
 /**
  * The ClientProperties class is used to save properties, which are required to generate a client socket connection to a server socket.
@@ -10,8 +14,7 @@ import java.net.URL;
 public class ClientProperties {
 	private String server_ip;
 	private int port;
-	private URL pathToCallableDir;
-	private String packagePathToCallableDir;
+	private List<IDClass_Path_Mapper> idMappers = new ArrayList<IDClass_Path_Mapper>();
 	
 	// GETTER AND SETTER
 	public String getServer_ip() {
@@ -26,16 +29,10 @@ public class ClientProperties {
 	public void setPort(int port) {
 		this.port = port;
 	}
-	public URL getPathToCallableDir() {
-		return pathToCallableDir;
+	public void addClassPathMapper(IDClass_Path_Mapper idCLassPathMapper){
+		idMappers.add(idCLassPathMapper);
 	}
-	public void setPathToCallableDir(URL pathToCallableDir) {
-		this.pathToCallableDir = pathToCallableDir;
-	}
-	public String getPackagePathToCallableDir() {
-		return packagePathToCallableDir;
-	}
-	public void setPackagePathToCallableDir(String packagePathToCallableDir) {
-		this.packagePathToCallableDir = packagePathToCallableDir;
+	public List<IDClass_Path_Mapper> getIDMappers(){
+		return idMappers;
 	}
 }

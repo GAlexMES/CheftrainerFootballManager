@@ -5,6 +5,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
 import de.szut.dqi12.cheftrainer.server.UserCommunication.ServerController;
 
@@ -30,8 +33,9 @@ public class App {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-    	serverProps.setPathToCallableDir(path);
-    	serverProps.setPackagePathToCallableDir(PACKAGE_PATH);
+		ClientToServer_MessageIDs cts = new ClientToServer_MessageIDs();
+		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, path, PACKAGE_PATH);
+		serverProps.addClassPathMapper(idMapper);
     	serverProps.setPort(5000);
     	conServer = new ServerController(serverProps);
     }

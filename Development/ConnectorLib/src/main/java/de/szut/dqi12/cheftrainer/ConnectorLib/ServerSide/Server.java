@@ -43,6 +43,7 @@ public class Server {
 		try {
 			ServerSocket serverSock = new ServerSocket(serverProps.getPort());
 			while (true) {
+				System.out.println("newClient");
 				Socket clientSocket = serverSock.accept();
 				newClient(clientSocket);
 			}
@@ -62,7 +63,7 @@ public class Server {
 		clientHandlerList.add(tempClientHandler);
 		Thread t = new Thread(tempClientHandler);
 		clientList.add(t);
-		t.run();
+		t.start();
 	}
 
 	// GETTER AND SETTER

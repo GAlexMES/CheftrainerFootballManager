@@ -2,6 +2,7 @@ package de.szut.dqi12.cheftrainer.connectorlib.messages;
 
 import java.io.PrintWriter;
 import java.security.KeyPair;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -14,9 +15,14 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
 
 /**
- * The MessageController Class is important for sending and receiving Message objects. It could be used from both, client and server. It says the ID <-> Class Mapper to map the IDs to the correct classes and forwards new message to the correct callable.
+ * The MessageController Class is important for sending and receiving Message
+ * objects. It could be used from both, client and server. It says the ID <->
+ * Class Mapper to map the IDs to the correct classes and forwards new message
+ * to the correct callable.
+ * 
  * @author Alexander Brennecke
  *
  */
@@ -29,16 +35,22 @@ public class MessageController {
 	private boolean completedHandshake = false;
 	private KeyPair rsaKeyPair;
 	private PrintWriter writer;
+	private String[] handshakeIDs = { Handshake_MessageIDs.AES_KEY,
+			Handshake_MessageIDs.HANDSHAKE_ACK,
+			Handshake_MessageIDs.RSA_PUBLIC_KEY };
 
 	/**
-	 * Constructor. Tries to generate a ID<->Class Map for each element in the idMappers list. After that it sets the messageController of each instance to itself.
+	 * Constructor. Tries to generate a ID<->Class Map for each element in the
+	 * idMappers list. After that it sets the messageController of each instance
+	 * to itself.
+	 * 
 	 * @param idMappers
 	 */
 	public MessageController(List<IDClass_Path_Mapper> idMappers) {
+
 		callableMap = new HashMap<String, CallableAbstract>();
 
 		idMappers.forEach(element -> mapIDsToCallableAbstract(element));
-		
 
 		Iterator<?> it = callableMap.entrySet().iterator();
 		while (it.hasNext()) {
@@ -46,13 +58,15 @@ public class MessageController {
 			((CallableAbstract) pair.getValue()).setMessageController(this);
 		}
 	}
-	
+
 	/**
 	 * Creates a ID<->CallableAbstract Map for the given idClassPathMapper.
-	 * @param idClassPathMapper the IDClass_Path_Mapper, which should be mapped.
+	 * 
+	 * @param idClassPathMapper
+	 *            the IDClass_Path_Mapper, which should be mapped.
 	 */
-	private void mapIDsToCallableAbstract(IDClass_Path_Mapper idClassPathMapper){
-		
+	private void mapIDsToCallableAbstract(IDClass_Path_Mapper idClassPathMapper) {
+
 		List<String> idList = idClassPathMapper.getMesIDabs().getIDs();
 		HashMap<String, CallableAbstract> callableIDMap = CallableController
 				.getInstancesForIDs(idList, idClassPathMapper.getPathToDir(),
@@ -61,8 +75,12 @@ public class MessageController {
 	}
 
 	/**
-	 * Is called from the Client/ServerHandler, when a new message comes through the InputStream. Tries to transform the String to a Message and handles it.
-	 * @param jsonString the String, that should be parsed.
+	 * Is called from the Client/ServerHandler, when a new message comes through
+	 * the InputStream. Tries to transform the String to a Message and handles
+	 * it.
+	 * 
+	 * @param jsonString
+	 *            the String, that should be parsed.
 	 */
 	public void receiveMessage(String jsonString) {
 		try {
@@ -75,8 +93,11 @@ public class MessageController {
 	}
 
 	/**
-	 * Is called to send a message. Creates a new JSONObject with the given message object and a String out of the JSONObject.
-	 * @param message the Message, that should be send.
+	 * Is called to send a message. Creates a new JSONObject with the given
+	 * message object and a String out of the JSONObject.
+	 * 
+	 * @param message
+	 *            the Message, that should be send.
 	 */
 	public void sendMessage(Message message) {
 		JSONObject tempJsonObj = new JSONObject();
@@ -87,20 +108,28 @@ public class MessageController {
 		if (completedHandshake) {
 			try {
 				encryptedMessage = cipherFactory.encrypt(encryptedMessage);
+				tempJsonObj.put(JSON_IDENTIFIER_CONTENT, encryptedMessage);
+
+				writer.println(tempJsonObj.toString());
+				writer.flush();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		tempJsonObj.put(JSON_IDENTIFIER_CONTENT, encryptedMessage);
+		} else if (Arrays.asList(handshakeIDs).contains(message.getMessageID())) {
+			tempJsonObj.put(JSON_IDENTIFIER_CONTENT, encryptedMessage);
 
-		writer.println(tempJsonObj.toString());
-		writer.flush();
+			writer.println(tempJsonObj.toString());
+			writer.flush();
+		}
 
 	}
 
 	/**
-	 * Calls the massageArrived() function of the Callable, which belongs to the ID of the message.
-	 * @param message the received message.
+	 * Calls the massageArrived() function of the Callable, which belongs to the
+	 * ID of the message.
+	 * 
+	 * @param message
+	 *            the received message.
 	 * @throws MessageException
 	 */
 	private void handleMessage(Message message) throws MessageException {
@@ -109,8 +138,11 @@ public class MessageController {
 	}
 
 	/**
-	 * Tries to parse the incoming JSON String and maps it to a new Message Object.
-	 * @param jsonString the String, that should be parsed.
+	 * Tries to parse the incoming JSON String and maps it to a new Message
+	 * Object.
+	 * 
+	 * @param jsonString
+	 *            the String, that should be parsed.
 	 * @return a new Message object, to which the incoming String was mapped.
 	 * @throws MessageException
 	 */
@@ -133,9 +165,8 @@ public class MessageController {
 		return tempMessage;
 	}
 
-	
 	// GETTER AND SETTER
-	
+
 	public KeyPair getRsaKeyPair() {
 		return rsaKeyPair;
 	}

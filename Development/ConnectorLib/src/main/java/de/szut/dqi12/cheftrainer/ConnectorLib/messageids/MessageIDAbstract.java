@@ -17,7 +17,7 @@ public abstract class MessageIDAbstract {
 	 * @return a List with all Strings in this class
 	 */
 	public List<String> getIDs(){
-		Field[] fields = ServerToClient_MessageIDs.class.getFields();
+		Field[] fields = this.getClass().getFields();
 		List<Field> fieldList = Arrays.asList(fields);
 		List<String> idList = new ArrayList<String>();
 		for(Field f : fieldList){
