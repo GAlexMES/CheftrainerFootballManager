@@ -59,11 +59,16 @@ public class Server {
 	 */
 	private void newClient(Socket clientSocket){
 		ClientHandler tempClientHandler = new ClientHandler(clientSocket, keyPair,
-				serverProps);
+				serverProps, this);
 		clientHandlerList.add(tempClientHandler);
 		Thread t = new Thread(tempClientHandler);
 		clientList.add(t);
 		t.start();
+	}
+	
+	public void removeClient(ClientHandler clientHandler, Thread t){
+		clientHandlerList.remove(clientHandler);
+		clientList.remove(t);
 	}
 
 	// GETTER AND SETTER
@@ -74,4 +79,6 @@ public class Server {
 	public ArrayList<ClientHandler> getClientHandlerList() {
 		return clientHandlerList;
 	}
+	
+	
 }
