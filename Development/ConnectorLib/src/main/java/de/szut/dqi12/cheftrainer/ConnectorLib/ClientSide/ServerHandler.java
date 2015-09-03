@@ -1,17 +1,17 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib.ClientSide;
+package de.szut.dqi12.cheftrainer.connectorlib.clientside;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.math.BigInteger;
 import java.net.Socket;
-import java.security.PublicKey;
-import java.util.Base64;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.crypto.SecretKey;
-
-import de.szut.dqi12.cheftrainer.ConnectorLib.Cipher.CipherFactory;
-import de.szut.dqi12.cheftrainer.ConnectorLib.Cipher.KeyGenerator;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.HandshakeMapperCreator;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.MessageController;
 
 /**
  * This class is the direct connection class to a java server. It receives and
@@ -23,48 +23,40 @@ import de.szut.dqi12.cheftrainer.ConnectorLib.Cipher.KeyGenerator;
 public class ServerHandler implements Runnable {
 	private BufferedReader reader;
 	private PrintWriter writer;
-	private CipherFactory cipherFactory;
-	private ClientInterface conInterface;
-
-	private BigInteger modulus = null;
-	private BigInteger exponent = null;
-
-	private boolean allowMessageSending = false;
+	private MessageController messageController;
 
 	/**
 	 * Constructor
 	 * 
 	 * @param socket
 	 */
-	public ServerHandler(Socket socket, ClientInterface conInterface)
+	public ServerHandler(Socket socket, ClientProperties clientProps)
 			throws Exception {
-		this.conInterface = conInterface;
+		ServerToClient_MessageIDs stc_messageIDs = new ServerToClient_MessageIDs();
+
+		List<IDClass_Path_Mapper> idMappers = new ArrayList<IDClass_Path_Mapper>();
+		idMappers.addAll(clientProps.getIDMappers());
+		idMappers.add(HandshakeMapperCreator.getIDClassPathMapperForHandshake());
+
+		messageController = new MessageController(idMappers);
 		InputStreamReader streamReader = new InputStreamReader(
 				socket.getInputStream());
 
 		reader = new BufferedReader(streamReader);
-
 		writer = new PrintWriter(socket.getOutputStream());
+		messageController.setWriter(writer);
 	}
-
 	
 	/**
-	 * This method runs the client thread. It also receives every message, which will be sent to the client from the server.
+	 * This method runs the client thread. It also receives every message, which
+	 * will be sent to the client from the server.
 	 */
-	@SuppressWarnings("unused")
 	public void run() {
 		String message;
-
-		int counter = 0;
 		try {
 			while ((message = reader.readLine()) != null) {
-				if (counter < 3) {
-					handshakek(message, counter);
-					counter++;
-				} else if (cipherFactory != null) {
-					String encodedMessage = cipherFactory.decrypt(message);
-					conInterface.receiveMessage(encodedMessage);
-				}
+				messageController.receiveMessage(message);
+				System.out.println("receive:   "+message);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -72,63 +64,13 @@ public class ServerHandler implements Runnable {
 	}
 
 	/**
-	 * This method will sent the given message, if the handshake was already completed.
-	 * @param message the message, that should be sended to the server
+	 * This method will sent the given message, if the handshake was already
+	 * completed.
+	 * 
+	 * @param message
+	 *            the message, that should be sent to the server
 	 */
-	public void sendMessage(String message) {
-		if (allowMessageSending) {
-			try {
-				String encryptedMessage = cipherFactory.encrypt(message);
-				writer.println(encryptedMessage);
-				writer.flush();
-
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-	}
-
-	
-	/**
-	 * Is used to parse the Server RSA Public Key and to call the sendSymetricKey function.
-	 * @param message modulus or exponent of the RSA Public Key in X.509 Format
-	 * @param counter 1 = modulus message is the modulus; 2 = message is the exponent and key is complete
-	 */
-	private void handshakek(String message, int counter) throws Exception {
-		switch (counter) {
-		case 1:
-			modulus = new BigInteger(message.split(" ")[3]);
-			break;
-		case 2:
-			exponent = new BigInteger(message.split(" ")[4]);
-			PublicKey rsaPublicKey = KeyGenerator.generatePublicKey(modulus,
-					exponent);
-			modulus = null;
-			exponent = null;
-			sendSymmetricKey(rsaPublicKey);
-		}
-	}
-
-	/**
-	 * Generates a symmetric key for AES cipher. Encrypts the symmetric key with given RSA Key and sent the encrypted symmetric key back to the server.
-	 * @param rsaPublicKey
-	 */
-	private void sendSymmetricKey(PublicKey rsaPublicKey) {
-		cipherFactory = new CipherFactory(rsaPublicKey, "RSA");
-		try {
-			SecretKey secKey = KeyGenerator.getRandomAESKey();
-			String encodedKey = Base64.getEncoder().encodeToString(
-					secKey.getEncoded());
-
-			String encryptedKey = cipherFactory.encrypt(encodedKey);
-			writer.println(encryptedKey);
-			writer.flush();
-			cipherFactory.setKey(secKey);
-			cipherFactory.setAlgorithm("AES");
-			allowMessageSending = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
+	public void sendMessage(Message message) {
+		messageController.sendMessage(message);
 	}
 }

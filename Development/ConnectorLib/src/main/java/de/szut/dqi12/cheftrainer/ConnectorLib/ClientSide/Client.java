@@ -1,7 +1,9 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib.ClientSide;
+package de.szut.dqi12.cheftrainer.connectorlib.clientside;
 
 import java.io.IOException;
 import java.net.Socket;
+
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
  * Handles the Server Connection
@@ -11,22 +13,16 @@ import java.net.Socket;
 public class Client {
 
 	private Socket socket;
-	private ClientInterface conInterface;
+	private ClientProperties clientProps;
 	private ServerHandler servHandler;
 	
 	/**
 	 * Constructor
 	 * @param conInterface
 	 */
-	public Client(ClientInterface conInterface){
-		this.conInterface = conInterface;
-	}
-
-	/**
-	 * Initializes a new Server Connection 
-	 */
-	public void run() {
-		startConnection("127.0.0.1",5000);
+	public Client(ClientProperties clientProps){
+		this.clientProps = clientProps;
+		startConnection(clientProps.getServer_ip(),clientProps.getPort());
 	}
 
 	/**
@@ -35,7 +31,7 @@ public class Client {
 	private void startConnection(String serverIP, int serverPort) {
 		try {
 			socket = new Socket(serverIP,serverPort);
-			servHandler = new ServerHandler(socket,conInterface);
+			servHandler = new ServerHandler(socket,clientProps);
 			Thread readerThread = new Thread(servHandler);
 			readerThread.start();
 			System.out.println("Verbindung Aufgebaut");
@@ -43,7 +39,6 @@ public class Client {
 			ex.printStackTrace();
 			System.out.println("Keine Verbindung Aufgebaut");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -53,7 +48,7 @@ public class Client {
 	 * Is used to forward a message to the serverHandler
 	 * @param message the decrypted message that should be send.
 	 */
-	public void sendMesage(String message){
+	public void sendMesage(Message message){
 		if(servHandler!=null){
 			servHandler.sendMessage(message);
 		}

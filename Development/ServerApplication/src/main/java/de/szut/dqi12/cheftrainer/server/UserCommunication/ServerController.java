@@ -2,62 +2,47 @@ package de.szut.dqi12.cheftrainer.server.UserCommunication;
 
 import java.util.ArrayList;
 
-import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.ClientHandler;
-import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.Server;
-import de.szut.dqi12.cheftrainer.ConnectorLib.ServerSide.ServerInterface;
-
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.Server;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
 
 /**
  * This Class uses the ConnectorLib to create a new server.
+ * 
  * @author Alexander Brennecke
  *
  */
-public class ServerController implements ServerInterface {
+public class ServerController {
 
 	private Server server;
-
 	private ArrayList<ClientHandler> clientList = new ArrayList<>();
 
 	/**
-	 * Is called, when a new message was send to the server by any client.
+	 * This method creates a new server and starts it.
+	 * @throws Exception 
 	 */
-	@Override
-	public void receiveMessage(String message) {
-		System.out.println(message);
-		sendMessage("Hallo Client!");
+	public ServerController(ServerProperties serverProps) throws Exception{
+		try {
+			server = new Server(serverProps);
+		} catch (Exception e) {
+			throw e;
+		}
+		server.run();
 	}
 
 	/**
 	 * This method sends the given String to the first ClientHandler in the list
-	 * Code must be updated so that it is possible to send to every ClientHandler
+	 * Code must be updated so that it is possible to send to every
+	 * ClientHandler
 	 */
-	@Override
-	public void sendMessage(String message) {
+	public void sendMessage(Message message) {
 		if (server != null) {
 			ClientHandler receiver = clientList.get(0);
 			if (receiver != null) {
 				receiver.sendMessage(message);
 			}
 		}
-	}
-
-	
-	/**
-	 * This methos creates a new server and starts it.
-	 */
-	@Override
-	public void createServer() {
-		server = new Server(this);
-		server.run();
-	}
-
-	
-	/**
-	 * This method is called by the server, when a new Client registers himself to the server.
-	 */
-	@Override
-	public void updateClientHandlerList(ArrayList<ClientHandler> clientList) {
-		this.clientList = clientList;
 	}
 
 }

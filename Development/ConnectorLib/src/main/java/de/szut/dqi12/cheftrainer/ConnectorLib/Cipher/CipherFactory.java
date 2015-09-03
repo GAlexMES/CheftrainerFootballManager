@@ -1,20 +1,22 @@
-package de.szut.dqi12.cheftrainer.ConnectorLib.Cipher;
+package de.szut.dqi12.cheftrainer.connectorlib.cipher;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+/**
+ * The CipherFactory should be used to easy encrypt/decrypt Strings with the given algorithm and key.
+ * @author Alexander Brennecke
+ *
+ */
 public class CipherFactory {
 
 	private Key key = null;
