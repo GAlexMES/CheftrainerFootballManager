@@ -37,6 +37,10 @@ public class App {
 		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, path, PACKAGE_PATH);
 		serverProps.addClassPathMapper(idMapper);
     	serverProps.setPort(5000);
-    	conServer = new ServerController(serverProps);
+    	try {
+			conServer = new ServerController(serverProps);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 }

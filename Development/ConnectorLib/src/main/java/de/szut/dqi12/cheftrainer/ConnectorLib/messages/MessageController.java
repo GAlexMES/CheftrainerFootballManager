@@ -10,12 +10,15 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 
 /**
  * The MessageController Class is important for sending and receiving Message
@@ -38,6 +41,9 @@ public class MessageController {
 	private String[] handshakeIDs = { Handshake_MessageIDs.AES_KEY,
 			Handshake_MessageIDs.HANDSHAKE_ACK,
 			Handshake_MessageIDs.RSA_PUBLIC_KEY };
+
+	private final static Logger LOGGER = Logger
+			.getLogger(MessageController.class);
 
 	/**
 	 * Constructor. Tries to generate a ID<->Class Map for each element in the
@@ -134,6 +140,7 @@ public class MessageController {
 	 */
 	private void handleMessage(Message message) throws MessageException {
 		String messageID = message.getMessageID();
+		LOGGER.info(LoggingMessages.NEW_MESSAGE + messageID);
 		callableMap.get(messageID).messageArrived(message);
 	}
 
@@ -181,6 +188,7 @@ public class MessageController {
 
 	public void setCompletedHandshake(boolean completedHandshake) {
 		this.completedHandshake = completedHandshake;
+		LOGGER.info(LoggingMessages.HANDSHAKE_COMPLETED);
 	}
 
 	public void setAESKey(SecretKey aesKey) {

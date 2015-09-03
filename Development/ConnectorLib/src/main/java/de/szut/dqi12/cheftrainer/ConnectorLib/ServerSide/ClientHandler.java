@@ -16,10 +16,12 @@ import java.util.List;
 
 import javax.crypto.SecretKey;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.HandshakeMapperCreator;
@@ -45,6 +47,8 @@ public class ClientHandler implements Runnable {
 	
 	private Server server;
 
+	private final static Logger LOGGER = Logger.getLogger(ClientHandler.class);
+	
 	/**
 	 * Constructor. Calls methods to create a message controller and a server connection
 	 * 
@@ -147,10 +151,7 @@ public class ClientHandler implements Runnable {
 				messageController.receiveMessage(message);
 			}
 		} catch (Exception ex) {
-			if (ex.getClass() == SocketException.class) {
-				System.out.println("connection lost!");
-				closeConnection();
-			} else {
+			if (ex.getClass() != SocketException.class) {
 				ex.printStackTrace();
 			}
 		} finally {
@@ -159,6 +160,7 @@ public class ClientHandler implements Runnable {
 	}
 	
 	private void closeConnection(){
+		LOGGER.info(LoggingMessages.CLIENT_DISCONNECTED + socket.getInetAddress().getHostAddress());
 		server.removeClient(this, Thread.currentThread());
 	}
 

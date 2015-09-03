@@ -6,6 +6,12 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.logging.LogManager;
+
+import org.apache.log4j.Logger;
+
+import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
+
 
 /**
  * This Server class creates a new server socket.
@@ -18,6 +24,8 @@ public class Server {
 	private ArrayList<Thread> clientList = new ArrayList<Thread>();
 	private ArrayList<ClientHandler> clientHandlerList = new ArrayList<ClientHandler>();
 	private ServerProperties serverProps;
+	
+	private final static Logger LOGGER = Logger.getLogger(Server.class);
 
 	/**
 	 * Constructor. Generates a new RSA KeyPair.
@@ -25,6 +33,7 @@ public class Server {
 	 */
 	public Server(ServerProperties serverProps) {
 		this.serverProps = serverProps;
+		
 		KeyPairGenerator kpg;
 		try {
 			kpg = KeyPairGenerator.getInstance("RSA");
@@ -33,7 +42,7 @@ public class Server {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
-
+		LOGGER.info(LoggingMessages.SERVER_STARTED);
 	}
 
 	/**
@@ -43,14 +52,15 @@ public class Server {
 		try {
 			ServerSocket serverSock = new ServerSocket(serverProps.getPort());
 			while (true) {
-				System.out.println("newClient");
 				Socket clientSocket = serverSock.accept();
 				newClient(clientSocket);
+				LOGGER.info(LoggingMessages.CLIENT_CONNECTED + clientSocket.getInetAddress().getHostAddress() );
 			}
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		LOGGER.info(LoggingMessages.SERVER_SHUTDOWN);
 	}
 	
 	/**
