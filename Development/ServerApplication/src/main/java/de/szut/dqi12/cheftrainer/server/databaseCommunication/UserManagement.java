@@ -40,7 +40,7 @@ public class UserManagement {
 					retval.put("existUser", true);
 				}
 				if(rs.getString(5)!=null && rs.getString(5).equals(newUser.geteMail())){
-					retval.put("existEMail", false);
+					retval.put("existEMail", true);
 				}
 			}
 		} catch (SQLException e) {

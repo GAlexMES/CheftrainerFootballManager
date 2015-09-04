@@ -1,6 +1,7 @@
 package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 import java.io.IOException;
+import java.net.URL;
 
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController;
@@ -11,6 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
@@ -28,6 +30,7 @@ public class GUIInitialator {
 	private AnchorPane loginLayout;
 	
 	private SideMenuController controller;
+	private LoginController loginController;
 
 	public static final String FXML_RESOURCE = "view/fxmlsources/";
 
@@ -49,19 +52,22 @@ public class GUIInitialator {
 		try {
 			// new FXMLLoader with Login.fxml as source
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE
+			loader.setLocation(new URL(MainApp.class.getResource(".")+FXML_RESOURCE
 					+ "Login.fxml"));
 			loginLayout = (AnchorPane) loader.load();
 			
-			//definition of the login controller
-			LoginController controller =  loader.getController();
-			controller.setStage(rStage);
-			rStage.setResizable(false);
-			
-			// displays the Login.fxml on screen
+			Stage dialogStage = new Stage();
+			dialogStage.initOwner(rStage);
+			dialogStage.initModality(Modality.WINDOW_MODAL);
 			Scene scene = new Scene(loginLayout);
-			rStage.setScene(scene);
-			rStage.show();
+			dialogStage.setScene(scene);
+			
+			//definition of the login controller
+			loginController =  loader.getController();
+			loginController.setStage(dialogStage);
+			
+
+			dialogStage.showAndWait();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -123,4 +129,7 @@ public class GUIInitialator {
 		return this.controller;
 	}
 
+	public LoginController getLoginController(){
+		return loginController;
+	}
 }

@@ -21,5 +21,4 @@ de\szut\dqi12\cheftrainer\connectorlib\clientside\Client.class
 de\szut\dqi12\cheftrainer\connectorlib\messages\IDClass_Path_Mapper.class
 de\szut\dqi12\cheftrainer\connectorlib\messages\MessageController.class
 de\szut\dqi12\cheftrainer\connectorlib\messageids\Handshake_MessageIDs.class
-de\szut\dqi12\cheftrainer\connectorlib\logging\CheftrainerLogger.class
 de\szut\dqi12\cheftrainer\connectorlib\logging\LoggingMessages.class

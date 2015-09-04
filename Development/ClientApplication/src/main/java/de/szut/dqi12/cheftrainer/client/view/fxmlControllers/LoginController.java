@@ -5,6 +5,8 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -44,6 +46,8 @@ public class LoginController {
 	private double severDetailsPane_Height;
 	
 	private ServerConnection serverConnection;
+	
+	private RegistrationController registrationController;
 
 	private Stage stage;
 
@@ -62,6 +66,7 @@ public class LoginController {
 		serverDetailsPane.visibleProperty().bind(
 				showDetailsCheck.selectedProperty());
 	}
+	
 
 	/**
 	 * triggers the frame size, to display the additional server information
@@ -107,8 +112,9 @@ public class LoginController {
 			Scene scene = new Scene(page);
 			dialogStage.setScene(scene);
 
-			RegistrationController controller = loader.getController();
-			controller.setDialogStage(dialogStage);
+			registrationController = loader.getController();
+			registrationController.setDialogStage(dialogStage);
+			registrationController.setLoginController(this);
 
 			dialogStage.showAndWait();
 
@@ -139,5 +145,21 @@ public class LoginController {
 	public void setServerConnection(ServerConnection serverConnection) {
 		this.serverConnection = serverConnection;
 	}
+	
+	public RegistrationController getRegistrationController(){
+		return registrationController;
+	}
+
+
+	public void showRegistrationDialog() {
+		Alert alert =  new Alert(AlertType.INFORMATION);
+		alert.initOwner(stage);
+		alert.setTitle("registration Success");
+		alert.setHeaderText("Your registration was completed!");
+		alert.setContentText("We completed your registration. You can login now!");
+
+		alert.showAndWait();
+	}
+	
 	
 }

@@ -95,4 +95,8 @@ public class GUIController {
 			e.printStackTrace();
 		}
 	}
+
+	public GUIInitialator getGUIInitialator() {
+		return guiInitialator;
+	}
 }
