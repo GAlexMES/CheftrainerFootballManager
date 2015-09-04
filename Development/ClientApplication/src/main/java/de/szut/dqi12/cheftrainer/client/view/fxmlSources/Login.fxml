@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="mainPane"  maxWidth="-Infinity"  minWidth="-Infinity"  prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlControllers.LoginController">
+<AnchorPane fx:id="mainPane"  maxWidth="-Infinity"  minWidth="-Infinity"  prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController">
 	<children>
 		<Text layoutX="24.0" layoutY="128.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cheftrainer Football Manager" textAlignment="CENTER">
 			<font>

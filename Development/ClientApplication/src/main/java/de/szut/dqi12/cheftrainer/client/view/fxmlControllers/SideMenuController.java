@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.client.view.fxmlControllers;
+package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,8 +30,8 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
 import de.szut.dqi12.cheftrainer.client.MainApp;
-import de.szut.dqi12.cheftrainer.client.guiControlling.GUIController;
-import de.szut.dqi12.cheftrainer.client.guiControlling.GUIInitialator;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 
 /**
  * Controller for the side menu

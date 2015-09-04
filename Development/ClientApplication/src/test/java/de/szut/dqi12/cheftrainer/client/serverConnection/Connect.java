@@ -8,7 +8,7 @@ import java.net.URL;
 import org.junit.Test;
 
 import de.szut.dqi12.cheftrainer.client.MainApp;
-import de.szut.dqi12.cheftrainer.client.serverCommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
@@ -37,18 +37,7 @@ public class Connect {
 		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(stc,path, PACKAGE_PATH);
 		clientProps.addClassPathMapper(idMapper);
 		clientProps.setPort(5000);
-		clientProps.setServer_ip("127.0.0.1");
+		clientProps.setServerIP("127.0.0.1");
 		serverCon = new ServerConnection(clientProps);
-		Double d = Math.random();
-		Message me = new Message(ClientToServer_MessageIDs.TESTING,String.valueOf(d));
-		while(true){
-			serverCon.sendMessage(me);
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 }

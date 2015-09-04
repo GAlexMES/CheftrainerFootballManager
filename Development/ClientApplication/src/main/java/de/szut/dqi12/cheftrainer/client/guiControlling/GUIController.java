@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.client.guiControlling;
+package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 import java.io.IOException;
 

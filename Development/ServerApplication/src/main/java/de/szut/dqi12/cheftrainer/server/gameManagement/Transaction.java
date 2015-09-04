@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.gameManagement;
+package de.szut.dqi12.cheftrainer.server.gamemanagement;
 
 /**
  * 

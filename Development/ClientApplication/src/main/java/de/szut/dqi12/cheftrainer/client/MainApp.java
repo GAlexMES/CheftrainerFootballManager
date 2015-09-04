@@ -1,7 +1,7 @@
 package de.szut.dqi12.cheftrainer.client;
 
 
-import de.szut.dqi12.cheftrainer.client.guiControlling.GUIController;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

@@ -1,10 +1,10 @@
-package de.szut.dqi12.cheftrainer.client.guiControlling;
+package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 import java.io.IOException;
 
 import de.szut.dqi12.cheftrainer.client.MainApp;
-import de.szut.dqi12.cheftrainer.client.view.fxmlControllers.LoginController;
-import de.szut.dqi12.cheftrainer.client.view.fxmlControllers.SideMenuController;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.SideMenuController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -29,7 +29,7 @@ public class GUIInitialator {
 	
 	private SideMenuController controller;
 
-	public static final String FXML_RESOURCE = "view/fxmlSources/";
+	public static final String FXML_RESOURCE = "view/fxmlsources/";
 
 	
 	/**

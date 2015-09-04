@@ -1,10 +1,7 @@
-package de.szut.dqi12.cheftrainer.client.view.fxmlControllers;
+package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.io.IOException;
 
-import de.szut.dqi12.cheftrainer.client.MainApp;
-import de.szut.dqi12.cheftrainer.client.guiControlling.GUIController;
-import de.szut.dqi12.cheftrainer.client.guiControlling.GUIInitialator;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -14,6 +11,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import de.szut.dqi12.cheftrainer.client.MainApp;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
+import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 
 /**
  * Controller class for the Login dialog, which is defined in the Login.fxml
@@ -41,6 +42,8 @@ public class LoginController {
 	private double buttonPane_YLayout;
 	private double serverDetailsPane_YLayout;
 	private double severDetailsPane_Height;
+	
+	private ServerConnection serverConnection;
 
 	private Stage stage;
 
@@ -98,7 +101,7 @@ public class LoginController {
 
 			Stage dialogStage = new Stage();
 			dialogStage.setResizable(false);
-			dialogStage.setTitle("Edit Car");
+			dialogStage.setTitle("Registration Dialog");
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.initOwner(stage);
 			Scene scene = new Scene(page);
@@ -128,4 +131,13 @@ public class LoginController {
 	public void setStage(Stage rStage) {
 		this.stage = rStage;
 	}
+
+	public ServerConnection getServerConnection() {
+		return serverConnection;
+	}
+
+	public void setServerConnection(ServerConnection serverConnection) {
+		this.serverConnection = serverConnection;
+	}
+	
 }

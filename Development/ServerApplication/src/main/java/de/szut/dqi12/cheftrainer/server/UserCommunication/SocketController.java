@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.UserCommunication;
+package de.szut.dqi12.cheftrainer.server.usercommunication;
 
 import java.util.ArrayList;
 
@@ -13,7 +13,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
  * @author Alexander Brennecke
  *
  */
-public class ServerController {
+public class SocketController {
 
 	private Server server;
 	private ArrayList<ClientHandler> clientList = new ArrayList<>();
@@ -22,7 +22,7 @@ public class ServerController {
 	 * This method creates a new server and starts it.
 	 * @throws Exception 
 	 */
-	public ServerController(ServerProperties serverProps) throws Exception{
+	public SocketController(ServerProperties serverProps) throws Exception{
 		try {
 			server = new Server(serverProps);
 		} catch (Exception e) {

@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="registrationPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="555.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlControllers.RegistrationController">
+<AnchorPane fx:id="registrationPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="555.0" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.RegistrationController">
 	<children>
 		<Text layoutX="24.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cheftrainer Football Manager" textAlignment="CENTER">
 			<font>
@@ -66,14 +66,14 @@
       						<Font size="20.0" />
       					</font>
       				</Text>
-      				<TextField layoutX="200.0" layoutY="66.0" />
+      				<TextField fx:id="portField" layoutX="200.0" layoutY="66.0" />
       
       				<Text layoutX="50.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IP Adresse">
       					<font>
       						<Font size="20.0" />
       					</font>
       				</Text>
-      				<TextField layoutX="200.0" layoutY="21.0" />
+      				<TextField fx:id="ipField" layoutX="200.0" layoutY="21.0" />
       			</children>
       		</AnchorPane>
       		<CheckBox fx:id="showDetailsCheck" layoutX="51.0" layoutY="213.0" onAction="#triggerFrameSize" text="Server Details" />
@@ -83,8 +83,8 @@
 		<AnchorPane fx:id="buttonPane" layoutX="34.0" layoutY="498.0" maxHeight="574.0" prefHeight="41.0" prefWidth="382.0">
 		<ButtonBar buttonMinWidth="0.0" prefHeight="41.0" prefWidth="320.0">
 			<buttons>
-				<Button mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Abbrechen" />
-				<Button mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Registrieren" />
+				<Button mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Abbrechen" onAction="#cancle"/>
+				<Button mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" text="Registrieren" onAction="#register"/>
 			</buttons>
 		</ButtonBar>
 		</AnchorPane>
