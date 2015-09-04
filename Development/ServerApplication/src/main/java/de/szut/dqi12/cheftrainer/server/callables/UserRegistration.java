@@ -36,6 +36,7 @@ public class UserRegistration extends CallableAbstract {
 	private void createAnswer(HashMap<String,Boolean> answer){
 		Message answerMessage = new Message(ServerToClient_MessageIDs.USER_AUTHENTIFICATION_ACK);
 		JSONObject authentification = new JSONObject();
+		authentification.put("mode", "registration");
 		authentification.put("authentificate", answer.get("authentificate"));
 		authentification.put("existUser", answer.get("existUser"));
 		authentification.put("existEMail", answer.get("existEMail"));

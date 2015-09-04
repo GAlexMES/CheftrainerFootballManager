@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 
 import org.json.JSONObject;
 
+import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
@@ -118,7 +119,6 @@ public class RegistrationController {
 			try {
 				Thread.sleep(800);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try {
@@ -140,11 +140,8 @@ public class RegistrationController {
 		Platform.runLater(new Runnable() {
             @Override
             public void run() {
-            	Alert alert = new Alert(AlertType.ERROR);
-        		alert.setContentText(content);
-        		alert.setTitle(title);
-        		alert.setHeaderText(header);
-        		alert.showAndWait();
+            	Alert alert = AlertDialog.createSimpleDialog(title, header, content, AlertType.ERROR);
+            	alert.showAndWait();
             }
         });
 		
@@ -189,12 +186,13 @@ public class RegistrationController {
 			byte[] passwordByte = passwordField.getText().getBytes("UTF-8");
 			byte[] paswordHashByte = mg.digest(passwordByte);
 			registrationInfo.put("password", new String(paswordHashByte, StandardCharsets.UTF_8));
+			registrationMessage.setMessageContent(registrationInfo);
+			serverCon.sendMessage(registrationMessage);
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Alert alert = AlertDialog.createExceptionDialog(e);
+			alert.showAndWait();
 		}
-		registrationMessage.setMessageContent(registrationInfo);
-		serverCon.sendMessage(registrationMessage);
+		
 	}
 
 	private void createServerConnection() {
@@ -210,7 +208,6 @@ public class RegistrationController {
 	}
 	
 	public void closeDialog() {
-		
 		Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -219,7 +216,6 @@ public class RegistrationController {
             	dialogStage.close();
             }
         });
-		
 	}
 
 	public void setLoginController(LoginController loginController) {

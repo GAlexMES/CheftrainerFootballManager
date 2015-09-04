@@ -9,10 +9,26 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 public class UserAuthentificationACK extends CallableAbstract {
-
 	
 	public void messageArrived(Message message) {
 		JSONObject authentificationAck = new JSONObject(message.getMessageContent());
+		switch(authentificationAck.getString("mode")){
+		case "registration":
+			register(authentificationAck);
+			break;
+		case "login":
+			login(authentificationAck);
+			break;
+		}
+	}
+	
+	private void login(JSONObject authentificationAck){
+		if(authentificationAck.getBoolean("userExist")&&authentificationAck.getBoolean("password")){
+			GUIController.getInstance().showMainApplication();
+		}
+	}
+	
+	private void register(JSONObject authentificationAck){
 		RegistrationController regController = GUIController.getInstance().getGUIInitialator().getLoginController().getRegistrationController();
 		if(authentificationAck.getBoolean("authentificate")){
 			regController.closeDialog();
@@ -30,8 +46,8 @@ public class UserAuthentificationACK extends CallableAbstract {
 			}
 			regController.showError("Registration error", "Something went wrong during your registration", errorMessage);
 		}
-		
 	}
+	
 	
 	public static CallableAbstract newInstance() {
 		return new UserAuthentificationACK();

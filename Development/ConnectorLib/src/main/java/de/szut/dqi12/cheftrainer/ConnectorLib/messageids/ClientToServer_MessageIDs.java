@@ -8,5 +8,6 @@ package de.szut.dqi12.cheftrainer.connectorlib.messageids;
 public class ClientToServer_MessageIDs extends MessageIDAbstract{
 	
 	public static String USER_REGISTRATION ="UserRegistration";
+	public static String USER_LOGIN ="UserLogin";
 	
 }

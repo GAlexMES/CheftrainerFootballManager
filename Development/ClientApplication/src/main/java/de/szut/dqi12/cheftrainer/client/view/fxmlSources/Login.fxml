@@ -41,14 +41,14 @@
 						<Font size="20.0" />
 					</font>
 				</Text>
-				<TextField layoutX="200.0" layoutY="66.0" />
+				<TextField fx:id="portField" layoutX="200.0" layoutY="66.0" text="5000" />
 				
 				<Text layoutX="50.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IP Adresse">
 					<font>
 						<Font size="20.0" />
 					</font>
 				</Text>
-				<TextField layoutX="200.0" layoutY="21.0" />
+				<TextField fx:id="ipField" layoutX="200.0" layoutY="21.0" text = "127.0.0.1" />
 			</children>
 		</AnchorPane>
 		
@@ -59,8 +59,8 @@
       
       		<ButtonBar layoutX="24.0" layoutY="32.0" prefHeight="27.0" prefWidth="149.0">
       			<buttons>
-      				<Button onAction="#loginButtonPressed" mnemonicParsing="false" text="Login" />
-      				<Button mnemonicParsing="false" text="Beenden" />
+      				<Button onAction="#login" mnemonicParsing="false" text="Login" />
+      				<Button onAction="#endApplication" mnemonicParsing="false" text="Beenden" />
       			</buttons>
       		</ButtonBar>
          </children>
