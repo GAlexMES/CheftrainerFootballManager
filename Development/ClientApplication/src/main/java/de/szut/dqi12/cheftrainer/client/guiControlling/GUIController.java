@@ -1,7 +1,8 @@
-package de.szut.dqi12.cheftrainer.client.guiControlling;
+package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 import java.io.IOException;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
@@ -52,10 +53,17 @@ public class GUIController {
 	 * Shows the main application, including side menu and content pane
 	 */
 	public void showMainApplication() {
-		guiInitialator.initRootLayout();
-		guiInitialator.showMenuLayout();
-		setContentFrameByName("CommunitiesFrame.fxml", false);
-		guiInitialator.getSideMenuController().expandColums();
+		Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+            	guiInitialator.getLoginController().close();
+            	guiInitialator.initRootLayout();
+        		guiInitialator.showMenuLayout();
+        		setContentFrameByName("CommunitiesFrame.fxml", false);
+        		guiInitialator.getSideMenuController().expandColums();
+            }
+        });
+		
 	}
 
 	/**
@@ -94,5 +102,9 @@ public class GUIController {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public GUIInitialator getGUIInitialator() {
+		return guiInitialator;
 	}
 }

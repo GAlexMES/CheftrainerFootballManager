@@ -46,8 +46,8 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/../ConnectorLib/target/ConnectorLib.jar</systemPath>
 		</dependency>
-		
-				<dependency>
+
+		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20141113</version>
@@ -56,7 +56,7 @@
 
 	<build>
 		<finalName>ClientApplication</finalName>
-		
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -68,7 +68,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-		
+
 		<resources>
 			<resource>
 				<directory>src/resources</directory>

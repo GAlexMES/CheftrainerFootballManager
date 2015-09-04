@@ -1,0 +1,6 @@
+.text-field {
+    -fx-text-box-border: blue;
+}
+.text-field-error{
+   -fx-text-box-border: red;
+}

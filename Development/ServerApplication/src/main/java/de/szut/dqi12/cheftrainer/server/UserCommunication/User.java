@@ -1,4 +1,6 @@
-package de.szut.dqi12.cheftrainer.server.UserCommunication;
+package de.szut.dqi12.cheftrainer.server.usercommunication;
+
+import org.json.JSONObject;
 
 public class User {
 	
@@ -7,6 +9,14 @@ public class User {
 	String userName = "";
 	String eMail = "";
 	String password = "";
+	
+	public void setWithJSON(JSONObject json){
+		firstName = json.getString("vorname");
+		lastName = json.getString("nachname");
+		eMail = json.getString("mail");
+		userName = json.getString("login");
+		password = json.getString("password");
+	}
 	
 	public String getFirstName() {
 		return firstName;

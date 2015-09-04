@@ -10,7 +10,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.MessageController;
  */
 public abstract class CallableAbstract {
 
-	MessageController mesController;
+	protected MessageController mesController;
 
 	/**
 	 * Is called from the MessageController whenever a new Message with arrives.

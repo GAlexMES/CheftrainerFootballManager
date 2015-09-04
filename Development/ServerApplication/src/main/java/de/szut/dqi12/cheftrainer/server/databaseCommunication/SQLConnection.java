@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.databaseCommunication;
+package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -79,7 +79,6 @@ public class SQLConnection {
 		} catch (SQLException sqle) {
 			handleSQLException(sqle);
 			return null;
-
 		}
 	}
 	

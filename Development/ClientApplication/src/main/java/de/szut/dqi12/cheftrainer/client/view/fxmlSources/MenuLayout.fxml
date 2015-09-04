@@ -9,7 +9,7 @@
 <VBox GridPane.hgrow="ALWAYS" fx:id="sideMenu" prefHeight="790.0"
  styleClass="sidebar" stylesheets="@sidebar.css"
 	xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlControllers.SideMenuController">
+	fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.SideMenuController">
 	<children>
 	</children>
 </VBox>

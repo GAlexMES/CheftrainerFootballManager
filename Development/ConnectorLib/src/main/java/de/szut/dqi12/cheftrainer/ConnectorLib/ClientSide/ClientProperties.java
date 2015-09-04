@@ -12,16 +12,16 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
  *
  */
 public class ClientProperties {
-	private String server_ip;
+	private String serverIP;
 	private int port;
 	private List<IDClass_Path_Mapper> idMappers = new ArrayList<IDClass_Path_Mapper>();
 	
 	// GETTER AND SETTER
-	public String getServer_ip() {
-		return server_ip;
+	public String getServerIP() {
+		return serverIP;
 	}
-	public void setServer_ip(String server_ip) {
-		this.server_ip = server_ip;
+	public void setServerIP(String serverIP) {
+		this.serverIP = serverIP;
 	}
 	public int getPort() {
 		return port;

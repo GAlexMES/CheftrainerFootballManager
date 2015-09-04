@@ -22,7 +22,7 @@ public class Client {
 	 */
 	public Client(ClientProperties clientProps){
 		this.clientProps = clientProps;
-		startConnection(clientProps.getServer_ip(),clientProps.getPort());
+		startConnection(clientProps.getServerIP(),clientProps.getPort());
 	}
 
 	/**

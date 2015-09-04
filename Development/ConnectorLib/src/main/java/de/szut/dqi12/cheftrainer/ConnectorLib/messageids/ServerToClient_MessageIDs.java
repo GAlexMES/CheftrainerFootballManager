@@ -7,7 +7,7 @@ package de.szut.dqi12.cheftrainer.connectorlib.messageids;
  */
 public class ServerToClient_MessageIDs extends MessageIDAbstract {
 	
-//	public String TEST ="Test";
+	public static String USER_AUTHENTIFICATION_ACK ="UserAuthentificationACK";
 	
 	
 
