@@ -18,7 +18,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 
 /**
  * The MessageController Class is important for sending and receiving Message
@@ -52,6 +51,7 @@ public class MessageController {
 	 * 
 	 * @param idMappers
 	 */
+	@SuppressWarnings("unchecked")
 	public MessageController(List<IDClass_Path_Mapper> idMappers) {
 
 		callableMap = new HashMap<String, CallableAbstract>();
@@ -60,7 +60,7 @@ public class MessageController {
 
 		Iterator<?> it = callableMap.entrySet().iterator();
 		while (it.hasNext()) {
-			Map.Entry pair = (Map.Entry) it.next();
+			Map.Entry<String, CallableAbstract> pair = (Map.Entry<String, CallableAbstract>) it.next();
 			((CallableAbstract) pair.getValue()).setMessageController(this);
 		}
 	}

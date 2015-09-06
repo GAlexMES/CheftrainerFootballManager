@@ -17,6 +17,7 @@ import sun.misc.BASE64Encoder;
  * @author Alexander Brennecke
  *
  */
+@SuppressWarnings("restriction")
 public class CipherFactory {
 
 	private Key key = null;

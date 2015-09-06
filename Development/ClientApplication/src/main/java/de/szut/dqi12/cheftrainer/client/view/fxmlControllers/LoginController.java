@@ -22,7 +22,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
-import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
@@ -37,7 +36,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  */
 public class LoginController {
 
-	// DEFINITIONS
+	// LINK TO FXML ELEMENTS ON GUI
 	@FXML
 	private TextField loginField;
 	@FXML
@@ -55,17 +54,21 @@ public class LoginController {
 	@FXML
 	private AnchorPane mainPane;
 
+	// are used to show/hide the server details
 	private double mainPaneMaxSize;
 	private double buttonPane_YLayout;
 	private double serverDetailsPane_YLayout;
 	private double severDetailsPane_Height;
 
+	// Used to send messages to the server
 	private ServerConnection serverConnection;
 
+	// Used to close the registration controller.
 	private RegistrationController registrationController;
 
+	
 	private Stage stage;
-
+	
 	/**
 	 * initialized a few variables
 	 */
@@ -106,8 +109,9 @@ public class LoginController {
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
 		ServerConnection serverCon = new ServerConnection(clientProps);
-		Message loginMessage = new Message(ClientToServer_MessageIDs.USER_LOGIN);
+		Message loginMessage = new Message(ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
 		JSONObject loginInfo = new JSONObject();
+		loginInfo.put("authentificationType", "login");
 		loginInfo.put("username", loginField.getText());
 		try {
 			MessageDigest mg = MessageDigest.getInstance("MD5");
@@ -115,7 +119,7 @@ public class LoginController {
 			byte[] paswordHashByte = mg.digest(passwordByte);
 			loginInfo.put("password", new String(paswordHashByte,StandardCharsets.UTF_8));
 			loginMessage.setMessageContent(loginInfo);
-			Thread.sleep(800);
+			Thread.sleep(1500);
 			serverCon.sendMessage(loginMessage);
 		} catch (NoSuchAlgorithmException e) {
 			Alert alert = AlertDialog.createExceptionDialog(e);
@@ -131,6 +135,9 @@ public class LoginController {
 		}
 	}
 
+	/**
+	 * Is called from the "cancle" button to close the aplication.
+	 */
 	@FXML
 	public void endApplication() {
 		stage.close();
@@ -166,24 +173,10 @@ public class LoginController {
 			e.printStackTrace();
 		}
 	}
-
-	// GETTER AND SETTER
-	public void setStage(Stage rStage) {
-		this.stage = rStage;
-	}
-
-	public ServerConnection getServerConnection() {
-		return serverConnection;
-	}
-
-	public void setServerConnection(ServerConnection serverConnection) {
-		this.serverConnection = serverConnection;
-	}
-
-	public RegistrationController getRegistrationController() {
-		return registrationController;
-	}
-
+	
+	/**
+	 * Shows a dialog, which says, that the registration was completed.
+	 */
 	public void showRegistrationDialog() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.initOwner(stage);
@@ -194,6 +187,9 @@ public class LoginController {
 		alert.showAndWait();
 	}
 
+	/**
+	 * Is called to close the registration dialog from a other thread.
+	 */
 	public void close() {
 		Platform.runLater(new Runnable() {
             @Override
@@ -201,6 +197,23 @@ public class LoginController {
             	stage.close();
             }
         });		
+	}
+
+	// GETTER AND SETTER
+	public void setStage(Stage rStage) {
+		this.stage = rStage;
+	}
+
+	public ServerConnection getServerConnection() {
+		return serverConnection;
+	}
+	
+	public void setServerConnection(ServerConnection serverConnection) {
+		this.serverConnection = serverConnection;
+	}
+
+	public RegistrationController getRegistrationController() {
+		return registrationController;
 	}
 
 }

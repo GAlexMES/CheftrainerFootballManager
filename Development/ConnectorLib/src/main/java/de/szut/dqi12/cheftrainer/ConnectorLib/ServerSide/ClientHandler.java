@@ -4,25 +4,17 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.crypto.SecretKey;
-
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
-import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.HandshakeMapperCreator;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;

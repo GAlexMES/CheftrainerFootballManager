@@ -18,6 +18,11 @@ public class GUIController {
 
 	private static GUIController instance = null;
 	private GUIInitialator guiInitialator;
+	
+	/**
+	 * Constructor
+	 * @param primaryStage needs a Stage to display GUI Elements onto it.
+	 */
 
 	public GUIController(Stage primaryStage) {
 		guiInitialator = new GUIInitialator(primaryStage);

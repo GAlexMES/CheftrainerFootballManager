@@ -19,8 +19,6 @@ public class ServerConnection {
 	
 	private final static String PACKAGE_PATH = "de.szut.dqi12.cheftrainer.client.callables.CLASS";
 	
-	private boolean allowSending = false;
-	
 	public ServerConnection(ClientProperties clientProps ){
 		
 		URL path = null;
