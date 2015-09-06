@@ -35,8 +35,10 @@ public class RegistrationController {
 
 	private Stage dialogStage;
 	
+	// Error message for wrong Inputs
 	private final String WRONG_INPUTS = "Please check ypur input for the following parameters: ";
 	
+	// LINK TO JAVAFX GUI ELEMENTS
 	@FXML
 	private AnchorPane serverDetailsPane;
 	@FXML
@@ -45,7 +47,6 @@ public class RegistrationController {
 	private AnchorPane registrationPane;
 	@FXML
 	private CheckBox showDetailsCheck;
-
 	@FXML
 	private TextField vornameField;
 	@FXML
@@ -63,11 +64,14 @@ public class RegistrationController {
 	@FXML
 	private TextField ipField;
 
+	// are used to show/hide the server details
 	private double mainPaneMaxSize;
 	private double buttonPane_YLayout;
 	private double serverDetailsPane_YLayout;
 	private double severDetailsPane_Height;
 	
+	
+	// are used for the communication with the login dialog and the server
 	private LoginController loginController;
 	private ServerConnection serverCon;
 
@@ -111,6 +115,9 @@ public class RegistrationController {
 		dialogStage.sizeToScene();
 	}
 
+	/**
+	 * Is called from the "register" button. Creates a message with the user entries and sends it to the server, if the entries are complete and correct.
+	 */
 	@FXML
 	public void register() {
 		List<String> errorList = checkInputs();
@@ -136,6 +143,12 @@ public class RegistrationController {
 	}
 	
 	
+	/**
+	 * Shows a error alert with the given parameters. Can also be called from a other thread.
+	 * @param title of the dialog
+	 * @param header of the dialog
+	 * @param content of the dialog
+	 */
 	public void showError(String title, String header, String content){
 		Platform.runLater(new Runnable() {
             @Override
@@ -146,7 +159,11 @@ public class RegistrationController {
         });
 		
 	}
-	
+
+	/**
+	 * Checks the user inputs when the user inputs and change the border color of empty/wrong input fields
+	 * @return
+	 */
 	private List<String> checkInputs(){
 		TextField[] inputFields = {vornameField,nachnameField,mailField,loginField,portField,ipField,passwordField,passwordConfirmationField};
 		List<String> retval = new ArrayList<>();
@@ -169,17 +186,22 @@ public class RegistrationController {
 		return retval;
 	}
 
+	/**
+	 * Creates the registration message and sends it to the server.
+	 * @throws UnsupportedEncodingException
+	 */
 	private void sendRegistrationMessage() throws UnsupportedEncodingException {
 		Message registrationMessage = new Message(
-				ClientToServer_MessageIDs.USER_REGISTRATION);
+				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
 
 		JSONObject registrationInfo = new JSONObject();
+		registrationInfo.put("authentificationType", "register");
 		registrationInfo.put("vorname", vornameField.getText());
 		registrationInfo.put("nachname", nachnameField.getText());
 		registrationInfo.put("mail", mailField.getText());
 		registrationInfo.put("login", loginField.getText());
 		
-		
+		// Creeates a MD5 hash of the password.
 		MessageDigest mg;
 		try {
 			mg = MessageDigest.getInstance("MD5");
@@ -195,6 +217,9 @@ public class RegistrationController {
 		
 	}
 
+	/**
+	 * Creates a new server connection to the IP and Port, standing in the input fields.
+	 */
 	private void createServerConnection() {
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
@@ -202,11 +227,17 @@ public class RegistrationController {
 		serverCon = new ServerConnection(clientProps);
 	}
 
+	/**
+	 * Is called from the "cancle" button. Closes the dialog.
+	 */
 	@FXML
 	public void cancle(){
 		dialogStage.close();
 	}
 	
+	/**
+	 * Is used to close the dialog from a other thread. Sets the server connection to the login controller.
+	 */
 	public void closeDialog() {
 		Platform.runLater(new Runnable() {
             @Override
@@ -217,7 +248,8 @@ public class RegistrationController {
             }
         });
 	}
-
+	
+	// GETTER AND SETTER
 	public void setLoginController(LoginController loginController) {
 		this.loginController=loginController;
 	}

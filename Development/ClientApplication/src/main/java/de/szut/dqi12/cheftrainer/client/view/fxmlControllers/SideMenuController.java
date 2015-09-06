@@ -159,7 +159,7 @@ public class SideMenuController {
 		}
 
 		SAXBuilder saxBuilder = new SAXBuilder();
-		List<Element> nodeList = new ArrayList();
+		List<Element> nodeList = new ArrayList<Element>();
 		try {
 			Document doc = saxBuilder.build(new StringReader(xmlString));
 			nodeList = doc.getRootElement().getChildren();

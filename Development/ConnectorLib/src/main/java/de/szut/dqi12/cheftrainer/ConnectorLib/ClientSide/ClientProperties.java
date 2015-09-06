@@ -1,6 +1,5 @@
 package de.szut.dqi12.cheftrainer.connectorlib.clientside;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 

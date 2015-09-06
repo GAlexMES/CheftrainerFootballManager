@@ -7,7 +7,6 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.HandshakeMapperCreator;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
@@ -32,7 +31,6 @@ public class ServerHandler implements Runnable {
 	 */
 	public ServerHandler(Socket socket, ClientProperties clientProps)
 			throws Exception {
-		ServerToClient_MessageIDs stc_messageIDs = new ServerToClient_MessageIDs();
 
 		List<IDClass_Path_Mapper> idMappers = new ArrayList<IDClass_Path_Mapper>();
 		idMappers.addAll(clientProps.getIDMappers());

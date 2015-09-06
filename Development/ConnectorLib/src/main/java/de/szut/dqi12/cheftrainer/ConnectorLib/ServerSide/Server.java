@@ -1,12 +1,12 @@
 package de.szut.dqi12.cheftrainer.connectorlib.serverside;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.logging.LogManager;
 
 import org.apache.log4j.Logger;
 
@@ -49,8 +49,9 @@ public class Server {
 	 * Is used to start the Server Thread. Will receive new connection to unlisted clients and registers them.
 	 */
 	public void run() {
+		ServerSocket serverSock = null;
 		try {
-			ServerSocket serverSock = new ServerSocket(serverProps.getPort());
+			serverSock = new ServerSocket(serverProps.getPort());
 			while (true) {
 				Socket clientSocket = serverSock.accept();
 				newClient(clientSocket);
@@ -58,7 +59,15 @@ public class Server {
 			}
 
 		} catch (Exception ex) {
+			
 			ex.printStackTrace();
+		}
+		finally{
+			try {
+				serverSock.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		LOGGER.info(LoggingMessages.SERVER_SHUTDOWN);
 	}

@@ -6,20 +6,33 @@ import java.util.HashMap;
 
 import de.szut.dqi12.cheftrainer.server.usercommunication.User;
 
+
+/**
+ * This class handles the User registration and login. I creates database entries for new users.
+ * @author Alexander Brennecke
+ *
+ */
 public class UserManagement {
 
+	//Given SGLConnection to database
 	private static SQLConnection sqlCon = null;
 
+	/**
+	 * Constructor
+	 * @param sqlCon active SQL Connection
+	 */
 	public UserManagement(SQLConnection sqlCon) {
 		UserManagement.sqlCon = sqlCon;
 	}
-
-	public static SQLConnection getSQLConnection() {
-		return sqlCon;
-	}
+	
+	/**
+	 * This method registers a new user to the database. But only if the username and the eMail doens't exist in the database.
+	 * @param newUser a User object of the new user
+	 * @return a HashMap with registry information.
+	 */
 
 	public HashMap<String, Boolean> register(User newUser) {
-		HashMap<String, Boolean> retval = existUserName(newUser);
+		HashMap<String, Boolean> retval = existUser(newUser);
 		retval.put("authentificate", false);
 		if ((!retval.get("existUser")) && (!retval.get("existEMail"))) {
 			addNewUserToDatabase(newUser);
@@ -28,7 +41,12 @@ public class UserManagement {
 		return retval;
 	}
 
-	private HashMap<String, Boolean> existUserName(User newUser) {
+	/**
+	 * This method checks if a User with the given username and eMail already exists in the database.
+	 * @param newUser a User object of the user, who should be checked.
+	 * @return a HashMap with information about the existence of the username and the eMail.
+	 */
+	private HashMap<String, Boolean> existUser(User newUser) {
 		HashMap<String, Boolean> retval = new HashMap<String, Boolean>();
 		retval.put("existUser", false);
 		retval.put("existEMail", false);
@@ -50,6 +68,10 @@ public class UserManagement {
 		return retval;
 	}
 
+	/**
+	 * This methid adds a new user to the database.
+	 * @param newUser
+	 */
 	private void addNewUserToDatabase(User newUser) {
 		String values = newUser.getAllForSQL();
 		String sqlQuery = "INSERT INTO Nutzer (Vorname,Nachname,Nutzername,EMail,Passwort) VALUES ( "
@@ -57,6 +79,11 @@ public class UserManagement {
 		sqlCon.sendQuery(sqlQuery);
 	}
 
+	/**
+	 * This method is called to log a user in. It compares the user name and the password.
+	 * @param user a User Object for the user, who wants to login
+	 * @return a HashMap with information about the existence of the username and the correct password.
+	 */
 	public HashMap<String, Boolean> login(User user) {
 		HashMap<String,Boolean> retval = new HashMap<String,Boolean>();
 		retval.put("userExist", false);
