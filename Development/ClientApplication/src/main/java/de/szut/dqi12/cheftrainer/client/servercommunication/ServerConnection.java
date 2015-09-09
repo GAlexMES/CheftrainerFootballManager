@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import javafx.event.ActionEvent;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
@@ -41,6 +42,10 @@ public class ServerConnection {
 	
 	public void sendMessage(Message message){
 		client.sendMesage(message);
+	}
+	
+	public void logout(ActionEvent evt){
+		System.out.println("logout");
 	}
 
 }

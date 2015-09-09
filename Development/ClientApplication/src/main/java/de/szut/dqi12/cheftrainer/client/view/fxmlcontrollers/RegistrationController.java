@@ -133,7 +133,7 @@ public class RegistrationController extends DialogController {
 				e.printStackTrace();
 			}
 		} else {
-			String errorMessage = WRONG_INPUTS;
+			String errorMessage = AlertDialog.WRONG_INPUTS;
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}

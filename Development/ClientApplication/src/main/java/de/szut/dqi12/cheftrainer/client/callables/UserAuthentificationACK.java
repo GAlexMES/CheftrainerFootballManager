@@ -3,7 +3,9 @@ package de.szut.dqi12.cheftrainer.client.callables;
 
 import org.json.JSONObject;
 
+import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.RegistrationController;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
@@ -37,8 +39,17 @@ public class UserAuthentificationACK extends CallableAbstract {
 	 * @param authentificationAck
 	 */
 	private void login(JSONObject authentificationAck){
+		GUIController controller = GUIController.getInstance();
 		if(authentificationAck.getBoolean("userExist")&&authentificationAck.getBoolean("password")){
-			GUIController.getInstance().showMainApplication();
+			controller.showMainApplication();
+		}
+		else if(!authentificationAck.getBoolean("userExist")){
+			LoginController loginController = controller.getGUIInitialator().getLoginController();
+			loginController.showError("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_USER);
+		}
+		else if(!authentificationAck.getBoolean("password")){
+			LoginController loginController = controller.getGUIInitialator().getLoginController();
+			loginController.showError("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_PASSWORD);
 		}
 	}
 	

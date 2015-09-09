@@ -12,6 +12,11 @@ import javafx.scene.layout.Priority;
 
 public class AlertDialog {
 
+	public static final String WRONG_INPUTS = "Please check ypur input for the following parameters: ";
+	
+	public static final String LOGIN_WRONG_USER = "Your username does not exist in our database. Please check your inputs or create a account.";
+	public static final String LOGIN_WRONG_PASSWORD = "Your password is wrong, or u use the wrong username. Pleas check your inputs!";
+
 	public static Alert createSimpleDialog(String title, String header,
 			String message, AlertType type) {
 		Alert alert = new Alert(type);

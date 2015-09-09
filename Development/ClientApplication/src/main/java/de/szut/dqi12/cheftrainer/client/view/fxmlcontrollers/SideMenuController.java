@@ -32,6 +32,7 @@ import org.jdom2.input.SAXBuilder;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
+import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 
 /**
  * Controller for the side menu
@@ -139,6 +140,11 @@ public class SideMenuController {
 		if (e.getChildText("triggerButton").equals("true")) {
 			//sets the onAction to the triggerSideMenu function
 			tempButton.setOnAction(this::triggerSideMenu);
+		}
+		else if(e.getChildText("logoutButton").equals("true")){
+			ServerConnection serverCon = mainApp.getLoginController().getServerConnection();
+			//sets the onAction to the logout function
+			tempButton.setOnAction(serverCon::logout);
 		}
 		else{
 			//sets the onAction to the buttonPressed function

@@ -117,7 +117,7 @@ public class LoginController extends DialogController{
 				showError("Login failed", "Something went wrong during your login", "Please check your server details!");
 			}
 		} else {
-			String errorMessage = WRONG_INPUTS;
+			String errorMessage = AlertDialog.WRONG_INPUTS;
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}

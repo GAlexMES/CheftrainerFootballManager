@@ -11,9 +11,6 @@ import javafx.scene.control.Alert.AlertType;
 
 public abstract class DialogController {
 
-	// Error message for wrong Inputs
-	public static final String WRONG_INPUTS = "Please check ypur input for the following parameters: ";
-
 	/**
 	 * Checks the user inputs when the user inputs and change the border color
 	 * of empty/wrong input fields
