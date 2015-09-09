@@ -11,17 +11,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
 public class AlertDialog {
-	
-	public static Alert createSimpleDialog(String title, String header, String message, AlertType type){
-    	Alert alert = new Alert(type);
+
+	public static Alert createSimpleDialog(String title, String header,
+			String message, AlertType type) {
+		Alert alert = new Alert(type);
 		alert.setContentText(message);
 		alert.setTitle(title);
 		alert.setHeaderText(header);
-		alert.showAndWait();
 		return alert;
 	}
-	
-	public static Alert createExceptionDialog(Exception e){
+
+	public static Alert createExceptionDialog(Exception e) {
 		Alert alert = new Alert(AlertType.ERROR);
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);

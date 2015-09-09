@@ -2,11 +2,11 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
-import org.json.JSONObject;
+import java.util.List;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -20,6 +20,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
+import org.json.JSONObject;
+
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
@@ -34,7 +37,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  * @author Alexander Brennecke
  *
  */
-public class LoginController {
+public class LoginController extends DialogController{
 
 	// LINK TO FXML ELEMENTS ON GUI
 	@FXML
@@ -105,6 +108,26 @@ public class LoginController {
 	 */
 	@FXML
 	public void login() {
+		TextField[] textFields = {loginField, passwordField,ipField,portField};
+		List<String> errorList = checkInputs(textFields);
+		if (errorList.size() == 0) {
+			try {
+				doLogin();
+			} catch (IOException e) {
+				showError("Login failed", "Something went wrong during your login", "Please check your server details!");
+			}
+		} else {
+			String errorMessage = WRONG_INPUTS;
+			for (String s : errorList) {
+				errorMessage += "\n " + s;
+			}
+			showError("Login failed",
+					"Something went wrong during your login",
+					errorMessage);
+		}
+	}
+	
+	private void doLogin() throws IOException{
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());

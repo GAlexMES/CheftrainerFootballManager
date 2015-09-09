@@ -1,5 +1,7 @@
 package de.szut.dqi12.cheftrainer.client.servercommunication;
 
+import java.io.IOException;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,7 +21,7 @@ public class ServerConnection {
 	
 	private final static String PACKAGE_PATH = "de.szut.dqi12.cheftrainer.client.callables.CLASS";
 	
-	public ServerConnection(ClientProperties clientProps ){
+	public ServerConnection(ClientProperties clientProps ) throws IOException{
 		
 		URL path = null;
 		try {

@@ -20,7 +20,7 @@ public class Client {
 	 * Constructor
 	 * @param conInterface
 	 */
-	public Client(ClientProperties clientProps){
+	public Client(ClientProperties clientProps) throws IOException{
 		this.clientProps = clientProps;
 		startConnection(clientProps.getServerIP(),clientProps.getPort());
 	}
@@ -28,18 +28,15 @@ public class Client {
 	/**
 	 * Builds a new Connection to a java server socket
 	 */
-	private void startConnection(String serverIP, int serverPort) {
+	private void startConnection(String serverIP, int serverPort) throws IOException {
 		try {
 			socket = new Socket(serverIP,serverPort);
 			servHandler = new ServerHandler(socket,clientProps);
 			Thread readerThread = new Thread(servHandler);
 			readerThread.start();
-			System.out.println("Verbindung Aufgebaut");
 		} catch (IOException ex) {
-			ex.printStackTrace();
-			System.out.println("Keine Verbindung Aufgebaut");
+			throw ex;
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 	
