@@ -91,8 +91,10 @@ public class SQLConnection {
 			System.err.println("No return Data. Use lastResult");
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_ERROR)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
+			System.err.print(sqLiteError);
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_BUSY)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
+			System.err.print(sqLiteError);
 		} else {
 			sqle.printStackTrace();
 		}

@@ -61,7 +61,7 @@ public class GUIController {
 		Platform.runLater(new Runnable() {
             @Override
             public void run() {
-            	guiInitialator.getLoginController().close();
+            	guiInitialator.closeLoginDialog();
             	guiInitialator.initRootLayout();
         		guiInitialator.showMenuLayout();
         		setContentFrameByName("CommunitiesFrame.fxml", false);
@@ -111,5 +111,10 @@ public class GUIController {
 
 	public GUIInitialator getGUIInitialator() {
 		return guiInitialator;
+	}
+
+	public void resetApplication() {
+		guiInitialator.closeMainApplication();
+		showLogin();
 	}
 }

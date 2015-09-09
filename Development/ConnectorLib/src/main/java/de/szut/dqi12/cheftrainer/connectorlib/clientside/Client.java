@@ -45,9 +45,17 @@ public class Client {
 	 * Is used to forward a message to the serverHandler
 	 * @param message the decrypted message that should be send.
 	 */
-	public void sendMesage(Message message){
+	public void sendMessage(Message message){
 		if(servHandler!=null){
 			servHandler.sendMessage(message);
 		}
+	}
+	
+	public String getServerIP(){
+		return socket.getInetAddress().toString();
+	}
+	
+	public int getServerPort(){
+		return socket.getPort();
 	}
 }

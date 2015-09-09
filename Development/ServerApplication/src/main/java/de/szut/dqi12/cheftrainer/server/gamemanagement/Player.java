@@ -1,6 +1,5 @@
 package de.szut.dqi12.cheftrainer.server.gamemanagement;
 
-import java.util.List;
 
 /**
  * 

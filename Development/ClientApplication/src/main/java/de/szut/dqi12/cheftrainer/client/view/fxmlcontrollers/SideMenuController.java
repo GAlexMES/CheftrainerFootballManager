@@ -29,10 +29,10 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
+import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
-import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 
 /**
  * Controller for the side menu
@@ -45,7 +45,7 @@ public class SideMenuController {
 	@FXML
 	private VBox sideMenu;
 
-	private GUIInitialator mainApp;
+	private GUIInitialator guiInitilator;
 	private boolean sideMenuFlag = true;
 
 	private double expandedWidth = 200.0;
@@ -61,9 +61,9 @@ public class SideMenuController {
 	 * 
 	 * @param mainApp is required for further actions, generates the side menu content
 	 */
-	public void setMainApp(GUIInitialator mainApp) {
-		this.mainApp = mainApp;
-		GridPane rLayout = mainApp.getRootlayout();
+	public void setGUIInitialator(GUIInitialator guiInitilator) {
+		this.guiInitilator = guiInitilator;
+		GridPane rLayout = guiInitilator.getRootlayout();
 		generateButtons(((VBox) rLayout.lookup("#sideMenu")));
 	}
 
@@ -142,9 +142,9 @@ public class SideMenuController {
 			tempButton.setOnAction(this::triggerSideMenu);
 		}
 		else if(e.getChildText("logoutButton").equals("true")){
-			ServerConnection serverCon = mainApp.getLoginController().getServerConnection();
+			Controller controller = Controller.getInstance();
 			//sets the onAction to the logout function
-			tempButton.setOnAction(serverCon::logout);
+			tempButton.setOnAction(controller::resetApplication);
 		}
 		else{
 			//sets the onAction to the buttonPressed function
@@ -193,7 +193,7 @@ public class SideMenuController {
 	 */
 	@FXML
 	public void triggerSideMenu(ActionEvent evt) {
-		rLayout = mainApp.getRootlayout();
+		rLayout = guiInitilator.getRootlayout();
 		ObservableList<Node> buttonList = ((VBox) rLayout.lookup("#sideMenu"))
 				.getChildren();
 		if (sideMenuFlag) {
@@ -256,7 +256,7 @@ public class SideMenuController {
 	 * resize the width of the root grid pane coloums
 	 */
 	public void expandColums(){
-		rLayout = mainApp.getRootlayout();
+		rLayout = guiInitilator.getRootlayout();
 		ColumnConstraints menuColoum = rLayout.getColumnConstraints().get(0);
 		menuColoum.setMaxWidth(expandedWidth);
 

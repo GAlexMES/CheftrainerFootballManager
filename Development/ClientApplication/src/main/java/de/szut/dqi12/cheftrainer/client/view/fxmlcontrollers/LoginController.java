@@ -2,7 +2,6 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.ConnectException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -23,11 +22,14 @@ import javafx.stage.Stage;
 
 import org.json.JSONObject;
 
+import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -37,7 +39,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  * @author Alexander Brennecke
  *
  */
-public class LoginController extends DialogController{
+public class LoginController extends DialogController {
 
 	// LINK TO FXML ELEMENTS ON GUI
 	@FXML
@@ -63,15 +65,11 @@ public class LoginController extends DialogController{
 	private double serverDetailsPane_YLayout;
 	private double severDetailsPane_Height;
 
-	// Used to send messages to the server
-	private ServerConnection serverConnection;
-
 	// Used to close the registration controller.
 	private RegistrationController registrationController;
 
-	
 	private Stage stage;
-	
+
 	/**
 	 * initialized a few variables
 	 */
@@ -108,31 +106,44 @@ public class LoginController extends DialogController{
 	 */
 	@FXML
 	public void login() {
-		TextField[] textFields = {loginField, passwordField,ipField,portField};
+		TextField[] textFields = { loginField, passwordField, ipField,
+				portField };
 		List<String> errorList = checkInputs(textFields);
 		if (errorList.size() == 0) {
 			try {
 				doLogin();
 			} catch (IOException e) {
-				showError("Login failed", "Something went wrong during your login", "Please check your server details!");
+				showError("Login failed",
+						"Something went wrong during your login",
+						"Please check your server details!");
 			}
 		} else {
 			String errorMessage = AlertDialog.WRONG_INPUTS;
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			showError("Login failed",
-					"Something went wrong during your login",
+			showError("Login failed", "Something went wrong during your login",
 					errorMessage);
 		}
 	}
-	
-	private void doLogin() throws IOException{
+
+	private void doLogin() throws IOException {
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
-		ServerConnection serverCon = new ServerConnection(clientProps);
-		Message loginMessage = new Message(ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
+		Client serverCon = Controller.getInstance().getSession().getClientSocket();
+		if (serverCon != null) {
+			if (!(serverCon.getServerIP().equals(ipField.getText()) && serverCon
+					.getServerPort() == Integer.valueOf(portField.getText()))) {
+				serverCon = ServerConnection
+						.createServerConnection(clientProps);
+			}
+		} else {
+			serverCon = ServerConnection.createServerConnection(clientProps);
+		}
+
+		Message loginMessage = new Message(
+				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
 		JSONObject loginInfo = new JSONObject();
 		loginInfo.put("authentificationType", "login");
 		loginInfo.put("username", loginField.getText());
@@ -140,20 +151,23 @@ public class LoginController extends DialogController{
 			MessageDigest mg = MessageDigest.getInstance("MD5");
 			byte[] passwordByte = passwordField.getText().getBytes("UTF-8");
 			byte[] paswordHashByte = mg.digest(passwordByte);
-			loginInfo.put("password", new String(paswordHashByte,StandardCharsets.UTF_8));
+			loginInfo.put("password", new String(paswordHashByte,
+					StandardCharsets.UTF_8));
 			loginMessage.setMessageContent(loginInfo);
 			Thread.sleep(1500);
 			serverCon.sendMessage(loginMessage);
+			
+			Session newSession = new Session();
+			newSession.setClientSocket(serverCon);
+			newSession.setLoginName(loginField.getText());
+			Controller.getInstance().setSession(newSession);;
 		} catch (NoSuchAlgorithmException e) {
 			Alert alert = AlertDialog.createExceptionDialog(e);
 			alert.showAndWait();
-		}
-		catch (UnsupportedEncodingException e) {
+		} catch (UnsupportedEncodingException e) {
 			Alert alert = AlertDialog.createExceptionDialog(e);
 			alert.showAndWait();
-		}
-		catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -196,7 +210,7 @@ public class LoginController extends DialogController{
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Shows a dialog, which says, that the registration was completed.
 	 */
@@ -206,20 +220,19 @@ public class LoginController extends DialogController{
 		alert.setTitle("registration Success");
 		alert.setHeaderText("Your registration was completed!");
 		alert.setContentText("We completed your registration. You can login now!");
-
 		alert.showAndWait();
 	}
 
 	/**
-	 * Is called to close the registration dialog from a other thread.
+	 * Is called to close the login dialog from a other thread.
 	 */
 	public void close() {
 		Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-            	stage.close();
-            }
-        });		
+			@Override
+			public void run() {
+				stage.close();
+			}
+		});
 	}
 
 	// GETTER AND SETTER
@@ -227,16 +240,7 @@ public class LoginController extends DialogController{
 		this.stage = rStage;
 	}
 
-	public ServerConnection getServerConnection() {
-		return serverConnection;
-	}
-	
-	public void setServerConnection(ServerConnection serverConnection) {
-		this.serverConnection = serverConnection;
-	}
-
 	public RegistrationController getRegistrationController() {
 		return registrationController;
 	}
-
 }

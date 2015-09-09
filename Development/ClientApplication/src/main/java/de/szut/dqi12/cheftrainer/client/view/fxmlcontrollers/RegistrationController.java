@@ -5,13 +5,11 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -22,7 +20,9 @@ import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -70,7 +70,7 @@ public class RegistrationController extends DialogController {
 
 	// are used for the communication with the login dialog and the server
 	private LoginController loginController;
-	private ServerConnection serverCon;
+	private Client serverCon;
 
 	/**
 	 * initialized a few variables
@@ -210,7 +210,7 @@ public class RegistrationController extends DialogController {
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
 		try {
-			serverCon = new ServerConnection(clientProps);
+			serverCon = ServerConnection.createServerConnection(clientProps);
 		} catch (IOException e) {
 			throw e;
 		}
@@ -232,7 +232,9 @@ public class RegistrationController extends DialogController {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				loginController.setServerConnection(serverCon);
+				Session newSession = new Session();
+				newSession.setClientSocket(serverCon);
+				newSession.setLoginName(loginField.getText());
 				loginController.showRegistrationDialog();
 				dialogStage.close();
 			}

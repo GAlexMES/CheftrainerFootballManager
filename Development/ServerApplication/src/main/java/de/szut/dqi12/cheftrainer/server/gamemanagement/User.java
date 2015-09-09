@@ -1,9 +1,7 @@
 package de.szut.dqi12.cheftrainer.server.gamemanagement;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 
