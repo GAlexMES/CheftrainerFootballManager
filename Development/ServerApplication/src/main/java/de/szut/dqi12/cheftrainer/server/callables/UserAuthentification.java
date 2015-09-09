@@ -36,7 +36,6 @@ public class UserAuthentification extends CallableAbstract {
 			login(authentification);
 			break;
 		}
-
 	}
 	/**
 	 * initializes a controller and UserManagement object.
