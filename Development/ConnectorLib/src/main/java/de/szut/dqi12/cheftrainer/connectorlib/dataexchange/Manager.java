@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.gamemanagement;
+package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
  * @author Robin
  *
  */
-public class User {
+public class Manager {
 
 	private String name;
 	private Double money;
@@ -17,7 +17,7 @@ public class User {
 	private int points;
 	private List<Transaction> transactions;
 	
-	public User(String name, Double money, int points){
+	public Manager(String name, Double money, int points){
 		this.name = name;
 		this.money = money;
 		this.points = points;
@@ -36,7 +36,6 @@ public class User {
 	public void setTransactions(List<Transaction> transactions) {
 		this.transactions = transactions;
 	}
-
 	
 	public void addPlayer(Player player){
 		this.players.add(player);

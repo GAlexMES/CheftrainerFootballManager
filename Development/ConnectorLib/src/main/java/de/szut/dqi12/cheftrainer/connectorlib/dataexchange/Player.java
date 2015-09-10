@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.gamemanagement;
+package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
 
 /**
