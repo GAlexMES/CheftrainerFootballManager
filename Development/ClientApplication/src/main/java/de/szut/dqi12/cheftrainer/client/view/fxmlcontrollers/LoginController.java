@@ -30,6 +30,7 @@ import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -131,8 +132,10 @@ public class LoginController extends DialogController {
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
-		Client serverCon = Controller.getInstance().getSession().getClientSocket();
-		if (serverCon != null) {
+		Session session = Controller.getInstance().getSession();
+		Client serverCon;
+		if (session != null) {
+			serverCon = session.getClientSocket();
 			if (!(serverCon.getServerIP().equals(ipField.getText()) && serverCon
 					.getServerPort() == Integer.valueOf(portField.getText()))) {
 				serverCon = ServerConnection
@@ -159,7 +162,9 @@ public class LoginController extends DialogController {
 			
 			Session newSession = new Session();
 			newSession.setClientSocket(serverCon);
-			newSession.setLoginName(loginField.getText());
+			User user = new User();
+			user.setFirstName(loginField.getText());
+			newSession.setUser(user);
 			Controller.getInstance().setSession(newSession);;
 		} catch (NoSuchAlgorithmException e) {
 			Alert alert = AlertDialog.createExceptionDialog(e);

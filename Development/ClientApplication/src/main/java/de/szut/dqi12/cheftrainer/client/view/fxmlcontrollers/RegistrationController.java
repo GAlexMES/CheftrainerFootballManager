@@ -23,6 +23,7 @@ import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -234,7 +235,9 @@ public class RegistrationController extends DialogController {
 			public void run() {
 				Session newSession = new Session();
 				newSession.setClientSocket(serverCon);
-				newSession.setLoginName(loginField.getText());
+				User user = new User();
+				user.setFirstName(loginField.getText());
+				newSession.setUser(user);;
 				loginController.showRegistrationDialog();
 				dialogStage.close();
 			}

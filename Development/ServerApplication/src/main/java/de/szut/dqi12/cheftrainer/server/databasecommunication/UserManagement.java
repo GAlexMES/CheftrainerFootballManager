@@ -93,7 +93,6 @@ public class UserManagement {
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		int counter = 0;
 		try {
-			
 			while (rs.next()) {
 				counter ++;
 				if (rs.getString(1).equals(user.getPassword())) {

@@ -26,12 +26,14 @@ public class SocketController {
 	 */
 	public SocketController(ServerProperties serverProps) throws Exception {
 		activeSessions = new HashMap<>();
+		Thread serverThread;
 		try {
 			server = new Server(serverProps);
+			serverThread = new Thread(server);
 		} catch (Exception e) {
 			throw e;
 		}
-		server.run();
+		serverThread.start();
 	}
 
 	public void addSession(Session s) {

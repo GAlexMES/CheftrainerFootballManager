@@ -22,7 +22,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
  * @author Alexander Brennecke
  *
  */
-public class Server {
+public class Server implements Runnable {
 
 	private KeyPair keyPair;
 	private ArrayList<Thread> clientList = new ArrayList<Thread>();

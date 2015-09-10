@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
+import javax.sound.midi.ControllerEventListener;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
@@ -46,6 +48,7 @@ public class MessageController {
 			.getLogger(MessageController.class);
 
 	private ClientHandler clientHandler;
+	private Session session;
 	
 	/**
 	 * Constructor. Tries to generate a ID<->Class Map for each element in the
@@ -204,4 +207,11 @@ public class MessageController {
 		return clientHandler;
 	}
 
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public Session getSession(){
+		return session;
+	}
 }
