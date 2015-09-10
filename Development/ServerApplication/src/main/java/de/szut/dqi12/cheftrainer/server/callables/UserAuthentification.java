@@ -5,11 +5,13 @@ import java.util.HashMap;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.Controller;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.ManagerManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.UserManagement;
-import de.szut.dqi12.cheftrainer.server.usercommunication.User;
 
 /**
  * This class is used to handle "UserAuthentification" messages, which were send by a client.
@@ -20,6 +22,7 @@ public class UserAuthentification extends CallableAbstract {
 
 	private static Controller controller;
 	private static UserManagement userManagement;
+	private static ManagerManagement managerManagement;
 
 	/**
 	 * Is called from the message controller, when a new message arrived.
@@ -47,6 +50,9 @@ public class UserAuthentification extends CallableAbstract {
 		if (userManagement == null) {
 			userManagement = new UserManagement(controller.getSQLConnection());
 		}
+		if (managerManagement == null) {
+			managerManagement= new ManagerManagement(controller.getSQLConnection());
+		}
 	}
 
 	/**
@@ -57,7 +63,7 @@ public class UserAuthentification extends CallableAbstract {
 		initialize();
 		User newUser = new User();
 		newUser.setWithJSON(registrationInfo);
-		HashMap<String,Boolean> dbInfo  =userManagement.register(newUser);
+		HashMap<String,Boolean> dbInfo  = userManagement.register(newUser);
 		createRegistrationAnswer(dbInfo.get("existEMail"), dbInfo.get("existUser"), dbInfo.get("authentificate"));
 	}
 
@@ -67,12 +73,21 @@ public class UserAuthentification extends CallableAbstract {
 	 */
 	public void login(JSONObject loginInfo) {
 		initialize();
-		User user = new User();
-		user.setUserName(loginInfo.getString("username"));
-		user.setPassword(loginInfo.getString("password"));
+		User loginUser = new User();
+		loginUser.setUserName(loginInfo.getString("username"));
+		loginUser.setPassword(loginInfo.getString("password"));
 		
-		HashMap<String, Boolean> dbInfo = userManagement.login(user);
-		createLoginAnswer(dbInfo.get("password"),dbInfo.get("userExist"));
+		HashMap<String, Boolean> dbInfo = userManagement.login(loginUser);
+		boolean correctPassword = dbInfo.get("password");
+		boolean userExist = dbInfo.get("userExist");
+		createLoginAnswer(correctPassword,userExist);
+		if(userExist&&correctPassword){
+			User databaseUser = userManagement.getUserValues(loginUser.getUserName());
+			Session session = new Session();
+			session.setUser(databaseUser);
+			session.setClientHandler(mesController.getClientHandler());
+			controller.getSocketController().addSession(session);
+		}
 	}
 
 	/**

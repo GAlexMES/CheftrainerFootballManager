@@ -1,9 +1,9 @@
 package de.szut.dqi12.cheftrainer.server.usercommunication;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.Server;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
 
@@ -16,13 +16,16 @@ import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
 public class SocketController {
 
 	private Server server;
-	private ArrayList<ClientHandler> clientList = new ArrayList<>();
+
+	private Map<String, Session> activeSessions;
 
 	/**
 	 * This method creates a new server and starts it.
-	 * @throws Exception 
+	 * 
+	 * @throws Exception
 	 */
-	public SocketController(ServerProperties serverProps) throws Exception{
+	public SocketController(ServerProperties serverProps) throws Exception {
+		activeSessions = new HashMap<>();
 		try {
 			server = new Server(serverProps);
 		} catch (Exception e) {
@@ -31,18 +34,12 @@ public class SocketController {
 		server.run();
 	}
 
-	/**
-	 * This method sends the given String to the first ClientHandler in the list
-	 * Code must be updated so that it is possible to send to every
-	 * ClientHandler
-	 */
-	public void sendMessage(Message message) {
-		if (server != null) {
-			ClientHandler receiver = clientList.get(0);
-			if (receiver != null) {
-				receiver.sendMessage(message);
-			}
-		}
+	public void addSession(Session s) {
+		activeSessions.put(s.getUser().getUserName(), s);
 	}
 
+	public Session getSession(String userName) {
+		return activeSessions.get(userName);
+
+	}
 }

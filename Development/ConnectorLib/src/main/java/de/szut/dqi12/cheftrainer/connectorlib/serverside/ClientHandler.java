@@ -97,6 +97,7 @@ public class ClientHandler implements Runnable {
 				.add(HandshakeMapperCreator.getIDClassPathMapperForHandshake());
 
 		messageController = new MessageController(idMappers);
+		messageController.setClientHandler(this);
 		messageController.setRsaKeyPair(rsaKeyPair);
 	}
 

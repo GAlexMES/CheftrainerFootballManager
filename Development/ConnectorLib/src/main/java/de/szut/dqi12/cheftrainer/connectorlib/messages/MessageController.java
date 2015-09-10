@@ -18,6 +18,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 
 /**
  * The MessageController Class is important for sending and receiving Message
@@ -44,6 +45,8 @@ public class MessageController {
 	private final static Logger LOGGER = Logger
 			.getLogger(MessageController.class);
 
+	private ClientHandler clientHandler;
+	
 	/**
 	 * Constructor. Tries to generate a ID<->Class Map for each element in the
 	 * idMappers list. After that it sets the messageController of each instance
@@ -193,6 +196,12 @@ public class MessageController {
 
 	public void setAESKey(SecretKey aesKey) {
 		cipherFactory = new CipherFactory(aesKey, "AES");
+	}
+	public void setClientHandler(ClientHandler clientHandler){
+		this.clientHandler = clientHandler;
+	}
+	public ClientHandler getClientHandler(){
+		return clientHandler;
 	}
 
 }
