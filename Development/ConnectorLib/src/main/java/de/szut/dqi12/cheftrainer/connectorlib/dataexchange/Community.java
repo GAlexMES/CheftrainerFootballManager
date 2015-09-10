@@ -10,25 +10,30 @@ import java.util.List;
  */
 public class Community {
 
+	private int communityID;
 	private String name;
-	private List<Manager> users;
+	private List<Manager> managers;
 	private Market market;
 	
 	public Community(){
-		
+		managers= new ArrayList<>();
 	}
 	
 	public Community(Market market){
-		users = new ArrayList<Manager>();
+		managers = new ArrayList<Manager>();
 		this.market = market;
 	}
 	
-	public void addUser(Manager user){
-		this.users.add(user);
+	public void addManager(Manager user){
+		this.managers.add(user);
+	}
+	
+	public void addManagers(List<Manager> managerList){
+		managers.addAll(managerList);
 	}
 
-	public List<Manager> getUsers() {
-		return users;
+	public List<Manager> getmanagers() {
+		return managers;
 	}
 
 	public Market getMarket() {
@@ -41,6 +46,14 @@ public class Community {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public int getCommunityID() {
+		return communityID;
+	}
+
+	public void setCommunityID(int communityID) {
+		this.communityID = communityID;
 	}
 	
 }
