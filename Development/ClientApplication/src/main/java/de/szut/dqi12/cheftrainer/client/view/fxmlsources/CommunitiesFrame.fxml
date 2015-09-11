@@ -7,24 +7,35 @@
 
 <GridPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.CommunitiesController">
    <columnConstraints>
+      <ColumnConstraints />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
    </columnConstraints>
    <rowConstraints>
-      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
+      <RowConstraints vgrow="SOMETIMES" />
+      <RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+      <RowConstraints fillHeight="false" maxHeight="25.0" prefHeight="26.0" vgrow="ALWAYS" />
    </rowConstraints>
    <children>
-      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Community Übersicht" wrappingWidth="288.13671875">
+      <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Community Übersicht" wrappingWidth="479.13671875" GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
          <font>
             <Font size="27.0" />
          </font>
       </Text>
-      <TableView fx:id="communitiesFrame" minHeight="100.0" minWidth="100.0" prefHeight="331.0" prefWidth="458.0" GridPane.rowIndex="1">
+      <TableView fx:id="communitiesFrame" GridPane.columnIndex="1" GridPane.rowIndex="1">
         <columns>
           <TableColumn fx:id="communityNameColumn" prefWidth="254.0" text="Community Name" />
           <TableColumn fx:id="wertDesTeamsColumn" prefWidth="129.0" text="Wert deines Teams" />
-          <TableColumn fx:id="plazierungColumn" prefWidth="74.0" text="Platzierung" />
+          <TableColumn fx:id="plazierungColumn" prefWidth="96.0" text="Platzierung" />
         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
       </TableView>
+      <AnchorPane GridPane.columnIndex="1" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+         <children>
+            <Button mnemonicParsing="false" text="Liga beitreten" />
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="102.0" text="Liga erstellen" />
+         </children>
+      </AnchorPane>
    </children>
 </GridPane>
