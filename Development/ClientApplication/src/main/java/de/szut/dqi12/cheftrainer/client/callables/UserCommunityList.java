@@ -53,7 +53,6 @@ public class UserCommunityList extends CallableAbstract {
 			int rang = 0;
 			Team t = new Team(name, String.valueOf(money), String.valueOf(rang));
 			teamList.add(t);
-			System.out.println("added:  "+name+money+rang);
 		}
 		cc.initTable(teamList);
 	}

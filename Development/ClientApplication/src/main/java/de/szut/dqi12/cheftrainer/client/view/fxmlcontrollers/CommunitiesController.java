@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,10 +10,18 @@ import org.json.JSONObject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.MainApp;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
+import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
@@ -30,8 +39,13 @@ public class CommunitiesController {
 	@FXML
 	private TableColumn<Team, String> plazierungColumn;
 	private ObservableList<Team> data;
+	
+	
+	FXMLLoader dialogLoader;
 
 	public CommunitiesController() {
+		dialogLoader = new FXMLLoader();
+		
 		communityNameColumn = new TableColumn<Team, String>();
 		wertDesTeamsColumn = new TableColumn<Team, String>();
 		plazierungColumn = new TableColumn<Team, String>();
@@ -104,5 +118,15 @@ public class CommunitiesController {
 			    });
 			    return row ;
 			});
+		}
+		
+		@FXML
+		public void enterCommunity(){
+			DialogUtils.showDialog("Enter Community!", "EnterCommunityDialog.fxml");
+		}
+		
+		@FXML
+		public void createCommunity(){
+			DialogUtils.showDialog("Create Community!", "CreateCommunityDialog.fxml");
 		}
 }
