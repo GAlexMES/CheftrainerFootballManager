@@ -8,32 +8,14 @@ import java.util.List;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 
-public class ManagerManagement {
+public class CommunityManagement {
 
 	private SQLConnection sqlCon;
 
-	public ManagerManagement(SQLConnection sqlCon) {
+	public CommunityManagement(SQLConnection sqlCon) {
 		this.sqlCon = sqlCon;
 	}
 
-//	public List<Community> getCommunitiesForUser(int userID) {
-//		List<Community> retval = new ArrayList<Community>();
-//		String sqlQuery = "SELECT Spielrunde.ID, Spielrunde.Name, Spielrunde.Liga_ID, Spielrunde.Administrator_ID, Spielrunde.Passwort FROM Spielrunde INNER JOIN Manager where Manager.Nutzer_ID = '"
-//				+ userID + "'";
-//		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-//		try {
-//			while (rs.next()) {
-//				Community community = new Community();
-//				community.setName(rs.getString("Name"));
-//				community.setCommunityID(rs.getInt("ID"));
-//				community.addManagers(getManagers(community.getCommunityID()));
-//				retval.add(community);
-//			}
-//		} catch (SQLException e) {
-//
-//		}
-//		return retval;
-//	}
 	public List<Community> getCummunities(int userID) {
 		List<Community> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde INNER JOIN Manager where Manager.Nutzer_ID ="+ userID+" And Manager.Spielrunde_ID=Spielrunde.ID";
@@ -86,5 +68,30 @@ public class ManagerManagement {
 		} catch (SQLException e) {
 		}
 		return retval;
+	}
+	
+	public boolean createNewCommunity(String name, String password, int adminID){
+		String sqlQuery = "Select Name From Spielrunde where Name='"+name+"'";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		try {
+			int counter = 0;
+			while (rs.next()) {
+				counter ++;
+			}
+			if(counter == 0){
+				return createCommunity(name,password, adminID);
+			}
+		}
+		catch(SQLException e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	private boolean createCommunity(String name, String password, int adminID){
+		String sqlQuery = "INSERT INTO Spielrunde (Name, Administrator_ID, Passwort) VALUES ( '"
+							+ name +"', '"+adminID +"', '"+password+"')";
+		sqlCon.sendQuery(sqlQuery);
+		return true;
 	}
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -21,6 +22,7 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
+import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
@@ -129,7 +131,10 @@ public class RegistrationController {
 				Thread.sleep(800);
 				sendRegistrationMessage();
 			} catch (IOException e1) {
-				DialogUtils.showError("Registration failed", "Something went wrong during your registration", "Please check your server details!");
+				DialogUtils.showAlert("Registration failed", 
+						"Something went wrong during your registration", 
+						"Please check your server details!",
+						AlertType.ERROR);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -139,9 +144,10 @@ public class RegistrationController {
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			DialogUtils.showError("Registration failed",
+			DialogUtils.showAlert("Registration failed",
 					"Something went wrong during your registration",
-					errorMessage);
+					errorMessage,
+					AlertType.ERROR);
 		}
 	}
 	
@@ -186,14 +192,9 @@ public class RegistrationController {
 		registrationInfo.put("mail", mailField.getText());
 		registrationInfo.put("login", loginField.getText());
 
-		// Creeates a MD5 hash of the password.
-		MessageDigest mg;
 		try {
-			mg = MessageDigest.getInstance("MD5");
-			byte[] passwordByte = passwordField.getText().getBytes("UTF-8");
-			byte[] paswordHashByte = mg.digest(passwordByte);
-			registrationInfo.put("password", new String(paswordHashByte,
-					StandardCharsets.UTF_8));
+			String passwordMD5 = CipherFactory.getMD5( passwordField.getText());
+			registrationInfo.put("password", passwordMD5);
 			registrationMessage.setMessageContent(registrationInfo);
 			serverCon.sendMessage(registrationMessage);
 		} catch (NoSuchAlgorithmException e) {

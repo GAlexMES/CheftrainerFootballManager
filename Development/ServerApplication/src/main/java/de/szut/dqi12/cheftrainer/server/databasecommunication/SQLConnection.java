@@ -28,6 +28,7 @@ public class SQLConnection {
 	 */
 	public SQLConnection(String name) {
 		this.name = name;
+		DatabaseUtils.getInstance().setSQLConnection(this);
 	}
 
 	/**

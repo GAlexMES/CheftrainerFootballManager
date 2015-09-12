@@ -13,8 +13,10 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 
 public class DialogUtils {
@@ -33,8 +35,9 @@ public class DialogUtils {
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			Scene scene = new Scene(dialog);
 			dialogStage.setScene(scene);
-
+			GUIController.getInstance().setCurrentDialogStage(dialogStage);
 			dialogStage.showAndWait();
+			GUIController.getInstance().setCurrentDialogStage(null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -71,13 +74,13 @@ public class DialogUtils {
 	 * @param content
 	 *            of the dialog
 	 */
-	public static void showError(String title, String header, String content) {
+	public static void showAlert(String title, String header, String content, AlertType type) {
 		Platform.runLater(new Runnable() {
 
 			@Override
 			public void run() {
 				Alert alert = AlertDialog.createSimpleDialog(title, header,
-						content, AlertType.ERROR);
+						content, type);
 				alert.showAndWait();
 			}
 		});

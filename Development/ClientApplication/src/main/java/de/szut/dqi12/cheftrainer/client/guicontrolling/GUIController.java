@@ -8,6 +8,8 @@ import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.MainApp;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
 /**
  * The GUIController controlles the GUIInitialator to replacement GUI components.
@@ -19,6 +21,7 @@ public class GUIController {
 	private static GUIController instance = null;
 	private GUIInitialator guiInitialator;
 	private FXMLLoader currentContentLoader;
+	private Stage currentDialogStage;
 	
 	/**
 	 * Constructor
@@ -121,5 +124,22 @@ public class GUIController {
 	
 	public FXMLLoader getCurrentContentLoader(){
 		return currentContentLoader;
+	}
+
+	public void setCurrentDialogStage(Stage dialogStage) {
+		this.currentDialogStage = dialogStage;
+	}
+	
+	public Stage getCurrentDialogStage(){
+		return this.currentDialogStage;
+	}
+
+	public void closeCurrentDialog() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				currentDialogStage.close();
+			}
+		});		
 	}
 }

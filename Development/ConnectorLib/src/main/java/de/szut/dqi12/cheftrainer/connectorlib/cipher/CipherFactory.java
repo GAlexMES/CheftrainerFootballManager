@@ -2,7 +2,11 @@ package de.szut.dqi12.cheftrainer.connectorlib.cipher;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -13,7 +17,9 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 /**
- * The CipherFactory should be used to easy encrypt/decrypt Strings with the given algorithm and key.
+ * The CipherFactory should be used to easy encrypt/decrypt Strings with the
+ * given algorithm and key.
+ * 
  * @author Alexander Brennecke
  *
  */
@@ -25,7 +31,7 @@ public class CipherFactory {
 
 	private final static String RSA_ALGORITHM = "RSA";
 	private final static String AES_ALGORITHM = "AES";
-	
+
 	private byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	private IvParameterSpec ivspec = new IvParameterSpec(iv);
 
@@ -88,17 +94,15 @@ public class CipherFactory {
 	public String encrypt(String text) throws Exception {
 		Cipher cipher;
 		if (algorithm.equals(RSA_ALGORITHM)) {
-			 cipher = Cipher.getInstance(RSA_ALGORITHM);
-			 cipher.init(Cipher.ENCRYPT_MODE, key);
-		}
-		else if (algorithm.equals(AES_ALGORITHM)){
-			 cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			 cipher.init(Cipher.ENCRYPT_MODE, key,ivspec);
-		}
-		else{
+			cipher = Cipher.getInstance(RSA_ALGORITHM);
+			cipher.init(Cipher.ENCRYPT_MODE, key);
+		} else if (algorithm.equals(AES_ALGORITHM)) {
+			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			cipher.init(Cipher.ENCRYPT_MODE, key, ivspec);
+		} else {
 			throw new Exception("Invalid Algorithmus");
 		}
-		
+
 		byte[] encrypted = cipher.doFinal(text.getBytes());
 
 		BASE64Encoder myEncoder = new BASE64Encoder();
@@ -124,19 +128,31 @@ public class CipherFactory {
 		// decode
 		Cipher cipher;
 		if (algorithm.equals(RSA_ALGORITHM)) {
-			 cipher = Cipher.getInstance(RSA_ALGORITHM);
-			 cipher.init(Cipher.DECRYPT_MODE, key);
-		}
-		else if (algorithm.equals(AES_ALGORITHM)){
-			 cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			 cipher.init(Cipher.DECRYPT_MODE, key,ivspec);
-		}
-		else{
+			cipher = Cipher.getInstance(RSA_ALGORITHM);
+			cipher.init(Cipher.DECRYPT_MODE, key);
+		} else if (algorithm.equals(AES_ALGORITHM)) {
+			cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			cipher.init(Cipher.DECRYPT_MODE, key, ivspec);
+		} else {
 			throw new Exception("Invalid Algorithmus");
 		}
-		
+
 		byte[] cipherData = cipher.doFinal(crypted);
 		return new String(cipherData);
+	}
+
+	public static String getMD5(String message) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		MessageDigest mg;
+		try {
+			mg = MessageDigest.getInstance("MD5");
+			byte[] passwordByte = message.getBytes("UTF-8");
+			byte[] paswordHashByte = mg.digest(passwordByte);
+			return new String(paswordHashByte, StandardCharsets.UTF_8);
+		} catch (NoSuchAlgorithmException e) {
+			throw e;
+		} catch (UnsupportedEncodingException e) {
+			throw e;
+		}
 	}
 
 	// GETTER AND SETTE

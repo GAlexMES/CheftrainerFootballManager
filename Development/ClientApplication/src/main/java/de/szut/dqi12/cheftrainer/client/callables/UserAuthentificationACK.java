@@ -1,6 +1,8 @@
 package de.szut.dqi12.cheftrainer.client.callables;
 
 
+import javafx.scene.control.Alert.AlertType;
+
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
@@ -47,12 +49,10 @@ public class UserAuthentificationACK extends CallableAbstract {
 			guiController.showMainApplication();
 		}
 		else if(!authentificationAck.getBoolean("userExist")){
-			LoginController loginController = guiController.getGUIInitialator().getLoginController();
-			DialogUtils.showError("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_USER);
+			DialogUtils.showAlert("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_USER, AlertType.ERROR);
 		}
 		else if(!authentificationAck.getBoolean("password")){
-			LoginController loginController = guiController.getGUIInitialator().getLoginController();
-			DialogUtils.showError("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_PASSWORD);
+			DialogUtils.showAlert("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_PASSWORD,AlertType.ERROR);
 		}
 	}
 	
@@ -81,7 +81,7 @@ public class UserAuthentificationACK extends CallableAbstract {
 			else{
 				errorMessage = "A unknown error occured";
 			}
-			DialogUtils.showError("Registration error", "Something went wrong during your registration", errorMessage);
+			DialogUtils.showAlert("Registration error", "Something went wrong during your registration", errorMessage,AlertType.ERROR);
 		}
 	}
 }

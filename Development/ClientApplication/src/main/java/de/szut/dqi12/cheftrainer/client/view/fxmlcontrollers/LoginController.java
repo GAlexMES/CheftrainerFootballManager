@@ -28,6 +28,7 @@ import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
+import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
@@ -115,17 +116,17 @@ public class LoginController {
 			try {
 				doLogin();
 			} catch (IOException e) {
-				DialogUtils.showError("Login failed",
+				DialogUtils.showAlert("Login failed",
 						"Something went wrong during your login",
-						"Please check your server details!");
+						"Please check your server details!", AlertType.ERROR);
 			}
 		} else {
 			String errorMessage = AlertDialog.WRONG_INPUTS;
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			DialogUtils.showError("Login failed", "Something went wrong during your login",
-					errorMessage);
+			DialogUtils.showAlert("Login failed", "Something went wrong during your login",
+					errorMessage,AlertType.ERROR);
 		}
 	}
 
@@ -152,11 +153,8 @@ public class LoginController {
 		loginInfo.put("authentificationType", "login");
 		loginInfo.put("username", loginField.getText());
 		try {
-			MessageDigest mg = MessageDigest.getInstance("MD5");
-			byte[] passwordByte = passwordField.getText().getBytes("UTF-8");
-			byte[] paswordHashByte = mg.digest(passwordByte);
-			loginInfo.put("password", new String(paswordHashByte,
-					StandardCharsets.UTF_8));
+			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
+			loginInfo.put("password", passwordMD5);
 			loginMessage.setMessageContent(loginInfo);
 			Thread.sleep(1500);
 			serverCon.sendMessage(loginMessage);

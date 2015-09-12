@@ -17,6 +17,12 @@ public class AlertDialog {
 	public static final String LOGIN_WRONG_USER = "Your username does not exist in our database. Please check your inputs or create a account.";
 	public static final String LOGIN_WRONG_PASSWORD = "Your password is wrong, or u use the wrong username. Pleas check your inputs!";
 
+	public static final String COMMUNITY_CREATION_TITLE = "Create a new community";
+	public static final String COMMUNITY_CREATION_WORKED_HEAD = "We created your community!";
+	public static final String COMMUNITY_CREATION_WORKED_NOT_HEAD = "We could not create your community!";
+	public static final String COMMUNITY_CREATION_WORKED_MESSAGE = "Give the community name and password to friends to play with them!";
+	public static final String COMMUNITY_CREATION_WORKED_NOT_MESSAGE = "Maybe your community name is already in use. Try a different one.";
+	
 	public static Alert createSimpleDialog(String title, String header,
 			String message, AlertType type) {
 		Alert alert = new Alert(type);
