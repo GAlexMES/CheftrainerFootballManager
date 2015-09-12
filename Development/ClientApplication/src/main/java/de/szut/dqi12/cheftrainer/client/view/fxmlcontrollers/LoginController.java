@@ -27,6 +27,7 @@ import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
@@ -40,7 +41,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  * @author Alexander Brennecke
  *
  */
-public class LoginController extends DialogController {
+public class LoginController {
 
 	// LINK TO FXML ELEMENTS ON GUI
 	@FXML
@@ -109,12 +110,12 @@ public class LoginController extends DialogController {
 	public void login() {
 		TextField[] textFields = { loginField, passwordField, ipField,
 				portField };
-		List<String> errorList = checkInputs(textFields);
+		List<String> errorList = DialogUtils.checkInputs(textFields);
 		if (errorList.size() == 0) {
 			try {
 				doLogin();
 			} catch (IOException e) {
-				showError("Login failed",
+				DialogUtils.showError("Login failed",
 						"Something went wrong during your login",
 						"Please check your server details!");
 			}
@@ -123,7 +124,7 @@ public class LoginController extends DialogController {
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			showError("Login failed", "Something went wrong during your login",
+			DialogUtils.showError("Login failed", "Something went wrong during your login",
 					errorMessage);
 		}
 	}

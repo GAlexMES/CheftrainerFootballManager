@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
@@ -33,7 +34,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  * @author Alexander Brennecke
  *
  */
-public class RegistrationController extends DialogController {
+public class RegistrationController {
 
 	private Stage dialogStage;
 
@@ -128,7 +129,7 @@ public class RegistrationController extends DialogController {
 				Thread.sleep(800);
 				sendRegistrationMessage();
 			} catch (IOException e1) {
-				showError("Registration failed", "Something went wrong during your registration", "Please check your server details!");
+				DialogUtils.showError("Registration failed", "Something went wrong during your registration", "Please check your server details!");
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -138,7 +139,7 @@ public class RegistrationController extends DialogController {
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			showError("Registration failed",
+			DialogUtils.showError("Registration failed",
 					"Something went wrong during your registration",
 					errorMessage);
 		}
@@ -156,7 +157,7 @@ public class RegistrationController extends DialogController {
 				loginField, portField, ipField, passwordField,
 				passwordConfirmationField };
 
-		List<String> retval = checkInputs(inputFields);
+		List<String> retval = DialogUtils.checkInputs(inputFields);
 
 		if (!(passwordField.getText().equals(passwordConfirmationField
 				.getText()))) {

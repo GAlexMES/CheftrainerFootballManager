@@ -8,6 +8,7 @@ import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.RegistrationController;
+import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -47,11 +48,11 @@ public class UserAuthentificationACK extends CallableAbstract {
 		}
 		else if(!authentificationAck.getBoolean("userExist")){
 			LoginController loginController = guiController.getGUIInitialator().getLoginController();
-			loginController.showError("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_USER);
+			DialogUtils.showError("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_USER);
 		}
 		else if(!authentificationAck.getBoolean("password")){
 			LoginController loginController = guiController.getGUIInitialator().getLoginController();
-			loginController.showError("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_PASSWORD);
+			DialogUtils.showError("Login failed", "Ther occured a problem during your login.", AlertDialog.LOGIN_WRONG_PASSWORD);
 		}
 	}
 	
@@ -80,7 +81,7 @@ public class UserAuthentificationACK extends CallableAbstract {
 			else{
 				errorMessage = "A unknown error occured";
 			}
-			regController.showError("Registration error", "Something went wrong during your registration", errorMessage);
+			DialogUtils.showError("Registration error", "Something went wrong during your registration", errorMessage);
 		}
 	}
 }
