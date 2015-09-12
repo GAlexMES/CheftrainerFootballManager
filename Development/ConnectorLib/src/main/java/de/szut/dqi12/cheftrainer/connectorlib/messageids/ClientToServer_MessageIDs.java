@@ -9,4 +9,5 @@ public class ClientToServer_MessageIDs extends MessageIDAbstract{
 	
 	public static String USER_AUTHENTIFICATION ="UserAuthentification";
 	public static String CREATE_COMMUNITY = "CreateNewCommunity";
+	public static String REQUEST_UPDATE = "UpdateRequest";
 }

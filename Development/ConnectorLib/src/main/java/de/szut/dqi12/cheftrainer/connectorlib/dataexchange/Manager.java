@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class Manager {
 
+	private int id;
 	private String name;
 	private Double money;
 	private List<Player> players;
@@ -63,6 +64,14 @@ public class Manager {
 
 	public int getPoints() {
 		return points;
+	}
+
+	public int getID() {
+		return id;
+	}
+
+	public void setID(int id) {
+		this.id = id;
 	}
 	
 	

@@ -163,7 +163,7 @@ public class LoginController extends DialogController {
 			Session newSession = new Session();
 			newSession.setClientSocket(serverCon);
 			User user = new User();
-			user.setFirstName(loginField.getText());
+			user.setUserName(loginField.getText());
 			newSession.setUser(user);
 			Controller.getInstance().setSession(newSession);;
 		} catch (NoSuchAlgorithmException e) {

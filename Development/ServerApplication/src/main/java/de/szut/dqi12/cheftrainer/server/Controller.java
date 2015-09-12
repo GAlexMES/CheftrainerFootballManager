@@ -46,7 +46,6 @@ public class Controller {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	System.out.println("möp");
 	}
 
 	public void creatDatabaseCommunication(String sqlName, String sqlPath) {

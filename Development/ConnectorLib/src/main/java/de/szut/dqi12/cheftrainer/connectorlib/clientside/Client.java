@@ -58,4 +58,8 @@ public class Client {
 	public int getServerPort(){
 		return socket.getPort();
 	}
+	
+	public ServerHandler getServerHandler(){
+		return servHandler;
+	}
 }

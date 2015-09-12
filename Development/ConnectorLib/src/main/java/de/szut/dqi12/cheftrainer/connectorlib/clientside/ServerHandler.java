@@ -71,4 +71,8 @@ public class ServerHandler implements Runnable {
 	public void sendMessage(Message message) {
 		messageController.sendMessage(message);
 	}
+	
+	public MessageController getMessageController(){
+		return messageController;
+	}
 }

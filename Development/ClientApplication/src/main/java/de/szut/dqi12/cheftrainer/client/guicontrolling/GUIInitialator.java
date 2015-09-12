@@ -33,6 +33,8 @@ public class GUIInitialator {
 
 	private SideMenuController controller;
 	private LoginController loginController;
+	
+	private FXMLLoader currentFXMLLoader;
 
 	public static final String FXML_RESOURCE = "view/fxmlsources/";
 
@@ -44,6 +46,7 @@ public class GUIInitialator {
 	public GUIInitialator(Stage primaryStage) {
 		this.rStage = primaryStage;
 		this.rStage.setTitle("Cheftrainer Football Manager");
+		currentFXMLLoader = new FXMLLoader();
 	}
 
 	/**
@@ -76,10 +79,10 @@ public class GUIInitialator {
 	public void initLoginLayout() {
 		try {
 			// new FXMLLoader with Login.fxml as source
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(new URL(MainApp.class.getResource(".")
+			currentFXMLLoader = new FXMLLoader();
+			currentFXMLLoader.setLocation(new URL(MainApp.class.getResource(".")
 					+ FXML_RESOURCE + "Login.fxml"));
-			loginLayout = (AnchorPane) loader.load();
+			loginLayout = (AnchorPane) currentFXMLLoader.load();
 
 			loginDialogStage = new Stage();
 			loginDialogStage.initOwner(rStage);
@@ -88,7 +91,7 @@ public class GUIInitialator {
 			loginDialogStage.setScene(scene);
 
 			// definition of the login controller
-			loginController = loader.getController();
+			loginController = currentFXMLLoader.getController();
 			loginController.setStage(loginDialogStage);
 
 			loginDialogStage.showAndWait();
@@ -105,10 +108,10 @@ public class GUIInitialator {
 	public void initRootLayout() {
 		try {
 			// new FXMLLoader with RooFrame.fxml as source
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE
+			currentFXMLLoader = new FXMLLoader();
+			currentFXMLLoader.setLocation(MainApp.class.getResource(FXML_RESOURCE
 					+ "RootFrame.fxml"));
-			rLayout = (GridPane) loader.load();
+			rLayout = (GridPane) currentFXMLLoader.load();
 
 			// displays the RootFrame.fxml on screen
 			mainApplicationStage = new Stage();
@@ -128,14 +131,14 @@ public class GUIInitialator {
 	public void showMenuLayout() {
 		try {
 			// new FXMLLoader with ManuLayout.fxml as source
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE
+			FXMLLoader menuLoader = new FXMLLoader();
+			menuLoader.setLocation(MainApp.class.getResource(FXML_RESOURCE
 					+ "MenuLayout.fxml"));
-			VBox menuLayout = (VBox) loader.load();
+			VBox menuLayout = (VBox) menuLoader.load();
 			rLayout.add(menuLayout, 0, 0);
 
 			// defines the SideMenuController
-			controller = loader.getController();
+			controller = menuLoader.getController();
 			controller.setGUIInitialator(this);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -157,5 +160,9 @@ public class GUIInitialator {
 
 	public LoginController getLoginController() {
 		return loginController;
+	}
+
+	public FXMLLoader getCurrentFXMLLoader() {
+		return currentFXMLLoader;
 	}
 }

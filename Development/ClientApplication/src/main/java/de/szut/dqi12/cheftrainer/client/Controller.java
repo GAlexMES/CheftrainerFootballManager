@@ -34,6 +34,7 @@ public class Controller {
 	}
 	public void setSession(Session session) {
 		this.currentSession = session;
+		session.getClientSocket().getServerHandler().getMessageController().setSession(session);
 	}
 
 }

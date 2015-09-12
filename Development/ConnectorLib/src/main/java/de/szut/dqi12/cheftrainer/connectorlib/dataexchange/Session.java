@@ -8,26 +8,27 @@ import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 
 public class Session {
 
-	private long userID;
+	private int userID;
 	private User user;
 	private Client clientSocket;
 
 	private ClientHandler clientHandler;
 
-	private HashMap<String, Community> communityMap;
+	private HashMap<Integer, Community> communityMap;
 
 	public Session() {
 		communityMap = new HashMap<>();
 	}
 
-	public void setCommunitiesName(List<String> names) {
-		for (String s : names) {
-			communityMap.put(s, new Community());
-		}
-	}
 
 	public void addCommunity(Community community) {
-		communityMap.put(community.getName(), community);
+		communityMap.put(community.getCommunityID(), community);
+	}
+	
+	public void addCommunities(List<Community> communities){
+		for(Community c : communities){
+			communityMap.put(c.getCommunityID(),c);
+		}
 	}
 
 	public User getUser() {
@@ -35,6 +36,7 @@ public class Session {
 	}
 
 	public void setUser(User user) {
+		userID = user.getUserID();
 		this.user = user;
 	}
 
@@ -46,15 +48,15 @@ public class Session {
 		this.clientSocket = clientSocket;
 	}
 
-	public long getUserID() {
+	public int getUserID() {
 		return userID;
 	}
 
-	public void setUserID(long userID) {
+	public void setUserID(int userID) {
 		this.userID = userID;
 	}
 
-	public HashMap<String, Community> getCommunityMap() {
+	public HashMap<Integer, Community> getCommunityMap() {
 		return communityMap;
 	}
 

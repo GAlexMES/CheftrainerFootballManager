@@ -18,6 +18,7 @@ public class GUIController {
 
 	private static GUIController instance = null;
 	private GUIInitialator guiInitialator;
+	private FXMLLoader currentContentLoader;
 	
 	/**
 	 * Constructor
@@ -93,9 +94,9 @@ public class GUIController {
 	 */
 	public void setContentFrameByPath(String path, boolean update) {
 		try {
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource(path));
-			GridPane newContentPane = (GridPane) loader.load();
+			currentContentLoader = new FXMLLoader();
+			currentContentLoader.setLocation(MainApp.class.getResource(path));
+			GridPane newContentPane = (GridPane) currentContentLoader.load();
 			newContentPane.autosize();
 			if (update) {
 				GridPane currentContentPane = ((GridPane) guiInitialator
@@ -116,5 +117,9 @@ public class GUIController {
 	public void resetApplication() {
 		guiInitialator.closeMainApplication();
 		showLogin();
+	}
+	
+	public FXMLLoader getCurrentContentLoader(){
+		return currentContentLoader;
 	}
 }

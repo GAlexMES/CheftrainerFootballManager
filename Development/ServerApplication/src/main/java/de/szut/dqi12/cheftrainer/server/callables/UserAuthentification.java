@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
@@ -89,30 +90,20 @@ public class UserAuthentification extends CallableAbstract {
 		HashMap<String, Boolean> dbInfo = userManagement.login(loginUser);
 		boolean correctPassword = dbInfo.get("password");
 		boolean userExist = dbInfo.get("userExist");
-		createLoginAnswer(correctPassword, userExist);
 		if (userExist && correctPassword) {
 			User databaseUser = userManagement.getUserValues(loginUser
 					.getUserName());
 			Session session = new Session();
 			session.setUser(databaseUser);
-			session.setCommunitiesName(managerManagement
-					.getCummunitiyNamesForUser(databaseUser.getUserID()));
+			session.setUserID(databaseUser.getUserID());
+			session.addCommunities(managerManagement
+					.getCummunities(databaseUser.getUserID()));
 			session.setClientHandler(mesController.getClientHandler());
 			mesController.setSession(session);
 			controller.getSocketController().addSession(session);
-			sendCommunitieList(session.getCommunityMap());
 		}
-	}
 
-	private void sendCommunitieList(HashMap<String, Community> communityMap) {
-		Message comminityMessage = new Message(
-				ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
-		JSONArray communityList = new JSONArray();
-		for (String s : communityMap.keySet()) {
-			communityList.put(s);
-		}
-		comminityMessage.setMessageContent(communityList.toString());
-		mesController.sendMessage(comminityMessage);
+		createLoginAnswer(correctPassword, userExist);
 	}
 
 	/**
@@ -131,6 +122,10 @@ public class UserAuthentification extends CallableAbstract {
 		authentificationInfo.put("mode", "login");
 		authentificationInfo.put("password", correctPassword);
 		authentificationInfo.put("userExist", existUser);
+		if (correctPassword && existUser) {
+			authentificationInfo.put("UserID", mesController.getSession()
+					.getUserID());
+		}
 		authentificationMessage.setMessageContent(authentificationInfo);
 		mesController.sendMessage(authentificationMessage);
 	}
