@@ -49,4 +49,9 @@ public class DatabaseUtils {
 	public static List<Community> getCummunitiesForUser(int userID){
 		return communityManagement.getCummunities(userID);
 	}
+
+	public static HashMap<String, Boolean> enterCommunity(String communityName,
+			String communityPassword, int userID) {
+		return communityManagement.enterCommunity(communityName,communityPassword,userID);
+	}
 }

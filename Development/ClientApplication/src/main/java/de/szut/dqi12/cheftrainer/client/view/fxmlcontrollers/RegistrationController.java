@@ -2,8 +2,6 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -19,8 +17,8 @@ import javafx.stage.Stage;
 
 import org.json.JSONObject;
 
-import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
@@ -120,7 +118,8 @@ public class RegistrationController {
 	 * Is called from the "register" button. Creates a message with the user
 	 * entries and sends it to the server, if the entries are complete and
 	 * correct.
-	 * @throws IOException 
+	 * 
+	 * @throws IOException
 	 */
 	@FXML
 	public void register() {
@@ -131,26 +130,23 @@ public class RegistrationController {
 				Thread.sleep(800);
 				sendRegistrationMessage();
 			} catch (IOException e1) {
-				DialogUtils.showAlert("Registration failed", 
-						"Something went wrong during your registration", 
-						"Please check your server details!",
-						AlertType.ERROR);
+				AlertUtils.createSimpleDialog("Registration failed",
+						"Something went wrong during your registration",
+						"Please check your server details!", AlertType.ERROR);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
-			String errorMessage = AlertDialog.WRONG_INPUTS;
+			String errorMessage = AlertUtils.WRONG_INPUTS;
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			DialogUtils.showAlert("Registration failed",
+			AlertUtils.createSimpleDialog("Registration failed",
 					"Something went wrong during your registration",
-					errorMessage,
-					AlertType.ERROR);
+					errorMessage, AlertType.ERROR);
 		}
 	}
-	
 
 	/**
 	 * Checks the user inputs when the user inputs and change the border color
@@ -193,12 +189,12 @@ public class RegistrationController {
 		registrationInfo.put("login", loginField.getText());
 
 		try {
-			String passwordMD5 = CipherFactory.getMD5( passwordField.getText());
+			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
 			registrationInfo.put("password", passwordMD5);
 			registrationMessage.setMessageContent(registrationInfo);
 			serverCon.sendMessage(registrationMessage);
 		} catch (NoSuchAlgorithmException e) {
-			Alert alert = AlertDialog.createExceptionDialog(e);
+			Alert alert = AlertUtils.createExceptionDialog(e);
 			alert.showAndWait();
 		}
 
@@ -239,7 +235,8 @@ public class RegistrationController {
 				newSession.setClientSocket(serverCon);
 				User user = new User();
 				user.setFirstName(loginField.getText());
-				newSession.setUser(user);;
+				newSession.setUser(user);
+				;
 				loginController.showRegistrationDialog();
 				dialogStage.close();
 			}

@@ -2,8 +2,6 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -24,9 +22,9 @@ import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.MainApp;
-import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
@@ -116,16 +114,16 @@ public class LoginController {
 			try {
 				doLogin();
 			} catch (IOException e) {
-				DialogUtils.showAlert("Login failed",
+				AlertUtils.createSimpleDialog("Login failed",
 						"Something went wrong during your login",
 						"Please check your server details!", AlertType.ERROR);
 			}
 		} else {
-			String errorMessage = AlertDialog.WRONG_INPUTS;
+			String errorMessage = AlertUtils.WRONG_INPUTS;
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			DialogUtils.showAlert("Login failed", "Something went wrong during your login",
+			AlertUtils.createSimpleDialog("Login failed", "Something went wrong during your login",
 					errorMessage,AlertType.ERROR);
 		}
 	}
@@ -166,10 +164,10 @@ public class LoginController {
 			newSession.setUser(user);
 			Controller.getInstance().setSession(newSession);;
 		} catch (NoSuchAlgorithmException e) {
-			Alert alert = AlertDialog.createExceptionDialog(e);
+			Alert alert = AlertUtils.createExceptionDialog(e);
 			alert.showAndWait();
 		} catch (UnsupportedEncodingException e) {
-			Alert alert = AlertDialog.createExceptionDialog(e);
+			Alert alert = AlertUtils.createExceptionDialog(e);
 			alert.showAndWait();
 		} catch (InterruptedException e) {
 			e.printStackTrace();

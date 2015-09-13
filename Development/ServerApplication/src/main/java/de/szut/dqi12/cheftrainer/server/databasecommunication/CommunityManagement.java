@@ -3,7 +3,9 @@ package de.szut.dqi12.cheftrainer.server.databasecommunication;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
@@ -18,7 +20,8 @@ public class CommunityManagement {
 
 	public List<Community> getCummunities(int userID) {
 		List<Community> retval = new ArrayList<>();
-		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde INNER JOIN Manager where Manager.Nutzer_ID ="+ userID+" And Manager.Spielrunde_ID=Spielrunde.ID";
+		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde INNER JOIN Manager WHERE Manager.Nutzer_ID ="
+				+ userID + " AND Manager.Spielrunde_ID=Spielrunde.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		List<Integer> idList = new ArrayList<>();
 		try {
@@ -29,15 +32,15 @@ public class CommunityManagement {
 		} catch (SQLException e) {
 
 		}
-		for(Integer i : idList){
+		for (Integer i : idList) {
 			retval.add(getCommunity(i));
 		}
 		return retval;
 	}
-	
-	private Community getCommunity(int communityID){
+
+	private Community getCommunity(int communityID) {
 		Community retval = new Community();
-		String sqlQuery = "Select * FROM Spielrunde where ID = "+communityID;
+		String sqlQuery = "Select * FROM Spielrunde WHERE ID = " + communityID;
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
 			while (rs.next()) {
@@ -49,19 +52,19 @@ public class CommunityManagement {
 		retval.addManagers(getManagers(communityID));
 		return retval;
 	}
-	
-	private List<Manager> getManagers(int communityID){
+
+	private List<Manager> getManagers(int communityID) {
 		List<Manager> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Manager.ID, Nutzer.Nutzername, Manager.Budget, Manager.Punkte "
-				+ "FROM  Manager INNER JOIN  Nutzer where Spielrunde_ID="+communityID
-				+ " AND Manager.Nutzer_ID=Nutzer.ID";
+				+ "FROM  Manager INNER JOIN  Nutzer WHERE Spielrunde_ID="
+				+ communityID + " AND Manager.Nutzer_ID=Nutzer.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
 			while (rs.next()) {
 				String managerName = rs.getString("Nutzername");
 				double money = rs.getDouble("Budget");
 				int points = rs.getInt("Punkte");
-				Manager manager = new Manager(managerName,money,points);
+				Manager manager = new Manager(managerName, money, points);
 				manager.setID(rs.getInt("ID"));
 				retval.add(manager);
 			}
@@ -69,29 +72,100 @@ public class CommunityManagement {
 		}
 		return retval;
 	}
-	
-	public boolean createNewCommunity(String name, String password, int adminID){
-		String sqlQuery = "Select Name From Spielrunde where Name='"+name+"'";
+
+	public boolean createNewCommunity(String name, String password, int adminID) {
+		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name
+				+ "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		try {
-			int counter = 0;
-			while (rs.next()) {
-				counter ++;
-			}
-			if(counter == 0){
-				return createCommunity(name,password, adminID);
-			}
-		}
-		catch(SQLException e){
-			e.printStackTrace();
+		if (isResultSetEmpty(rs)) {
+			return createCommunity(name, password, adminID);
 		}
 		return false;
 	}
-	
-	private boolean createCommunity(String name, String password, int adminID){
+
+	private boolean createCommunity(String name, String password, int adminID) {
 		String sqlQuery = "INSERT INTO Spielrunde (Name, Administrator_ID, Passwort) VALUES ( '"
-							+ name +"', '"+adminID +"', '"+password+"')";
+				+ name + "', '" + adminID + "', '" + password + "')";
 		sqlCon.sendQuery(sqlQuery);
 		return true;
+	}
+
+	public HashMap<String, Boolean> enterCommunity(String communityName,
+			String communityPassword, int userID) {
+		HashMap<String, Boolean> retval = new HashMap<String, Boolean>();
+		retval.put("userDoesNotExist", false);
+		retval.put("existCommunity", false);
+		retval.put("correctPassword", false);
+		retval.put("managerCreated", false);
+		if (existCommunity(communityName)) {
+			retval.put("existCommunity", true);
+			if (checkPassword(communityPassword, communityName)) {
+				retval.put("correctPassword", true);
+				if (!existUserInCommunity(userID, communityName)) {
+					retval.put("userDoesNotExist", true);
+					createNewManager(communityName, userID);
+				}
+			}
+		}
+		return retval;
+	}
+
+	private boolean existCommunity(String communityName) {
+		String sqlQueryExistCommunity = "SELECT * FROM Spielrunde WHERE Spielrunde.Name= '"
+				+ communityName + "'";
+
+		ResultSet rs = sqlCon.sendQuery(sqlQueryExistCommunity);
+		return !isResultSetEmpty(rs);
+	}
+
+	private boolean createNewManager(String communityName, int userID) {
+		ResultSet rs;
+		String sqlQueryCommunityID = "SELECT ID FROM Spielrunde WHERE Name='"
+				+ communityName + "'";
+		rs = sqlCon.sendQuery(sqlQueryCommunityID);
+		try {
+			int communityID = rs.getInt("ID");
+			String sqlQuery = "INSERT INTO Manager (Nutzer_ID, Spielrunde_ID) VALUES ('"
+					+ userID + "','" + communityID + "')";
+			sqlCon.sendQuery(sqlQuery);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	private boolean checkPassword(String password, String communityName) {
+		String sqlQuery = "SELECT Passwort FROM Spielrunde" + " WHERE Name='"
+				+ communityName + "'" + " AND Passwort='" + password + "'";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		return !isResultSetEmpty(rs);
+	}
+
+	private boolean existUserInCommunity(int userID, String communityName) {
+		String sqlQueryExistUser = "SELECT * FROM Manager INNER JOIN Spielrunde "
+				+ "WHERE Manager.Nutzer_ID="
+				+ userID
+				+ " And Spielrunde.Name='"
+				+ communityName
+				+ "'"
+				+ " AND Spielrunde.ID=Manager.Spielrunde_ID";
+		ResultSet rs = sqlCon.sendQuery(sqlQueryExistUser);
+		return !isResultSetEmpty(rs);
+	}
+
+	private boolean isResultSetEmpty(ResultSet rs) {
+		try {
+			int counter = 0;
+			while (rs.next()) {
+				counter++;
+			}
+			if (counter == 0) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }

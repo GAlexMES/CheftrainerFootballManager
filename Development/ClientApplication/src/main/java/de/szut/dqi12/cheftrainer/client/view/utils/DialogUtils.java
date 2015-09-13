@@ -13,9 +13,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.MainApp;
-import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 
@@ -63,27 +61,4 @@ public class DialogUtils {
 		return retval;
 	}
 	
-	/**
-	 * Shows a error alert with the given parameters. Can also be called from a
-	 * other thread.
-	 * 
-	 * @param title
-	 *            of the dialog
-	 * @param header
-	 *            of the dialog
-	 * @param content
-	 *            of the dialog
-	 */
-	public static void showAlert(String title, String header, String content, AlertType type) {
-		Platform.runLater(new Runnable() {
-
-			@Override
-			public void run() {
-				Alert alert = AlertDialog.createSimpleDialog(title, header,
-						content, type);
-				alert.showAndWait();
-			}
-		});
-
-	}
 }

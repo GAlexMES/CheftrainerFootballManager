@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
-import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
+import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
@@ -52,12 +52,12 @@ public class CreateCommunityController {
 		if (errorList.size() == 0) {
 			createNewCommunityMessage();
 		} else {
-			String errorMessage = AlertDialog.WRONG_INPUTS;
+			String errorMessage = AlertUtils.WRONG_INPUTS;
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			DialogUtils.showAlert("Creation failed",
-					"Something went wrong during the community creation0",
+			AlertUtils.createSimpleDialog("Creation failed",
+					"Something went wrong during the community creation!",
 					errorMessage,
 					AlertType.ERROR);
 		}
@@ -75,7 +75,7 @@ public class CreateCommunityController {
 			communityMessage.setMessageContent(communitJSON);
 			Controller.getInstance().getSession().getClientSocket().sendMessage(communityMessage);
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			AlertDialog.createExceptionDialog(e);
+			AlertUtils.createExceptionDialog(e);
 		}
 	}
 }

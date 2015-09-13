@@ -25,11 +25,11 @@
       </Text>
       <ButtonBar layoutX="95.0" layoutY="184.0" prefHeight="40.0" prefWidth="142.0">
         <buttons>
-          <Button mnemonicParsing="false" text="Cancle" />
-            <Button mnemonicParsing="false" text="Enter" />
+          <Button onAction="#cancle" mnemonicParsing="false" text="Cancle" />
+            <Button onAction="#enter" mnemonicParsing="false" text="Enter" />
         </buttons>
       </ButtonBar>
-      <TextField layoutX="177.0" layoutY="87.0" />
-      <PasswordField layoutX="177.0" layoutY="139.0" />
+      <TextField fx:id="communityNameField" layoutX="177.0" layoutY="87.0" />
+      <PasswordField  fx:id="passwordField" layoutX="177.0" layoutY="139.0" />
    </children>
 </AnchorPane>
