@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.client.servercommunication;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -10,17 +11,14 @@ import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
-import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 
 public class ServerConnection {
 	
-	private Client client;
 	
 	private final static String PACKAGE_PATH = "de.szut.dqi12.cheftrainer.client.callables.CLASS";
 	
-	public ServerConnection(ClientProperties clientProps ){
-		
+	public static Client createServerConnection(ClientProperties clientProps ) throws IOException{
 		URL path = null;
 		try {
 			String pathAsString = MainApp.class.getResource(".").toURI().toString();
@@ -34,11 +32,7 @@ public class ServerConnection {
 		ServerToClient_MessageIDs stc = new ServerToClient_MessageIDs();
 		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(stc,path, PACKAGE_PATH);
 		clientProps.addClassPathMapper(idMapper);
-		client = new Client(clientProps);
+		return new Client(clientProps);
 	}
 	
-	public void sendMessage(Message message){
-		client.sendMesage(message);
-	}
-
 }

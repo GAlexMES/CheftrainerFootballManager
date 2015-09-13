@@ -8,6 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+/**
+ * This class is used to connect to a existing database.
+ * @author Alexander Brennecke
+ *
+ */
 public class SQLConnection {
 
 	//INITIALISATION
@@ -28,6 +33,7 @@ public class SQLConnection {
 	 */
 	public SQLConnection(String name) {
 		this.name = name;
+		DatabaseUtils.getInstance().setSQLConnection(this);
 	}
 
 	/**
@@ -91,8 +97,10 @@ public class SQLConnection {
 			System.err.println("No return Data. Use lastResult");
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_ERROR)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
+			System.err.print(sqLiteError);
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_BUSY)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
+			System.err.print(sqLiteError);
 		} else {
 			sqle.printStackTrace();
 		}

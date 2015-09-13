@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
+import javax.sound.midi.ControllerEventListener;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
@@ -16,8 +17,10 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableController;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.Handshake_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 
 /**
  * The MessageController Class is important for sending and receiving Message
@@ -44,6 +47,9 @@ public class MessageController {
 	private final static Logger LOGGER = Logger
 			.getLogger(MessageController.class);
 
+	private ClientHandler clientHandler;
+	private Session session;
+	
 	/**
 	 * Constructor. Tries to generate a ID<->Class Map for each element in the
 	 * idMappers list. After that it sets the messageController of each instance
@@ -194,5 +200,18 @@ public class MessageController {
 	public void setAESKey(SecretKey aesKey) {
 		cipherFactory = new CipherFactory(aesKey, "AES");
 	}
+	public void setClientHandler(ClientHandler clientHandler){
+		this.clientHandler = clientHandler;
+	}
+	public ClientHandler getClientHandler(){
+		return clientHandler;
+	}
 
+	public void setSession(Session session) {
+		this.session = session;
+	}
+
+	public Session getSession(){
+		return session;
+	}
 }

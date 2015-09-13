@@ -7,9 +7,13 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
 
 
@@ -18,12 +22,14 @@ import de.szut.dqi12.cheftrainer.connectorlib.logging.LoggingMessages;
  * @author Alexander Brennecke
  *
  */
-public class Server {
+public class Server implements Runnable {
 
 	private KeyPair keyPair;
 	private ArrayList<Thread> clientList = new ArrayList<Thread>();
 	private ArrayList<ClientHandler> clientHandlerList = new ArrayList<ClientHandler>();
 	private ServerProperties serverProps;
+	
+	
 	
 	private final static Logger LOGGER = Logger.getLogger(Server.class);
 
@@ -79,9 +85,7 @@ public class Server {
 	private void newClient(Socket clientSocket){
 		ClientHandler tempClientHandler = new ClientHandler(clientSocket, keyPair,
 				serverProps, this);
-		clientHandlerList.add(tempClientHandler);
 		Thread t = new Thread(tempClientHandler);
-		clientList.add(t);
 		t.start();
 	}
 	
@@ -98,6 +102,5 @@ public class Server {
 	public ArrayList<ClientHandler> getClientHandlerList() {
 		return clientHandlerList;
 	}
-	
 	
 }

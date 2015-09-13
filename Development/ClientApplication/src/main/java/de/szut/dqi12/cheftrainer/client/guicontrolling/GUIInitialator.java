@@ -6,6 +6,7 @@ import java.net.URL;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.SideMenuController;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -14,82 +15,111 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-
 /**
- * The GUI Initialator replaces, generates and renders the components of the GUI.
+ * The GUI Initialator replaces, generates and renders the components of the
+ * GUI.
+ * 
  * @author Alexander Brennecke
  *
  */
 public class GUIInitialator {
 
-	
 	// DEFINITION
 	private Stage rStage;
+	private Stage mainApplicationStage;
+	private Stage loginDialogStage;
 	private GridPane rLayout;
 	private AnchorPane loginLayout;
-	
+
 	private SideMenuController controller;
 	private LoginController loginController;
+	
+	private FXMLLoader currentFXMLLoader;
 
 	public static final String FXML_RESOURCE = "view/fxmlsources/";
 
-	
 	/**
 	 * Constructor to define this class
+	 * 
 	 * @param primaryStage
 	 */
 	public GUIInitialator(Stage primaryStage) {
 		this.rStage = primaryStage;
 		this.rStage.setTitle("Cheftrainer Football Manager");
+		currentFXMLLoader = new FXMLLoader();
 	}
 
-	
+	/**
+	 * Is called to close the application.
+	 */
+	public void closeMainApplication() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				mainApplicationStage.close();
+			}
+		});
+	}
+
+	/**
+	 * Is called to close the application.
+	 */
+	public void closeLoginDialog() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				loginDialogStage.close();
+			}
+		});
+	}
+
 	/**
 	 * Generates the Login Layout and displays it.
 	 */
 	public void initLoginLayout() {
 		try {
 			// new FXMLLoader with Login.fxml as source
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(new URL(MainApp.class.getResource(".")+FXML_RESOURCE
-					+ "Login.fxml"));
-			loginLayout = (AnchorPane) loader.load();
-			
-			Stage dialogStage = new Stage();
-			dialogStage.initOwner(rStage);
-			dialogStage.initModality(Modality.WINDOW_MODAL);
-			Scene scene = new Scene(loginLayout);
-			dialogStage.setScene(scene);
-			
-			//definition of the login controller
-			loginController =  loader.getController();
-			loginController.setStage(dialogStage);
-			
+			currentFXMLLoader = new FXMLLoader();
+			currentFXMLLoader.setLocation(new URL(MainApp.class.getResource(".")
+					+ FXML_RESOURCE + "Login.fxml"));
+			loginLayout = (AnchorPane) currentFXMLLoader.load();
 
-			dialogStage.showAndWait();
+			loginDialogStage = new Stage();
+			loginDialogStage.initOwner(rStage);
+			loginDialogStage.initModality(Modality.WINDOW_MODAL);
+			Scene scene = new Scene(loginLayout);
+			loginDialogStage.setScene(scene);
+
+			// definition of the login controller
+			loginController = currentFXMLLoader.getController();
+			loginController.setStage(loginDialogStage);
+
+			loginDialogStage.showAndWait();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * Generates the Root Layout/Frame of the main application and displays it on the screen
+	 * Generates the Root Layout/Frame of the main application and displays it
+	 * on the screen
 	 */
 	public void initRootLayout() {
 		try {
 			// new FXMLLoader with RooFrame.fxml as source
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE
+			currentFXMLLoader = new FXMLLoader();
+			currentFXMLLoader.setLocation(MainApp.class.getResource(FXML_RESOURCE
 					+ "RootFrame.fxml"));
-			rLayout = (GridPane) loader.load();
+			rLayout = (GridPane) currentFXMLLoader.load();
 
 			// displays the RootFrame.fxml on screen
-			rStage.setMinWidth(600.0);
+			mainApplicationStage = new Stage();
+			mainApplicationStage.setMinWidth(600.0);
 			Scene scene = new Scene(rLayout);
-			rStage.setScene(scene);
-			rStage.show();
-			
+			mainApplicationStage.setScene(scene);
+			mainApplicationStage.show();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -101,21 +131,21 @@ public class GUIInitialator {
 	public void showMenuLayout() {
 		try {
 			// new FXMLLoader with ManuLayout.fxml as source
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource(FXML_RESOURCE
+			FXMLLoader menuLoader = new FXMLLoader();
+			menuLoader.setLocation(MainApp.class.getResource(FXML_RESOURCE
 					+ "MenuLayout.fxml"));
-			VBox menuLayout = (VBox) loader.load();
+			VBox menuLayout = (VBox) menuLoader.load();
 			rLayout.add(menuLayout, 0, 0);
 
 			// defines the SideMenuController
-			controller = loader.getController();
-			controller.setMainApp(this);
+			controller = menuLoader.getController();
+			controller.setGUIInitialator(this);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	//GETTER AND SETTER
+	// GETTER AND SETTER
 	public Stage getPrimaryStage() {
 		return rStage;
 	}
@@ -123,12 +153,16 @@ public class GUIInitialator {
 	public GridPane getRootlayout() {
 		return this.rLayout;
 	}
-	
-	public SideMenuController getSideMenuController(){
+
+	public SideMenuController getSideMenuController() {
 		return this.controller;
 	}
 
-	public LoginController getLoginController(){
+	public LoginController getLoginController() {
 		return loginController;
+	}
+
+	public FXMLLoader getCurrentFXMLLoader() {
+		return currentFXMLLoader;
 	}
 }

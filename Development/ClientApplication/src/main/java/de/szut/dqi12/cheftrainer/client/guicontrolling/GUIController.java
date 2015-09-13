@@ -1,6 +1,8 @@
 package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -8,6 +10,10 @@ import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.MainApp;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
 /**
  * The GUIController controlles the GUIInitialator to replacement GUI components.
@@ -18,6 +24,8 @@ public class GUIController {
 
 	private static GUIController instance = null;
 	private GUIInitialator guiInitialator;
+	private FXMLLoader currentContentLoader;
+	private Stage currentDialogStage;
 	
 	/**
 	 * Constructor
@@ -61,7 +69,7 @@ public class GUIController {
 		Platform.runLater(new Runnable() {
             @Override
             public void run() {
-            	guiInitialator.getLoginController().close();
+            	guiInitialator.closeLoginDialog();
             	guiInitialator.initRootLayout();
         		guiInitialator.showMenuLayout();
         		setContentFrameByName("CommunitiesFrame.fxml", false);
@@ -93,9 +101,15 @@ public class GUIController {
 	 */
 	public void setContentFrameByPath(String path, boolean update) {
 		try {
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource(path));
-			GridPane newContentPane = (GridPane) loader.load();
+			currentContentLoader = new FXMLLoader();
+			currentContentLoader.setLocation(MainApp.class.getResource(path));
+			GridPane newContentPane = (GridPane) currentContentLoader.load();
+			if(currentContentLoader.getController().getClass()==CommunitiesController.class){
+				Team t = new Team("","","");
+				List<Team> teamList = new ArrayList<>();
+				teamList.add(t);
+				((CommunitiesController)currentContentLoader.getController()).initTable();
+			}
 			newContentPane.autosize();
 			if (update) {
 				GridPane currentContentPane = ((GridPane) guiInitialator
@@ -111,5 +125,31 @@ public class GUIController {
 
 	public GUIInitialator getGUIInitialator() {
 		return guiInitialator;
+	}
+
+	public void resetApplication() {
+		guiInitialator.closeMainApplication();
+		showLogin();
+	}
+	
+	public FXMLLoader getCurrentContentLoader(){
+		return currentContentLoader;
+	}
+
+	public void setCurrentDialogStage(Stage dialogStage) {
+		this.currentDialogStage = dialogStage;
+	}
+	
+	public Stage getCurrentDialogStage(){
+		return this.currentDialogStage;
+	}
+
+	public void closeCurrentDialog() {
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				currentDialogStage.close();
+			}
+		});		
 	}
 }

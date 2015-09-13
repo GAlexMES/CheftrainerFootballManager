@@ -1,10 +1,8 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.application.Platform;
@@ -19,9 +17,14 @@ import javafx.stage.Stage;
 
 import org.json.JSONObject;
 
-import de.szut.dqi12.cheftrainer.client.guicontrolling.AlertDialog;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
+import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
+import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -34,10 +37,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 public class RegistrationController {
 
 	private Stage dialogStage;
-	
-	// Error message for wrong Inputs
-	private final String WRONG_INPUTS = "Please check ypur input for the following parameters: ";
-	
+
 	// LINK TO JAVAFX GUI ELEMENTS
 	@FXML
 	private AnchorPane serverDetailsPane;
@@ -69,11 +69,10 @@ public class RegistrationController {
 	private double buttonPane_YLayout;
 	private double serverDetailsPane_YLayout;
 	private double severDetailsPane_Height;
-	
-	
+
 	// are used for the communication with the login dialog and the server
 	private LoginController loginController;
-	private ServerConnection serverCon;
+	private Client serverCon;
 
 	/**
 	 * initialized a few variables
@@ -116,78 +115,66 @@ public class RegistrationController {
 	}
 
 	/**
-	 * Is called from the "register" button. Creates a message with the user entries and sends it to the server, if the entries are complete and correct.
+	 * Is called from the "register" button. Creates a message with the user
+	 * entries and sends it to the server, if the entries are complete and
+	 * correct.
+	 * 
+	 * @throws IOException
 	 */
 	@FXML
 	public void register() {
 		List<String> errorList = checkInputs();
-		if (errorList.size()==0) {
-			createServerConnection();
+		if (errorList.size() == 0) {
 			try {
+				createServerConnection();
 				Thread.sleep(800);
+				sendRegistrationMessage();
+			} catch (IOException e1) {
+				AlertUtils.createSimpleDialog("Registration failed",
+						"Something went wrong during your registration",
+						"Please check your server details!", AlertType.ERROR);
 			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			try {
-				sendRegistrationMessage();
-			} catch (UnsupportedEncodingException e) {
+		} else {
+			String errorMessage = AlertUtils.WRONG_INPUTS;
+			for (String s : errorList) {
+				errorMessage += "\n " + s;
 			}
+			AlertUtils.createSimpleDialog("Registration failed",
+					"Something went wrong during your registration",
+					errorMessage, AlertType.ERROR);
 		}
-		else{
-			String errorMessage = WRONG_INPUTS;
-			for(String s : errorList){
-				errorMessage += "\n "+s;
-			}
-			showError("Registration failed", "Something went wrong during your registration", errorMessage);
-		}
-	}
-	
-	
-	/**
-	 * Shows a error alert with the given parameters. Can also be called from a other thread.
-	 * @param title of the dialog
-	 * @param header of the dialog
-	 * @param content of the dialog
-	 */
-	public void showError(String title, String header, String content){
-		Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-            	Alert alert = AlertDialog.createSimpleDialog(title, header, content, AlertType.ERROR);
-            	alert.showAndWait();
-            }
-        });
-		
 	}
 
 	/**
-	 * Checks the user inputs when the user inputs and change the border color of empty/wrong input fields
+	 * Checks the user inputs when the user inputs and change the border color
+	 * of empty/wrong input fields
+	 * 
 	 * @return
 	 */
-	private List<String> checkInputs(){
-		TextField[] inputFields = {vornameField,nachnameField,mailField,loginField,portField,ipField,passwordField,passwordConfirmationField};
-		List<String> retval = new ArrayList<>();
-		for(TextField tf:inputFields){
-			if(tf.getText()==null || tf.getText().isEmpty()){
-				tf.setStyle("-fx-text-box-border: red;");
-				retval.add(tf.getId().substring(0,tf.getId().length()-5));
-			}
-			else{
-				tf.setStyle("-fx-text-box-border: green;");
-			}
-		}
-		
-		if(!(passwordField.getText().equals(passwordConfirmationField.getText()))){
+	private List<String> checkInputs() {
+		TextField[] inputFields = { vornameField, nachnameField, mailField,
+				loginField, portField, ipField, passwordField,
+				passwordConfirmationField };
+
+		List<String> retval = DialogUtils.checkInputs(inputFields);
+
+		if (!(passwordField.getText().equals(passwordConfirmationField
+				.getText()))) {
 			passwordField.setText("");
 			passwordConfirmationField.setText("");
 			passwordField.setStyle("-fx-text-box-border: red;");
 			passwordConfirmationField.setStyle("-fx-text-box-border: red;");
+			retval.add("Passwords are not the same");
 		}
 		return retval;
 	}
 
 	/**
 	 * Creates the registration message and sends it to the server.
+	 * 
 	 * @throws UnsupportedEncodingException
 	 */
 	private void sendRegistrationMessage() throws UnsupportedEncodingException {
@@ -200,58 +187,65 @@ public class RegistrationController {
 		registrationInfo.put("nachname", nachnameField.getText());
 		registrationInfo.put("mail", mailField.getText());
 		registrationInfo.put("login", loginField.getText());
-		
-		// Creeates a MD5 hash of the password.
-		MessageDigest mg;
+
 		try {
-			mg = MessageDigest.getInstance("MD5");
-			byte[] passwordByte = passwordField.getText().getBytes("UTF-8");
-			byte[] paswordHashByte = mg.digest(passwordByte);
-			registrationInfo.put("password", new String(paswordHashByte, StandardCharsets.UTF_8));
+			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
+			registrationInfo.put("password", passwordMD5);
 			registrationMessage.setMessageContent(registrationInfo);
 			serverCon.sendMessage(registrationMessage);
 		} catch (NoSuchAlgorithmException e) {
-			Alert alert = AlertDialog.createExceptionDialog(e);
+			Alert alert = AlertUtils.createExceptionDialog(e);
 			alert.showAndWait();
 		}
-		
+
 	}
 
 	/**
-	 * Creates a new server connection to the IP and Port, standing in the input fields.
+	 * Creates a new server connection to the IP and Port, standing in the input
+	 * fields.
 	 */
-	private void createServerConnection() {
+	private void createServerConnection() throws IOException {
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
-		serverCon = new ServerConnection(clientProps);
+		try {
+			serverCon = ServerConnection.createServerConnection(clientProps);
+		} catch (IOException e) {
+			throw e;
+		}
 	}
 
 	/**
 	 * Is called from the "cancle" button. Closes the dialog.
 	 */
 	@FXML
-	public void cancle(){
+	public void cancle() {
 		dialogStage.close();
 	}
-	
+
 	/**
-	 * Is used to close the dialog from a other thread. Sets the server connection to the login controller.
+	 * Is used to close the dialog from a other thread. Sets the server
+	 * connection to the login controller.
 	 */
 	public void closeDialog() {
 		Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-            	loginController.setServerConnection(serverCon);
-            	loginController.showRegistrationDialog();
-            	dialogStage.close();
-            }
-        });
+			@Override
+			public void run() {
+				Session newSession = new Session();
+				newSession.setClientSocket(serverCon);
+				User user = new User();
+				user.setFirstName(loginField.getText());
+				newSession.setUser(user);
+				;
+				loginController.showRegistrationDialog();
+				dialogStage.close();
+			}
+		});
 	}
-	
+
 	// GETTER AND SETTER
 	public void setLoginController(LoginController loginController) {
-		this.loginController=loginController;
+		this.loginController = loginController;
 	}
 
 }

@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.usercommunication;
+package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
 import org.json.JSONObject;
 
@@ -9,6 +9,8 @@ public class User {
 	String userName = "";
 	String eMail = "";
 	String password = "";
+	
+	int userID;
 	
 	public void setWithJSON(JSONObject json){
 		firstName = json.getString("vorname");
@@ -47,6 +49,12 @@ public class User {
 	}
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	public int getUserID(){
+		return userID;
+	}
+	public void setUserId(int ID){
+		this.userID=ID;
 	}
 	public String getAllForSQL(){
 		String retval = "'"+firstName +"', '" + lastName +"', '" + userName +"', '" + eMail +"', '" + password+"'";

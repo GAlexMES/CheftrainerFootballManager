@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import de.szut.dqi12.cheftrainer.server.usercommunication.User;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
 
 /**
@@ -93,7 +93,6 @@ public class UserManagement {
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		int counter = 0;
 		try {
-			
 			while (rs.next()) {
 				counter ++;
 				if (rs.getString(1).equals(user.getPassword())) {
@@ -105,6 +104,31 @@ public class UserManagement {
 		}
 		if(counter == 1){
 			retval.put("userExist", true);
+		}
+		return retval;
+	}
+	
+	/**
+	 * This mehtod maps all information of the given user to a new User object and returns it.
+	 * @param userName is used to find the information in the database and to map it to the User Object.
+	 * @return a new User object with the mapped parameters.
+	 */
+	public User getUserValues(String userName){
+		String sqlQuery = "select * FROM Nutzer where Nutzername = '"
+				+ userName + "'";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		User retval = new User();
+		try {
+			while (rs.next()) {
+				retval.seteMail(rs.getString("EMail"));
+				retval.setFirstName(rs.getString("Vorname"));
+				retval.setLastName(rs.getString("Nachname"));
+				retval.setUserName(rs.getString("Nutzername"));
+				retval.setUserId(rs.getInt("ID"));
+				retval.setPassword(rs.getString("Passwort"));
+			}
+		} catch (SQLException e) {
+
 		}
 		return retval;
 	}

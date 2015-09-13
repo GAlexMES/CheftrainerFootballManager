@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+
+
+<AnchorPane fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.CreateCommunityController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="274.0" prefWidth="371.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Text layoutX="47.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create a new community!" wrappingWidth="290.13671875">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Text>
+      <Text layoutX="39.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Community name:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Text>
+      <Text layoutX="12.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Community password:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Text>
+      <Text layoutX="40.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="confirm password:">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Text>
+      <ButtonBar layoutX="95.0" layoutY="230.0" prefHeight="40.0" prefWidth="142.0">
+        <buttons>
+          <Button onAction="#cancel" mnemonicParsing="false" text="Cancle" />
+            <Button onAction="#create" mnemonicParsing="false" text="Register" />
+        </buttons>
+      </ButtonBar>
+      <TextField fx:id="communityNameField" layoutX="177.0" layoutY="87.0" />
+      <PasswordField fx:id="passwordField" layoutX="177.0" layoutY="139.0" />
+      <PasswordField fx:id="passwordConfirmationField" layoutX="177.0" layoutY="178.0" />
+   </children>
+</AnchorPane>

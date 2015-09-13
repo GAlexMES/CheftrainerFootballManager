@@ -1,17 +1,16 @@
-package de.szut.dqi12.cheftrainer.server.gamemanagement;
+package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 
  * @author Robin
  *
  */
-public class User {
+public class Manager {
 
+	private int id;
 	private String name;
 	private Double money;
 	private List<Player> players;
@@ -19,7 +18,7 @@ public class User {
 	private int points;
 	private List<Transaction> transactions;
 	
-	public User(String name, Double money, int points){
+	public Manager(String name, Double money, int points){
 		this.name = name;
 		this.money = money;
 		this.points = points;
@@ -38,7 +37,6 @@ public class User {
 	public void setTransactions(List<Transaction> transactions) {
 		this.transactions = transactions;
 	}
-
 	
 	public void addPlayer(Player player){
 		this.players.add(player);
@@ -66,6 +64,14 @@ public class User {
 
 	public int getPoints() {
 		return points;
+	}
+
+	public int getID() {
+		return id;
+	}
+
+	public void setID(int id) {
+		this.id = id;
 	}
 	
 	

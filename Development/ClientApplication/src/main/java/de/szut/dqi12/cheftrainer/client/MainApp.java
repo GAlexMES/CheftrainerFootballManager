@@ -1,7 +1,6 @@
 package de.szut.dqi12.cheftrainer.client;
 
 
-import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -18,8 +17,8 @@ public class MainApp extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
-		GUIController guiController = GUIController.getInstance(primaryStage);
-		guiController.showLogin();
+		Controller controller = Controller.getInstance();
+		controller.startApplication(primaryStage);
 	}
 
 	

@@ -60,15 +60,10 @@
 				<PasswordField fx:id="passwordField" layoutX="182.0" layoutY="176.0" prefHeight="25.0" prefWidth="113.0" />
 
 				<PasswordField fx:id="passwordConfirmationField" layoutX="303.0" layoutY="176.0" prefHeight="25.0" prefWidth="103.0" />
+				<CheckBox fx:id="showDetailsCheck" layoutX="50.0" layoutY="219.0" onAction="#triggerFrameSize" text="Server Details" />
 
 				<AnchorPane fx:id="serverDetailsPane" layoutY="230.0" prefHeight="95.0" prefWidth="413.0">
 					<children>
-						<Text layoutX="50.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port">
-							<font>
-								<Font size="20.0" />
-							</font>
-						</Text>
-						<TextField fx:id="portField" layoutX="200.0" layoutY="66.0" text="5000" />
 
 						<Text layoutX="50.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="IP Adresse">
 							<font>
@@ -76,9 +71,14 @@
 							</font>
 						</Text>
 						<TextField fx:id="ipField" layoutX="200.0" layoutY="21.0" text="127.0.0.1" />
+						<Text layoutX="50.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Port">
+							<font>
+								<Font size="20.0" />
+							</font>
+						</Text>
+						<TextField fx:id="portField" layoutX="200.0" layoutY="66.0" text="5000" />
 					</children>
 				</AnchorPane>
-				<CheckBox fx:id="showDetailsCheck" layoutX="50.0" layoutY="219.0" onAction="#triggerFrameSize" text="Server Details" />
 
 			</children>
 		</AnchorPane>
