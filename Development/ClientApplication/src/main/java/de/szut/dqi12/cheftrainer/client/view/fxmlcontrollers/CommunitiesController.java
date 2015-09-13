@@ -3,8 +3,6 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -12,13 +10,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
+/**
+ * This is the controller for the CommunitiesFrame.
+ * @author Robin Bley, Alexander Brennecke
+ *
+ */
 public class CommunitiesController {
 
 	@FXML
@@ -103,14 +103,30 @@ public class CommunitiesController {
 		});
 	}
 
+	/**
+	 * Is called, when the enter community button was pressed.
+	 * It shows a the EnterCommunityDialog.fxml
+	 */
 	@FXML
 	public void enterCommunity() {
-		DialogUtils.showDialog("Enter Community!", "EnterCommunityDialog.fxml");
+		try {
+			DialogUtils.showDialog("Enter Community!", "EnterCommunityDialog.fxml");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
+	/**
+	 * Is called, when the enter community button was pressed.
+	 * It shows a the CreateCommunityDialog.fxml
+	 */
 	@FXML
 	public void createCommunity() {
-		DialogUtils.showDialog("Create Community!",
-				"CreateCommunityDialog.fxml");
+		try {
+			DialogUtils.showDialog("Create Community!",
+					"CreateCommunityDialog.fxml");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

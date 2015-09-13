@@ -6,10 +6,15 @@ import java.util.List;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
+/**
+ * This class provides some Database utils.
+ * There is no Javadoc, because the functions just forwarde to functions in the according *Management (e.g UserManagement) class.
+ * @author Alexander Brennecke
+ *
+ */
 public class DatabaseUtils {
 	
 	private static DatabaseUtils INSTANCE = null;
-	private SQLConnection sqlCon;
 	
 	
 	//DATABASE MANAGERS
@@ -24,7 +29,6 @@ public class DatabaseUtils {
 	}
 	
 	public void setSQLConnection(SQLConnection sqlCon){
-		this.sqlCon=sqlCon;
 		userManagement = new UserManagement(sqlCon);
 		communityManagement = new CommunityManagement(sqlCon);
 	}

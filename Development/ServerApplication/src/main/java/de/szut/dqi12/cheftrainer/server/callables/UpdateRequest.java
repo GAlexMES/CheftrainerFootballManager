@@ -13,8 +13,19 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageI
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
 
+/**
+ * This class is used to handle "UpdateRequest" messages, which were send
+ * by a client.
+ * 
+ * @author Alexander Brennecke
+ *
+ */
 public class UpdateRequest extends CallableAbstract {
 
+	/**
+	 * This method is called whenever a message with the ID "UpdateRequest" is arrived at the message controller.
+	 */
+	@Override
 	public void messageArrived(Message message) {
 		JSONObject messageContent = new JSONObject(message.getMessageContent());
 		String update = messageContent.getString("update");
@@ -25,6 +36,11 @@ public class UpdateRequest extends CallableAbstract {
 		}
 	}
 
+	/**
+	 * Is called, when the UpdateRequest message has the type "CommunityList".
+	 * It collects all communities, in which the given user has managers.
+	 * After that it creates a ACK message and sends it to the client.
+	 */
 	private void sendCommunityUpdate() {
 		Session s  = mesController.getSession();
 		s.updateCommunities(DatabaseUtils.getCummunitiesForUser(s.getUserID()));
@@ -48,6 +64,11 @@ public class UpdateRequest extends CallableAbstract {
 		mesController.sendMessage(comminityMessage);
 	}
 
+	/**
+	 * This method creates a JSONObject out of a Manager Object
+	 * @param m the manager object, that should be transformed to a JSON
+	 * @return the JSONObject witl all information out of the manager object.
+	 */
 	private JSONObject managerToJson(Manager m) {
 		JSONObject managerJSON = new JSONObject();
 		managerJSON.put("Points", m.getPoints());

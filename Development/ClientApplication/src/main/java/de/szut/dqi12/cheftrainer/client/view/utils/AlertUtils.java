@@ -11,6 +11,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
+/**
+ * This class provides constants for Alerts and a few method to simply create Alerts.
+ * @author Alexander Brennecke
+ *
+ */
 public class AlertUtils {
 public static final String WRONG_INPUTS = "Please check ypur input for the following parameters: ";
 	
@@ -55,7 +60,9 @@ public static final String WRONG_INPUTS = "Please check ypur input for the follo
 
 	}
 	
-	
+	/**
+	 * Shows a Alert with the given parameters.
+	 */
 	private static Alert showAlert(String title, String header,
 			String message, AlertType type) {
 		Alert alert = new Alert(type);
@@ -65,6 +72,11 @@ public static final String WRONG_INPUTS = "Please check ypur input for the follo
 		return alert;
 	}
 
+	/**
+	 * Creates a Dialog, which displays the given exception.
+	 * @param e the Exception, that should be displayed
+	 * @return the created Alert dialog
+	 */
 	public static Alert createExceptionDialog(Exception e) {
 		Alert alert = new Alert(AlertType.ERROR);
 		StringWriter sw = new StringWriter();

@@ -5,19 +5,33 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 
+/**
+ * This class is used to communicate with the database.
+ * It has Querys for the topic "Community"
+ * @author Alexander Brennecke
+ *
+ */
 public class CommunityManagement {
 
 	private SQLConnection sqlCon;
 
+	/**
+	 * Constructor.
+	 * @param sqlCon
+	 */
 	public CommunityManagement(SQLConnection sqlCon) {
 		this.sqlCon = sqlCon;
 	}
 
+	/**
+	 *This method collects all communities for the given userID and returns it.
+	 * @param userID the ID, of the user, that communities should be returns.
+	 * @return a list of all communities in which the given user has a manager.
+	 */
 	public List<Community> getCummunities(int userID) {
 		List<Community> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde INNER JOIN Manager WHERE Manager.Nutzer_ID ="
@@ -38,6 +52,11 @@ public class CommunityManagement {
 		return retval;
 	}
 
+	/**
+	 * Creates a Community Object for the given community ID with all information, that could be collect in the database.
+	 * @param communityID the ID of the Community, that information should be collect in the database.
+	 * @return a Community Object for the given community ID
+	 */
 	private Community getCommunity(int communityID) {
 		Community retval = new Community();
 		String sqlQuery = "Select * FROM Spielrunde WHERE ID = " + communityID;
@@ -53,6 +72,11 @@ public class CommunityManagement {
 		return retval;
 	}
 
+	/**
+	 * This method collects all managers, that play in the given community
+	 * @param communityID the ID of the community
+	 * @return a List of Manager Objects.
+	 */
 	private List<Manager> getManagers(int communityID) {
 		List<Manager> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Manager.ID, Nutzer.Nutzername, Manager.Budget, Manager.Punkte "
@@ -73,6 +97,13 @@ public class CommunityManagement {
 		return retval;
 	}
 
+	/**
+	 * This method is used to create a new community in the database, when there is no database with the given name.
+	 * @param name the name of the new community.
+	 * @param password the password of the new community
+	 * @param adminID the user ID of the user, that creates the community.
+	 * @return true = commmuniy was created.
+	 */
 	public boolean createNewCommunity(String name, String password, int adminID) {
 		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name
 				+ "'";
@@ -83,6 +114,13 @@ public class CommunityManagement {
 		return false;
 	}
 
+	/**
+	 * This method is used to create a new community in the database.
+	 * @param name the name of the new community.
+	 * @param password the password of the new community
+	 * @param adminID the user ID of the user, that creates the community.
+	 * @return true = commmuniy was created.
+	 */
 	private boolean createCommunity(String name, String password, int adminID) {
 		String sqlQuery = "INSERT INTO Spielrunde (Name, Administrator_ID, Passwort) VALUES ( '"
 				+ name + "', '" + adminID + "', '" + password + "')";
@@ -90,6 +128,13 @@ public class CommunityManagement {
 		return true;
 	}
 
+	/**
+	 * This method is called, when a user tries to enter an existing community.
+	 * @param communityName the name of the community.
+	 * @param communityPassword the md5 password of the community
+	 * @param userID the user ID of the user, that wants to join the community.
+	 * @return a HashMap with booleans, that describes, if the entering was successful.
+	 */
 	public HashMap<String, Boolean> enterCommunity(String communityName,
 			String communityPassword, int userID) {
 		HashMap<String, Boolean> retval = new HashMap<String, Boolean>();
@@ -110,6 +155,11 @@ public class CommunityManagement {
 		return retval;
 	}
 
+	/**
+	 * This method checks, if the given community already exists in the database.
+	 * @param communityName Name of the Community, that should be checked.
+	 * @return true = Community exists.
+	 */
 	private boolean existCommunity(String communityName) {
 		String sqlQueryExistCommunity = "SELECT * FROM Spielrunde WHERE Spielrunde.Name= '"
 				+ communityName + "'";
@@ -118,6 +168,12 @@ public class CommunityManagement {
 		return !isResultSetEmpty(rs);
 	}
 
+	/**
+	 * This method is called, when a new manager should be added to the database.
+	 * @param communityName the name of the community, which the manager joins.
+	 * @param userID the ID of the user, that wants to join the community.
+	 * @return true = manager was created successful.
+	 */
 	private boolean createNewManager(String communityName, int userID) {
 		ResultSet rs;
 		String sqlQueryCommunityID = "SELECT ID FROM Spielrunde WHERE Name='"
@@ -135,6 +191,12 @@ public class CommunityManagement {
 		return false;
 	}
 
+	/**
+	 * This method checks, if the given password and community match together.
+	 * @param password the md5 password of the community.
+	 * @param communityName the name of the community.
+	 * @return true = password and name match together.
+	 */
 	private boolean checkPassword(String password, String communityName) {
 		String sqlQuery = "SELECT Passwort FROM Spielrunde" + " WHERE Name='"
 				+ communityName + "'" + " AND Passwort='" + password + "'";
@@ -142,6 +204,12 @@ public class CommunityManagement {
 		return !isResultSetEmpty(rs);
 	}
 
+	/**
+	 * This method checks, of the user has already a manager, which plays in the given community.
+	 * @param userID the ID of the user
+	 * @param communityName the name of the community
+	 * @return true =  the user has a manager in the given community.
+	 */
 	private boolean existUserInCommunity(int userID, String communityName) {
 		String sqlQueryExistUser = "SELECT * FROM Manager INNER JOIN Spielrunde "
 				+ "WHERE Manager.Nutzer_ID="
@@ -154,6 +222,11 @@ public class CommunityManagement {
 		return !isResultSetEmpty(rs);
 	}
 
+	/**
+	 * This method checks, if the given ResultSet is empty|has zero rows
+	 * @param rs the ResultSet, that should be checked.
+	 * @return true = the ResultSet is empty.
+	 */
 	private boolean isResultSetEmpty(ResultSet rs) {
 		try {
 			int counter = 0;

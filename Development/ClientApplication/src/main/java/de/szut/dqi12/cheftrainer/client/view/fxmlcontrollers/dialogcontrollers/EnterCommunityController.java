@@ -19,6 +19,11 @@ import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
+/**
+ * This class is the controller class for the EnterCommunityDialog.fxml
+ * @author Alexander Brennecke
+ *
+ */
 public class EnterCommunityController {
 
 	
@@ -27,12 +32,18 @@ public class EnterCommunityController {
 	@FXML
 	PasswordField passwordField;
 
+	/**
+	 * This method is called, when the cancel button was pressed
+	 */
 	@FXML
-	public void cancle(){
+	public void cancel(){
 		Stage stage = (Stage)communityNameField.getScene().getWindow();
 		stage.close();
 	}
 	
+	/**
+	 * THis method is called, when the enter button was pressed.
+	 */
 	@FXML
 	public void enter(){
 		TextField[] inputFields = {communityNameField,passwordField};
@@ -52,6 +63,9 @@ public class EnterCommunityController {
 		}
 	}
 	
+	/**
+	 * This method is called, when a new community should be created. It creates a message with the required data and sends it to the server.
+	 */
 	private void createEnterCommunityMessage(){
 		Message enterCommunityMessage = new Message(ClientToServer_MessageIDs.COMMUNITY_AUTHENTIFICATION);
 		JSONObject enterJSON = new JSONObject();

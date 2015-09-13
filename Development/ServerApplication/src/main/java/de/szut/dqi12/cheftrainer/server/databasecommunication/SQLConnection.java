@@ -8,6 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+/**
+ * This class is used to connect to a existing database.
+ * @author Alexander Brennecke
+ *
+ */
 public class SQLConnection {
 
 	//INITIALISATION

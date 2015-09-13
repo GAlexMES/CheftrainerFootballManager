@@ -10,8 +10,16 @@ import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
+/**
+ * This class is called when a message with the id "CommunityAuthentificationAck" arrived.
+ * @author Alexander Brennecke
+ *
+ */
 public class CommunityAuthentificationAck extends CallableAbstract {
 
+	/**
+	 * This method is called by the message controller, when a message with the id "CommunityAuthentificationAck" arrived at the message controller.
+	 */
 	@Override
 	public void messageArrived(Message message) {
 		JSONObject authentificationACK = new JSONObject(
@@ -26,6 +34,11 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 		}
 	}
 
+	/**
+	 * This method is called, when the arrived method has the type "enter".
+	 * It shows a Alert Dialog appending on the information in the given JSON.
+	 * @param authentificationACK the JSONObject with the required information to display one of the Alerts.
+	 */
 	private void handleEnter(JSONObject authentificationACK) {
 		if (!authentificationACK.getBoolean("existCommunity")
 				|| !authentificationACK.getBoolean("correctPassword")) {
@@ -43,10 +56,15 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 					AlertUtils.COMMUNITY_ENTER_WORKED_MESSAGE,
 					AlertType.INFORMATION);
 			GUIController.getInstance().closeCurrentDialog();
-			updateTable();
+			UpdateUtils.getCommunityUpdate();
 		}
 	}
 
+	/**
+	 * This method is called, when the arrived method has the type "creation".
+	 * It shows a Alert Dialog appending on the information in the given JSON.
+	 * @param creationJSON the JSONObject with the required information to display one of the Alerts.
+	 */
 	private void handleCreation(JSONObject creationJSON) {
 		if (creationJSON.getBoolean("created")) {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_CREATION_TITLE,
@@ -54,16 +72,12 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 					AlertUtils.COMMUNITY_CREATION_WORKED_MESSAGE,
 					AlertType.CONFIRMATION);
 			GUIController.getInstance().closeCurrentDialog();
-			updateTable();
+			UpdateUtils.getCommunityUpdate();
 		} else {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_CREATION_TITLE,
 					AlertUtils.COMMUNITY_CREATION_WORKED_NOT_HEAD,
 					AlertUtils.COMMUNITY_CREATION_WORKED_NOT_MESSAGE,
 					AlertType.ERROR);
 		}
-	}
-
-	private void updateTable() {
-		UpdateUtils.getCommunityUpdate();
 	}
 }

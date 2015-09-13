@@ -19,6 +19,11 @@ import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
+/**
+ * This class is the Controller for the CreateCommunityDialog.
+ * @author Alexander Brennecke
+ *
+ */
 public class CreateCommunityController {
 
 	@FXML
@@ -28,18 +33,24 @@ public class CreateCommunityController {
 	@FXML
 	PasswordField passwordConfirmationField;
 	
+	/**
+	 * This method is called, when the cancel button was pressed.
+	 */
 	@FXML
-	public void cancle(){
+	public void cancel(){
 		Stage stage = (Stage)communityNameField.getScene().getWindow();
 		stage.close();
 	}
 	
+	/**
+	 * This method is called, when the register button was pressed.
+	 */
 	@FXML
 	public void create(){
 		TextField[] inputFields = {communityNameField,passwordField,passwordConfirmationField};
 		List<String> errorList = DialogUtils.checkInputs(inputFields);
 		
-		
+		// Checks if the passwords are identical
 		if (!(passwordField.getText().equals(passwordConfirmationField
 				.getText()))) {
 			passwordField.setText("");
@@ -63,6 +74,9 @@ public class CreateCommunityController {
 		}
 	}
 	
+	/**
+	 * Creates a message with the required data to create a new community and sends it to the server.
+	 */
 	private void createNewCommunityMessage(){
 		Message communityMessage = new Message(ClientToServer_MessageIDs.COMMUNITY_AUTHENTIFICATION);
 		JSONObject communitJSON = new JSONObject();

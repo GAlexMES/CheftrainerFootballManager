@@ -4,12 +4,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -17,9 +14,22 @@ import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 
+/**
+ * This class provides a few method for Dialogs
+ * @author Alexander Brennecke
+ *
+ */
 public class DialogUtils {
 
-	public static void showDialog(String dialogTitle, String fxmlFile){
+	/**
+	 * Opens new windows and loads the given fxmmlFile.
+	 * @param dialogTitle the title of the dialog
+	 * @param fxmlFile the fxml source of the dialog (should be *.fxml)
+	 */
+	public static void showDialog(String dialogTitle, String fxmlFile) throws Exception{
+		if(GUIController.getInstance().getCurrentContentLoader()!=null){
+			throw new Exception("There is already a dialog opened. Please close it first!");
+		}
 		FXMLLoader dialogLoader= new FXMLLoader();
 		dialogLoader.setLocation(MainApp.class
 				.getResource(GUIInitialator.FXML_RESOURCE

@@ -108,6 +108,11 @@ public class UserManagement {
 		return retval;
 	}
 	
+	/**
+	 * This mehtod maps all information of the given user to a new User object and returns it.
+	 * @param userName is used to find the information in the database and to map it to the User Object.
+	 * @return a new User object with the mapped parameters.
+	 */
 	public User getUserValues(String userName){
 		String sqlQuery = "select * FROM Nutzer where Nutzername = '"
 				+ userName + "'";

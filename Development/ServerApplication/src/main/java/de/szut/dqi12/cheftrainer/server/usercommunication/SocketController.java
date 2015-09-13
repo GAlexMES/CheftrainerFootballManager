@@ -36,6 +36,8 @@ public class SocketController {
 		serverThread.start();
 	}
 
+	
+	//GETTER AND SETTER
 	public void addSession(Session s) {
 		activeSessions.put(s.getUser().getUserName(), s);
 	}

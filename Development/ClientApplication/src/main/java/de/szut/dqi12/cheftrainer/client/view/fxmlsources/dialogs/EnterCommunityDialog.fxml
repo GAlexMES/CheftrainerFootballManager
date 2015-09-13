@@ -25,7 +25,7 @@
       </Text>
       <ButtonBar layoutX="95.0" layoutY="184.0" prefHeight="40.0" prefWidth="142.0">
         <buttons>
-          <Button onAction="#cancle" mnemonicParsing="false" text="Cancle" />
+          <Button onAction="#cancel" mnemonicParsing="false" text="Cancle" />
             <Button onAction="#enter" mnemonicParsing="false" text="Enter" />
         </buttons>
       </ButtonBar>

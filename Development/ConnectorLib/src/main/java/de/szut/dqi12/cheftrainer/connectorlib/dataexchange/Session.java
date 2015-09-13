@@ -6,6 +6,11 @@ import java.util.List;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 
+/**
+ * This class is used to save session specific attributes. It can be used on server and client side.
+ * @author Alexander Brennecke
+ *
+ */
 public class Session {
 
 	private int userID;
@@ -44,10 +49,18 @@ public class Session {
 		this.user = user;
 	}
 
+	/**
+	 * Should only be used on the client side.
+	 * @return
+	 */
 	public Client getClientSocket() {
 		return clientSocket;
 	}
 
+	/**
+	 * Should only be used on the client side.
+	 * @return
+	 */
 	public void setClientSocket(Client clientSocket) {
 		this.clientSocket = clientSocket;
 	}
@@ -64,10 +77,19 @@ public class Session {
 		return communityMap;
 	}
 
+	/**
+	 * Should only be used on the server side.
+	 * @return
+	 */
 	public ClientHandler getClientHandler() {
 		return clientHandler;
 	}
 
+
+	/**
+	 * Should only be used on the server side.
+	 * @return
+	 */
 	public void setClientHandler(ClientHandler clientHandler) {
 		this.clientHandler = clientHandler;
 	}

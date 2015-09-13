@@ -123,12 +123,56 @@ public class LoginController {
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			AlertUtils.createSimpleDialog("Login failed", "Something went wrong during your login",
-					errorMessage,AlertType.ERROR);
+			AlertUtils.createSimpleDialog("Login failed",
+					"Something went wrong during your login", errorMessage,
+					AlertType.ERROR);
 		}
 	}
 
+	/**
+	 * Is called, when all required input fields are filled. 
+	 * Creates a new server connection and sends a message with the required data for a login to the server.
+	 * It also initializes a few parameters.
+	 * @throws IOException
+	 */
 	private void doLogin() throws IOException {
+		Client serverCon = createServerCon();
+		Message loginMessage = new Message(
+				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
+		JSONObject loginInfo = new JSONObject();
+		loginInfo.put("authentificationType", "login");
+		loginInfo.put("username", loginField.getText());
+		try {
+			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
+			loginInfo.put("password", passwordMD5);
+			loginMessage.setMessageContent(loginInfo);
+			Thread.sleep(1500);
+			serverCon.sendMessage(loginMessage);
+
+			Session newSession = new Session();
+			newSession.setClientSocket(serverCon);
+			User user = new User();
+			user.setUserName(loginField.getText());
+			newSession.setUser(user);
+			Controller.getInstance().setSession(newSession);
+			;
+		} catch (NoSuchAlgorithmException e) {
+			Alert alert = AlertUtils.createExceptionDialog(e);
+			alert.showAndWait();
+		} catch (UnsupportedEncodingException e) {
+			Alert alert = AlertUtils.createExceptionDialog(e);
+			alert.showAndWait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Creates a new Client with the given parameters in the input fields. 
+	 * @return
+	 * @throws IOException
+	 */
+	private Client createServerCon() throws IOException{
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
@@ -144,34 +188,7 @@ public class LoginController {
 		} else {
 			serverCon = ServerConnection.createServerConnection(clientProps);
 		}
-
-		Message loginMessage = new Message(
-				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
-		JSONObject loginInfo = new JSONObject();
-		loginInfo.put("authentificationType", "login");
-		loginInfo.put("username", loginField.getText());
-		try {
-			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
-			loginInfo.put("password", passwordMD5);
-			loginMessage.setMessageContent(loginInfo);
-			Thread.sleep(1500);
-			serverCon.sendMessage(loginMessage);
-			
-			Session newSession = new Session();
-			newSession.setClientSocket(serverCon);
-			User user = new User();
-			user.setUserName(loginField.getText());
-			newSession.setUser(user);
-			Controller.getInstance().setSession(newSession);;
-		} catch (NoSuchAlgorithmException e) {
-			Alert alert = AlertUtils.createExceptionDialog(e);
-			alert.showAndWait();
-		} catch (UnsupportedEncodingException e) {
-			Alert alert = AlertUtils.createExceptionDialog(e);
-			alert.showAndWait();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		return serverCon;
 	}
 
 	/**
@@ -183,7 +200,7 @@ public class LoginController {
 	}
 
 	/**
-	 * is called, when the register button was pressed
+	 * Is called, when the register button was pressed
 	 */
 	@FXML
 	public void register() {
