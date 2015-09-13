@@ -4,9 +4,18 @@ import java.util.HashMap;
 
 import org.json.JSONObject;
 
+/**
+ * This class provides a few JSON method, which could be used to tranform JSONObject etc. to something else. Or other way rounde.
+ * @author Alexander Brennecke
+ *
+ */
 public class JSONUtils {
 
-	
+	/**
+	 * This class created a JSONObject out of the given HashMap.
+	 * @param map the Map, that should be transformed to a JSON.
+	 * @return a new JSONObject with the map information inside.
+	 */
 	public static JSONObject mapToJSON(HashMap<String,Boolean> map) {
         JSONObject retval = new JSONObject();
         
@@ -15,12 +24,6 @@ public class JSONUtils {
             retval.put(key, value);
 
         }
-
-        System.out.println(random(5,7));
         return retval;
     }
-	 public static <T> T random( T m, T n )
-	  {
-	    return Math.random() > 0.5 ? m : n;
-	  }
 }
