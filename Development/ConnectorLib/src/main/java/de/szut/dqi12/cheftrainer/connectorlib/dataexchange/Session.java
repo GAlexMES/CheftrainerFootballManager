@@ -20,7 +20,11 @@ public class Session {
 		communityMap = new HashMap<>();
 	}
 
-
+	public void updateCommunities(List<Community> communities){
+		communityMap = new HashMap<>();
+		addCommunities(communities);
+	}
+	
 	public void addCommunity(Community community) {
 		communityMap.put(community.getCommunityID(), community);
 	}

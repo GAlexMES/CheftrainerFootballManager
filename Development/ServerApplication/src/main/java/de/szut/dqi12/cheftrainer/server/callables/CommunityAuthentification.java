@@ -44,6 +44,10 @@ public class CommunityAuthentification extends CallableAbstract {
 		boolean communityCreated = DatabaseUtils.createNewCommunity(
 				communityName, communityPassword, adminID);
 
+		if(communityCreated){
+			int userID = mesController.getSession().getUserID();
+			DatabaseUtils.enterCommunity(communityName, communityPassword, userID);
+		}
 		Message creationACK = new Message(
 				ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 
@@ -55,4 +59,5 @@ public class CommunityAuthentification extends CallableAbstract {
 
 		mesController.sendMessage(creationACK);
 	}
+	
 }

@@ -1,6 +1,8 @@
 package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -8,7 +10,9 @@ import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.MainApp;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
 /**
@@ -100,6 +104,12 @@ public class GUIController {
 			currentContentLoader = new FXMLLoader();
 			currentContentLoader.setLocation(MainApp.class.getResource(path));
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
+			if(currentContentLoader.getController().getClass()==CommunitiesController.class){
+				Team t = new Team("","","");
+				List<Team> teamList = new ArrayList<>();
+				teamList.add(t);
+				((CommunitiesController)currentContentLoader.getController()).initTable();
+			}
 			newContentPane.autosize();
 			if (update) {
 				GridPane currentContentPane = ((GridPane) guiInitialator

@@ -14,6 +14,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
+import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
@@ -39,40 +40,33 @@ public class CommunitiesController {
 		wertDesTeamsColumn = new TableColumn<Team, String>();
 		plazierungColumn = new TableColumn<Team, String>();
 		data = FXCollections.observableArrayList();
-		getCommunityUpdate();
+		UpdateUtils.getCommunityUpdate();
 	}
-
-	private void getCommunityUpdate() {
-		JSONObject messageContent = new JSONObject();
-		messageContent.put("update", "CommunityList");
-		Message updateMessage = new Message(
-				ClientToServer_MessageIDs.REQUEST_UPDATE);
-		updateMessage.setMessageContent(messageContent);
-		Controller.getInstance().getSession().getClientSocket()
-				.sendMessage(updateMessage);
-	}
-
+	
 	public void addRow(String communityName, double wertDesTeams, int rang) {
 		data.add(new Team(communityName, String.valueOf(wertDesTeams), String
 				.valueOf(rang)));
-
 	}
-
-	public void reloadTable(ArrayList<Team> teams) {
-		for (int i = 0; teams.size() > i; i++) {
-			data.remove(teams.get(i));
+	
+	public void reloadTable(List<Team> teams) {
+		List<Team> currentData = new ArrayList<>();
+		
+		for (int i = 0; data.size() > i; i++) {
+			currentData.add(data.get(i));
 		}
 
+		data.removeAll(currentData);
+		
 		for (int i = 0; teams.size() > i; i++) {
 			data.add(teams.get(i));
 		}
 	}
 
-	public void initTable(List<Team> teams) {
+	public void initTable() {
 
-		for (int i = 0; teams.size() > i; i++) {
-			data.add(teams.get(i));
-		}
+//		for (int i = 0; teams.size() > i; i++) {
+//			data.add(teams.get(i));
+//		}
 
 		communityNameColumn.setCellValueFactory(data -> data.getValue()
 				.getCommunityName());
@@ -82,7 +76,7 @@ public class CommunitiesController {
 				.getWertDesTeams());
 
 		communitiesFrame.setItems(data);
-		this.blabla();
+//		this.blabla();
 	}
 
 	public void blabla() {

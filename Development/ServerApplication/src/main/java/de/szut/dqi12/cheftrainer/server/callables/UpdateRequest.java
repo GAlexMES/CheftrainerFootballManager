@@ -8,8 +8,10 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
 
 public class UpdateRequest extends CallableAbstract {
 
@@ -24,8 +26,9 @@ public class UpdateRequest extends CallableAbstract {
 	}
 
 	private void sendCommunityUpdate() {
-		HashMap<Integer, Community> communityMap = mesController.getSession()
-				.getCommunityMap();
+		Session s  = mesController.getSession();
+		s.updateCommunities(DatabaseUtils.getCummunitiesForUser(s.getUserID()));
+		HashMap<Integer, Community> communityMap = s.getCommunityMap();
 		Message comminityMessage = new Message(
 				ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
 		JSONArray communityListJSON = new JSONArray();

@@ -51,10 +51,10 @@ public class UserCommunityList extends CallableAbstract {
 			String name = c.getName();
 			double money = c.getUsersManager().getMoney();
 			int rang = 0;
-			Team t = new Team(name, String.valueOf(money), String.valueOf(rang));
+			Team t = new Team(name, String.valueOf(money),String.valueOf(rang));
 			teamList.add(t);
 		}
-		cc.initTable(teamList);
+		cc.reloadTable(teamList);
 	}
 
 	private List<Manager> createManagerList(JSONArray managersJSON) {
