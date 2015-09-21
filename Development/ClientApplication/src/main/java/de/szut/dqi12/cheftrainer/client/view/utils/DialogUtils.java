@@ -31,14 +31,13 @@ public class DialogUtils {
 	 */
 	public static void showDialog(String dialogTitle, String fileName)
 			throws Exception {
-		if (GUIController.getInstance().getCurrentContentLoader() != null) {
-			throw new Exception(
-					"There is already a dialog opened. Please close it first!");
-		}
+		// if (GUIController.getInstance().getCurrentContentLoader() != null) {
+		// throw new Exception(
+		// "There is already a dialog opened. Please close it first!");
+		// }
 		FXMLLoader dialogLoader = new FXMLLoader();
 		ClassLoader classLoader = DialogUtils.class.getClassLoader();
-		URL fxmlFile = new URL(classLoader
-				.getResource("dialogFXML/" + fileName).getFile());
+		URL fxmlFile = classLoader.getResource("dialogFXML/" + fileName);
 
 		dialogLoader.setLocation(fxmlFile);
 		AnchorPane dialog;
