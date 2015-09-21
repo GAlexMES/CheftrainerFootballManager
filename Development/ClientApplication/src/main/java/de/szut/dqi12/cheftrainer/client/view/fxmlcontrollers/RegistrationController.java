@@ -236,7 +236,6 @@ public class RegistrationController {
 				User user = new User();
 				user.setFirstName(loginField.getText());
 				newSession.setUser(user);
-				;
 				loginController.showRegistrationDialog();
 				dialogStage.close();
 			}

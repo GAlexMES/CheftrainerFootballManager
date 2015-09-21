@@ -236,7 +236,7 @@ public class LoginController {
 	public void showRegistrationDialog() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.initOwner(stage);
-		alert.setTitle("registration Success");
+		alert.setTitle("registration success");
 		alert.setHeaderText("Your registration was completed!");
 		alert.setContentText("We completed your registration. You can login now!");
 		alert.showAndWait();
