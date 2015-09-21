@@ -1,6 +1,7 @@
 package de.szut.dqi12.cheftrainer.client.view.utils;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +11,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
-import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 
 /**
  * This class provides a few method for Dialogs
+ * 
  * @author Alexander Brennecke
  *
  */
@@ -23,17 +23,24 @@ public class DialogUtils {
 
 	/**
 	 * Opens new windows and loads the given fxmmlFile.
-	 * @param dialogTitle the title of the dialog
-	 * @param fxmlFile the fxml source of the dialog (should be *.fxml)
+	 * 
+	 * @param dialogTitle
+	 *            the title of the dialog
+	 * @param fxmlFile
+	 *            the fxml source of the dialog (should be *.fxml)
 	 */
-	public static void showDialog(String dialogTitle, String fxmlFile) throws Exception{
-		if(GUIController.getInstance().getCurrentContentLoader()!=null){
-			throw new Exception("There is already a dialog opened. Please close it first!");
+	public static void showDialog(String dialogTitle, String fileName)
+			throws Exception {
+		if (GUIController.getInstance().getCurrentContentLoader() != null) {
+			throw new Exception(
+					"There is already a dialog opened. Please close it first!");
 		}
-		FXMLLoader dialogLoader= new FXMLLoader();
-		dialogLoader.setLocation(MainApp.class
-				.getResource(GUIInitialator.FXML_RESOURCE
-						+ "dialogs/"+ fxmlFile));
+		FXMLLoader dialogLoader = new FXMLLoader();
+		ClassLoader classLoader = DialogUtils.class.getClassLoader();
+		URL fxmlFile = new URL(classLoader
+				.getResource("dialogFXML/" + fileName).getFile());
+
+		dialogLoader.setLocation(fxmlFile);
 		AnchorPane dialog;
 		try {
 			dialog = (AnchorPane) dialogLoader.load();
@@ -50,8 +57,7 @@ public class DialogUtils {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	/**
 	 * Checks the user inputs when the user inputs and change the border color
 	 * of empty/wrong input fields
@@ -70,5 +76,5 @@ public class DialogUtils {
 		}
 		return retval;
 	}
-	
+
 }

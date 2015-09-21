@@ -2,6 +2,7 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
@@ -21,8 +22,6 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
-import de.szut.dqi12.cheftrainer.client.MainApp;
-import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
@@ -206,9 +205,9 @@ public class LoginController {
 	public void register() {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class
-					.getResource(GUIInitialator.FXML_RESOURCE
-							+ "Registration.fxml"));
+			ClassLoader classLoader = getClass().getClassLoader();
+			URL fxmlFile = classLoader.getResource("sourcesFXML/Registration.fxml");
+			loader.setLocation(fxmlFile);
 			AnchorPane page = (AnchorPane) loader.load();
 
 			Stage dialogStage = new Stage();

@@ -1,6 +1,7 @@
 package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
 /**
  * The GUIController controlles the GUIInitialator to replacement GUI components.
@@ -26,6 +25,8 @@ public class GUIController {
 	private GUIInitialator guiInitialator;
 	private FXMLLoader currentContentLoader;
 	private Stage currentDialogStage;
+	private ClassLoader classLoader;
+	private URL fxmlFile;
 	
 	/**
 	 * Constructor
@@ -34,6 +35,7 @@ public class GUIController {
 
 	public GUIController(Stage primaryStage) {
 		guiInitialator = new GUIInitialator(primaryStage);
+		classLoader = getClass().getClassLoader();
 	}
 
 	/**
@@ -88,8 +90,7 @@ public class GUIController {
 	 *            de\szut\dqi12\cheftrainer\client\view\fxmlSources</li>
 	 */
 	public void setContentFrameByName(String fxmlFileName, boolean update) {
-		String path = GUIInitialator.FXML_RESOURCE + fxmlFileName;
-		setContentFrameByPath(path,update);
+		setContentFrameByPath(fxmlFileName,update);
 	}
 
 	/**
@@ -102,8 +103,9 @@ public class GUIController {
 	public void setContentFrameByPath(String path, boolean update) {
 		try {
 			currentContentLoader = new FXMLLoader();
-			currentContentLoader.setLocation(MainApp.class.getResource(path));
-			GridPane newContentPane = (GridPane) currentContentLoader.load();
+			fxmlFile = classLoader.getResource("sourcesFXML/"+path);
+			currentContentLoader.setLocation(fxmlFile);
+			GridPane newContentPane = (GridPane)currentContentLoader.load();
 			if(currentContentLoader.getController().getClass()==CommunitiesController.class){
 				Team t = new Team("","","");
 				List<Team> teamList = new ArrayList<>();

@@ -3,7 +3,6 @@ package de.szut.dqi12.cheftrainer.client.guicontrolling;
 import java.io.IOException;
 import java.net.URL;
 
-import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.SideMenuController;
 import javafx.application.Platform;
@@ -33,10 +32,11 @@ public class GUIInitialator {
 
 	private SideMenuController controller;
 	private LoginController loginController;
-	
+
 	private FXMLLoader currentFXMLLoader;
 
-	public static final String FXML_RESOURCE = "view/fxmlsources/";
+	private ClassLoader classLoader;
+	private URL fxmlFile;
 
 	/**
 	 * Constructor to define this class
@@ -46,6 +46,7 @@ public class GUIInitialator {
 	public GUIInitialator(Stage primaryStage) {
 		this.rStage = primaryStage;
 		this.rStage.setTitle("Cheftrainer Football Manager");
+		classLoader = getClass().getClassLoader();
 		currentFXMLLoader = new FXMLLoader();
 	}
 
@@ -80,8 +81,9 @@ public class GUIInitialator {
 		try {
 			// new FXMLLoader with Login.fxml as source
 			currentFXMLLoader = new FXMLLoader();
-			currentFXMLLoader.setLocation(new URL(MainApp.class.getResource(".")
-					+ FXML_RESOURCE + "Login.fxml"));
+			fxmlFile = classLoader.getResource("sourcesFXML/Login.fxml");
+
+			currentFXMLLoader.setLocation(fxmlFile);
 			loginLayout = (AnchorPane) currentFXMLLoader.load();
 
 			loginDialogStage = new Stage();
@@ -109,8 +111,8 @@ public class GUIInitialator {
 		try {
 			// new FXMLLoader with RooFrame.fxml as source
 			currentFXMLLoader = new FXMLLoader();
-			currentFXMLLoader.setLocation(MainApp.class.getResource(FXML_RESOURCE
-					+ "RootFrame.fxml"));
+			fxmlFile = classLoader.getResource("rootFXML/RootFrame.fxml");
+			currentFXMLLoader.setLocation(fxmlFile);
 			rLayout = (GridPane) currentFXMLLoader.load();
 
 			// displays the RootFrame.fxml on screen
@@ -132,8 +134,9 @@ public class GUIInitialator {
 		try {
 			// new FXMLLoader with ManuLayout.fxml as source
 			FXMLLoader menuLoader = new FXMLLoader();
-			menuLoader.setLocation(MainApp.class.getResource(FXML_RESOURCE
-					+ "MenuLayout.fxml"));
+			fxmlFile = classLoader.getResource("rootFXML/MenuLayout.fxml");
+
+			menuLoader.setLocation(fxmlFile);
 			VBox menuLayout = (VBox) menuLoader.load();
 			rLayout.add(menuLayout, 0, 0);
 

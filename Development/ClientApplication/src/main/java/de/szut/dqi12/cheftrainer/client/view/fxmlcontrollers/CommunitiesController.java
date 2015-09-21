@@ -22,7 +22,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
 public class CommunitiesController {
 
 	@FXML
-	private TableView<Team> communitiesFrame;
+	private TableView<Team> communitiesTable;
 
 	@FXML
 	private TableColumn<Team, String> communityNameColumn;
@@ -32,10 +32,8 @@ public class CommunitiesController {
 	private TableColumn<Team, String> plazierungColumn;
 	private ObservableList<Team> data;
 
-	FXMLLoader dialogLoader;
 
 	public CommunitiesController() {
-		dialogLoader = new FXMLLoader();
 		communityNameColumn = new TableColumn<Team, String>();
 		wertDesTeamsColumn = new TableColumn<Team, String>();
 		plazierungColumn = new TableColumn<Team, String>();
@@ -75,12 +73,12 @@ public class CommunitiesController {
 		wertDesTeamsColumn.setCellValueFactory(data -> data.getValue()
 				.getWertDesTeams());
 
-		communitiesFrame.setItems(data);
+		communitiesTable.setItems(data);
 //		this.blabla();
 	}
 
 	public void blabla() {
-		communitiesFrame.setRowFactory(tv -> {
+		communitiesTable.setRowFactory(tv -> {
 			TableRow<Team> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
