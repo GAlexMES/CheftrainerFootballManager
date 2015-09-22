@@ -47,10 +47,9 @@ public class Controller {
 			e.printStackTrace();
 		}
 	}
-
+	
 	public void creatDatabaseCommunication(String sqlName, String sqlPath) {
-		sqlConnection = new SQLConnection(sqlName);
-		sqlConnection.loadDB(sqlPath);
+		sqlConnection = new SQLConnection(sqlName,sqlPath);
 	}
 	
 	public SQLConnection getSQLConnection(){

@@ -14,7 +14,7 @@ import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesControll
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.ManagerTeam;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
@@ -72,12 +72,12 @@ public class UserCommunityList extends CallableAbstract {
 	 */
 	private void displayCommunities(List<Community> communities,
 			CommunitiesController cc) {
-		List<Team> teamList = new ArrayList<>();
+		List<ManagerTeam> teamList = new ArrayList<>();
 		for (Community c : communities) {
 			String name = c.getName();
 			double money = c.getUsersManager().getMoney();
 			int rang = 0;
-			Team t = new Team(name, String.valueOf(money),String.valueOf(rang));
+			ManagerTeam t = new ManagerTeam(name, String.valueOf(money),String.valueOf(rang));
 			teamList.add(t);
 		}
 		cc.reloadTable(teamList);

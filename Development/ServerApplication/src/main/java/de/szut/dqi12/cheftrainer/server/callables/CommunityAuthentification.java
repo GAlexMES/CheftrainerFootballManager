@@ -7,8 +7,8 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
-import de.szut.dqi12.cheftrainer.utils.JSONUtils;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.utils.JSONUtils;
 
 /**
  * This class handles messaged with the id "CommunityAuthentification".
@@ -41,7 +41,7 @@ public class CommunityAuthentification extends CallableAbstract {
 		String communityName = communityJSON.getString("communityName");
 		String communityPassword = communityJSON.getString("password");
 		int userID = mesController.getSession().getUserID();
-		HashMap<String,Boolean> enterFeedback = DatabaseUtils.enterCommunity(communityName, communityPassword, userID);
+		HashMap<String,Boolean> enterFeedback = DatabaseRequests.enterCommunity(communityName, communityPassword, userID);
 		Message enterACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 		JSONObject enterACKJSON = JSONUtils.mapToJSON(enterFeedback);
 		enterACKJSON.put("type", "enter");
@@ -58,12 +58,12 @@ public class CommunityAuthentification extends CallableAbstract {
 		String communityName = communityJSON.getString("communityName");
 		String communityPassword = communityJSON.getString("communityPassword");
 		int adminID = mesController.getSession().getUserID();
-		boolean communityCreated = DatabaseUtils.createNewCommunity(
+		boolean communityCreated = DatabaseRequests.createNewCommunity(
 				communityName, communityPassword, adminID);
 
 		if(communityCreated){
 			int userID = mesController.getSession().getUserID();
-			DatabaseUtils.enterCommunity(communityName, communityPassword, userID);
+			DatabaseRequests.enterCommunity(communityName, communityPassword, userID);
 		}
 		Message creationACK = new Message(
 				ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);

@@ -12,18 +12,19 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
  * @author Alexander Brennecke
  *
  */
-public class DatabaseUtils {
+public class DatabaseRequests {
 	
-	private static DatabaseUtils INSTANCE = null;
+	private static DatabaseRequests INSTANCE = null;
 	
 	
 	//DATABASE MANAGERS
 	private static UserManagement userManagement;
 	private static CommunityManagement communityManagement;
+	private static InitializationManagement initializationManagement;
 	
-	public static DatabaseUtils getInstance(){
+	public static DatabaseRequests getInstance(){
 		if(INSTANCE==null){
-			INSTANCE = new DatabaseUtils();
+			INSTANCE = new DatabaseRequests();
 		}
 		return INSTANCE;
 	}
@@ -31,6 +32,7 @@ public class DatabaseUtils {
 	public void setSQLConnection(SQLConnection sqlCon){
 		userManagement = new UserManagement(sqlCon);
 		communityManagement = new CommunityManagement(sqlCon);
+		initializationManagement = new InitializationManagement(sqlCon);;
 	}
 
 	
@@ -57,5 +59,13 @@ public class DatabaseUtils {
 	public static HashMap<String, Boolean> enterCommunity(String communityName,
 			String communityPassword, int userID) {
 		return communityManagement.enterCommunity(communityName,communityPassword,userID);
+	}
+	
+	public static boolean existRealPlayer(){
+		return initializationManagement.existPlayer();
+	}
+
+	public static void loadRealPlayers(String leagueName, String leagueCountry, String leagueSource) {
+		initializationManagement.loadRealPlayers(leagueName, leagueCountry, leagueSource);
 	}
 }

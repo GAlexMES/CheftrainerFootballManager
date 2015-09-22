@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import de.szut.dqi12.cheftrainer.server.utils.ParserUtils;
+
 /**
  * This class is used to connect to a existing database.
  * @author Alexander Brennecke
@@ -31,17 +33,26 @@ public class SQLConnection {
 	 * Constructor
 	 * @param name of the database
 	 */
-	public SQLConnection(String name) {
+	public SQLConnection(String name, String sqlPath) {
 		this.name = name;
-		DatabaseUtils.getInstance().setSQLConnection(this);
+		DatabaseRequests.getInstance().setSQLConnection(this);
+		loadDB(sqlPath);
+		init();
 	}
 
+	
+	private void init(){
+		if(!DatabaseRequests.existRealPlayer()){
+			DatabaseRequests.loadRealPlayers("Bundesliga","Deutschland",ParserUtils.playerRootURL);
+		}
+	}
+	
 	/**
 	 * Tries to connect to the given db file
 	 * 
 	 * @param path to the db file
 	 */
-	public void loadDB(String path) {
+	private void loadDB(String path) {
 
 		final String url = "jdbc:sqlite:" + path;
 
@@ -62,6 +73,7 @@ public class SQLConnection {
 					tableNames.add(rs.getString(3));
 				}
 			}
+			
 			statement = con.createStatement();
 
 			statement.executeQuery("ATTACH '" + name + "' as " + name.substring(0, name.length() - 3));
@@ -94,7 +106,6 @@ public class SQLConnection {
 	 */
 	private void handleSQLException (SQLException sqle){
 		if (sqle.getMessage().contains(SQLEXCEPTION_NORESULT)) {
-			System.err.println("No return Data. Use lastResult");
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_ERROR)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
 			System.err.print(sqLiteError);

@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 
 /**
  * This class is used to communicate with the database.
@@ -108,7 +109,7 @@ public class CommunityManagement {
 		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name
 				+ "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		if (isResultSetEmpty(rs)) {
+		if (DatabaseUtils.isResultSetEmpty(rs)) {
 			return createCommunity(name, password, adminID);
 		}
 		return false;
@@ -165,7 +166,7 @@ public class CommunityManagement {
 				+ communityName + "'";
 
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistCommunity);
-		return !isResultSetEmpty(rs);
+		return !DatabaseUtils.isResultSetEmpty(rs);
 	}
 
 	/**
@@ -201,7 +202,7 @@ public class CommunityManagement {
 		String sqlQuery = "SELECT Passwort FROM Spielrunde" + " WHERE Name='"
 				+ communityName + "'" + " AND Passwort='" + password + "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		return !isResultSetEmpty(rs);
+		return !DatabaseUtils.isResultSetEmpty(rs);
 	}
 
 	/**
@@ -219,26 +220,6 @@ public class CommunityManagement {
 				+ "'"
 				+ " AND Spielrunde.ID=Manager.Spielrunde_ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistUser);
-		return !isResultSetEmpty(rs);
-	}
-
-	/**
-	 * This method checks, if the given ResultSet is empty|has zero rows
-	 * @param rs the ResultSet, that should be checked.
-	 * @return true = the ResultSet is empty.
-	 */
-	private boolean isResultSetEmpty(ResultSet rs) {
-		try {
-			int counter = 0;
-			while (rs.next()) {
-				counter++;
-			}
-			if (counter == 0) {
-				return true;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
+		return !DatabaseUtils.isResultSetEmpty(rs);
 	}
 }

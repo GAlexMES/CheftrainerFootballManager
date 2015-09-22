@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.utils;
+package de.szut.dqi12.cheftrainer.server.utils;
 
 import java.util.HashMap;
 

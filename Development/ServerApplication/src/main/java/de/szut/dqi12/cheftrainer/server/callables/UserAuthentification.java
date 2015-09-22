@@ -10,7 +10,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.Controller;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
 
 /**
  * This class is used to handle "UserAuthentification" messages, which were send
@@ -57,7 +57,7 @@ public class UserAuthentification extends CallableAbstract {
 		initialize();
 		User newUser = new User();
 		newUser.setWithJSON(registrationInfo);
-		HashMap<String, Boolean> dbInfo = DatabaseUtils.registerNewUser(newUser);
+		HashMap<String, Boolean> dbInfo = DatabaseRequests.registerNewUser(newUser);
 		createRegistrationAnswer(dbInfo.get("existEMail"),
 				dbInfo.get("existUser"), dbInfo.get("authentificate"));
 	}
@@ -74,17 +74,17 @@ public class UserAuthentification extends CallableAbstract {
 		loginUser.setUserName(loginInfo.getString("username"));
 		loginUser.setPassword(loginInfo.getString("password"));
 
-		HashMap<String, Boolean> dbInfo = DatabaseUtils.loginUser(loginUser);
+		HashMap<String, Boolean> dbInfo = DatabaseRequests.loginUser(loginUser);
 		boolean correctPassword = dbInfo.get("password");
 		boolean userExist = dbInfo.get("userExist");
 		if (userExist && correctPassword) {
-			User databaseUser = DatabaseUtils.getUserData(loginUser
+			User databaseUser = DatabaseRequests.getUserData(loginUser
 					.getUserName());
 			Session session = new Session();
 			session.setUser(databaseUser);
 			session.setUserID(databaseUser.getUserID());
 			int userID = databaseUser.getUserID();
-			session.addCommunities(DatabaseUtils.getCummunitiesForUser(userID));
+			session.addCommunities(DatabaseRequests.getCummunitiesForUser(userID));
 			session.setClientHandler(mesController.getClientHandler());
 			mesController.setSession(session);
 			controller.getSocketController().addSession(session);

@@ -10,6 +10,8 @@ public class Player {
 	private Double worth;
 	private String name;
 	private int points;
+	private int number;
+	private String position;
 	
 	
 	public Player(Double worth, String name, int points) {
@@ -19,6 +21,26 @@ public class Player {
 		this.points = points;
 	}
 	
+	public Player(){
+	}
+	
+	
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
 	public Double getWorth() {
 		return worth;
 	}

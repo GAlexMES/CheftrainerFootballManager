@@ -11,7 +11,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
 
 /**
  * This class is used to handle "UpdateRequest" messages, which were send
@@ -43,7 +43,7 @@ public class UpdateRequest extends CallableAbstract {
 	 */
 	private void sendCommunityUpdate() {
 		Session s  = mesController.getSession();
-		s.updateCommunities(DatabaseUtils.getCummunitiesForUser(s.getUserID()));
+		s.updateCommunities(DatabaseRequests.getCummunitiesForUser(s.getUserID()));
 		HashMap<Integer, Community> communityMap = s.getCommunityMap();
 		Message comminityMessage = new Message(
 				ServerToClient_MessageIDs.USER_COMMUNITY_LIST);

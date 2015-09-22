@@ -10,9 +10,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import de.szut.dqi12.cheftrainer.client.MainApp;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.ManagerTeam;
 
 /**
  * The GUIController controlles the GUIInitialator to replacement GUI components.
@@ -106,13 +105,16 @@ public class GUIController {
 			fxmlFile = classLoader.getResource("sourcesFXML/"+path);
 			currentContentLoader.setLocation(fxmlFile);
 			GridPane newContentPane = (GridPane)currentContentLoader.load();
+			
 			if(currentContentLoader.getController().getClass()==CommunitiesController.class){
-				Team t = new Team("","","");
-				List<Team> teamList = new ArrayList<>();
+				ManagerTeam t = new ManagerTeam("","","");
+				List<ManagerTeam> teamList = new ArrayList<>();
 				teamList.add(t);
 				((CommunitiesController)currentContentLoader.getController()).initTable();
 			}
+			
 			newContentPane.autosize();
+			
 			if (update) {
 				GridPane currentContentPane = ((GridPane) guiInitialator
 						.getRootlayout());
