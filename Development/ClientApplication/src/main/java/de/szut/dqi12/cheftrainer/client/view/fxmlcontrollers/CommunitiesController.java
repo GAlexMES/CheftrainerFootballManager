@@ -73,14 +73,14 @@ public class CommunitiesController {
 				.getWertDesTeams());
 
 		communitiesTable.setItems(data);
-		// this.blabla();
+		this.addListener();;
 	}
 
 	/**
 	 * Diese Funktion wird aufgerufen, wenn auf eine Reihe der Tabelle ein
 	 * Doppelklick ausgeuebt wird.
 	 */
-	public void onRowClicked() {
+	public void addListener() {
 		communitiesTable.setRowFactory(tv -> {
 			TableRow<Team> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
