@@ -5,6 +5,8 @@ import java.net.URL;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 public class LineUpController {
@@ -21,26 +23,31 @@ public class LineUpController {
 
 	public void changeFormation(String path) {
 		try {
-			System.out.println(lineUpFrame.toString());
 			ClassLoader classLoader = getClass().getClassLoader();
 			FXMLLoader currentContentLoader = new FXMLLoader();
-			 URL fxmlFile = classLoader.getResource("sourcesFXML/" + path);
-
+			URL fxmlFile = classLoader.getResource("sourcesFXML/" + path);
 			currentContentLoader.setLocation(fxmlFile);
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
+			((FormationController) currentContentLoader.getController())
+					.setClickedListener();
+			;
+
+			for (Node node : newContentPane.getChildren()) {
+				System.out.println(((Label) node).getText());
+			}
 			lineUpFrame.add(newContentPane, 0, 0);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public void saveButtonClicked(){
-		
+
+	public void saveButtonClicked() {
+
 	}
-	
-	public void formationButtonClicked(){
-		
+
+	public void formationButtonClicked() {
+
 	}
 
 }
