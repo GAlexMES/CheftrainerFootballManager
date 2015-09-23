@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
+import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.utils.ParserUtils;
 
 /**
@@ -25,8 +28,9 @@ public class SQLConnection {
 	private Connection con = null;
 	private Statement statement = null;
 	private String name = "";
-
 	
+	private final static Logger LOGGER = Logger.getLogger(Controller.class);
+
 	private ArrayList<String> tableNames = new ArrayList<String>();
 
 	/**
@@ -42,9 +46,11 @@ public class SQLConnection {
 
 	
 	private void init(){
+		LOGGER.info("Start validating Database!");
 		if(!DatabaseRequests.existRealPlayer()){
 			DatabaseRequests.loadRealPlayers("Bundesliga","Deutschland",ParserUtils.playerRootURL);
 		}
+		LOGGER.info("Validating database: 100% done");
 	}
 	
 	/**

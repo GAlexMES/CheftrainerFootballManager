@@ -7,14 +7,15 @@ package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
  *
  */
 public class Player {
-	private Double worth;
+	private int worth;
 	private String name;
 	private int points;
 	private int number;
 	private String position;
+	private int ID;
 	
 	
-	public Player(Double worth, String name, int points) {
+	public Player(int worth, String name, int points) {
 		super();
 		this.worth = worth;
 		this.name = name;
@@ -24,7 +25,14 @@ public class Player {
 	public Player(){
 	}
 	
-	
+	public int getID() {
+		return ID;
+	}
+
+	public void setID(int iD) {
+		ID = iD;
+	}
+
 	public String getPosition() {
 		return position;
 	}
@@ -41,10 +49,10 @@ public class Player {
 		this.number = number;
 	}
 
-	public Double getWorth() {
+	public int getWorth() {
 		return worth;
 	}
-	public void setWorth(Double worth) {
+	public void setWorth(int worth) {
 		this.worth = worth;
 	}
 	public String getName() {

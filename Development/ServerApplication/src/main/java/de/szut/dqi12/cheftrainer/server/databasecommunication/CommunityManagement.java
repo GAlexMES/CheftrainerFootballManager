@@ -78,7 +78,7 @@ public class CommunityManagement {
 	 * @param communityID the ID of the community
 	 * @return a List of Manager Objects.
 	 */
-	private List<Manager> getManagers(int communityID) {
+	public List<Manager> getManagers(int communityID) {
 		List<Manager> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Manager.ID, Nutzer.Nutzername, Manager.Budget, Manager.Punkte "
 				+ "FROM  Manager INNER JOIN  Nutzer WHERE Spielrunde_ID="

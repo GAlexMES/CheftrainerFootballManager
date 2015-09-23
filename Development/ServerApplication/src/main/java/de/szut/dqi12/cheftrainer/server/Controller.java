@@ -5,6 +5,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import org.apache.log4j.Logger;
+
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
@@ -16,7 +18,6 @@ public class Controller {
 	private static Controller instance;
 	private SocketController socketController;
 	private SQLConnection sqlConnection;
-	
 	
 	public static Controller getInstance(){
 		if(instance == null){

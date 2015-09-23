@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
 /**
@@ -21,6 +23,7 @@ public class DatabaseRequests {
 	private static UserManagement userManagement;
 	private static CommunityManagement communityManagement;
 	private static InitializationManagement initializationManagement;
+	private static LogicManagement logicManagement;
 	
 	public static DatabaseRequests getInstance(){
 		if(INSTANCE==null){
@@ -33,6 +36,7 @@ public class DatabaseRequests {
 		userManagement = new UserManagement(sqlCon);
 		communityManagement = new CommunityManagement(sqlCon);
 		initializationManagement = new InitializationManagement(sqlCon);;
+		logicManagement = new LogicManagement(sqlCon);
 	}
 
 	
@@ -55,6 +59,10 @@ public class DatabaseRequests {
 	public static List<Community> getCummunitiesForUser(int userID){
 		return communityManagement.getCummunities(userID);
 	}
+	
+	public static List<Manager> getManagers(int communityID){
+		return communityManagement.getManagers(communityID);
+	}
 
 	public static HashMap<String, Boolean> enterCommunity(String communityName,
 			String communityPassword, int userID) {
@@ -68,4 +76,22 @@ public class DatabaseRequests {
 	public static void loadRealPlayers(String leagueName, String leagueCountry, String leagueSource) {
 		initializationManagement.loadRealPlayers(leagueName, leagueCountry, leagueSource);
 	}
+	
+	public static int getHeighstPlayerID(){
+		return logicManagement.getHeighstPlayerID();
+	}
+	
+	public static Player getPlayer(int playerID){
+		return logicManagement.getPlayer(playerID);
+	}
+
+	public static boolean isPlayerOwened(int playerID, int communityID) {
+		return logicManagement.isPlayerOwened(playerID, communityID);
+	}
+
+	public static void addPlayerToManager(int managerID, int playerID) {
+		logicManagement.addPlayerToManager(managerID, playerID);
+		
+	}
+
 }
