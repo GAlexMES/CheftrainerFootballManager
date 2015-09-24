@@ -56,13 +56,10 @@ public class TeamGenerator {
 		while (goalkeepers + defenders + middfielders + offensives < NUMBER_OF_PLAYER
 				&& idList.size() < heighestPlayerID - 1) {
 			Player p = getNewRandomPlayer();
-			System.out.println("New player: "+p.getID());
 			if (!idList.contains(p.getID())) {
 				idList.add(p.getID());
-				System.out.println("ID was not checked befor");
 				if (!isPlayerInUse(p.getID())
 						&& playerFitsInTeam(p.getPosition())) {
-					System.out.println("Player added to team");
 					playerList.add(p);
 					updatePlayerPerPosition(p.getPosition(), 1);
 					teamWorth += p.getWorth();
@@ -93,7 +90,6 @@ public class TeamGenerator {
 	}
 
 	private void findMoreExpensivePlayerForCheapestPlayer() {
-		System.out.println("Find more expensive player");
 		Player cheapestPlayer = null;
 
 		List<Integer> currentPlayerIDs = new ArrayList<>();
@@ -129,8 +125,6 @@ public class TeamGenerator {
 						teamWorth += newPlayer.getWorth();
 						playerList.remove(cheapestPlayer);
 						playerList.add(newPlayer);
-						System.out.println("Deleted player "+cheapestPlayer.getID() +" ( "+cheapestPlayer.getWorth()+" )");
-						System.out.println("Added player "+newPlayer.getID() +" ( "+newPlayer.getWorth()+" )");
 						playerFound = true;
 					}
 				}
@@ -139,7 +133,6 @@ public class TeamGenerator {
 	}
 
 	private void findCheaperPlayerForMostExpensivePlayer() {
-		System.out.println("Try to find cheaper player!");
 		Player mostExpensive = null;
 
 		List<Integer> currentPlayerIDs = new ArrayList<>();
@@ -175,8 +168,6 @@ public class TeamGenerator {
 						teamWorth += newPlayer.getWorth();
 						playerList.remove(mostExpensive);
 						playerList.add(newPlayer);
-						System.out.println("Deleted player "+mostExpensive.getID() +" ( "+mostExpensive.getWorth()+" )");
-						System.out.println("Added player "+newPlayer.getID() +" ( "+newPlayer.getWorth()+" )");
 						playerFound = true;
 					}
 				}
@@ -215,28 +206,18 @@ public class TeamGenerator {
 
 	// TODO: Überprüfung, ob Spieler auf dem Transfermarkt ist.
 	private boolean isPlayerInUse(int playerID) {
-		boolean retval = DatabaseRequests.isPlayerOwened(playerID, communityID);
-		System.out.println("Is player in use: "+retval);
-		return retval;
+		return DatabaseRequests.isPlayerOwened(playerID, communityID);
 	}
 
 	private boolean playerFitsInTeam(String position) {
 		switch (position) {
 		case "Torwart":
-			System.out.println("Goalkeeper:");
-			System.out.println("Current number: "+goalkeepers+" maximum: "+NUMBER_OF_GOALKEEPER);
 			return goalkeepers < NUMBER_OF_GOALKEEPER;
 		case "Abwehr":
-			System.out.println("Defender:");
-			System.out.println("Current number: "+defenders+" maximum: "+NUMBER_OF_DEFENDER);
 			return defenders < NUMBER_OF_DEFENDER;
 		case "Mittelfeld":
-			System.out.println("Middfield:");
-			System.out.println("Current number: "+middfielders+" maximum: "+NUMBER_OF_MIDDFIELDER);
 			return middfielders < NUMBER_OF_MIDDFIELDER;
 		case "Sturm":
-			System.out.println("Offensive:");
-			System.out.println("Current number: "+offensives+" maximum: "+NUMBER_OF_OFFENSIVE);
 			return offensives < NUMBER_OF_OFFENSIVE;
 		default:
 			return false;
