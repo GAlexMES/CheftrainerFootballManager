@@ -10,15 +10,24 @@ public class Player {
 	private Double worth;
 	private String name;
 	private int points;
+	private Position position;
 	
 	
-	public Player(Double worth, String name, int points) {
+	
+	public Player(Double worth, String name, int points, Position position) {
 		super();
 		this.worth = worth;
 		this.name = name;
 		this.points = points;
+		this.position = position;
 	}
 	
+	
+	public Position getPosition() {
+		return position;
+	}
+
+
 	public Double getWorth() {
 		return worth;
 	}
