@@ -1,5 +1,7 @@
 package de.szut.dqi12.cheftrainer.server.test;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import de.szut.dqi12.cheftrainer.server.App;
@@ -15,9 +17,14 @@ public class TeamGeneratorTest {
 	@Test
 	public void test() {
 		Controller con = Controller.getInstance();
-		con.creatDatabaseCommunication(DB_NAME, DB_PATH);
-		TeamGenerator tg = new TeamGenerator();
-		tg.generateTeamForUser(1, 1);
+		try {
+			con.creatDatabaseCommunication(DB_NAME, DB_PATH);
+			TeamGenerator tg = new TeamGenerator();
+			tg.generateTeamForUser(1, 1);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 }

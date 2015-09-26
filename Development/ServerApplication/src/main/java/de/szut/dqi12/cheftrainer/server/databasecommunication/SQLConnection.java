@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -37,7 +38,7 @@ public class SQLConnection {
 	 * Constructor
 	 * @param name of the database
 	 */
-	public SQLConnection(String name, String sqlPath) {
+	public SQLConnection(String name, String sqlPath) throws IOException{
 		this.name = name;
 		DatabaseRequests.getInstance().setSQLConnection(this);
 		loadDB(sqlPath);
@@ -45,12 +46,20 @@ public class SQLConnection {
 	}
 
 	
-	private void init(){
+	private void init() throws IOException{
 		LOGGER.info("Start validating Database!");
 		if(!DatabaseRequests.existRealPlayer()){
+			try{
 			DatabaseRequests.loadRealPlayers("Bundesliga","Deutschland",ParserUtils.playerRootURL);
+			LOGGER.info("Validating database: 100% done");
+			}
+			catch(IOException io){
+				LOGGER.error("Validating database failed: ");
+				LOGGER.error(io);
+				throw io;
+			}
 		}
-		LOGGER.info("Validating database: 100% done");
+		
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class DatabaseRequests {
 		return initializationManagement.existPlayer();
 	}
 
-	public static void loadRealPlayers(String leagueName, String leagueCountry, String leagueSource) {
+	public static void loadRealPlayers(String leagueName, String leagueCountry, String leagueSource) throws IOException{
 		initializationManagement.loadRealPlayers(leagueName, leagueCountry, leagueSource);
 	}
 	

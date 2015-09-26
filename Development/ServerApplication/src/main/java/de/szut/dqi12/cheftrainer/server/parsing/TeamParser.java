@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.parsing;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import de.szut.dqi12.cheftrainer.server.utils.ParserUtils;
 
 public class TeamParser {
 	
-	public List<RealTeam> getTeamlist(String rootURL){
+	public List<RealTeam> getTeamlist(String rootURL) throws IOException{
 		URL teamsURL;
 		List<RealTeam> teamList = new ArrayList<RealTeam>();
 		try {
@@ -23,8 +24,8 @@ public class TeamParser {
 			String teamsTable = ParserUtils.getTableOfHTML(pageContent);
 			List<Element> rootChilds = ParserUtils.parseXmlTableString(teamsTable);
 			teamList = parseNodeList(rootChilds);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
+		} catch (IOException e ) {
+			throw e;
 		}
 		return teamList;
 	}

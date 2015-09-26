@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.parsing;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +17,7 @@ public class PlayerParser {
 	private List<String> validPositionList = new ArrayList<String>(Arrays.asList(validPositions));
 
 
-	public List<Player> getPlayers(URL teamURL) {
+	public List<Player> getPlayers(URL teamURL) throws IOException {
 		List<Player> playerList = new ArrayList<Player>();
 		String pageContent = ParserUtils.getPage(teamURL);
 		String playersTable = ParserUtils.getTableOfHTML(pageContent);

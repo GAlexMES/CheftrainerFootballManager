@@ -1,6 +1,7 @@
 package de.szut.dqi12.cheftrainer.server.logic;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -8,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.InitializationManagement;
 
 /**
  * <b>//F0040<b> Generates a new random team for a user.
@@ -69,36 +69,59 @@ public class TeamGenerator {
 				}
 			}
 		}
-
+		
 		while (!checkWorth()) {
-			System.out.println("Incorrect worth: "+teamWorth);
+			System.out.println("Incorrect worth: " + teamWorth);
 			correctWorth();
 		}
-		System.out.println("Correct wort: "+teamWorth);
+		System.out.println("Correct wort: " + teamWorth);
 
 		playerList.forEach(p -> updateDatabaseWithPlayers(p));
 
 		LOGGER.info("Team generation: 100% done - completed!");
 	}
 
+	private static final Comparator<Integer> NOT_CHEAPER_COMPARATOR = (a, b) -> {
+		if (a > b) {
+			return -1;
+		}
+		if (a < b) {
+			return 1;
+		}
+		return 0;
+	};
+
+	private static final Comparator<Integer> CHEAPER_COMPARATOR = (a, b) -> {
+		if (a < b) {
+			return -1;
+		}
+		if (a > b) {
+			return 1;
+		}
+		return 0;
+	};
+
 	private void correctWorth() {
 		if (teamWorth < TEAM_WORTH * (1 + TEAM_WORTH_TOLERANZ)) {
-			findMoreExpensivePlayerForCheapestPlayer();
+			System.out.println("Find more expensive player");
+			findBetterPlayer(NOT_CHEAPER_COMPARATOR);
 		} else if (teamWorth > TEAM_WORTH * (1 - TEAM_WORTH_TOLERANZ)) {
-			findCheaperPlayerForMostExpensivePlayer();
+			System.out.println("Find cheaper player");
+			findBetterPlayer(CHEAPER_COMPARATOR);
 		}
 	}
 
-	private void findMoreExpensivePlayerForCheapestPlayer() {
-		Player cheapestPlayer = null;
+	private void findBetterPlayer(Comparator<Integer> com) {
+		Player currentPlayer = null;
 
 		List<Integer> currentPlayerIDs = new ArrayList<>();
 		for (int i = 0; i < playerList.size(); i++) {
 			Player p = playerList.get(i);
 			currentPlayerIDs.add(p.getID());
-			if (cheapestPlayer == null
-					|| p.getWorth() < cheapestPlayer.getWorth()) {
-				cheapestPlayer = p;
+			System.out.println("Player Worth: "+p.getWorth()+" CurrentPlayer Worth: "+currentPlayer.getWorth());
+			if (currentPlayer == null
+					|| com.compare(p.getWorth(), currentPlayer.getWorth()) < 0) {
+				currentPlayer = p;
 			}
 		}
 
@@ -111,19 +134,19 @@ public class TeamGenerator {
 			if (!idList.contains(newPlayer.getID())) {
 				idList.add(newPlayer.getID());
 
-				boolean betterWorth = newPlayer.getWorth() > cheapestPlayer
+				boolean betterWorth = newPlayer.getWorth() > currentPlayer
 						.getWorth();
 				boolean samePosition = newPlayer.getPosition().equals(
-						cheapestPlayer.getPosition());
+						currentPlayer.getPosition());
 				boolean notInUse = !isPlayerInUse(newPlayer.getID())
 						&& !currentPlayerIDs.contains(newPlayer.getID());
 
 				if (betterWorth && samePosition && notInUse) {
 					if (newPlayer.getPosition().equals(
-							cheapestPlayer.getPosition())) {
-						teamWorth -= cheapestPlayer.getWorth();
+							currentPlayer.getPosition())) {
+						teamWorth -= currentPlayer.getWorth();
 						teamWorth += newPlayer.getWorth();
-						playerList.remove(cheapestPlayer);
+						playerList.remove(currentPlayer);
 						playerList.add(newPlayer);
 						playerFound = true;
 					}
@@ -132,48 +155,91 @@ public class TeamGenerator {
 		}
 	}
 
-	private void findCheaperPlayerForMostExpensivePlayer() {
-		Player mostExpensive = null;
-
-		List<Integer> currentPlayerIDs = new ArrayList<>();
-		for (int i = 0; i < playerList.size(); i++) {
-			Player p = playerList.get(i);
-			currentPlayerIDs.add(p.getID());
-			if (mostExpensive == null
-					|| p.getWorth() > mostExpensive.getWorth()) {
-				mostExpensive = p;
-			}
-		}
-
-		boolean playerFound = false;
-		List<Integer> idList = new ArrayList<>();
-
-		while (!playerFound && idList.size() < heighestPlayerID / 2) {
-			Player newPlayer = getNewRandomPlayer();
-
-			if (!idList.contains(newPlayer.getID())) {
-				idList.add(newPlayer.getID());
-
-				boolean betterWorth = newPlayer.getWorth() < mostExpensive
-						.getWorth();
-				boolean samePosition = newPlayer.getPosition().equals(
-						mostExpensive.getPosition());
-				boolean notInUse = !isPlayerInUse(newPlayer.getID())
-						&& !currentPlayerIDs.contains(newPlayer.getID());
-
-				if (betterWorth && samePosition && notInUse) {
-					if (newPlayer.getPosition().equals(
-							mostExpensive.getPosition())) {
-						teamWorth -= mostExpensive.getWorth();
-						teamWorth += newPlayer.getWorth();
-						playerList.remove(mostExpensive);
-						playerList.add(newPlayer);
-						playerFound = true;
-					}
-				}
-			}
-		}
-	}
+	// private void findMoreExpensivePlayerForCheapestPlayer() {
+	// Player cheapestPlayer = null;
+	//
+	// List<Integer> currentPlayerIDs = new ArrayList<>();
+	// for (int i = 0; i < playerList.size(); i++) {
+	// Player p = playerList.get(i);
+	// currentPlayerIDs.add(p.getID());
+	// if (cheapestPlayer == null
+	// || p.getWorth() < cheapestPlayer.getWorth()) {
+	// cheapestPlayer = p;
+	// }
+	// }
+	//
+	// boolean playerFound = false;
+	// List<Integer> idList = new ArrayList<>();
+	//
+	// while (!playerFound && idList.size() < heighestPlayerID - 1) {
+	// Player newPlayer = getNewRandomPlayer();
+	//
+	// if (!idList.contains(newPlayer.getID())) {
+	// idList.add(newPlayer.getID());
+	//
+	// boolean betterWorth = newPlayer.getWorth() > cheapestPlayer
+	// .getWorth();
+	// boolean samePosition = newPlayer.getPosition().equals(
+	// cheapestPlayer.getPosition());
+	// boolean notInUse = !isPlayerInUse(newPlayer.getID())
+	// && !currentPlayerIDs.contains(newPlayer.getID());
+	//
+	// if (betterWorth && samePosition && notInUse) {
+	// if (newPlayer.getPosition().equals(
+	// cheapestPlayer.getPosition())) {
+	// teamWorth -= cheapestPlayer.getWorth();
+	// teamWorth += newPlayer.getWorth();
+	// playerList.remove(cheapestPlayer);
+	// playerList.add(newPlayer);
+	// playerFound = true;
+	// }
+	// }
+	// }
+	// }
+	// }
+	//
+	// private void findCheaperPlayerForMostExpensivePlayer() {
+	// Player mostExpensive = null;
+	//
+	// List<Integer> currentPlayerIDs = new ArrayList<>();
+	// for (int i = 0; i < playerList.size(); i++) {
+	// Player p = playerList.get(i);
+	// currentPlayerIDs.add(p.getID());
+	// if (mostExpensive == null
+	// || p.getWorth() > mostExpensive.getWorth()) {
+	// mostExpensive = p;
+	// }
+	// }
+	//
+	// boolean playerFound = false;
+	// List<Integer> idList = new ArrayList<>();
+	//
+	// while (!playerFound && idList.size() < heighestPlayerID / 2) {
+	// Player newPlayer = getNewRandomPlayer();
+	//
+	// if (!idList.contains(newPlayer.getID())) {
+	// idList.add(newPlayer.getID());
+	//
+	// boolean betterWorth = newPlayer.getWorth() < mostExpensive
+	// .getWorth();
+	// boolean samePosition = newPlayer.getPosition().equals(
+	// mostExpensive.getPosition());
+	// boolean notInUse = !isPlayerInUse(newPlayer.getID())
+	// && !currentPlayerIDs.contains(newPlayer.getID());
+	//
+	// if (betterWorth && samePosition && notInUse) {
+	// if (newPlayer.getPosition().equals(
+	// mostExpensive.getPosition())) {
+	// teamWorth -= mostExpensive.getWorth();
+	// teamWorth += newPlayer.getWorth();
+	// playerList.remove(mostExpensive);
+	// playerList.add(newPlayer);
+	// playerFound = true;
+	// }
+	// }
+	// }
+	// }
+	// }
 
 	private boolean checkWorth() {
 		if (teamWorth < TEAM_WORTH * (1 + TEAM_WORTH_TOLERANZ)

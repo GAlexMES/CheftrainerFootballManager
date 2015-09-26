@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class InitializationManagement {
 	}
 
 	public void loadRealPlayers(String leagueName, String leagueCountry,
-			String sourceURL) {
+			String sourceURL) throws IOException{
 		try {
 			addLeague(leagueName, leagueCountry);
 			LOGGER.info("Validating database: 0% Done");
@@ -38,9 +39,10 @@ public class InitializationManagement {
 			String condition = "Name='"+leagueName+"'";
 			int leagueID = Integer.valueOf(DatabaseUtils.getUniqueValue(sqlCon,"ID", "Liga",condition));
 			teamList.forEach(t -> addTeam(t, leagueID));
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+			throw e;
 		}
+		
 	}
 
 	private void addPlayer(Player p, int teamID){

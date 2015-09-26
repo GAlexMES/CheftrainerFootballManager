@@ -23,29 +23,33 @@ public class ParserUtils {
 
 	public static String playerRootURL = "http://www.ran.de/datenbank/fussball";
 
-	public static List<RealTeam> getTeamList(String leagueRootURL){
-		TeamParser tp = new TeamParser();
-		List<RealTeam> teamList = tp.getTeamlist(leagueRootURL);
-		PlayerParser pp = new PlayerParser();
-		for(RealTeam t : teamList){
-			URL teamURL;
-			try {
-				teamURL = new URL(leagueRootURL + t.getTeamUrl());
-				t.setPlayerList(pp.getPlayers(teamURL));
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
+	public static List<RealTeam> getTeamList(String leagueRootURL) throws IOException {
+		try {
+			TeamParser tp = new TeamParser();
+			List<RealTeam> teamList = tp.getTeamlist(leagueRootURL);
+			PlayerParser pp = new PlayerParser();
+			for (RealTeam t : teamList) {
+				URL teamURL;
+				try {
+					teamURL = new URL(leagueRootURL + t.getTeamUrl());
+					t.setPlayerList(pp.getPlayers(teamURL));
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
 			}
+			return teamList;
+		} catch (IOException e) {
+			throw e;
 		}
-		return teamList;
 	}
 
-	public static String getPage(URL url) {
+	public static String getPage(URL url) throws IOException {
 		String content = "";
 		try {
 			content = new Scanner(url.openStream(), "UTF-8")
 					.useDelimiter("\\A").next();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw e;
 		}
 		return content;
 	}
