@@ -71,9 +71,14 @@ public class ParserUtils {
 		try {
 			Document doc = saxBuilder.build(new StringReader(xmlString));
 			nodeList = doc.getRootElement().getChildren();
-		} catch (JDOMException e) {
-		} catch (IOException e) {
+		} catch (JDOMException |IOException e) {
 		}
 		return nodeList;
+	}
+
+	public static List<Element> getElementWithID(String pageContent,
+			String string, String tableid) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
