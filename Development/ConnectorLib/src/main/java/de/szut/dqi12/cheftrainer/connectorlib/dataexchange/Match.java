@@ -9,6 +9,24 @@ public class Match {
 	private String detailURL;
 	private int goalsHome;
 	private int goalsGuest;
+	private int sportalMatchID;
+	
+	public Match(String date, String time, String home, String guest,
+			String score, String detailURL) {
+		this.date = date;
+		this.time=time;
+		this.home=home;
+		this.guest=guest;
+		this.detailURL=detailURL;
+		this.goalsHome = Integer.valueOf(score.split(":")[0]);
+		this.goalsGuest = Integer.valueOf(score.split(":")[1]);
+	}
+	public int getSportalMatchID() {
+		return sportalMatchID;
+	}
+	public void setSportalMatchID(int sportalMatchID) {
+		this.sportalMatchID = sportalMatchID;
+	}
 	public String getDate() {
 		return date;
 	}

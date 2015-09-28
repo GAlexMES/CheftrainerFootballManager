@@ -1,131 +1,84 @@
 package de.szut.dqi12.cheftrainer.server.parsing;
 
 import java.io.IOException;
-import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 import de.szut.dqi12.cheftrainer.server.utils.ParserUtils;
 
 public class ScheduleParser {
 
-	private String scheduleRoot = "http://www.sportal.de/fussball/bundesliga/spielplan/spielplan-spieltag-";
+	private static String sportalRoot = "http://www.sportal.de";
+	private String scheduleRoot = sportalRoot
+			+ "/fussball/bundesliga/spielplan/spielplan-spieltag-";
 	private final static String tableID = "moduleResultContentResultateList";
 	private int matchday;
 	private int season;
-
-	private Map<String,List<String>> gamedayInformation;
+	private List<Match> matches;
 
 	public List<Match> createSchedule(int matchday, int season)
 			throws MalformedURLException {
 		this.matchday = matchday;
 		this.season = season;
+		matches = new ArrayList<>();
 		URL scheduleURL = new URL(scheduleRoot + matchday + "-saison-" + season
 				+ "-" + (season + 1));
-		gamedayInformation = new HashMap<>();
-		List<Match> matches = new ArrayList<>();
+
 		try {
-			String pageContent = ParserUtils.getPage(scheduleURL);
-
-			List<Element> nodeList = new ArrayList<Element>();
-
-			gamedayInformation.put("date",findeTagsInHTML(
-					("<span class=\"date\">(.*?)</span>"), pageContent, 0, 7));
-			gamedayInformation.put("time",findeTagsInHTML(
-					("<span class=\"time\">(.*?)</span>"), pageContent, 0, 7));
-			gamedayInformation.put("home",findeTagsInHTML(
-					("<li class=\"heim\">(.*?)</li>"), pageContent, 1, 8));
-			gamedayInformation.put("score",findeTagsInHTML(
-					("<li class=\"score\">(.*?)</li>"), pageContent, 1, 8));
-			gamedayInformation.put("guest",findeTagsInHTML(
-					("<li class=\"auswaerts\">(.*?)</li>"), pageContent, 1, 8));
-
-			for (int i = 0; i < 7; i++) {
-				matches.add(createMatchForIndex(i));
-			}
+			Document doc = Jsoup.connect(scheduleURL.toString()).get();
+			Element scheduleDiv = doc
+					.getElementById("moduleResultContentResultateList");
+			Elements games = scheduleDiv.getElementsByAttributeValue("class",
+					"table_content table_content_wetten");
+			games.forEach(e -> createMatch(e));
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		return matches;
 	}
 
-	private Match createMatchForIndex(int i) {
-		Match retval = new Match();
+	private void createMatch(Element e) {
+		String date = e.select("span[class=date]").text();
 		if (matchday < 18) {
-			retval.setDate(gamedayInformation.get("date").get(i) + season);
+			date += String.valueOf(season);
 		} else {
-			retval.setDate(gamedayInformation.get("date").get(i) + (season + 1));
+			date += String.valueOf(season + 1);
 		}
-		retval.setTime(gamedayInformation.get("time").get(i));
-		retval.setHome(getTeamName(gamedayInformation.get("home").get(i)));
-		retval.setGuest(getTeamName(gamedayInformation.get("guest").get(i)));
-		retval.setDetailURL(getDetailURL(gamedayInformation.get("score").get(i)));
-		String score = getScore(gamedayInformation.get("score").get(i));
-		retval.setGoalsHome(Integer.valueOf(score.split(":")[0]));
-		retval.setGoalsGuest(Integer.valueOf(score.split(":")[1]));
-		return retval;
+		String time = e.select("span[class=time]").text();
+		String home = e.select("li[class=heim]").get(0).select("a")
+				.attr("title");
+		String guest = e.select("li[class=auswaerts]").get(0).select("a")
+				.attr("title");
+		String score = e.select("li[class=score]").get(0).select("a").text();
+		String detailURL = e.select("li[class=score]").get(0).select("a")
+				.attr("href");
+		Match m = new Match(date, time, home, guest, score, detailURL);
+		matches.add(m);
 	}
-	
-	private String getScore(String htmlPhrase) {
+
+	public static int getSportalID(String url) {
+
 		try {
-			SAXBuilder saxBuilder = new SAXBuilder();
-			Document doc = saxBuilder.build(new StringReader("<html>/n"+htmlPhrase+"/n</html>"));
-			String teamName = doc.getRootElement().getChildren("a").get(0).getText();
-			return teamName;
-		} catch (JDOMException | IOException e) {
-				 e.printStackTrace();
-		}
-		return null;
-	}
+			Document doc = Jsoup.connect(sportalRoot + url).get();
+			Element navigation = doc.getElementById("kompaktformat_topnavi");
+			Element firstnavigationIcon = navigation.select("a[href]").first();
+			String[] hrefParts = firstnavigationIcon.attr("href").split("-");
+			String completeID = hrefParts[hrefParts.length - 1];
+			return Integer.valueOf(completeID);
 
-	private String getDetailURL(String htmlPhrase) {
-		try {
-			SAXBuilder saxBuilder = new SAXBuilder();
-			Document doc = saxBuilder.build(new StringReader("<html>/n"+htmlPhrase+"/n</html>"));
-			String teamName = doc.getRootElement().getChildren("a").get(0).getAttribute("href").getValue();
-			return teamName;
-		} catch (JDOMException | IOException e) {
-				 e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return null;
-	}
-
-	private String getTeamName(String htmlPhrase){
-		 try {
-			SAXBuilder saxBuilder = new SAXBuilder();
-			Document doc = saxBuilder.build(new StringReader("<html>/n"+htmlPhrase+"/n</html>"));
-			String teamName = doc.getRootElement().getChild("a").getAttribute("title").getValue();
-			return teamName;
-		} catch (JDOMException | IOException e) {
-				 e.printStackTrace();
-		}
-		 return null;
-	}
-
-	private List<String> findeTagsInHTML(String pattern, String source,
-			int beginIndex, int endIndex) {
-		List<String> retval = new ArrayList<>();
-		Pattern r = Pattern.compile(pattern);
-		Matcher m = r.matcher(source);
-
-		for (int i = 0; i < endIndex; i++) {
-			if (m.find()) {
-				if (i >= beginIndex) {
-					retval.add(m.group(1));
-				}
-			}
-		}
-		return retval;
+		return -1;
 	}
 }
