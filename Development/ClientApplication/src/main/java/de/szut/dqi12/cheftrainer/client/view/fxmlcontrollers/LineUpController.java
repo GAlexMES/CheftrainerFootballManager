@@ -30,7 +30,7 @@ public class LineUpController {
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 			((FormationController) currentContentLoader.getController())
 					.setClickedListener();
-			;
+			
 
 			for (Node node : newContentPane.getChildren()) {
 				System.out.println(((Label) node).getText());
