@@ -59,7 +59,14 @@ public class SQLConnection {
 				throw io;
 			}
 		}
-		
+		int currentSeason = DatabaseRequests.getCurrentSeasonFromSportal();
+		if(currentSeason>2000){
+			LOGGER.info("Start collecting points for current season ("+currentSeason+"-"+(currentSeason+1));
+			DatabaseRequests.initializeScheduleForSeason(currentSeason);
+		}
+		else{
+			LOGGER.error("Failed collecting points, current season is invalid: "+currentSeason);
+		}
 	}
 	
 	/**

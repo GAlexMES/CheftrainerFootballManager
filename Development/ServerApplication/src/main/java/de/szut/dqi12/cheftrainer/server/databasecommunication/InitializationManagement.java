@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
-import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 import de.szut.dqi12.cheftrainer.server.utils.ParserUtils;
 

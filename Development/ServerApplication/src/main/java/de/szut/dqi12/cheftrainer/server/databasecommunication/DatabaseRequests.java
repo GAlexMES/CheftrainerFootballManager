@@ -25,6 +25,7 @@ public class DatabaseRequests {
 	private static CommunityManagement communityManagement;
 	private static InitializationManagement initializationManagement;
 	private static LogicManagement logicManagement;
+	private static SchedulePointManagement schedulePointManagement;
 	
 	public static DatabaseRequests getInstance(){
 		if(INSTANCE==null){
@@ -38,6 +39,7 @@ public class DatabaseRequests {
 		communityManagement = new CommunityManagement(sqlCon);
 		initializationManagement = new InitializationManagement(sqlCon);;
 		logicManagement = new LogicManagement(sqlCon);
+		schedulePointManagement = new SchedulePointManagement(sqlCon);
 	}
 
 	
@@ -93,6 +95,14 @@ public class DatabaseRequests {
 	public static void addPlayerToManager(int managerID, int playerID) {
 		logicManagement.addPlayerToManager(managerID, playerID);
 		
+	}
+
+	public static int getCurrentSeasonFromSportal() {
+		return schedulePointManagement.getCurrentSeasonFromSportal();
+	}
+
+	public static void initializeScheduleForSeason(int currentSeason) {
+		schedulePointManagement.initializeScheduleForSeason(currentSeason);
 	}
 
 }

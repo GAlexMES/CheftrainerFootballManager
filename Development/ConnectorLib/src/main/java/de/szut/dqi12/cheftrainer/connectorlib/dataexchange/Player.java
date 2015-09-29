@@ -13,6 +13,10 @@ public class Player {
 	private int number;
 	private String position;
 	private int ID;
+	private int goals;
+	private boolean redCard;
+	private boolean yellowRedCard;
+	private String teamName;
 	
 	
 	public Player(int worth, String name, int points) {
@@ -20,11 +24,59 @@ public class Player {
 		this.worth = worth;
 		this.name = name;
 		this.points = points;
+		goals = 0;
+		redCard = false;
+		yellowRedCard = false;
 	}
 	
 	public Player(){
 	}
 	
+	public Player(String name, String teamName, int points) {
+		this.name = name;
+		this.points = points;
+		this.teamName = teamName;
+	}
+	
+	public Player(String name, int points) {
+		this.name = name;
+		this.points = points;
+	}
+
+	
+	
+	public String getTeamName() {
+		return teamName;
+	}
+
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
+	}
+
+	public int getGoals() {
+		return goals;
+	}
+
+	public void setGoals(int goals) {
+		this.goals = goals;
+	}
+
+	public boolean isRedCard() {
+		return redCard;
+	}
+
+	public void setRedCard(boolean redCard) {
+		this.redCard = redCard;
+	}
+
+	public boolean isYellowRedCard() {
+		return yellowRedCard;
+	}
+
+	public void setYellowRedCard(boolean yellowRedCard) {
+		this.yellowRedCard = yellowRedCard;
+	}
+
 	public int getID() {
 		return ID;
 	}

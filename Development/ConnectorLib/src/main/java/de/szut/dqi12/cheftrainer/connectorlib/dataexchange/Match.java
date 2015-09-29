@@ -18,8 +18,14 @@ public class Match {
 		this.home=home;
 		this.guest=guest;
 		this.detailURL=detailURL;
+		try{
 		this.goalsHome = Integer.valueOf(score.split(":")[0]);
 		this.goalsGuest = Integer.valueOf(score.split(":")[1]);
+		}
+		catch(Exception e){
+			this.goalsHome=-1;
+			this.goalsGuest=-1;
+		}
 	}
 	public int getSportalMatchID() {
 		return sportalMatchID;
