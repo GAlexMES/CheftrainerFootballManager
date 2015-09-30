@@ -17,10 +17,8 @@ public class Player {
 	private boolean redCard;
 	private boolean yellowRedCard;
 	private String teamName;
-	
-	
-	public Player(int worth, String name, int points) {
-		super();
+		
+	public Player(int worth, String name, int points, Position position) {
 		this.worth = worth;
 		this.name = name;
 		this.points = points;
@@ -42,7 +40,6 @@ public class Player {
 		this.name = name;
 		this.points = points;
 	}
-
 	
 	
 	public String getTeamName() {
@@ -102,8 +99,13 @@ public class Player {
 	}
 
 	public int getWorth() {
-		return worth;
+		this.position = position;
 	}
+	
+	public Position getPosition() {
+		return position;
+	}
+
 	public void setWorth(int worth) {
 		this.worth = worth;
 	}

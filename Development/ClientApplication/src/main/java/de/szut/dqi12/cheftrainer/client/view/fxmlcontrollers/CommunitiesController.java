@@ -16,6 +16,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.ManagerTeam;
 
 /**
  * This is the controller for the CommunitiesFrame.
+ * 
  * @author Robin Bley, Alexander Brennecke
  *
  */
@@ -23,7 +24,6 @@ public class CommunitiesController {
 
 	@FXML
 	private TableView<ManagerTeam> communitiesTable;
-
 	@FXML
 	private TableColumn<ManagerTeam, String> communityNameColumn;
 	@FXML
@@ -32,7 +32,6 @@ public class CommunitiesController {
 	private TableColumn<ManagerTeam, String> plazierungColumn;
 	private ObservableList<ManagerTeam> data;
 
-
 	public CommunitiesController() {
 		communityNameColumn = new TableColumn<ManagerTeam, String>();
 		wertDesTeamsColumn = new TableColumn<ManagerTeam, String>();
@@ -40,7 +39,7 @@ public class CommunitiesController {
 		data = FXCollections.observableArrayList();
 		UpdateUtils.getCommunityUpdate();
 	}
-	
+
 	public void addRow(String communityName, double wertDesTeams, int rang) {
 		data.add(new ManagerTeam(communityName, String.valueOf(wertDesTeams), String
 				.valueOf(rang)));
@@ -54,7 +53,7 @@ public class CommunitiesController {
 		}
 
 		data.removeAll(currentData);
-		
+
 		for (int i = 0; teams.size() > i; i++) {
 			data.add(teams.get(i));
 		}
@@ -62,9 +61,9 @@ public class CommunitiesController {
 
 	public void initTable() {
 
-//		for (int i = 0; teams.size() > i; i++) {
-//			data.add(teams.get(i));
-//		}
+		// for (int i = 0; teams.size() > i; i++) {
+		// data.add(teams.get(i));
+		// }
 
 		communityNameColumn.setCellValueFactory(data -> data.getValue()
 				.getCommunityName());
@@ -74,16 +73,21 @@ public class CommunitiesController {
 				.getWertDesTeams());
 
 		communitiesTable.setItems(data);
-//		this.blabla();
+		this.addListener();;
 	}
 
-	public void blabla() {
+	/**
+	 * Diese Funktion wird aufgerufen, wenn auf eine Reihe der Tabelle ein
+	 * Doppelklick ausgeuebt wird.
+	 */
+	public void addListener() {
 		communitiesTable.setRowFactory(tv -> {
 			TableRow<ManagerTeam> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
 					ManagerTeam rowData = row.getItem();
 					System.out.println(rowData.getCommunityName().get());
+
 					// DO SOMETHING
 
 					// Stage dialogStage = new Stage();
@@ -102,21 +106,22 @@ public class CommunitiesController {
 	}
 
 	/**
-	 * Is called, when the enter community button was pressed.
-	 * It shows a the EnterCommunityDialog.fxml
+	 * Is called, when the enter community button was pressed. It shows a the
+	 * EnterCommunityDialog.fxml
 	 */
 	@FXML
 	public void enterCommunity() {
 		try {
-			DialogUtils.showDialog("Enter Community!", "EnterCommunityDialog.fxml");
+			DialogUtils.showDialog("Enter Community!",
+					"EnterCommunityDialog.fxml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	/**
-	 * Is called, when the enter community button was pressed.
-	 * It shows a the CreateCommunityDialog.fxml
+	 * Is called, when the enter community button was pressed. It shows a the
+	 * CreateCommunityDialog.fxml
 	 */
 	@FXML
 	public void createCommunity() {
