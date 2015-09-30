@@ -11,27 +11,89 @@ public class Player {
 	private String name;
 	private int points;
 	private Position position;
-	
-	
-	
-	public Player(Double worth, String name, int points, Position position) {
-		super();
+	private int number;
+	private String positionString;
+	private Position position;
+	private int ID;
+	private int goals;
+	private boolean redCard;
+	private boolean yellowRedCard;
+	private String teamName;
+		
+	public Player(int worth, String name, int points, Position position) {
 		this.worth = worth;
 		this.name = name;
 		this.points = points;
-		this.position = position;
+		goals = 0;
+		redCard = false;
+		yellowRedCard = false;
 	}
-	
 	
 	public Position getPosition() {
 		return position;
 	}
 
+	public String getTeamName() {
+		return teamName;
+	}
 
-	public Double getWorth() {
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
+	}
+
+	public int getGoals() {
+		return goals;
+	}
+
+	public void setGoals(int goals) {
+		this.goals = goals;
+	}
+
+	public boolean isRedCard() {
+		return redCard;
+	}
+
+	public void setRedCard(boolean redCard) {
+		this.redCard = redCard;
+	}
+
+	public boolean isYellowRedCard() {
+		return yellowRedCard;
+	}
+
+	public void setYellowRedCard(boolean yellowRedCard) {
+		this.yellowRedCard = yellowRedCard;
+	}
+
+	public int getID() {
+		return ID;
+	}
+
+	public void setID(int iD) {
+		ID = iD;
+	}
+
+	public String getPositionString() {
+		return positionString;
+	}
+
+	public void setPosition(String position) {
+		this.positionString = position;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+	public int getWorth() {
 		return worth;
 	}
-	public void setWorth(Double worth) {
+	
+	public Position getPosition() {
+		return position;
+	}
+
+	public void setWorth(int worth) {
 		this.worth = worth;
 	}
 	public String getName() {
