@@ -41,7 +41,7 @@ public class FormationController {
 	}
 
 	public void setClickedListener() {
-		players.add(new Player(2423D, "hans", 1243, Position.Keeper));
+		players.add(new Player(2423, "hans", 1243, Position.Keeper));
 
 		for (Node n : formationFrame.getChildren()) {
 			((Label) n).setOnMouseClicked(new EventHandler<Event>() {

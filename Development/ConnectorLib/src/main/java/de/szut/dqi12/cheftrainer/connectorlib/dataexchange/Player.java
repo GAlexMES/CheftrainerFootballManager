@@ -11,7 +11,8 @@ public class Player {
 	private String name;
 	private int points;
 	private int number;
-	private String position;
+	private String positionString;
+	private Position position;
 	private int ID;
 	private int goals;
 	private boolean redCard;
@@ -82,12 +83,12 @@ public class Player {
 		ID = iD;
 	}
 
-	public String getPosition() {
-		return position;
+	public String getPositionString() {
+		return positionString;
 	}
 
 	public void setPosition(String position) {
-		this.position = position;
+		this.positionString = position;
 	}
 
 	public int getNumber() {
@@ -99,7 +100,7 @@ public class Player {
 	}
 
 	public int getWorth() {
-		this.position = position;
+		return worth;
 	}
 	
 	public Position getPosition() {
