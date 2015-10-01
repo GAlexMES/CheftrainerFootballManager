@@ -25,22 +25,23 @@ public class LineChartController<Y, X> {
 
 		chart = (LineChart) lineChart.getChildren().get(0);
 	}
-	
-	public void setTitle(String name){
+
+	public void setTitle(String name) {
 		chart.setTitle(name);
 	}
 
 	public void setData(HashMap<String, Integer> data) {
 		Series<String, Integer> series = new Series<String, Integer>();
 		for (String key : data.keySet()) {
-				
-				series.getData().add(new XYChart.Data<String, Integer>(key, data.get(key)));
+
+			series.getData().add(
+					new XYChart.Data<String, Integer>(key, data.get(key)));
 		}
-		
-		try{			
+
+		try {
 			this.data.clear();
-		}catch(Exception e){
-//			e.printStackTrace();
+		} catch (Exception e) {
+			// e.printStackTrace();
 		}
 		this.data.add(series);
 		this.chart.getData().clear();
@@ -58,15 +59,23 @@ public class LineChartController<Y, X> {
 		this.chart.setData(this.data);
 
 	}
-/**
- * 
- * @param xValue Wert fuer X-Achse
- * @param yValue Wert fuer Y-Achse
- * @param series Die Position des Graphes (0 fuer ersten Graph)
- */
+
+	/**
+	 * 
+	 * @param xValue
+	 *            Wert fuer X-Achse
+	 * @param yValue
+	 *            Wert fuer Y-Achse
+	 * @param series
+	 *            Die Position des Graphes (0 fuer ersten Graph)
+	 */
 	public void addValue(String xValue, int yValue, int series) {
 
 		try {
+			if (this.chart.getData().size() == 0) {
+				this.chart.getData().add(new Series<String, Integer>());
+			}
+			System.out.println(this.chart.getData().size());
 			this.chart.getData().get(series).getData()
 					.add(new XYChart.Data(xValue, yValue));
 		} catch (Exception e) {
