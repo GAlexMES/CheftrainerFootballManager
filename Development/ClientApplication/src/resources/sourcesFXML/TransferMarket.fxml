@@ -5,23 +5,32 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<GridPane fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.TransferMarketController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.transfer.TransferMarketController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
   </columnConstraints>
   <rowConstraints>
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints />
+      <RowConstraints />
   </rowConstraints>
    <children>
       <TableView fx:id="marketTable" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
 			<columns>
 				<TableColumn fx:id="nameCol" minWidth="254.0" prefWidth="-1.0" text="Player" />
 				<TableColumn fx:id="pointsCol" minWidth="129.0" prefWidth="-1.0" text="Points" />
-				<TableColumn fx:id="priceCol" minWidth="96.0" prefWidth="-1.0" text="Price" />
+				<TableColumn fx:id="werthCol" minWidth="96.0" prefWidth="-1.0" text="Werth" />
 			</columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
 		</TableView>
+		<ButtonBar GridPane.rowIndex="2">
+			<buttons>
+				<Button mnemonicParsing="false" onAction="#showOffers" text="show offers" />
+				<Button mnemonicParsing="false" onAction="#addPlayer" text="add player" />
+<!-- 					<Button mnemonicParsing="false" onAction="#createCommunity" prefHeight="25.0" prefWidth="102.0" text="Community erstellen" /> -->
+			</buttons>
+		</ButtonBar>
    </children>
 </GridPane>
