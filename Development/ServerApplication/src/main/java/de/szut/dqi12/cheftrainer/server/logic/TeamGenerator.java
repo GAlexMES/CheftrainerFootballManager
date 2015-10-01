@@ -59,9 +59,9 @@ public class TeamGenerator {
 			if (!idList.contains(p.getID())) {
 				idList.add(p.getID());
 				if (!isPlayerInUse(p.getID())
-						&& playerFitsInTeam(p.getPosition())) {
+						&& playerFitsInTeam(p.getPositionString())) {
 					playerList.add(p);
-					updatePlayerPerPosition(p.getPosition(), 1);
+					updatePlayerPerPosition(p.getPositionString(), 1);
 					teamWorth += p.getWorth();
 					LOGGER.info("Team generation: "
 							+ ((goalkeepers + defenders + middfielders + offensives) * 6.5)
