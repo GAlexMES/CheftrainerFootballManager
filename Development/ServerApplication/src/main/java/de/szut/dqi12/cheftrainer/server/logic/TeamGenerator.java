@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.logic;
 
+import java.awt.color.CMMException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -42,6 +43,15 @@ public class TeamGenerator {
 
 	private final static Logger LOGGER = Logger.getLogger(TeamGenerator.class);
 
+	/**
+	 * This method creates a new team for the given manager in the given
+	 * community
+	 * 
+	 * @param managerID
+	 *            the ID of the manager, that should get the new team
+	 * @param communityID
+	 *            the ID, in which the manager is active
+	 */
 	public void generateTeamForUser(int managerID, int communityID) {
 		LOGGER.info("Generate team for manager with ID = " + managerID
 				+ " for community " + communityID);
@@ -69,17 +79,21 @@ public class TeamGenerator {
 				}
 			}
 		}
-		
-		while (!checkWorth()) {
-			correctWorth();
+		if (correctWorth()) {
+
+			playerList.forEach(p -> updateDatabaseWithPlayers(p));
+
+			LOGGER.info("Team generation: 100% done - completed!");
 		}
-
-		playerList.forEach(p -> updateDatabaseWithPlayers(p));
-
-		LOGGER.info("Team generation: 100% done - completed!");
+		else{
+			LOGGER.error("Team generation: failed, something went wrong!");
+		}
 	}
 
-	private static final Comparator<Integer> INT_COMPARATOR= (a, b) -> {
+	/**
+	 * Compares two int
+	 */
+	private static final Comparator<Integer> INT_COMPARATOR = (a, b) -> {
 		if (a < b) {
 			return -1;
 		}
@@ -89,14 +103,32 @@ public class TeamGenerator {
 		return 0;
 	};
 
-	private void correctWorth() {
-		if (teamWorth < TEAM_WORTH * (1 + TEAM_WORTH_TOLERANZ)) {
-			findBetterPlayer((a,b)-> -INT_COMPARATOR.compare(a, b));
-		} else if (teamWorth > TEAM_WORTH * (1 - TEAM_WORTH_TOLERANZ)) {
+	/**
+	 * This method checks, if the team worth is correct and calls the
+	 * findBetterPlayer function to improve the team worth
+	 */
+	private boolean correctWorth() {
+		boolean smallerThanMax = teamWorth < TEAM_WORTH
+				* (1 + TEAM_WORTH_TOLERANZ);
+		boolean greaterThanMin = teamWorth > TEAM_WORTH
+				* (1 - TEAM_WORTH_TOLERANZ);
+		if (smallerThanMax && greaterThanMin) {
+			return true;
+		} else if (smallerThanMax) {
+			findBetterPlayer((a, b) -> -INT_COMPARATOR.compare(a, b));
+		} else if (greaterThanMin) {
 			findBetterPlayer(INT_COMPARATOR);
 		}
+		return correctWorth();
 	}
 
+	/**
+	 * Tries to find a better player for the user
+	 * 
+	 * @param com
+	 *            the comparator, which is used to find a cheaper or more
+	 *            expensive player
+	 */
 	private void findBetterPlayer(Comparator<Integer> com) {
 		Player currentPlayer = null;
 
@@ -104,8 +136,9 @@ public class TeamGenerator {
 		for (int i = 0; i < playerList.size(); i++) {
 			Player p = playerList.get(i);
 			currentPlayerIDs.add(p.getID());
-			
-			if (currentPlayer == null || com.compare(currentPlayer.getWorth(),p.getWorth()) < 0) {
+
+			if (currentPlayer == null
+					|| com.compare(currentPlayer.getWorth(), p.getWorth()) < 0) {
 				currentPlayer = p;
 			}
 		}
@@ -116,14 +149,14 @@ public class TeamGenerator {
 		while (!playerFound && idList.size() < heighestPlayerID - 1) {
 			Player newPlayer = getNewRandomPlayer();
 
-			if(newPlayer==null){
+			if (newPlayer == null) {
 				System.out.println("lol null");
 			}
 			if (!idList.contains(newPlayer.getID())) {
 				idList.add(newPlayer.getID());
 
-				boolean betterWorth = com.compare(newPlayer.getWorth(),currentPlayer
-						.getWorth())<0;
+				boolean betterWorth = com.compare(newPlayer.getWorth(),
+						currentPlayer.getWorth()) < 0;
 				boolean samePosition = newPlayer.getPosition().equals(
 						currentPlayer.getPosition());
 				boolean notInUse = !isPlayerInUse(newPlayer.getID())
@@ -143,18 +176,19 @@ public class TeamGenerator {
 		}
 	}
 
-	private boolean checkWorth() {
-		if (teamWorth < TEAM_WORTH * (1 + TEAM_WORTH_TOLERANZ)
-				&& teamWorth > TEAM_WORTH * (1 - TEAM_WORTH_TOLERANZ)) {
-			return true;
-		}
-		return false;
-	}
-
+	/**
+	 * This method maps the given Player to the manager, that was given to the generateTeamForUser method
+	 * @param p the player, that should be mapped to the manager
+	 */
 	private void updateDatabaseWithPlayers(Player p) {
 		DatabaseRequests.addPlayerToManager(managerID, p.getID());
 	}
 
+	/**
+	 * Updates the number of players, which plays on the given position
+	 * @param position the position, that should be updated
+	 * @param update the value, that should be added to the position
+	 */
 	private void updatePlayerPerPosition(String position, int update) {
 		switch (position) {
 		case "Torwart":
@@ -177,6 +211,11 @@ public class TeamGenerator {
 		return DatabaseRequests.isPlayerOwened(playerID, communityID);
 	}
 
+	/**
+	 * Checks if the position, on which the given plays, is free
+	 * @param position the position of the player
+	 * @return true = position is free, false=position is not free
+	 */
 	private boolean playerFitsInTeam(String position) {
 		switch (position) {
 		case "Torwart":
@@ -192,6 +231,10 @@ public class TeamGenerator {
 		}
 	}
 
+	/**
+	 * Creates a random int and takes the player with this ID out of the database
+	 * @return a new random Player object with values from the database
+	 */
 	private Player getNewRandomPlayer() {
 		Random rn = new Random();
 		int playerID = 0 + rn.nextInt(heighestPlayerID - 1);
@@ -199,6 +242,9 @@ public class TeamGenerator {
 		return DatabaseRequests.getPlayer(playerID);
 	}
 
+	/**
+	 * Resets all parameters for next generation
+	 */
 	private void reset() {
 		teamWorth = 0;
 		goalkeepers = 0;

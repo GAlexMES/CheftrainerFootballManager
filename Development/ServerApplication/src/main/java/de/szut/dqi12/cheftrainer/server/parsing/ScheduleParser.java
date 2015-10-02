@@ -22,7 +22,6 @@ public class ScheduleParser {
 	private static String sportalRoot = "http://www.sportal.de";
 	private String scheduleRoot = sportalRoot
 			+ "/fussball/bundesliga/spielplan/spielplan-spieltag-";
-	private final static String tableID = "moduleResultContentResultateList";
 	private int matchday;
 	private int season;
 	private List<Match> matches;

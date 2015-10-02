@@ -11,7 +11,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-
+/**
+ * The PointParser class is used to create a new URL to a sportal webside, 
+ * from which the points of all players, that realy played, can be parsed.
+ * @author Alexander Brennecke
+ *
+ */
 public class PointsParser {
 
 	private static final String root = "http://www.sportal.de/includes/kompaktformat/index_frame_full.php";
@@ -22,6 +27,15 @@ public class PointsParser {
 	private static final int HEIGHST_GRADE_POINT = 12;
 	private static final int DIF_BETWEEN_HALF_GRADES = 2;
 
+	
+	/**
+	 * This method is used, to get the points of all players for a specific match at a specific matchday in a specific season.
+	 * @param season the season, use 2015 for season 2015-2016
+	 * @param matchday the matchday, use 1-34 for the bundesliga
+	 * @param matchID tha matchID, is a unique ID, that was created by sportal
+	 * @return a Map, that contains a key for each team of the given season. 
+	 * Each key has a new Map, where the keys are the Player names and the value is a player object.
+	 */
 	public Map<String, Map<String, Player>> getPlayerPoints(int season,
 			int matchday, int matchID) {
 		Map<String, Map<String, Player>> retval = new HashMap<>();
@@ -48,6 +62,12 @@ public class PointsParser {
 		return retval;
 	}
 
+	/**
+	 * Sets the given team name to all players of the given map.
+	 * @param team a Map of players, that plays in the given team
+	 * @param teamName the name of the team, that will be set to all players in the team
+	 * @return the team list with modified values
+	 */
 	private Map<String, Player> addTeamToPlayers(Map<String, Player> team,
 			String teamName) {
 		for (String s : team.keySet()) {
@@ -56,6 +76,12 @@ public class PointsParser {
 		return team;
 	}
 
+	/**
+	 * Creates a map of all Players, that played for the Home/Guest team and received points
+	 * @param team Should be TEAM_HOME or TEAM_GUEST
+	 * @param doc the Document of the player grades webside from sportal
+	 * @return a map with all players, that received points and plays in the given tesm
+	 */
 	private Map<String, Player> getPlayersForTeam(String team, Document doc) {
 		Element teamOnPitch = doc.select("div[class=spielfeld" + team + "]")
 				.first();
@@ -70,6 +96,14 @@ public class PointsParser {
 		return players;
 	}
 
+	/**
+	 * Adds Yello-Red Card, Red Card and Goals to the player and creates new Player Object, 
+	 * for players, that have no gradem but a additional information
+	 * @param players a Map of players, that should get the additional data
+	 * @param team should be TEAM_HOME or TEAM_GUEST
+	 * @param doc the document od the sportal player grade form
+	 * @return the team map with the additional data
+	 */
 	private Map<String, Player> addAditionalInformationToPlayers(
 			Map<String, Player> players, String team, Document doc) {
 
@@ -83,6 +117,13 @@ public class PointsParser {
 		return players;
 	}
 
+	/**
+	 * Mapps the given additional data parameter to a player in the given map
+	 * @param players the map of players, that should receive the additional data
+	 * @param information the map of the players, that have additional data
+	 * @param mapping the Parameter, that should be maped. Should be RedCard, YellowRedCard or Goals
+	 * @return the players map with the additional data for the mapping parameter
+	 */
 	private Map<String, Player> mapAdditionalInformationToPlayer(
 			Map<String, Player> players, Map<String, Integer> information,
 			String mapping) {
@@ -106,7 +147,12 @@ public class PointsParser {
 		}
 		return players;
 	}
-
+	
+	/**
+	 * This method parsed all players, that played at the beginning of the game, and received a grade
+	 * @param players a List&lt;Player&gt; of the players, that played at the beginning and received a grade 
+	 * @return
+	 */
 	private Map<String, Player> getPlayerOnPitch(Elements players) {
 		Map<String, Player> retval = new HashMap<>();
 
@@ -126,6 +172,11 @@ public class PointsParser {
 		return retval;
 	}
 	
+	/**
+	 * Calculate the points for the given grade
+	 * @param gradeAsString Should be between 1 and 6 in 0.5 steps
+	 * @return the points for the grade
+	 */
 	private int getGrade(String gradeAsString){
 		try {
 			Double grade = Double.valueOf(gradeAsString);
@@ -144,6 +195,12 @@ public class PointsParser {
 		return 0;
 	}
 
+	/**
+	 * Parses all Players, that replaced a other player during the game
+	 * @param team should be TEAM_HOME or TEAM_GUEST
+	 * @param doc the Document of the sportal webside
+	 * @return a Map with player names as key and a player object as value for all players, that replaced a other player during the game
+	 */
 	private Map<String, Player> getReplacementPlayer(String team, Document doc) {
 		Map<String, Player> retval = new HashMap<>();
 
@@ -176,11 +233,23 @@ public class PointsParser {
 		return retval;
 	}
 
+	/**
+	 * Parses the Document to receive the team name of the given team.
+	 * @param team should be TEAM_HOME or TEAM_GUEST
+	 * @param doc the Document of the sportal webside
+	 * @return the team name as string
+	 */
 	private String getTeamName(String team, Document doc) {
 		Element teamLogo = doc.select("div[class=logo" + team + "]").first();
 		return teamLogo.select("a").attr("title");
 	}
 
+	/**
+	 * Parses all Players, that scored at leas one goal during the game.
+	 * @param team should be TEAM_HOME or TEAM_GUEST
+	 * @param doc the Document of the sportal webside
+	 * @return a Map with the player name as key and a player object as value for all players, that plays in the given team and scored at least one goal.
+	 */
 	private Map<String, Integer> getGoalPlayers(String team, Document doc) {
 		Map<String, Integer> retval = new HashMap<>();
 		Elements goals = getRowData(doc, team, "Tore");
@@ -197,6 +266,12 @@ public class PointsParser {
 		return retval;
 	}
 
+	/**
+	 * Parses all Players, that received a YellowRedCard
+	 * @param team should be TEAM_HOME or TEAM_GUEST
+	 * @param doc the Document of the sportal webside
+	 * @return a Map with the player name as key and a player object as value for all players, that plays in the given team and received a YellowRedCard
+	 */
 	private Map<String, Integer> getYellowRedCardPlayers(String team,
 			Document doc) {
 		Map<String, Integer> retval = new HashMap<>();
@@ -208,6 +283,12 @@ public class PointsParser {
 		return retval;
 	}
 
+	/**
+	 * Parses all Players, that received a RedCard
+	 * @param team should be TEAM_HOME or TEAM_GUEST
+	 * @param doc the Document of the sportal webside
+	 * @return a Map with the player name as key and a player object as value for all players, that plays in the given team and received a RedCard
+	 */
 	private Map<String, Integer> getRedCardPlayers(String team, Document doc) {
 		Map<String, Integer> retval = new HashMap<>();
 		Elements redCards = getRowData(doc, team, "Rote Karten");
@@ -218,6 +299,14 @@ public class PointsParser {
 		return retval;
 	}
 
+	
+	/**
+	 * Parses the information table.
+	 * @param doc The document of the sportal webside.
+	 * @param team should be TEAM_HOME or TEAM_GUEST
+	 * @param headerText the name of the information, that should be parsed
+	 * @return All Elements under the given row header
+	 */
 	private Elements getRowData(Document doc, String team, String headerText) {
 		String teamAB = "";
 		if (team.equals(TEAM_GUEST)) {
@@ -236,6 +325,13 @@ public class PointsParser {
 		return retval;
 	}
 
+	/**
+	 * Creates the URL for the sportal webside out of the given information
+	 * @param season the season, should be 2015 for 2015-2016
+	 * @param matchday the matchday, should be 1-34 for bundesliga
+	 * @param matchID the matchID is a unique sportal ID for a specific match
+	 * @return the generated URL as String
+	 */
 	private static String getURL(int season, int matchday, int matchID) {
 		String parsedSeason = String.valueOf(season);
 		parsedSeason = parsedSeason.substring(2, parsedSeason.length());
