@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.server.Controller;
-import de.szut.dqi12.cheftrainer.server.utils.ParserUtils;
 
 /**
  * This class is used to connect to a existing database.
@@ -50,7 +49,7 @@ public class SQLConnection {
 		LOGGER.info("Start validating Database!");
 		if(!DatabaseRequests.existRealPlayer()){
 			try{
-			DatabaseRequests.loadRealPlayers("Bundesliga","Deutschland",ParserUtils.playerRootURL);
+			DatabaseRequests.loadRealPlayers("Bundesliga","Deutschland");
 			LOGGER.info("Validating database: 100% done");
 			}
 			catch(IOException io){

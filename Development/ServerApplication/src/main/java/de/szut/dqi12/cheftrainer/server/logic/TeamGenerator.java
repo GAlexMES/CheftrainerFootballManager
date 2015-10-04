@@ -1,6 +1,5 @@
 package de.szut.dqi12.cheftrainer.server.logic;
 
-import java.awt.color.CMMException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -35,7 +34,6 @@ public class TeamGenerator {
 	private int middfielders = 0;
 	private int offensives = 0;
 
-	private List<Integer> idList;
 	private List<Player> playerList;
 	private int heighestPlayerID;
 	private int communityID;
@@ -59,9 +57,28 @@ public class TeamGenerator {
 		reset();
 		this.managerID = managerID;
 		this.communityID = communityID;
+		playerList = createRandomTeam();
+		
+		if (correctWorth()) {
+
+			playerList.forEach(p -> updateDatabaseWithPlayers(p));
+
+			LOGGER.info("Team generation: 100% done - completed!");
+		}
+		else{
+			LOGGER.error("Team generation: failed, something went wrong!");
+		}
+	}
+	
+	
+	/**
+	 * This method creates a new random team
+	 * @return a List of all Players, playing in this new team
+	 */
+	private List<Player> createRandomTeam(){
 		heighestPlayerID = DatabaseRequests.getHeighstPlayerID();
-		idList = new ArrayList<>();
-		playerList = new ArrayList<>();
+		List<Integer> idList = new ArrayList<>();
+		List<Player> playerList = new ArrayList<>();
 
 		while (goalkeepers + defenders + middfielders + offensives < NUMBER_OF_PLAYER
 				&& idList.size() < heighestPlayerID - 1) {
@@ -79,15 +96,7 @@ public class TeamGenerator {
 				}
 			}
 		}
-		if (correctWorth()) {
-
-			playerList.forEach(p -> updateDatabaseWithPlayers(p));
-
-			LOGGER.info("Team generation: 100% done - completed!");
-		}
-		else{
-			LOGGER.error("Team generation: failed, something went wrong!");
-		}
+		return playerList;
 	}
 
 	/**

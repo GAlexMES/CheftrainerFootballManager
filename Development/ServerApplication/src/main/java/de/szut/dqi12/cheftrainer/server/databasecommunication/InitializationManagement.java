@@ -8,8 +8,8 @@ import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
+import de.szut.dqi12.cheftrainer.server.parsing.TeamParser;
 import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
-import de.szut.dqi12.cheftrainer.server.utils.ParserUtils;
 
 public class InitializationManagement {
 
@@ -28,12 +28,11 @@ public class InitializationManagement {
 		return !DatabaseUtils.isResultSetEmpty(rs);
 	}
 
-	public void loadRealPlayers(String leagueName, String leagueCountry,
-			String sourceURL) throws IOException{
+	public void loadRealPlayers(String leagueName, String leagueCountry) throws IOException{
 		try {
 			addLeague(leagueName, leagueCountry);
 			LOGGER.info("Validating database: 0% Done");
-			List<RealTeam> teamList = ParserUtils.getTeamList(sourceURL);
+			List<RealTeam> teamList = TeamParser.getTeams();
 			LOGGER.info("Validating database: 10% Done");
 			String condition = "Name='"+leagueName+"'";
 			int leagueID = Integer.valueOf(DatabaseUtils.getUniqueValue(sqlCon,"ID", "Liga",condition));

@@ -16,6 +16,11 @@ import org.jsoup.select.Elements;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 
+/**
+ * This class should be used to parse information, which are required for a matchday, a match or a season
+ * @author Alexander Brennecke
+ *
+ */
 public class ScheduleParser {
 
 	private static String sportalBundesligaRoot = "http://www.sportal.de/fussball/bundesliga/";
@@ -26,6 +31,14 @@ public class ScheduleParser {
 	private int season;
 	private List<Match> matches;
 
+	
+	/**
+	 * This method parses the information for the given matchday in the given season to Match objects.
+	 * @param matchday the matchday (should be 1-34 for bundesliga)
+	 * @param season use 2015 for season 2015-2016
+	 * @return a List of all Matches, that are part of this matchday
+	 * @throws MalformedURLException
+	 */
 	public List<Match> createSchedule(int matchday, int season)
 			throws MalformedURLException {
 		this.matchday = matchday;
@@ -49,6 +62,11 @@ public class ScheduleParser {
 		return matches;
 	}
 
+	/**
+	 * Parses a HTML Element to a Match object
+	 * @param e the HTML Element from sportal.de
+	 * @return a new Match object
+	 */
 	private Match createMatch(Element e) {
 		String date = e.select("span[class=date]").text();
 		if (matchday < 18) {
@@ -68,6 +86,11 @@ public class ScheduleParser {
 		return m;
 	}
 	
+	/**
+	 * This method returns the ID of a match.
+	 * @param url must be a URL to a sportal detail side of a match
+	 * @return the id of the match as int
+	 */
 	public static int getSportalID(String url) {
 
 		try {
@@ -84,7 +107,11 @@ public class ScheduleParser {
 		return -1;
 	}
 	
-
+	/**
+	 * This method parses the whole schedule for a season-
+	 * @param season use 2015 for season 2015-2016
+	 * @return a Map, where the key is a matchday and returns a List of Matches for that matchday
+	 */
 	public Map<Integer,List<Match>> getMatchesForSeason(int season){
 		String url ="http://www.sportal.de/fussball/bundesliga/spielplan/spielplan-chronologisch-saison-";
 		url = url + season+"-"+(season+1);
@@ -111,6 +138,10 @@ public class ScheduleParser {
 		return retval;
 	}
 
+	/**
+	 * This method parses the sportal.de webside t find the current season.
+	 * @return the current season as int. Will return 2015 for season 2015-2016
+	 */
 	public int getCurrentSeason() {
 		Document doc;
 		try {

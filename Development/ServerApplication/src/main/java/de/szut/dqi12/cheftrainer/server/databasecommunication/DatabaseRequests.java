@@ -76,8 +76,8 @@ public class DatabaseRequests {
 		return initializationManagement.existPlayer();
 	}
 
-	public static void loadRealPlayers(String leagueName, String leagueCountry, String leagueSource) throws IOException{
-		initializationManagement.loadRealPlayers(leagueName, leagueCountry, leagueSource);
+	public static void loadRealPlayers(String leagueName, String leagueCountry) throws IOException{
+		initializationManagement.loadRealPlayers(leagueName, leagueCountry);
 	}
 	
 	public static int getHeighstPlayerID(){

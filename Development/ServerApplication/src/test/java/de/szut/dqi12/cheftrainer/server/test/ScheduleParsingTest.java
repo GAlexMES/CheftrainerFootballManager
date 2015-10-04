@@ -15,7 +15,8 @@ import de.szut.dqi12.cheftrainer.server.parsing.PointsParser;
 import de.szut.dqi12.cheftrainer.server.parsing.ScheduleParser;
 
 /**
- *	This class testes the Schedule and Point parser. It loads all matches for a given gameday and checks the points for a few players.
+ *	This class testes the Schedule and Point parser. 
+ *  It loads all matches for a given gameday and checks the points for a few players.
  * @author Alexander Brennecke
  *
  */

@@ -2,7 +2,6 @@ package de.szut.dqi12.cheftrainer.server.utils;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,34 +14,18 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
-import de.szut.dqi12.cheftrainer.server.parsing.PlayerParser;
-import de.szut.dqi12.cheftrainer.server.parsing.TeamParser;
-
+/**
+ * This class has some useful methods, which are used by the parser classes.
+ * @author Alexander Brennecke
+ *
+ */
 public class ParserUtils {
 
-	public static String playerRootURL = "http://www.ran.de/datenbank/fussball";
-
-	public static List<RealTeam> getTeamList(String leagueRootURL) throws IOException {
-		try {
-			TeamParser tp = new TeamParser();
-			List<RealTeam> teamList = tp.getTeamlist(leagueRootURL);
-			PlayerParser pp = new PlayerParser();
-			for (RealTeam t : teamList) {
-				URL teamURL;
-				try {
-					teamURL = new URL(leagueRootURL + t.getTeamUrl());
-					t.setPlayerList(pp.getPlayers(teamURL));
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
-			}
-			return teamList;
-		} catch (IOException e) {
-			throw e;
-		}
-	}
-
+	/**
+	 * This method collects the HTML of the given URL
+	 * @return the content of the given url as string
+	 * @throws IOException
+	 */
 	public static String getPage(URL url) throws IOException {
 		String content = "";
 		try {
@@ -54,6 +37,11 @@ public class ParserUtils {
 		return content;
 	}
 
+	/**
+	 * Tries to find a HTML table in the given string.
+	 * @param file return the content of the HTML table
+	 * @return
+	 */
 	public static String getTableOfHTML(String file) {
 		String pattern = "(<table>.*<\\/table>)";
 		Pattern r = Pattern.compile(pattern);
@@ -65,6 +53,11 @@ public class ParserUtils {
 		return null;
 	}
 
+	/**
+	 * This method creates a SAXBuilder for the given String
+	 * @param xmlString The html string, that should be used with the SAXBuilder
+	 * @return a List of Element, which are the childs of the root of the given String.
+	 */
 	public static List<Element> parseXmlTableString(String xmlString) {
 		SAXBuilder saxBuilder = new SAXBuilder();
 		List<Element> nodeList = new ArrayList<Element>();
@@ -74,11 +67,5 @@ public class ParserUtils {
 		} catch (JDOMException |IOException e) {
 		}
 		return nodeList;
-	}
-
-	public static List<Element> getElementWithID(String pageContent,
-			String string, String tableid) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
