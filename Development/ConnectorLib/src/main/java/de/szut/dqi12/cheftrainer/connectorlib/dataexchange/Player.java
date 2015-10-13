@@ -18,6 +18,7 @@ public class Player {
 	private boolean redCard;
 	private boolean yellowRedCard;
 	private String teamName;
+	private boolean plasy;
 		
 	public Player(int worth, String name, int points, Position position) {
 		this.worth = worth;
@@ -121,6 +122,14 @@ public class Player {
 	}
 	public void setPoints(int points) {
 		this.points = points;
+	}
+
+	public void setPlays(boolean plays) {
+		this.plasy = plays;
+	}
+	
+	public boolean plays(){
+		return this.plays();
 	}
 	
 	

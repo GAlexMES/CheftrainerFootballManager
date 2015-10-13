@@ -113,12 +113,12 @@ public class ScheduleParser {
 	 * @return a Map, where the key is a matchday and returns a List of Matches for that matchday
 	 */
 	public Map<Integer,List<Match>> getMatchesForSeason(int season){
-		String url ="http://www.sportal.de/fussball/bundesliga/spielplan/spielplan-chronologisch-saison-";
+		String url =sportalBundesligaRoot+"spielplan/spielplan-chronologisch-saison-";
 		url = url + season+"-"+(season+1);
 		Map<Integer,List<Match>> retval = new HashMap<>();
 		
 		try {
-			Document doc = Jsoup.connect(sportalBundesligaRoot).get();
+			Document doc = Jsoup.connect(url).get();
 			Elements matchDays = doc.getElementById("moduleResultContentResultateList").select("ul[class=table_head_spieltag]");
 			for(Element matchDay: matchDays){
 				int matchDayID = Integer.valueOf(matchDay.child(0).text().split(Pattern.quote("."))[0]);

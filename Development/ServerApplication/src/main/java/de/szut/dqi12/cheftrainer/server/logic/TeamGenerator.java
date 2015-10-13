@@ -85,8 +85,7 @@ public class TeamGenerator {
 			Player p = getNewRandomPlayer();
 			if (!idList.contains(p.getID())) {
 				idList.add(p.getID());
-				if (!isPlayerInUse(p.getID())
-						&& playerFitsInTeam(p.getPositionString())) {
+				if (!isPlayerInUse(p.getID())&& playerFitsInTeam(p.getPositionString())) {
 					playerList.add(p);
 					updatePlayerPerPosition(p.getPositionString(), 1);
 					teamWorth += p.getWorth();
@@ -161,19 +160,20 @@ public class TeamGenerator {
 			if (newPlayer == null) {
 				System.out.println("lol null");
 			}
+			System.out.println(newPlayer.getID());
 			if (!idList.contains(newPlayer.getID())) {
 				idList.add(newPlayer.getID());
 
 				boolean betterWorth = com.compare(newPlayer.getWorth(),
 						currentPlayer.getWorth()) < 0;
-				boolean samePosition = newPlayer.getPosition().equals(
-						currentPlayer.getPosition());
+				boolean samePosition = newPlayer.getPositionString().equals(
+						currentPlayer.getPositionString());
 				boolean notInUse = !isPlayerInUse(newPlayer.getID())
 						&& !currentPlayerIDs.contains(newPlayer.getID());
 
 				if (betterWorth && samePosition && notInUse) {
-					if (newPlayer.getPosition().equals(
-							currentPlayer.getPosition())) {
+					if (newPlayer.getPositionString().equals(
+							currentPlayer.getPositionString())) {
 						teamWorth -= currentPlayer.getWorth();
 						teamWorth += newPlayer.getWorth();
 						playerList.remove(currentPlayer);

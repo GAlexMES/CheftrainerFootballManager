@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.List;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
 import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 
 /**
@@ -185,13 +188,17 @@ public class CommunityManagement {
 			String sqlQuery = "INSERT INTO Manager (Nutzer_ID, Spielrunde_ID) VALUES ('"
 					+ userID + "','" + communityID + "')";
 			sqlCon.sendQuery(sqlQuery);
+			
+			int managerID = DatabaseUtils.getManagerID(sqlCon, userID, communityID);
+			TeamGenerator tg = new TeamGenerator();
+			tg.generateTeamForUser(managerID, communityID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		return false;
 	}
-
+	
 	/**
 	 * This method checks, if the given password and community match together.
 	 * @param password the md5 password of the community.
@@ -221,5 +228,31 @@ public class CommunityManagement {
 				+ " AND Spielrunde.ID=Manager.Spielrunde_ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistUser);
 		return !DatabaseUtils.isResultSetEmpty(rs);
+	}
+	
+	public List<Player> getTeam(int managerID){
+		List<Player> playerList = new ArrayList<>();
+		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft"
+				+ " WHERE Mannschaft.Manager_ID="+managerID
+				+ " AND Mannschaft.Spieler_ID=Spieler.ID";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		try {
+			while (rs.next()) {
+				Player p = new Player();
+				p.setID(rs.getInt("ID"));
+				p.setName(rs.getString("Name"));
+				int teamID = rs.getInt("ID");
+				String teamName = DatabaseUtils.getTeamNameForID(sqlCon, teamID);
+				p.setTeamName(teamName);
+//				p.setPosition(rs.getString("Position"));
+				p.setNumber(rs.getInt("Nummer"));
+				p.setPlays(rs.getBoolean("Aufgestellt"));
+				p.setWorth(rs.getInt("Marktwert"));
+				p.setPoints(rs.getInt("Punkte"));
+				playerList.add(p);
+			}
+		} catch (SQLException e) {
+		}
+		return playerList;
 	}
 }

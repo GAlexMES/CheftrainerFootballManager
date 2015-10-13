@@ -26,6 +26,43 @@ public class DatabaseUtils {
 		return false;
 	}
 
+	public static int getManagerID(SQLConnection sqlCon, int userID,
+			int communityID) {
+		try {
+			return DatabaseUtils.getUniqueValue(sqlCon, "Manager.ID",
+					"Manager INNER JOIN Nutzer", "Manager.Nutzer_ID=" + userID
+							+ " AND Manager.Spielrunde_ID=" + communityID);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+
+	public static int getManagerID(SQLConnection sqlCon, int userID,
+			String communityName) {
+			try {
+				int communityID = getUniqueValue(sqlCon,"Spielrunde.ID", "Spielrunde", "Spielrunde.Name='"+ communityName+"'");
+				return getManagerID(sqlCon, userID, communityID);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return -1;
+			}
+	}
+
+	public static String getTeamNameForID(SQLConnection sqlCon, int id){
+		String sqlQuery ="Select Name from Verein where Verein.ID="+id;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		if (!DatabaseUtils.isResultSetEmpty(rs)) {
+			try {
+				while (rs.next()) {
+					return  rs.getString("Name");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} 
+		return "";
+	}
 	public static int getUniqueValue(SQLConnection sqlCon, String coloumName,
 			String table, String whereCondition) throws IOException {
 		int retval = 0;

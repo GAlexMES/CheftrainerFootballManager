@@ -105,4 +105,8 @@ public class DatabaseRequests {
 		schedulePointManagement.initializeScheduleForSeason(currentSeason);
 	}
 
+	public static List<Player> getTeam(int managerID) {
+		return communityManagement.getTeam(managerID);
+	}
+
 }

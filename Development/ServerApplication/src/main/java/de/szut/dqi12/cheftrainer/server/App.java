@@ -20,8 +20,8 @@ public class App {
 			Controller controller = Controller.getInstance();
 			controller.creatDatabaseCommunication(DB_NAME, DB_PATH);
 			controller.startServerSocket(PACKAGE_PATH);
-
 		} catch (Exception e) {
+			e.printStackTrace();
 			LOGGER.error("A fatal error occured. Server will shut down!");
 		}
 	}

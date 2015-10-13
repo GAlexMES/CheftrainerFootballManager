@@ -2,9 +2,7 @@ package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 
