@@ -75,7 +75,6 @@ public class LineChartController<Y, X> {
 			if (this.chart.getData().size() == 0) {
 				this.chart.getData().add(new Series<String, Integer>());
 			}
-			System.out.println(this.chart.getData().size());
 			this.chart.getData().get(series).getData()
 					.add(new XYChart.Data(xValue, yValue));
 		} catch (Exception e) {
