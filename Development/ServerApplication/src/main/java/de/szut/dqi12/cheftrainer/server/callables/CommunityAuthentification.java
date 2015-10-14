@@ -2,18 +2,16 @@ package de.szut.dqi12.cheftrainer.server.callables;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.SQLConnection;
-import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
+import de.szut.dqi12.cheftrainer.server.usercommunication.ClientUpdate;
 import de.szut.dqi12.cheftrainer.server.utils.JSONUtils;
 
 /**
@@ -58,48 +56,85 @@ public class CommunityAuthentification extends CallableAbstract {
 		Message enterACK = new Message(
 				ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 		JSONObject enterACKJSON = JSONUtils.mapToJSON(enterFeedback);
-		JSONArray team = createJSONForManagerTeam(userID, communityName,
-				enterFeedback);
+
+		updateSessionAndClient(userID);
+
 		enterACKJSON.put("type", "enter");
-		enterACKJSON.put("team", team);
 		enterACK.setMessageContent(enterACKJSON);
 		mesController.sendMessage(enterACK);
 	}
 
-	private JSONArray createJSONForManagerTeam(int userID,
-			String communityName, boolean feedback) {
-		if (feedback) {
-			return createJSONForTeam(userID, communityName);
+	private void updateSessionAndClient(int userID) {
+		int communityID = getNewCommunityID(userID);
+		if (communityID > 0) {
+			updateSession(communityID);
+			sendUpdateToClient(communityID);
 		}
-		return new JSONArray();
 	}
 
-	private JSONArray createJSONForManagerTeam(int userID,
-			String communityName, HashMap<String, Boolean> feedback) {
-		boolean feedbackFlag = false;
-		;
+	private void updateSession(int communityID) {
+		Community community = DatabaseRequests.getCummunityForID(communityID);
+		mesController.getSession().addCommunity(community);
+	}
 
-		for (String s : feedback.keySet()) {
-			feedbackFlag = feedback.get(s);
-			if (!feedbackFlag) {
-				break;
+	private int getNewCommunityID(int userID) {
+		Set<Integer> knownIDs = mesController.getSession().getCommunityMap()
+				.keySet();
+		List<Integer> allIDs = DatabaseRequests.getCummunityIDsForUser(userID);
+
+		for (Integer i : allIDs) {
+			if (!knownIDs.contains(i)) {
+				return i;
 			}
 		}
-
-		return createJSONForManagerTeam(userID, communityName, feedbackFlag);
+		return -1;
 	}
 
-	private JSONArray createJSONForTeam(int userID, String communityName) {
-		JSONArray retval = new JSONArray();
-		SQLConnection sqlCon = Controller.getInstance().getSQLConnection();
-		int managerID = DatabaseUtils.getManagerID(sqlCon, userID,
-				communityName);
-		List<Player> playerList = DatabaseRequests.getTeam(managerID);
-		for (Player p : playerList) {
-			retval.put(JSONUtils.getJSONFromPlayer(p));
-		}
-		return retval;
+	private void sendUpdateToClient(int communityID) {
+		Message communityListUpdate = new Message(
+				ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
+
+		JSONObject updateJSON = new JSONObject();
+		updateJSON.put("type", "newCommunity");
+		updateJSON.put("community", ClientUpdate.createCommunityMessage(communityID));
+		communityListUpdate.setMessageContent(updateJSON);
+		mesController.sendMessage(communityListUpdate);
 	}
+
+	// private JSONArray createJSONForManagerTeam(int userID,
+	// String communityName, boolean feedback) {
+	// if (feedback) {
+	// return createJSONForTeam(userID, communityName);
+	// }
+	// return new JSONArray();
+	// }
+	//
+	// private JSONArray createJSONForManagerTeam(int userID,
+	// String communityName, HashMap<String, Boolean> feedback) {
+	// boolean feedbackFlag = false;
+	// ;
+	//
+	// for (String s : feedback.keySet()) {
+	// feedbackFlag = feedback.get(s);
+	// if (!feedbackFlag) {
+	// break;
+	// }
+	// }
+	//
+	// return createJSONForManagerTeam(userID, communityName, feedbackFlag);
+	// }
+	//
+	// private JSONArray createJSONForTeam(int userID, String communityName) {
+	// JSONArray retval = new JSONArray();
+	// SQLConnection sqlCon = Controller.getInstance().getSQLConnection();
+	// int managerID = DatabaseUtils.getManagerID(sqlCon, userID,
+	// communityName);
+	// List<Player> playerList = DatabaseRequests.getTeam(managerID);
+	// for (Player p : playerList) {
+	// retval.put(p.getJSONFromPlayer());
+	// }
+	// return retval;
+	// }
 
 	/**
 	 * This method is called, when the CommunityAuthentification Message has the
@@ -120,6 +155,7 @@ public class CommunityAuthentification extends CallableAbstract {
 		if (communityCreated) {
 			DatabaseRequests.enterCommunity(communityName, communityPassword,
 					userID);
+			updateSessionAndClient(userID);
 		}
 		Message creationACK = new Message(
 				ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
@@ -127,9 +163,6 @@ public class CommunityAuthentification extends CallableAbstract {
 		JSONObject creationACKJSON = new JSONObject();
 		creationACKJSON.put("type", "creation");
 		creationACKJSON.put("created", communityCreated);
-		JSONArray team = createJSONForManagerTeam(userID, communityName,
-				communityCreated);
-		creationACKJSON.put("team", team);
 
 		creationACK.setMessageContent(creationACKJSON);
 

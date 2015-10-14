@@ -5,6 +5,7 @@ import java.util.List;
 
 import javafx.fxml.FXMLLoader;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,6 +16,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.ManagerTeam;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
@@ -24,16 +26,45 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  */
 public class UserCommunityList extends CallableAbstract {
 
+	private final static Logger LOGGER = Logger.getLogger(UserCommunityList.class);
+	
+	
 	/**
 	 * This method is called, when a new message with the id "UserCommunityList" arrived at the message controller.
 	 */
 	@Override
 	public void messageArrived(Message message) {
+		JSONObject jsonMessage = new JSONObject(message.getMessageContent()); 
+		switch(jsonMessage.getString("type")){
+		case "init": newList(jsonMessage); break;
+		case "updateCommunity": updateList(jsonMessage); break;
+		case "newCommunity": addCommunityToList(jsonMessage); break;
+		default: 
+			LOGGER.error("Undefined message type ("+jsonMessage.getString("type")+")");
+		}
+	}
+	
+	private void updateList(JSONObject message){
+		System.out.println("lol");
+	}
+	
+	private void addCommunityToList(JSONObject message){
+		Community community = jsonToCommunity(message.getJSONObject("community"));
+		Controller.getInstance().getSession().addCommunity(community);
+		updateView();
+	}
+	
+	private void newList(JSONObject message){
 		String userName = mesController.getSession().getUser().getUserName();
-		JSONArray communityList = new JSONArray(message.getMessageContent());
+		JSONArray communityList = message.getJSONArray("information");
 		List<Community> communities = jsonArrayToCommnityList(communityList,userName);
 		Controller.getInstance().getSession().addCommunities(communities);
+		updateView();
+	}
+	
+	private void updateView(){
 		FXMLLoader loader = GUIController.getInstance().getCurrentContentLoader();
+		List<Community> communities = Controller.getInstance().getSession().getCommunities();
 		try {
 			CommunitiesController cc = loader.getController();
 			displayCommunities(communities, cc);
@@ -51,17 +82,37 @@ public class UserCommunityList extends CallableAbstract {
 		new ArrayList<>();
 		List<Community> retval = new ArrayList<>();
 		for (int i = 0; i < communityList.length(); i++) {
-			Community com = new Community();
-			JSONObject communityJSON = new JSONObject(communityList.get(i)
-					.toString());
-			com.setCommunityID(communityJSON.getInt("ID"));
-			com.setName(communityJSON.getString("Name"));
-			JSONArray managersJSON = new JSONArray(
-					communityJSON.get("Managers").toString());
-			com.addManagers(createManagerList(managersJSON));
+			Community com = jsonToCommunity(new JSONObject(communityList.get(i).toString()));
 			com.findeUsersManager(userName);
 			retval.add(com);
+			
+			//TODO: remove wenn funzt
+//			Community com = new Community();
+//			JSONObject communityJSON = new JSONObject(communityList.get(i)
+//					.toString());
+//			com.setCommunityID(communityJSON.getInt("ID"));
+//			com.setName(communityJSON.getString("Name"));
+//			JSONArray managersJSON = new JSONArray(
+//					communityJSON.get("Managers").toString());
+//			com.addManagers(createManagerList(managersJSON));
+//			com.findeUsersManager(userName);
+//			retval.add(com);
 		}
+		return retval;
+	}
+	
+	private Community jsonToCommunity(JSONObject communityJSON){
+		Community retval = new Community();
+		try{
+		retval.setCommunityID(communityJSON.getInt("ID"));
+		}
+		catch(org.json.JSONException jse){
+			System.out.println("lol");
+		}
+		retval.setName(communityJSON.getString("Name"));
+		JSONArray managersJSON = new JSONArray(
+				communityJSON.get("Managers").toString());
+		retval.addManagers(createManagerList(managersJSON));
 		return retval;
 	}
 
@@ -97,6 +148,13 @@ public class UserCommunityList extends CallableAbstract {
 			int points = managerJSON.getInt("Points");
 			Manager manager = new Manager(name, money, points);
 			manager.setID(managerJSON.getInt("ID"));
+			JSONArray managersTeam = managerJSON.getJSONArray("Team");
+			List<Player> playerList = new ArrayList<>();
+			for (int m = 0; m < managersTeam.length(); m++) {
+				  JSONObject playerJSON = managersTeam.getJSONObject(i);
+				  playerList.add(new Player(playerJSON));
+			}
+			manager.addPlayer(playerList);
 			retval.add(manager);
 		}
 		return retval;

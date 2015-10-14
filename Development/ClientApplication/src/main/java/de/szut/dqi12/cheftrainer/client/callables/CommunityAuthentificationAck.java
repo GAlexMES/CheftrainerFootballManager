@@ -4,6 +4,7 @@ import javafx.scene.control.Alert.AlertType;
 
 import org.json.JSONObject;
 
+import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
@@ -56,7 +57,7 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 					AlertUtils.COMMUNITY_ENTER_WORKED_MESSAGE,
 					AlertType.INFORMATION);
 			GUIController.getInstance().closeCurrentDialog();
-			UpdateUtils.getCommunityUpdate();
+//			UpdateUtils.getCommunityUpdate();
 		}
 	}
 
@@ -72,7 +73,7 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 					AlertUtils.COMMUNITY_CREATION_WORKED_MESSAGE,
 					AlertType.CONFIRMATION);
 			GUIController.getInstance().closeCurrentDialog();
-			UpdateUtils.getCommunityUpdate();
+//			UpdateUtils.getCommunityUpdate();
 		} else {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_CREATION_TITLE,
 					AlertUtils.COMMUNITY_CREATION_WORKED_NOT_HEAD,
@@ -80,4 +81,6 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 					AlertType.ERROR);
 		}
 	}
+	
+	
 }

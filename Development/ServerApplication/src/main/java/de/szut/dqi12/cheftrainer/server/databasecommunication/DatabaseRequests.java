@@ -63,6 +63,14 @@ public class DatabaseRequests {
 		return communityManagement.getCummunities(userID);
 	}
 	
+	public static List<Integer> getCummunityIDsForUser(int userID){
+		return communityManagement.getCommunityIDsForUser(userID);
+	}
+	
+	public static Community getCummunityForID(int communityID){
+		return communityManagement.getCommunity(communityID);
+	}
+	
 	public static List<Manager> getManagers(int communityID){
 		return communityManagement.getManagers(communityID);
 	}

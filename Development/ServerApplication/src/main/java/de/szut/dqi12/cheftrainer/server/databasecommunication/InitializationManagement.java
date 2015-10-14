@@ -58,10 +58,10 @@ public class InitializationManagement {
 	private void addTeam(RealTeam t, int leagueID) {
 		teamCounter++;
 		try {
-			String sqlQuery = "INSERT INTO Verein (Name, Liga_ID) Values ('"
+			String sqlQuery = "INSERT INTO Verein (Vereinsname, Liga_ID) Values ('"
 					+ t.getTeamName() + "','" + leagueID + "')";
 			sqlCon.sendQuery(sqlQuery);
-			String condition = "Name='"+t.getTeamName()+"'";
+			String condition = "Vereinsname='"+t.getTeamName()+"'";
 			int teamID = Integer.valueOf(DatabaseUtils.getUniqueValue(sqlCon,"ID", "Verein",condition ));
 			List<Player> playerList = t.getPlayerList();
 			playerList.forEach(p -> addPlayer(p, teamID));

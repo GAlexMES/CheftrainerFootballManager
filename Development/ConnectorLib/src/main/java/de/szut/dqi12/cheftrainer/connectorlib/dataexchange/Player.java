@@ -1,5 +1,7 @@
 package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
+import org.json.JSONObject;
+
 
 /**
  * 
@@ -18,8 +20,16 @@ public class Player {
 	private boolean redCard;
 	private boolean yellowRedCard;
 	private String teamName;
-	private boolean plasy;
+	private boolean plays;
 		
+	
+	public Player(){
+	}
+	
+	public Player(JSONObject playerJSON){
+		getPlayerFromJSON(playerJSON);
+	}
+	
 	public Player(int worth, String name, int points, Position position) {
 		this.worth = worth;
 		this.name = name;
@@ -27,9 +37,6 @@ public class Player {
 		goals = 0;
 		redCard = false;
 		yellowRedCard = false;
-	}
-	
-	public Player(){
 	}
 	
 	public Player(String name, String teamName, int points) {
@@ -125,13 +132,34 @@ public class Player {
 	}
 
 	public void setPlays(boolean plays) {
-		this.plasy = plays;
+		this.plays = plays;
 	}
 	
 	public boolean plays(){
 		return this.plays();
 	}
 	
+	public JSONObject getJSONFromPlayer() {
+		JSONObject retval = new JSONObject();
+		retval.put("name", this.getName());
+		retval.put("id", this.getID());
+		retval.put("number", this.getNumber());
+		retval.put("points", this.getPoints());
+		retval.put("worth", this.getWorth());
+		retval.put("position", this.getPositionString());
+		retval.put("team", this.getTeamName());
+		return retval;
+	}
+	
+	public void getPlayerFromJSON(JSONObject playerJSON) {
+		this.setName(playerJSON.getString("name"));
+		this.setID(playerJSON.getInt("id"));
+		this.setNumber(playerJSON.getInt("number"));
+		this.setPoints(playerJSON.getInt("points"));
+		this.setWorth(playerJSON.getInt("worth"));
+		this.setPosition(playerJSON.getString("position"));
+		this.setTeamName(playerJSON.getString("team"));
+	}
 	
 
 }

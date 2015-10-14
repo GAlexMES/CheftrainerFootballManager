@@ -3,6 +3,8 @@ package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sun.javafx.geom.AreaOp.AddOp;
+
 /**
  * 
  * @author Robin
@@ -17,19 +19,19 @@ public class Manager {
 	private List<String> lineUp;
 	private int points;
 	private List<Transaction> transactions;
-	
-	public Manager(String name, Double money, int points){
+
+	public Manager(String name, Double money, int points) {
 		this.name = name;
 		this.money = money;
 		this.points = points;
 		this.players = new ArrayList<Player>();
 		this.lineUp = new ArrayList<String>();
 	}
-	
-	public void addTransaction(Transaction transaction){
+
+	public void addTransaction(Transaction transaction) {
 		this.transactions.add(transaction);
 	}
-		
+
 	public List<Transaction> getTransactions() {
 		return transactions;
 	}
@@ -37,9 +39,16 @@ public class Manager {
 	public void setTransactions(List<Transaction> transactions) {
 		this.transactions = transactions;
 	}
+
+	public void addPlayer(List<Player> players){
+		Player[] playerArray = players.toArray(new Player[players.size()]);
+		addPlayer(playerArray);
+	}
 	
-	public void addPlayer(Player player){
-		this.players.add(player);
+	public void addPlayer(Player... player) {
+		for (Player p : player) {
+			this.players.add(p);
+		}
 	}
 
 	public List<String> getLineUp() {
@@ -73,6 +82,5 @@ public class Manager {
 	public void setID(int id) {
 		this.id = id;
 	}
-	
-	
+
 }

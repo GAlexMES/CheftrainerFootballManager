@@ -1,17 +1,16 @@
 package de.szut.dqi12.cheftrainer.server.callables;
 
-import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.usercommunication.ClientUpdate;
 
 /**
  * This class is used to handle "UpdateRequest" messages, which were send
@@ -31,50 +30,36 @@ public class UpdateRequest extends CallableAbstract {
 		String update = messageContent.getString("update");
 		switch (update) {
 		case "CommunityList":
-			sendCommunityUpdate();
+			sendCommunityList();
 			break;
 		}
 	}
-
+	
 	/**
 	 * Is called, when the UpdateRequest message has the type "CommunityList".
 	 * It collects all communities, in which the given user has managers.
 	 * After that it creates a ACK message and sends it to the client.
 	 */
-	private void sendCommunityUpdate() {
-		Session s  = mesController.getSession();
-		s.updateCommunities(DatabaseRequests.getCummunitiesForUser(s.getUserID()));
-		HashMap<Integer, Community> communityMap = s.getCommunityMap();
+	public void sendCommunityList(){
+		JSONArray communityListJSON = new JSONArray();
 		Message comminityMessage = new Message(
 				ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
-		JSONArray communityListJSON = new JSONArray();
-		for (Integer i : communityMap.keySet()) {
-			JSONObject communityJSON = new JSONObject();
-			Community currentCommunity = communityMap.get(i);
-			communityJSON.put("ID", currentCommunity.getCommunityID());
-			communityJSON.put("Name", currentCommunity.getName());
-			JSONArray managersJSON = new JSONArray();
-			for (Manager m : currentCommunity.getManagers()) {
-				managersJSON.put(managerToJson(m));
-			}
-			communityJSON.put("Managers", managersJSON);
+		
+		Session s  = mesController.getSession();
+		//TODO: Muss dies getan werden?????
+		//s.updateCommunities(DatabaseRequests.getCummunitiesForUser(s.getUserID()));
+		int userID = s.getUserID();
+		List<Integer> communityIDs = DatabaseRequests.getCummunityIDsForUser(userID);
+		for(Integer c : communityIDs){
+			JSONObject communityJSON = ClientUpdate.createCommunityMessage(Integer.valueOf(c));
 			communityListJSON.put(communityJSON);
 		}
-		comminityMessage.setMessageContent(communityListJSON.toString());
+		
+		JSONObject jsonMessage = new JSONObject();
+		jsonMessage.put("type", "init");
+		jsonMessage.put("information",communityListJSON );
+		
+		comminityMessage.setMessageContent(jsonMessage.toString());
 		mesController.sendMessage(comminityMessage);
-	}
-
-	/**
-	 * This method creates a JSONObject out of a Manager Object
-	 * @param m the manager object, that should be transformed to a JSON
-	 * @return the JSONObject witl all information out of the manager object.
-	 */
-	private JSONObject managerToJson(Manager m) {
-		JSONObject managerJSON = new JSONObject();
-		managerJSON.put("Points", m.getPoints());
-		managerJSON.put("Money", m.getMoney());
-		managerJSON.put("Name", m.getName());
-		managerJSON.put("ID", m.getID());
-		return managerJSON;
 	}
 }

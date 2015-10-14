@@ -39,6 +39,8 @@ public class TeamGenerator {
 	private int communityID;
 	private int managerID;
 
+	private boolean breakFlag = false;
+
 	private final static Logger LOGGER = Logger.getLogger(TeamGenerator.class);
 
 	/**
@@ -58,24 +60,23 @@ public class TeamGenerator {
 		this.managerID = managerID;
 		this.communityID = communityID;
 		playerList = createRandomTeam();
-		
+
 		if (correctWorth()) {
 
 			playerList.forEach(p -> updateDatabaseWithPlayers(p));
 
 			LOGGER.info("Team generation: 100% done - completed!");
-		}
-		else{
+		} else {
 			LOGGER.error("Team generation: failed, something went wrong!");
 		}
 	}
-	
-	
+
 	/**
 	 * This method creates a new random team
+	 * 
 	 * @return a List of all Players, playing in this new team
 	 */
-	private List<Player> createRandomTeam(){
+	private List<Player> createRandomTeam() {
 		heighestPlayerID = DatabaseRequests.getHeighstPlayerID();
 		List<Integer> idList = new ArrayList<>();
 		List<Player> playerList = new ArrayList<>();
@@ -85,7 +86,8 @@ public class TeamGenerator {
 			Player p = getNewRandomPlayer();
 			if (!idList.contains(p.getID())) {
 				idList.add(p.getID());
-				if (!isPlayerInUse(p.getID())&& playerFitsInTeam(p.getPositionString())) {
+				if (!isPlayerInUse(p.getID())
+						&& playerFitsInTeam(p.getPositionString())) {
 					playerList.add(p);
 					updatePlayerPerPosition(p.getPositionString(), 1);
 					teamWorth += p.getWorth();
@@ -127,7 +129,12 @@ public class TeamGenerator {
 		} else if (greaterThanMin) {
 			findBetterPlayer(INT_COMPARATOR);
 		}
-		return correctWorth();
+
+		if (!breakFlag) {
+			return correctWorth();
+		} else {
+			return true;
+		}
 	}
 
 	/**
@@ -158,9 +165,13 @@ public class TeamGenerator {
 			Player newPlayer = getNewRandomPlayer();
 
 			if (newPlayer == null) {
-				System.out.println("lol null");
+				System.out
+						.println("Could not find a better player. Team worth is: "
+								+ teamWorth);
+				breakFlag = true;
+				break;
 			}
-			System.out.println(newPlayer.getID());
+
 			if (!idList.contains(newPlayer.getID())) {
 				idList.add(newPlayer.getID());
 
@@ -186,8 +197,11 @@ public class TeamGenerator {
 	}
 
 	/**
-	 * This method maps the given Player to the manager, that was given to the generateTeamForUser method
-	 * @param p the player, that should be mapped to the manager
+	 * This method maps the given Player to the manager, that was given to the
+	 * generateTeamForUser method
+	 * 
+	 * @param p
+	 *            the player, that should be mapped to the manager
 	 */
 	private void updateDatabaseWithPlayers(Player p) {
 		DatabaseRequests.addPlayerToManager(managerID, p.getID());
@@ -195,8 +209,11 @@ public class TeamGenerator {
 
 	/**
 	 * Updates the number of players, which plays on the given position
-	 * @param position the position, that should be updated
-	 * @param update the value, that should be added to the position
+	 * 
+	 * @param position
+	 *            the position, that should be updated
+	 * @param update
+	 *            the value, that should be added to the position
 	 */
 	private void updatePlayerPerPosition(String position, int update) {
 		switch (position) {
@@ -222,7 +239,9 @@ public class TeamGenerator {
 
 	/**
 	 * Checks if the position, on which the given plays, is free
-	 * @param position the position of the player
+	 * 
+	 * @param position
+	 *            the position of the player
 	 * @return true = position is free, false=position is not free
 	 */
 	private boolean playerFitsInTeam(String position) {
@@ -241,7 +260,9 @@ public class TeamGenerator {
 	}
 
 	/**
-	 * Creates a random int and takes the player with this ID out of the database
+	 * Creates a random int and takes the player with this ID out of the
+	 * database
+	 * 
 	 * @return a new random Player object with values from the database
 	 */
 	private Player getNewRandomPlayer() {

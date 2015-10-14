@@ -1,6 +1,5 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
-import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,6 +10,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
+import de.szut.dqi12.cheftrainer.server.usercommunication.ClientUpdate;
 import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 
 /**
@@ -38,21 +38,27 @@ public class CommunityManagement {
 	 */
 	public List<Community> getCummunities(int userID) {
 		List<Community> retval = new ArrayList<>();
+		List<Integer> idList = getCommunityIDsForUser(userID);
+		for (Integer i : idList) {
+			retval.add(getCommunity(i));
+		}
+		return retval;
+	}
+	
+	public List<Integer> getCommunityIDsForUser(int userID){
 		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde INNER JOIN Manager WHERE Manager.Nutzer_ID ="
 				+ userID + " AND Manager.Spielrunde_ID=Spielrunde.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		List<Integer> idList = new ArrayList<>();
+		List<Integer> retval = new ArrayList<>();
 		try {
 			while (rs.next()) {
 				int id = rs.getInt("ID");
-				idList.add(id);
+				retval.add(id);
 			}
 		} catch (SQLException e) {
 
 		}
-		for (Integer i : idList) {
-			retval.add(getCommunity(i));
-		}
+		
 		return retval;
 	}
 
@@ -61,7 +67,7 @@ public class CommunityManagement {
 	 * @param communityID the ID of the Community, that information should be collect in the database.
 	 * @return a Community Object for the given community ID
 	 */
-	private Community getCommunity(int communityID) {
+	public Community getCommunity(int communityID) {
 		Community retval = new Community();
 		String sqlQuery = "Select * FROM Spielrunde WHERE ID = " + communityID;
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
@@ -97,6 +103,11 @@ public class CommunityManagement {
 				retval.add(manager);
 			}
 		} catch (SQLException e) {
+		}
+		for(Manager m : retval){
+			List<Player> playerList = getTeam(m.getID());
+			Player [] playerArray = playerList.toArray(new Player[playerList.size()]);
+			m.addPlayer(playerArray);
 		}
 		return retval;
 	}
@@ -152,7 +163,8 @@ public class CommunityManagement {
 				retval.put("correctPassword", true);
 				if (!existUserInCommunity(userID, communityName)) {
 					retval.put("userDoesNotExist", true);
-					createNewManager(communityName, userID);
+					boolean created = createNewManager(communityName, userID);
+					retval.put("managerCreated", created);
 				}
 			}
 		}
@@ -192,6 +204,8 @@ public class CommunityManagement {
 			int managerID = DatabaseUtils.getManagerID(sqlCon, userID, communityID);
 			TeamGenerator tg = new TeamGenerator();
 			tg.generateTeamForUser(managerID, communityID);
+			
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -232,8 +246,9 @@ public class CommunityManagement {
 	
 	public List<Player> getTeam(int managerID){
 		List<Player> playerList = new ArrayList<>();
-		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft"
+		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein"
 				+ " WHERE Mannschaft.Manager_ID="+managerID
+				+ " AND Spieler.Verein_ID = Verein.ID"
 				+ " AND Mannschaft.Spieler_ID=Spieler.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
@@ -241,10 +256,8 @@ public class CommunityManagement {
 				Player p = new Player();
 				p.setID(rs.getInt("ID"));
 				p.setName(rs.getString("Name"));
-				int teamID = rs.getInt("ID");
-				String teamName = DatabaseUtils.getTeamNameForID(sqlCon, teamID);
-				p.setTeamName(teamName);
-//				p.setPosition(rs.getString("Position"));
+				p.setTeamName(rs.getString("Vereinsname"));
+				p.setPosition(rs.getString("Position"));
 				p.setNumber(rs.getInt("Nummer"));
 				p.setPlays(rs.getBoolean("Aufgestellt"));
 				p.setWorth(rs.getInt("Marktwert"));
