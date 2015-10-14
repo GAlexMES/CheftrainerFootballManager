@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
+package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts;
 
 import java.util.HashMap;
 
@@ -12,14 +12,20 @@ import javafx.scene.layout.GridPane;
 
 public class BarChartController {
 	@FXML
-	GridPane barChart;
-	BarChart<String, Integer> chart;
-	XYChart.Series<String, Integer> series;
+	private GridPane barChart;
+	private BarChart<String, Integer> chart;
+	private XYChart.Series<String, Integer> series;
 	
 	public BarChartController(){
 		series = new XYChart.Series<>();	
 	}
 	
+	
+	public BarChart<String, Integer> getChart() {
+		return chart;
+	}
+
+
 	public void init() {
 
 		chart = (BarChart) barChart.getChildren().get(0);

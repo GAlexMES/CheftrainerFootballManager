@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
+package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts;
 
 import java.util.HashMap;
 
@@ -15,9 +15,9 @@ public class LineChartController<Y, X> {
 	final NumberAxis xAxis = new NumberAxis();
 	final NumberAxis yAxis = new NumberAxis();
 	@FXML
-	GridPane lineChart;
-	ObservableList<XYChart.Series<String, Integer>> data;
-	LineChart<String, Integer> chart;
+	private GridPane lineChart;
+	private ObservableList<XYChart.Series<String, Integer>> data;
+	private LineChart<String, Integer> chart;
 
 	public void init() {
 
@@ -25,6 +25,14 @@ public class LineChartController<Y, X> {
 
 		chart = (LineChart) lineChart.getChildren().get(0);
 	}
+
+	
+	
+	public LineChart<String, Integer> getChart() {
+		return chart;
+	}
+
+
 
 	public void setTitle(String name) {
 		chart.setTitle(name);
