@@ -10,7 +10,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
-import de.szut.dqi12.cheftrainer.server.usercommunication.ClientUpdate;
 import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 
 /**

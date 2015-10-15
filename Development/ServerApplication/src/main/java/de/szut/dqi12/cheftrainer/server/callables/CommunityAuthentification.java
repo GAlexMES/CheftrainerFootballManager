@@ -35,6 +35,7 @@ public class CommunityAuthentification extends CallableAbstract {
 			break;
 		case "enter":
 			enterCommunity(communityJSON);
+			break;
 		}
 	}
 
@@ -51,10 +52,9 @@ public class CommunityAuthentification extends CallableAbstract {
 		String communityName = communityJSON.getString("communityName");
 		String communityPassword = communityJSON.getString("password");
 		int userID = mesController.getSession().getUserID();
-		HashMap<String, Boolean> enterFeedback = DatabaseRequests
-				.enterCommunity(communityName, communityPassword, userID);
-		Message enterACK = new Message(
-				ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
+		HashMap<String, Boolean> enterFeedback = DatabaseRequests.enterCommunity(communityName, communityPassword,
+				userID);
+		Message enterACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 		JSONObject enterACKJSON = JSONUtils.mapToJSON(enterFeedback);
 
 		updateSessionAndClient(userID);
@@ -78,8 +78,7 @@ public class CommunityAuthentification extends CallableAbstract {
 	}
 
 	private int getNewCommunityID(int userID) {
-		Set<Integer> knownIDs = mesController.getSession().getCommunityMap()
-				.keySet();
+		Set<Integer> knownIDs = mesController.getSession().getCommunityMap().keySet();
 		List<Integer> allIDs = DatabaseRequests.getCummunityIDsForUser(userID);
 
 		for (Integer i : allIDs) {
@@ -91,13 +90,14 @@ public class CommunityAuthentification extends CallableAbstract {
 	}
 
 	private void sendUpdateToClient(int communityID) {
-		Message communityListUpdate = new Message(
-				ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
+		System.out.println("sendUpdate   "+communityID);
+		Message communityListUpdate = new Message(ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
 
 		JSONObject updateJSON = new JSONObject();
 		updateJSON.put("type", "newCommunity");
 		updateJSON.put("community", ClientUpdate.createCommunityMessage(communityID));
 		communityListUpdate.setMessageContent(updateJSON);
+		
 		mesController.sendMessage(communityListUpdate);
 	}
 
@@ -149,16 +149,13 @@ public class CommunityAuthentification extends CallableAbstract {
 		String communityName = communityJSON.getString("communityName");
 		String communityPassword = communityJSON.getString("communityPassword");
 		int userID = mesController.getSession().getUserID();
-		boolean communityCreated = DatabaseRequests.createNewCommunity(
-				communityName, communityPassword, userID);
+		boolean communityCreated = DatabaseRequests.createNewCommunity(communityName, communityPassword, userID);
 
 		if (communityCreated) {
-			DatabaseRequests.enterCommunity(communityName, communityPassword,
-					userID);
+			DatabaseRequests.enterCommunity(communityName, communityPassword, userID);
 			updateSessionAndClient(userID);
 		}
-		Message creationACK = new Message(
-				ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
+		Message creationACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 
 		JSONObject creationACKJSON = new JSONObject();
 		creationACKJSON.put("type", "creation");

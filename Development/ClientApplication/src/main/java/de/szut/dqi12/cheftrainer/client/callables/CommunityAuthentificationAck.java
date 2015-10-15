@@ -4,10 +4,8 @@ import javafx.scene.control.Alert.AlertType;
 
 import org.json.JSONObject;
 
-import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
-import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
