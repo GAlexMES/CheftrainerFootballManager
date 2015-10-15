@@ -4,8 +4,6 @@ import java.util.HashMap;
 
 import org.json.JSONObject;
 
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-
 /**
  * This class provides a few JSON method, which could be used to transform JSONObject etc. to something else. Or other way round.
  * @author Alexander Brennecke

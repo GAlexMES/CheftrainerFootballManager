@@ -6,7 +6,7 @@ import java.util.List;
 public class RealTeam {
 	private String teamUrl;
 	private String teamName;
-	private List<Player> playerList = new ArrayList();
+	private List<Player> playerList = new ArrayList<Player>();
 	
 	public String getTeamUrl() {
 		return teamUrl;

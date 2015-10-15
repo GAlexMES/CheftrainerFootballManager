@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.callables;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +9,7 @@ import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
@@ -57,40 +59,57 @@ public class CommunityAuthentification extends CallableAbstract {
 		Message enterACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 		JSONObject enterACKJSON = JSONUtils.mapToJSON(enterFeedback);
 
-		updateSessionAndClient(userID);
+		updateSessionAndClient();
 
 		enterACKJSON.put("type", "enter");
 		enterACK.setMessageContent(enterACKJSON);
 		mesController.sendMessage(enterACK);
 	}
 
-	private void updateSessionAndClient(int userID) {
-		int communityID = getNewCommunityID(userID);
-		if (communityID > 0) {
-			updateSession(communityID);
-			sendUpdateToClient(communityID);
+	/**
+	 * This function checks, if the CommunityList in the Session object is up to date.
+	 */
+	private void updateSessionAndClient() {
+		int userID = mesController.getSession().getUserID();
+		List<Integer>  communityID = getNewCommunityID(userID);
+		for(Integer i : communityID){
+			updateSession(i);
+			sendUpdateToClient(i);
 		}
 	}
 
+	/**
+	 * This method takes the Community with the given ID and sets it to the session.
+	 * @param communityID
+	 */
 	private void updateSession(int communityID) {
 		Community community = DatabaseRequests.getCummunityForID(communityID);
 		mesController.getSession().addCommunity(community);
 	}
 
-	private int getNewCommunityID(int userID) {
+	/**
+	 * This method compares the communities in the session object with the communities in the database,
+	 * @param userID the ID of the user, that has a manager in the compared communities
+	 * @return a List of Integers. Each Integer displays the ID of a {@link Community} , that is in the Database but not in the {@link Session}
+	 */
+	private List<Integer> getNewCommunityID(int userID) {
 		Set<Integer> knownIDs = mesController.getSession().getCommunityMap().keySet();
 		List<Integer> allIDs = DatabaseRequests.getCummunityIDsForUser(userID);
 
-		for (Integer i : allIDs) {
-			if (!knownIDs.contains(i)) {
-				return i;
+		List<Integer> retval = new ArrayList<Integer>();
+		for (Integer i : knownIDs) {
+			if (allIDs.contains(i)) {
+				retval.add(i);
 			}
 		}
-		return -1;
+		return retval;
 	}
 
+	/**
+	 * This method creates a new Update Message, containing an Community, for the Client and sends it.
+	 * @param communityID The ID of the Community, that will be send to the client.
+	 */
 	private void sendUpdateToClient(int communityID) {
-		System.out.println("sendUpdate   "+communityID);
 		Message communityListUpdate = new Message(ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
 
 		JSONObject updateJSON = new JSONObject();
@@ -101,40 +120,6 @@ public class CommunityAuthentification extends CallableAbstract {
 		mesController.sendMessage(communityListUpdate);
 	}
 
-	// private JSONArray createJSONForManagerTeam(int userID,
-	// String communityName, boolean feedback) {
-	// if (feedback) {
-	// return createJSONForTeam(userID, communityName);
-	// }
-	// return new JSONArray();
-	// }
-	//
-	// private JSONArray createJSONForManagerTeam(int userID,
-	// String communityName, HashMap<String, Boolean> feedback) {
-	// boolean feedbackFlag = false;
-	// ;
-	//
-	// for (String s : feedback.keySet()) {
-	// feedbackFlag = feedback.get(s);
-	// if (!feedbackFlag) {
-	// break;
-	// }
-	// }
-	//
-	// return createJSONForManagerTeam(userID, communityName, feedbackFlag);
-	// }
-	//
-	// private JSONArray createJSONForTeam(int userID, String communityName) {
-	// JSONArray retval = new JSONArray();
-	// SQLConnection sqlCon = Controller.getInstance().getSQLConnection();
-	// int managerID = DatabaseUtils.getManagerID(sqlCon, userID,
-	// communityName);
-	// List<Player> playerList = DatabaseRequests.getTeam(managerID);
-	// for (Player p : playerList) {
-	// retval.put(p.getJSONFromPlayer());
-	// }
-	// return retval;
-	// }
 
 	/**
 	 * This method is called, when the CommunityAuthentification Message has the
@@ -153,7 +138,7 @@ public class CommunityAuthentification extends CallableAbstract {
 
 		if (communityCreated) {
 			DatabaseRequests.enterCommunity(communityName, communityPassword, userID);
-			updateSessionAndClient(userID);
+			updateSessionAndClient();
 		}
 		Message creationACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 

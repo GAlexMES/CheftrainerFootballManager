@@ -2,7 +2,6 @@ package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.ObservableList;
 
 public class MarketPlayer {
 	private final StringProperty playerName;

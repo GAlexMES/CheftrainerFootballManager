@@ -3,8 +3,6 @@ package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.javafx.geom.AreaOp.AddOp;
-
 /**
  * 
  * @author Robin
@@ -19,6 +17,7 @@ public class Manager {
 	private List<String> lineUp;
 	private int points;
 	private List<Transaction> transactions;
+	private int teamWorth;
 
 	public Manager(String name, Double money, int points) {
 		this.name = name;
@@ -48,6 +47,7 @@ public class Manager {
 	public void addPlayer(Player... player) {
 		for (Player p : player) {
 			this.players.add(p);
+			teamWorth += p.getWorth();
 		}
 	}
 
@@ -81,6 +81,14 @@ public class Manager {
 
 	public void setID(int id) {
 		this.id = id;
+	}
+
+	public int getTeamWorth() {
+		return teamWorth;
+	}
+	
+	public void setTeamWorth(int teamWorth){
+		this.teamWorth = teamWorth;
 	}
 
 }

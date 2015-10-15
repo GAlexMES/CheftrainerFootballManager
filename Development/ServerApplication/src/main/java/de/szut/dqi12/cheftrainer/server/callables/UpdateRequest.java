@@ -46,8 +46,6 @@ public class UpdateRequest extends CallableAbstract {
 				ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
 		
 		Session s  = mesController.getSession();
-		//TODO: Muss dies getan werden?????
-		//s.updateCommunities(DatabaseRequests.getCummunitiesForUser(s.getUserID()));
 		int userID = s.getUserID();
 		List<Integer> communityIDs = DatabaseRequests.getCummunityIDsForUser(userID);
 		for(Integer c : communityIDs){

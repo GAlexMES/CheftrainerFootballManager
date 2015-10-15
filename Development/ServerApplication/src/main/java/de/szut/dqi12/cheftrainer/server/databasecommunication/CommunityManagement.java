@@ -21,6 +21,8 @@ import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 public class CommunityManagement {
 
 	private SQLConnection sqlCon;
+	
+	private static final int BUDGET = 15000000;
 
 	/**
 	 * Constructor.
@@ -44,6 +46,11 @@ public class CommunityManagement {
 		return retval;
 	}
 	
+	/**
+	 * This method fetches all CommunityIDs from the database, in which a User with the given ID has a {@link Manager}.
+	 * @param userID the ID of the User, that {@link Community}IDs will be returned 
+	 * @return a List of Integer with IDs for {@link Community} inside.
+	 */
 	public List<Integer> getCommunityIDsForUser(int userID){
 		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde INNER JOIN Manager WHERE Manager.Nutzer_ID ="
 				+ userID + " AND Manager.Spielrunde_ID=Spielrunde.ID";
@@ -202,7 +209,22 @@ public class CommunityManagement {
 			
 			int managerID = DatabaseUtils.getManagerID(sqlCon, userID, communityID);
 			TeamGenerator tg = new TeamGenerator();
-			tg.generateTeamForUser(managerID, communityID);
+			int teamWorth = tg.generateTeamForUser(managerID, communityID);
+			int budget = BUDGET;
+			
+			int maxTeamWorth = (int)(TeamGenerator.TEAM_WORTH*(1+TeamGenerator.TEAM_WORTH_TOLERANZ));
+			int minTeamWorth = (int)(TeamGenerator.TEAM_WORTH*(1-TeamGenerator.TEAM_WORTH_TOLERANZ));
+			
+			if (teamWorth>maxTeamWorth){
+				budget = BUDGET - (maxTeamWorth - teamWorth);
+			}
+			else if(teamWorth<minTeamWorth){
+				budget = BUDGET + (minTeamWorth- teamWorth);
+			}
+			
+			sqlQuery = "UPDATE Manager SET Budget='"+budget+"'"
+					+ "WHERE ID="+managerID;
+			sqlCon.sendQuery(sqlQuery);
 			
 			return true;
 		} catch (SQLException e) {
@@ -243,6 +265,11 @@ public class CommunityManagement {
 		return !DatabaseUtils.isResultSetEmpty(rs);
 	}
 	
+	/**
+	 * This method creates a List of {@link Player} for the given {@link Manager} out of the database values.
+	 * @param managerID the id of the {@link Manager}, that team should be fetched from the database. 
+	 * @return a List of {@link Player} Objects, which presents the team of the {@link Manager}
+	 */
 	public List<Player> getTeam(int managerID){
 		List<Player> playerList = new ArrayList<>();
 		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein"

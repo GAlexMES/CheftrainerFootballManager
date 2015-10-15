@@ -25,8 +25,8 @@ public class TeamGenerator {
 	private final int NUMBER_OF_PLAYER = NUMBER_OF_DEFENDER
 			+ NUMBER_OF_GOALKEEPER + NUMBER_OF_MIDDFIELDER
 			+ NUMBER_OF_OFFENSIVE;
-	private final int TEAM_WORTH = 20000000;
-	private final double TEAM_WORTH_TOLERANZ = 0.25;
+	public static final int TEAM_WORTH = 20000000;
+	public static final double TEAM_WORTH_TOLERANZ = 0.25;
 
 	private int teamWorth = 0;
 	private int goalkeepers = 0;
@@ -51,8 +51,9 @@ public class TeamGenerator {
 	 *            the ID of the manager, that should get the new team
 	 * @param communityID
 	 *            the ID, in which the manager is active
+	 * @return returns the worth of the created team
 	 */
-	public void generateTeamForUser(int managerID, int communityID) {
+	public int generateTeamForUser(int managerID, int communityID) {
 		LOGGER.info("Generate team for manager with ID = " + managerID
 				+ " for community " + communityID);
 
@@ -69,6 +70,7 @@ public class TeamGenerator {
 		} else {
 			LOGGER.error("Team generation: failed, something went wrong!");
 		}
+		return teamWorth;
 	}
 
 	/**
@@ -84,7 +86,7 @@ public class TeamGenerator {
 		while (goalkeepers + defenders + middfielders + offensives < NUMBER_OF_PLAYER
 				&& idList.size() < heighestPlayerID - 1) {
 			Player p = getNewRandomPlayer();
-			if (!idList.contains(p.getID())) {
+			if (p != null && !idList.contains(p.getID())) {
 				idList.add(p.getID());
 				if (!isPlayerInUse(p.getID())
 						&& playerFitsInTeam(p.getPositionString())) {
@@ -147,6 +149,8 @@ public class TeamGenerator {
 	private void findBetterPlayer(Comparator<Integer> com) {
 		Player currentPlayer = null;
 
+		int noPlayerFoundCounter = 0;
+
 		List<Integer> currentPlayerIDs = new ArrayList<>();
 		for (int i = 0; i < playerList.size(); i++) {
 			Player p = playerList.get(i);
@@ -165,14 +169,17 @@ public class TeamGenerator {
 			Player newPlayer = getNewRandomPlayer();
 
 			if (newPlayer == null) {
-				System.out
-						.println("Could not find a better player. Team worth is: "
-								+ teamWorth);
-				breakFlag = true;
-				break;
+				noPlayerFoundCounter++;
+				if (noPlayerFoundCounter >= 10) {
+					System.out
+							.println("Could not find a better player. Team worth is: "
+									+ teamWorth);
+					breakFlag = true;
+					break;
+				}
 			}
 
-			if (!idList.contains(newPlayer.getID())) {
+			if (newPlayer != null && !idList.contains(newPlayer.getID())) {
 				idList.add(newPlayer.getID());
 
 				boolean betterWorth = com.compare(newPlayer.getWorth(),

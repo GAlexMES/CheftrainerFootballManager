@@ -39,8 +39,9 @@ public class CommunitiesController {
 		UpdateUtils.getCommunityUpdate();
 	}
 
+	
 	public void addRow(String communityName, double wertDesTeams, int rang) {
-		data.add(new ManagerTeam(communityName, String.valueOf(wertDesTeams), String
+		data.add(new ManagerTeam(communityName, wertDesTeams, String
 				.valueOf(rang)));
 	}
 	
@@ -131,4 +132,5 @@ public class CommunitiesController {
 			e.printStackTrace();
 		}
 	}
+	
 }

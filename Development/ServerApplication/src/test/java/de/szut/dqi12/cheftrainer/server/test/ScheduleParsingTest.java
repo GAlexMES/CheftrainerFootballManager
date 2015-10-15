@@ -35,7 +35,6 @@ public class ScheduleParsingTest {
 				playerList.putAll(currentPlayerList);
 			}
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		String player = "Geis";

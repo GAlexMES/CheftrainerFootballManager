@@ -107,7 +107,7 @@ public class GUIController {
 			GridPane newContentPane = (GridPane)currentContentLoader.load();
 			
 			if(currentContentLoader.getController().getClass()==CommunitiesController.class){
-				ManagerTeam t = new ManagerTeam("","","");
+				ManagerTeam t = new ManagerTeam("",0D,"");
 				List<ManagerTeam> teamList = new ArrayList<>();
 				teamList.add(t);
 				((CommunitiesController)currentContentLoader.getController()).initTable();

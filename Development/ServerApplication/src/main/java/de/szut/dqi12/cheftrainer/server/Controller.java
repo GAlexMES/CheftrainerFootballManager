@@ -33,7 +33,7 @@ public class Controller {
 		ServerProperties serverProps = new ServerProperties();
 		URL path = null;
 		try {
-			String pathAsString = App.class.getResource(".").toURI().toString();
+			String pathAsString = ServerApplication.class.getResource(".").toURI().toString();
 			URI uriPath = new URI(pathAsString + "callables/");
 			path = uriPath.toURL();
 		} catch (MalformedURLException e) {

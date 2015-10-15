@@ -89,7 +89,7 @@ public class DatabaseRequests {
 	}
 	
 	public static int getHeighstPlayerID(){
-		return logicManagement.getHeighstPlayerID();
+		return logicManagement.getHeightsPlayerID();
 	}
 	
 	public static Player getPlayer(int playerID){
