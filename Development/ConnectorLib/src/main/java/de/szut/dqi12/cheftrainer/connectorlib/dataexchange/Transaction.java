@@ -11,10 +11,10 @@ public class Transaction {
 	private boolean outgoing;
 	private String tenderer;
 	private String receiver;
-	private String player;
+	private Player player;
 	
 	public Transaction(Double price, boolean outgoing, String tenderer,
-			String receiver, String player) {
+			String receiver, Player player) {
 		this.price = price;
 		this.outgoing = outgoing;
 		this.tenderer = tenderer;
@@ -33,7 +33,7 @@ public class Transaction {
 	public String getReceiver() {
 		return receiver;
 	}
-	public String getPlayer() {
+	public Player getPlayer() {
 		return player;
 	}
 
