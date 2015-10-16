@@ -11,8 +11,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
 public class FormationController {
 	@FXML
@@ -28,7 +30,14 @@ public class FormationController {
 		return formationFrame;
 	}
 
-	public ArrayList getPlayers() {
+	public void loadPlayers() {
+		Session session = Controller.getInstance().getSession();
+		players = (ArrayList<Player>) session.getCommunityMap()
+				.get(session.getCommunityMap())
+				.getManager(session.getCurrentManager()).getLineUp();
+	}
+
+	public ArrayList<Label> getPlayers() {
 		ArrayList<Label> players = new ArrayList<Label>();
 		try {
 			for (Node n : formationFrame.getChildren()) {
@@ -41,25 +50,20 @@ public class FormationController {
 	}
 
 	public void setClickedListener() {
-		players.add(new Player(2423D, "hans", 1243, Position.Keeper));
-
 		for (Node n : formationFrame.getChildren()) {
 			((Label) n).setOnMouseClicked(new EventHandler<Event>() {
+				Player currentPlayer = players.get(0);
 
 				@Override
 				public void handle(Event event) {
 
-					// players = getPlayers
+					loadPlayers();
 
-					// Die Klasse Player koennte eine Funktion: generate Label
-					// enthalten.
-
-					Position po = Position.Keeper;
+					String playername = ((Label) n).getText().split(";")[0];
 					for (Player p : players) {
-						// GetText muss durch etwas anderes ersetzt werden, denn
-						// im Labelnamen steht nicht immer nur der Name
-						if (p.getName().equals(((Label) n).getText())) {
-							po = p.getPosition();
+						if (p.getName().equals(playername)) {
+							currentPlayer = p;
+							break;
 						}
 					}
 
@@ -70,17 +74,20 @@ public class FormationController {
 						Label l;
 						int i = 0;
 						for (Player player : players) {
-							if (player.getPosition() == po) {
+							if (player.getPosition() == currentPlayer
+									.getPosition()) {
 								l = new Label();
 								dialog.add(l, 0, i);
 								i++;
 								l.setOnMouseClicked(new EventHandler<Event>() {
 									@Override
 									public void handle(Event event) {
+										Controller.getInstance()
+												.changePlayerInLineUp(
+														currentPlayer, player);
 
-										// Spieler der Aufstellung hinzufuegen!
 										dialogStage.close();
-										
+
 									}
 								});
 							}

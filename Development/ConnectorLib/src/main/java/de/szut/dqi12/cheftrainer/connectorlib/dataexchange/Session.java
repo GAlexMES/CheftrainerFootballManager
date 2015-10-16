@@ -7,7 +7,9 @@ import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 
 /**
- * This class is used to save session specific attributes. It can be used on server and client side.
+ * This class is used to save session specific attributes. It can be used on
+ * server and client side.
+ * 
  * @author Alexander Brennecke
  *
  */
@@ -16,27 +18,45 @@ public class Session {
 	private int userID;
 	private User user;
 	private Client clientSocket;
+	private int currentManager;
+	private int currentCommunity;
 
 	private ClientHandler clientHandler;
 
 	private HashMap<Integer, Community> communityMap;
 
+	public int getCurrentManager() {
+		return currentManager;
+	}
+
+	public void setCurrentManager(int currentManager) {
+		this.currentManager = currentManager;
+	}
+
+	public int getCurrentCommunity() {
+		return currentCommunity;
+	}
+
+	public void setCurrentCommunity(int currentCommunity) {
+		this.currentCommunity = currentCommunity;
+	}
+
 	public Session() {
 		communityMap = new HashMap<>();
 	}
 
-	public void updateCommunities(List<Community> communities){
+	public void updateCommunities(List<Community> communities) {
 		communityMap = new HashMap<>();
 		addCommunities(communities);
 	}
-	
+
 	public void addCommunity(Community community) {
 		communityMap.put(community.getCommunityID(), community);
 	}
-	
-	public void addCommunities(List<Community> communities){
-		for(Community c : communities){
-			communityMap.put(c.getCommunityID(),c);
+
+	public void addCommunities(List<Community> communities) {
+		for (Community c : communities) {
+			communityMap.put(c.getCommunityID(), c);
 		}
 	}
 
@@ -51,6 +71,7 @@ public class Session {
 
 	/**
 	 * Should only be used on the client side.
+	 * 
 	 * @return
 	 */
 	public Client getClientSocket() {
@@ -59,6 +80,7 @@ public class Session {
 
 	/**
 	 * Should only be used on the client side.
+	 * 
 	 * @return
 	 */
 	public void setClientSocket(Client clientSocket) {
@@ -79,15 +101,16 @@ public class Session {
 
 	/**
 	 * Should only be used on the server side.
+	 * 
 	 * @return
 	 */
 	public ClientHandler getClientHandler() {
 		return clientHandler;
 	}
 
-
 	/**
 	 * Should only be used on the server side.
+	 * 
 	 * @return
 	 */
 	public void setClientHandler(ClientHandler clientHandler) {

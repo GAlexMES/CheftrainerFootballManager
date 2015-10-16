@@ -3,6 +3,7 @@ package de.szut.dqi12.cheftrainer.client;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
 /**
@@ -55,5 +56,10 @@ public class Controller {
 		this.currentSession = session;
 		session.getClientSocket().getServerHandler().getMessageController().setSession(session);
 	}
-
+	
+	//Dummy
+	public void changePlayerInLineUp(Player oldplayer, Player newPlayer){
+		
+	}
+	
 }

@@ -7,13 +7,12 @@ package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
  *
  */
 public class Player {
-	private Double worth;
+	private int worth;
 	private String name;
 	private int points;
 	private Position position;
 	private int number;
 	private String positionString;
-	private Position position;
 	private int ID;
 	private int goals;
 	private boolean redCard;
@@ -89,9 +88,7 @@ public class Player {
 		return worth;
 	}
 	
-	public Position getPosition() {
-		return position;
-	}
+
 
 	public void setWorth(int worth) {
 		this.worth = worth;
