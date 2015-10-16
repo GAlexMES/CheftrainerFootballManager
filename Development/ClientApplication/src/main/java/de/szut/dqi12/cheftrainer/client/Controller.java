@@ -1,8 +1,12 @@
 package de.szut.dqi12.cheftrainer.client;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
@@ -57,9 +61,9 @@ public class Controller {
 		session.getClientSocket().getServerHandler().getMessageController().setSession(session);
 	}
 	
-	//Dummy
-	public void changePlayerInLineUp(Player oldplayer, Player newPlayer){
+	//Dummy 
+	public void save(ArrayList<Player> players, Formation formation){
 		
 	}
-	
+		
 }

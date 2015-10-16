@@ -21,6 +21,10 @@ public class FormationController {
 	private GridPane formationFrame;
 
 	private ArrayList<Player> players;
+	
+	public ArrayList<Player> getCurrentPlayers(){
+		return players;
+	}
 
 	public FormationController() {
 		players = new ArrayList<Player>();
@@ -50,6 +54,8 @@ public class FormationController {
 	}
 
 	public void setClickedListener() {
+				
+		
 		for (Node n : formationFrame.getChildren()) {
 			((Label) n).setOnMouseClicked(new EventHandler<Event>() {
 				Player currentPlayer = players.get(0);
@@ -82,10 +88,8 @@ public class FormationController {
 								l.setOnMouseClicked(new EventHandler<Event>() {
 									@Override
 									public void handle(Event event) {
-										Controller.getInstance()
-												.changePlayerInLineUp(
-														currentPlayer, player);
-
+										players.remove(currentPlayer);
+										players.add(player);
 										dialogStage.close();
 
 									}
