@@ -2,7 +2,6 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.util.ArrayList;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,7 +18,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 
 public class TransferMarketController {
 	// @FXML
@@ -33,82 +36,87 @@ public class TransferMarketController {
 	@FXML
 	private TableColumn<MarketPlayer, String> werthCol;
 	private ObservableList<MarketPlayer> data;
+	private ArrayList<Player> players;
+	private ArrayList<Transaction> transactions;
 
 	public TransferMarketController() {
+		Community com = Controller
+				.getInstance()
+				.getSession()
+				.getCommunityMap()
+				.get(Controller.getInstance().getSession()
+						.getCurrentCommunity());
 		data = FXCollections.observableArrayList();
-
+		players = (ArrayList<Player>) com.getMarket().getPlayers();
+		transactions = (ArrayList<Transaction>) com.getManagers()
+				.get(Controller.getInstance().getSession().getCurrentManager())
+				.getTransactions();
 	}
 
 	public void init() {
 		addListener();
+		addAll();
 	}
 
-	public void addAll(ArrayList<MarketPlayer> players) {
-		for (MarketPlayer player : players) {
-			data.add(player);
+	public void addAll() {
+		for (Player p : players) {
+			data.add(new MarketPlayer(p.getName(),
+					String.valueOf(p.getPoints()), String.valueOf(p.getWorth())));
 		}
 		nameCol.setCellValueFactory(data -> data.getValue().getPlayerName());
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
-		werthCol.setCellValueFactory(data -> data.getValue().getPrice());
+		werthCol.setCellValueFactory(data -> data.getValue().getWerth());
 		marketTable.setItems(data);
 	}
 
-	public void reloadTable(ArrayList<MarketPlayer> players) {
+	public void reloadTable(ArrayList<Player> players) {
 		data.clear();
-		addAll(players);
+		this.players = players;
+		addAll();
 	}
 
 	public void addRow(MarketPlayer player) {
 		data.add(player);
 		nameCol.setCellValueFactory(data -> data.getValue().getPlayerName());
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
-		werthCol.setCellValueFactory(data -> data.getValue().getPrice());
+		werthCol.setCellValueFactory(data -> data.getValue().getWerth());
 		marketTable.setItems(data);
 	}
 
-	//DATEN IN DER FUNKTION BEFUELLEN
-	public void addPlayer(){
-		//
-		//Get Players
-		//
+	public void addPlayer() {
 		GridPane dialog = new GridPane();
 		Button but;
-		
+
 		int i = 0;
-		For(Player player : players){
+		for (Player player : players) {
 			but = new Button("put on market");
 			but.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent event) {
-					//
-					//AUF DEN MARKT SETZTEN
-					//
-					
+
 					GridPane dlog = new GridPane();
-					dlog.add(new Label()player.getName()), 1, 0);
+					dlog.add(new Label(player.getName()), 1, 0);
 					TextField field = new TextField();
-					field.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-							public void handle( KeyEvent t ) {
+					field.addEventFilter(KeyEvent.KEY_TYPED,
+							new EventHandler<KeyEvent>() {
+								public void handle(KeyEvent t) {
 									char ar[] = t.getCharacter().toCharArray();
 									char ch = ar[t.getCharacter().toCharArray().length - 1];
 									if (!(ch >= '0' && ch <= '9')) {
 										t.consume();
 									}
-							}
-					});
+								}
+							});
 					dlog.add(field, 2, 0);
 					Button butt = new Button("send");
 					butt.setOnAction(new EventHandler<ActionEvent>() {
 
 						@Override
 						public void handle(ActionEvent event) {
-							
-							//
-							//Spieler auf den Markt setzten!!!!!!!
-							//
-							textfield.getText()
-							//
-							
+
+							Controller.getInstance().setPlayeronMarket(player,
+									Integer.valueOf(field.getText()));
+
 						}
 					});
 					Stage stage = new Stage();
@@ -118,44 +126,60 @@ public class TransferMarketController {
 					Scene dialogScene = new Scene(dialog);
 					stage.setScene(dialogScene);
 					stage.showAndWait();
-					
+
 				}
 			});
-		dialog.add(new Label(player.getName()), i, 0);
-		
+			dialog.add(new Label(player.getName()), i, 0);
+
 		}
-		
+
 		Stage dialogStage = new Stage();
 		dialogStage.setResizable(false);
 		dialogStage.setTitle("your players");
 		dialogStage.initModality(Modality.WINDOW_MODAL);
-		Scene scene = new Scene(dialog);	
+		Scene scene = new Scene(dialog);
 		dialogStage.setScene(scene);
 		dialogStage.showAndWait();
 	}
 
-	//DATEN MIT RICHTIGEM INHALT BEFUELLEN
 	public void showOffers() {
-		//
-		// Get Offers
-		//
+		
 		GridPane dialog = new GridPane();
 		
-		for(Offer offer : offers){
-			dialog.add(new Label(offer.getPlayerName()), 0, 1);
-			Button but = new Button("remove from market");
-			but.setOnAction(new EventHandler<ActionEvent>() {
 
-				@Override
-				public void handle(ActionEvent event) {
-					
-					offers.remove(offer);
-					
-				}
-			});
-			dialog.add(but, 1, 0);
+		Button but;
+		int index = 1;
+		dialog.add(new Label("player"), 0, 0);
+		dialog.add(new Label("price"), 1, 0);
+		dialog.add(new Label("action"), 2, 0);
+		for (Transaction tr : transactions) {
+			if(tr.isOutgoing()){
+				but = new Button("remove from market");
+				but.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+
+						Controller.getInstance().answerOffer(tr, false);
+					}
+				});
+			}else{
+				but = new Button("accept");
+				but.setOnAction(new EventHandler<ActionEvent>() {
+
+					@Override
+					public void handle(ActionEvent event) {
+
+						Controller.getInstance().answerOffer(tr, true);
+					}
+				});
+			}
+
+			dialog.add(new Label(tr.getPlayer().getName()), 0, index);
+			dialog.add(new Label(String.valueOf(tr.getPrice())), 1, index);
+			dialog.add(but, 2, index);
+			index++;
 		}
-		
+
 		Stage dialogStage = new Stage();
 		dialogStage.setResizable(false);
 		dialogStage.setTitle("offers");
@@ -171,16 +195,19 @@ public class TransferMarketController {
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
 					MarketPlayer rowData = row.getItem();
-					System.out.println(rowData.getPrice().get());
+					System.out.println(rowData.getWerth().get());
 
 					GridPane dialog = new GridPane();
 					Stage dialogStage = new Stage();
+					
+					//INDEXE MUESSTEN MOEGLICHERWEISE UEBERARBEITET WERDEN
+					
 					dialog.add(new Label("Name of the Player "), 0, 0);
 					dialog.add(new Label(rowData.getPlayerName().get()), 0, 1);
 					dialog.add(new Label("Actual Points "), 1, 0);
 					dialog.add(new Label(rowData.getPoints().get()), 1, 1);
 					dialog.add(new Label("Werth "), 2, 0);
-					dialog.add(new Label(rowData.getPrice().get()), 2, 1);
+					dialog.add(new Label(rowData.getWerth().get()), 2, 1);
 					TextField field = new TextField();
 					field.addEventFilter(KeyEvent.KEY_TYPED,
 							new EventHandler<KeyEvent>() {
@@ -197,12 +224,25 @@ public class TransferMarketController {
 						@Override
 						public void handle(ActionEvent event) {
 							dialogStage.close();
-
-							System.out.println(field.getText());
+							Player currentPlayer;
+							if (Integer.valueOf(field.getText()) >= Integer
+									.valueOf(rowData.getWerth().toString())) {
+								for (Player player : players) {
+									if (player.getName().equals(
+											rowData.getPlayerName().toString())) {
+										currentPlayer = player;
+										Controller.getInstance()
+												.sendOffer(
+														currentPlayer,
+														Integer.valueOf(field
+																.getText()));
+										break;
+									}
+								}
+							} else {
+								// Hinweis anzeigen: Falsches angebot
+							}
 							//
-							// Berechnungen ob Der Preis passt
-							// Gebot wird abgegeben
-
 						}
 					});
 					dialog.add(field, 3, 1);
