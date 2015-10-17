@@ -1,12 +1,16 @@
-package de.szut.dqi12.cheftrainer.server.utils;
+package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import de.szut.dqi12.cheftrainer.server.databasecommunication.SQLConnection;
-
 public class DatabaseUtils {
+	
+	private SQLConnection sqlCon;
+	
+	public DatabaseUtils(SQLConnection sqlCon){
+		this.sqlCon = sqlCon;
+	}
 
 	/**
 	 * This method checks, if the given ResultSet is empty|has zero rows
@@ -15,7 +19,7 @@ public class DatabaseUtils {
 	 *            the ResultSet, that should be checked.
 	 * @return true = the ResultSet is empty.
 	 */
-	public static boolean isResultSetEmpty(ResultSet rs) {
+	public boolean isResultSetEmpty(ResultSet rs) {
 		try {
 			if (!rs.next()) {
 				return true;
@@ -26,10 +30,16 @@ public class DatabaseUtils {
 		return false;
 	}
 
-	public static int getManagerID(SQLConnection sqlCon, int userID,
+	public void clearTable(String tableName){
+		String sqlQuery = "DELETE FROM "+tableName;
+		sqlCon.sendQuery(sqlQuery);
+		
+	}
+	
+	public int getManagerID(int userID,
 			int communityID) {
 		try {
-			return DatabaseUtils.getUniqueValue(sqlCon, "Manager.ID",
+			return getUniqueValue( "Manager.ID",
 					"Manager INNER JOIN Nutzer", "Manager.Nutzer_ID=" + userID
 							+ " AND Manager.Spielrunde_ID=" + communityID);
 		} catch (IOException e) {
@@ -38,21 +48,21 @@ public class DatabaseUtils {
 		}
 	}
 
-	public static int getManagerID(SQLConnection sqlCon, int userID,
+	public int getManagerID(int userID,
 			String communityName) {
 			try {
-				int communityID = getUniqueValue(sqlCon,"Spielrunde.ID", "Spielrunde", "Spielrunde.Name='"+ communityName+"'");
-				return getManagerID(sqlCon, userID, communityID);
+				int communityID = getUniqueValue("Spielrunde.ID", "Spielrunde", "Spielrunde.Name='"+ communityName+"'");
+				return getManagerID(userID, communityID);
 			} catch (IOException e) {
 				e.printStackTrace();
 				return -1;
 			}
 	}
 
-	public static String getTeamNameForID(SQLConnection sqlCon, int id){
+	public String getTeamNameForID( int id){
 		String sqlQuery ="Select Name from Verein where Verein.ID="+id;
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		if (!DatabaseUtils.isResultSetEmpty(rs)) {
+		if (!isResultSetEmpty(rs)) {
 			try {
 				while (rs.next()) {
 					return  rs.getString("Name");
@@ -63,14 +73,15 @@ public class DatabaseUtils {
 		} 
 		return "";
 	}
-	public static int getUniqueValue(SQLConnection sqlCon, String coloumName,
+	
+	public int getUniqueValue( String coloumName,
 			String table, String whereCondition) throws IOException {
 		int retval = 0;
 		String sqlQuery = "Select " + coloumName + " FROM " + table + " where "
 				+ whereCondition;
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
-			if (!DatabaseUtils.isResultSetEmpty(rs)) {
+			if (!isResultSetEmpty(rs)) {
 				rs = sqlCon.sendQuery(sqlQuery);
 				while (rs.next()) {
 					retval = rs.getInt(1);

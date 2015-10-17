@@ -1,8 +1,10 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
@@ -26,6 +28,8 @@ public class DatabaseRequests {
 	private static InitializationManagement initializationManagement;
 	private static LogicManagement logicManagement;
 	private static SchedulePointManagement schedulePointManagement;
+	private static ServerPropertiesManagement serverPropertiesManagement;
+	private static DatabaseUtils databaseUtils;
 	
 	public static DatabaseRequests getInstance(){
 		if(INSTANCE==null){
@@ -40,6 +44,8 @@ public class DatabaseRequests {
 		initializationManagement = new InitializationManagement(sqlCon);;
 		logicManagement = new LogicManagement(sqlCon);
 		schedulePointManagement = new SchedulePointManagement(sqlCon);
+		serverPropertiesManagement = new ServerPropertiesManagement(sqlCon);
+		databaseUtils = new DatabaseUtils(sqlCon);
 	}
 
 	
@@ -117,4 +123,46 @@ public class DatabaseRequests {
 		return communityManagement.getTeam(managerID);
 	}
 
+	public static Boolean getServerPropsAsBoolean(String propertie) {
+		return serverPropertiesManagement.getPropAsBoolean(propertie);
+	}
+
+	public static String getServerPropsAsString(String propertie) throws NoSuchElementException {
+		return serverPropertiesManagement.getPropAsString(propertie);
+	}	
+	
+	public static Integer getServerPropsAsInt(String property) throws NoSuchElementException{
+		return serverPropertiesManagement.getPropAsInt(property);
+	}
+
+	public static <E> void setServerProperty(String property, E value) {
+		serverPropertiesManagement.setProperty(property, value);
+	}
+	
+	public static void clearTable(String tableName) {
+		databaseUtils.clearTable(tableName);
+	}
+	
+	public static boolean isResultSetEmpty(ResultSet rs) {
+		return databaseUtils.isResultSetEmpty(rs);
+	}
+	
+	public static int getManagerID(int userID,
+			int communityID) {
+		return databaseUtils.getManagerID(userID, communityID);
+	}
+	
+	public static int getManagerID(int userID,
+			String communityID) {
+		return databaseUtils.getManagerID(userID, communityID);
+	}
+	
+	public static String getTeamNameForID( int id){
+		return databaseUtils.getTeamNameForID(id);
+	}
+	
+	public static int getUniqueValue( String coloumName,
+			String table, String whereCondition) throws IOException {
+		return databaseUtils.getUniqueValue(coloumName, table, whereCondition);
+	}
 }

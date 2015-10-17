@@ -10,7 +10,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
-import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 
 /**
  * This class is used to communicate with the database.
@@ -129,7 +128,7 @@ public class CommunityManagement {
 		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name
 				+ "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		if (DatabaseUtils.isResultSetEmpty(rs)) {
+		if (DatabaseRequests.isResultSetEmpty(rs)) {
 			return createCommunity(name, password, adminID);
 		}
 		return false;
@@ -187,7 +186,7 @@ public class CommunityManagement {
 				+ communityName + "'";
 
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistCommunity);
-		return !DatabaseUtils.isResultSetEmpty(rs);
+		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 
 	/**
@@ -207,7 +206,7 @@ public class CommunityManagement {
 					+ userID + "','" + communityID + "')";
 			sqlCon.sendQuery(sqlQuery);
 			
-			int managerID = DatabaseUtils.getManagerID(sqlCon, userID, communityID);
+			int managerID = DatabaseRequests.getManagerID(userID, communityID);
 			TeamGenerator tg = new TeamGenerator();
 			int teamWorth = tg.generateTeamForUser(managerID, communityID);
 			int budget = BUDGET;
@@ -244,7 +243,7 @@ public class CommunityManagement {
 		String sqlQuery = "SELECT Passwort FROM Spielrunde" + " WHERE Name='"
 				+ communityName + "'" + " AND Passwort='" + password + "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		return !DatabaseUtils.isResultSetEmpty(rs);
+		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 
 	/**
@@ -262,7 +261,7 @@ public class CommunityManagement {
 				+ "'"
 				+ " AND Spielrunde.ID=Manager.Spielrunde_ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistUser);
-		return !DatabaseUtils.isResultSetEmpty(rs);
+		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 	
 	/**

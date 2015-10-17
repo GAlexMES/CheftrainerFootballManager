@@ -55,7 +55,7 @@ public class Controller {
 
 	public void creatDatabaseCommunication(String sqlName, String sqlPath) throws IOException {
 		try{
-			sqlConnection = new SQLConnection(sqlName,sqlPath);
+			sqlConnection = new SQLConnection(sqlName,sqlPath,true);
 		}
 		catch(IOException io){
 			LOGGER.error("Creating access to database failed.");

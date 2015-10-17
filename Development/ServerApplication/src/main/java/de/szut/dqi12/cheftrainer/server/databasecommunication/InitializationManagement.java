@@ -6,12 +6,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
 import de.szut.dqi12.cheftrainer.server.parsing.PlayerParser;
 import de.szut.dqi12.cheftrainer.server.parsing.TeamParser;
-import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 
 /**
  * This class is used to Initialize the Database, when the server starts the first time.
@@ -36,7 +34,7 @@ public class InitializationManagement {
 	public boolean existPlayer() {
 		String sqlQuery = "Select ID from Spieler";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		return !DatabaseUtils.isResultSetEmpty(rs);
+		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 
 	/**
@@ -54,7 +52,7 @@ public class InitializationManagement {
 			List<RealTeam> teamList = TeamParser.getTeams();
 			LOGGER.info("Validating database: 10% Done");
 			String condition = "Name='"+leagueName+"'";
-			int leagueID = Integer.valueOf(DatabaseUtils.getUniqueValue(sqlCon,"ID", "Liga",condition));
+			int leagueID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Liga",condition));
 			teamList.forEach(t -> addTeam(t, leagueID));
 		} catch (IOException e) {
 			throw e;
@@ -91,7 +89,7 @@ public class InitializationManagement {
 					+ t.getTeamName() + "','" + leagueID + "')";
 			sqlCon.sendQuery(sqlQuery);
 			String condition = "Vereinsname='"+t.getTeamName()+"'";
-			int teamID = Integer.valueOf(DatabaseUtils.getUniqueValue(sqlCon,"ID", "Verein",condition ));
+			int teamID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Verein",condition ));
 			List<Player> playerList = t.getPlayerList();
 			playerList.forEach(p -> addPlayer(p, teamID));
 		} catch (Exception e) {

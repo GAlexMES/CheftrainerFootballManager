@@ -7,7 +7,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
-import de.szut.dqi12.cheftrainer.server.utils.DatabaseUtils;
 
 /**
  * This class provides functions to map a {@link Player} to a {@link Manager} and some other simple functions, which are mostly used by the {@link TeamGenerator}.
@@ -32,7 +31,7 @@ public class LogicManagement {
 	public int getHeightsPlayerID() {
 		try {
 			String condition = "name='Spieler'";
-			return Integer.valueOf(DatabaseUtils.getUniqueValue(sqlCon, "seq", "sqlite_sequence", condition));
+			return Integer.valueOf(DatabaseRequests.getUniqueValue("seq", "sqlite_sequence", condition));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -73,7 +72,7 @@ public class LogicManagement {
 						+ "WHERE Manager.Spielrunde_ID='"+communityID+"'"
 						+ " AND Mannschaft.Spieler_ID='"+playerID+"'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		return !DatabaseUtils.isResultSetEmpty(rs);
+		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 
 	/**

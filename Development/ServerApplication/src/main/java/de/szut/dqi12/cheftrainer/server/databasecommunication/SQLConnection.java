@@ -15,12 +15,13 @@ import de.szut.dqi12.cheftrainer.server.Controller;
 
 /**
  * This class is used to connect to a existing database.
+ * 
  * @author Alexander Brennecke
  *
  */
 public class SQLConnection {
 
-	//INITIALISATION
+	// INITIALISATION
 	private final String SQLEXCEPTION_NORESULT = "query does not return ResultSet";
 	private final String SQLEXCEPTION_ERROR = "[SQLITE_ERROR]";
 	private final String SQLEXCEPTION_BUSY = "[SQLITE_BUSY]";
@@ -28,50 +29,65 @@ public class SQLConnection {
 	private Connection con = null;
 	private Statement statement = null;
 	private String name = "";
-	
+
 	private final static Logger LOGGER = Logger.getLogger(Controller.class);
 
 	private ArrayList<String> tableNames = new ArrayList<String>();
 
 	/**
 	 * Constructor
-	 * @param name of the database
+	 * 
+	 * @param name
+	 *            of the database
 	 */
-	public SQLConnection(String name, String sqlPath) throws IOException{
+	public SQLConnection(String name, String sqlPath, boolean init)
+			throws IOException {
 		this.name = name;
 		DatabaseRequests.getInstance().setSQLConnection(this);
 		loadDB(sqlPath);
-		init();
+		if (init) {
+			init();
+		}
 	}
 
-	
-	private void init() throws IOException{
+	public void init() throws IOException {
 		LOGGER.info("Start validating Database!");
-		if(!DatabaseRequests.existRealPlayer()){
-			try{
-			DatabaseRequests.loadRealPlayers("Bundesliga","Deutschland");
-			LOGGER.info("Validating database: 100% done");
-			}
-			catch(IOException io){
+		Boolean finishedPlayerParsing = DatabaseRequests
+				.getServerPropsAsBoolean(ServerPropertiesManagement.FINISHED_PLAYER_PARSING);
+		if (!(finishedPlayerParsing)) {
+			DatabaseRequests.clearTable("Spieler");
+			try {
+				DatabaseRequests.loadRealPlayers("Bundesliga", "Deutschland");
+				LOGGER.info("Validating database: 100% done");
+				DatabaseRequests.setServerProperty(
+						ServerPropertiesManagement.FINISHED_PLAYER_PARSING, true);
+			} catch (IOException io) {
+				DatabaseRequests.setServerProperty(
+						ServerPropertiesManagement.FINISHED_PLAYER_PARSING,
+						false);
 				LOGGER.error("Validating database failed: ");
 				LOGGER.error(io);
 				throw io;
 			}
+			
 		}
+
 		int currentSeason = DatabaseRequests.getCurrentSeasonFromSportal();
-		if(currentSeason>2000){
-			LOGGER.info("Start collecting points for current season ("+currentSeason+"-"+(currentSeason+1));
+		if (currentSeason > 2014) {
+			LOGGER.info("Start collecting points for current season ("
+					+ currentSeason + "-" + (currentSeason + 1));
 			DatabaseRequests.initializeScheduleForSeason(currentSeason);
-		}
-		else{
-			LOGGER.error("Failed collecting points, current season is invalid: "+currentSeason);
+		} else {
+			LOGGER.error("Failed collecting points, current season is invalid: "
+					+ currentSeason);
 		}
 	}
-	
+
 	/**
 	 * Tries to connect to the given db file
 	 * 
-	 * @param path to the db file
+	 * @param path
+	 *            to the db file
 	 */
 	private void loadDB(String path) {
 
@@ -94,10 +110,11 @@ public class SQLConnection {
 					tableNames.add(rs.getString(3));
 				}
 			}
-			
+
 			statement = con.createStatement();
 
-			statement.executeQuery("ATTACH '" + name + "' as " + name.substring(0, name.length() - 3));
+			statement.executeQuery("ATTACH '" + name + "' as "
+					+ name.substring(0, name.length() - 3));
 
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -106,7 +123,9 @@ public class SQLConnection {
 
 	/**
 	 * Tries to send a query to the database
-	 * @param command query as String
+	 * 
+	 * @param command
+	 *            query as String
 	 * @return ResultSet with the retval of the database
 	 */
 	public ResultSet sendQuery(String command) {
@@ -120,12 +139,14 @@ public class SQLConnection {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * This method handles SQLExceptions.
-	 * @param sqle SQLException
+	 * 
+	 * @param sqle
+	 *            SQLException
 	 */
-	private void handleSQLException (SQLException sqle){
+	private void handleSQLException(SQLException sqle) {
 		if (sqle.getMessage().contains(SQLEXCEPTION_NORESULT)) {
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_ERROR)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
@@ -138,9 +159,8 @@ public class SQLConnection {
 		}
 	}
 
-	
-	//GETTER&SETTER
-	///////////////
+	// GETTER&SETTER
+	// /////////////
 	public String getName() {
 		return this.name;
 	}
@@ -148,8 +168,8 @@ public class SQLConnection {
 	public ArrayList<String> getTableNames() {
 		return this.tableNames;
 	}
-	
-	public Connection getConnection(){
+
+	public Connection getConnection() {
 		return con;
 	}
 }
