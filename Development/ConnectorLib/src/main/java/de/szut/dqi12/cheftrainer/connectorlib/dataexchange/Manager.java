@@ -14,39 +14,57 @@ public class Manager {
 	private String name;
 	private Double money;
 	private List<Player> players;
-	private List<String> lineUp;
+	private List<Player> lineUp;
+	private Formation formation;
 	private int points;
 	private List<Transaction> transactions;
-	
-	public Manager(String name, Double money, int points){
+	private int teamWorth;
+
+	public Manager(String name, Double money, int points) {
 		this.name = name;
 		this.money = money;
 		this.points = points;
 		this.players = new ArrayList<Player>();
-		this.lineUp = new ArrayList<String>();
+		this.lineUp = new ArrayList<Player>();
 	}
-	
-	public void addTransaction(Transaction transaction){
+
+	public void addTransaction(Transaction transaction) {
 		this.transactions.add(transaction);
 	}
-		
+
 	public List<Transaction> getTransactions() {
 		return transactions;
+	}
+
+	public Formation getFormation() {
+		return formation;
+	}
+
+	public void setFormation(Formation formation) {
+		this.formation = formation;
 	}
 
 	public void setTransactions(List<Transaction> transactions) {
 		this.transactions = transactions;
 	}
+
+	public void addPlayer(List<Player> players){
+		Player[] playerArray = players.toArray(new Player[players.size()]);
+		addPlayer(playerArray);
+	}
 	
-	public void addPlayer(Player player){
-		this.players.add(player);
+	public void addPlayer(Player... player) {
+		for (Player p : player) {
+			this.players.add(p);
+			teamWorth += p.getWorth();
+		}
 	}
 
-	public List<String> getLineUp() {
+	public List<Player> getLineUp() {
 		return lineUp;
 	}
 
-	public void setLineUp(ArrayList<String> lineUp) {
+	public void setLineUp(ArrayList<Player> lineUp) {
 		this.lineUp = lineUp;
 	}
 
@@ -73,6 +91,13 @@ public class Manager {
 	public void setID(int id) {
 		this.id = id;
 	}
+
+	public int getTeamWorth() {
+		return teamWorth;
+	}
 	
-	
+	public void setTeamWorth(int teamWorth){
+		this.teamWorth = teamWorth;
+	}
+
 }

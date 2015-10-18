@@ -1,9 +1,14 @@
 package de.szut.dqi12.cheftrainer.client;
 
+import java.util.ArrayList;
+
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 
 /**
  * This class is the Controller class for the whole application.
@@ -55,5 +60,24 @@ public class Controller {
 		this.currentSession = session;
 		session.getClientSocket().getServerHandler().getMessageController().setSession(session);
 	}
-
+	
+	//Dummy 
+	public void save(ArrayList<Player> players, Formation formation){
+		
+	}
+	//Dummy
+	public void setPlayeronMarket(Player player, int price){
+		
+	}
+	//Dummy
+	public void sendOffer(Player player, int offer){
+		
+	}
+	//Dummy answer = 1 = angenommen; answer = 0 = spieler vom markt nehmen(auch eigene Angebote)
+	public void answerOffer(Transaction offer, Boolean answer){
+		
+	}
+	
+	
+		
 }

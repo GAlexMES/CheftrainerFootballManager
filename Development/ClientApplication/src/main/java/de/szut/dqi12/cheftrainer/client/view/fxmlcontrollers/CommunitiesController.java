@@ -6,13 +6,12 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.ManagerTeam;
 
 /**
  * This is the controller for the CommunitiesFrame.
@@ -23,31 +22,32 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Team;
 public class CommunitiesController {
 
 	@FXML
-	private TableView<Team> communitiesTable;
+	private TableView<ManagerTeam> communitiesTable;
 	@FXML
-	private TableColumn<Team, String> communityNameColumn;
+	private TableColumn<ManagerTeam, String> communityNameColumn;
 	@FXML
-	private TableColumn<Team, String> wertDesTeamsColumn;
+	private TableColumn<ManagerTeam, String> wertDesTeamsColumn;
 	@FXML
-	private TableColumn<Team, String> plazierungColumn;
-	private ObservableList<Team> data;
+	private TableColumn<ManagerTeam, String> plazierungColumn;
+	private ObservableList<ManagerTeam> data;
 
 	public CommunitiesController() {
-		communityNameColumn = new TableColumn<Team, String>();
-		wertDesTeamsColumn = new TableColumn<Team, String>();
-		plazierungColumn = new TableColumn<Team, String>();
+		communityNameColumn = new TableColumn<ManagerTeam, String>();
+		wertDesTeamsColumn = new TableColumn<ManagerTeam, String>();
+		plazierungColumn = new TableColumn<ManagerTeam, String>();
 		data = FXCollections.observableArrayList();
 		UpdateUtils.getCommunityUpdate();
 	}
 
+	
 	public void addRow(String communityName, double wertDesTeams, int rang) {
-		data.add(new Team(communityName, String.valueOf(wertDesTeams), String
+		data.add(new ManagerTeam(communityName, wertDesTeams, String
 				.valueOf(rang)));
 	}
-
-	public void reloadTable(List<Team> teams) {
-		List<Team> currentData = new ArrayList<>();
-
+	
+	public void reloadTable(List<ManagerTeam> teams) {
+		List<ManagerTeam> currentData = new ArrayList<>();
+		
 		for (int i = 0; data.size() > i; i++) {
 			currentData.add(data.get(i));
 		}
@@ -82,10 +82,10 @@ public class CommunitiesController {
 	 */
 	public void addListener() {
 		communitiesTable.setRowFactory(tv -> {
-			TableRow<Team> row = new TableRow<>();
+			TableRow<ManagerTeam> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					Team rowData = row.getItem();
+					ManagerTeam rowData = row.getItem();
 					System.out.println(rowData.getCommunityName().get());
 
 					// DO SOMETHING
@@ -132,4 +132,5 @@ public class CommunitiesController {
 			e.printStackTrace();
 		}
 	}
+	
 }

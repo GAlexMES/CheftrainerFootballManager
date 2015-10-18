@@ -1,61 +1,146 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
-import java.util.HashMap;
-import java.util.List;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
 /**
- * This class provides some Database utils.
- * There is no Javadoc, because the functions just forwarde to functions in the according *Management (e.g UserManagement) class.
+ * This class provides a few simple method, to communicate with the database or to check ResultSets.
  * @author Alexander Brennecke
  *
  */
 public class DatabaseUtils {
 	
-	private static DatabaseUtils INSTANCE = null;
+	private SQLConnection sqlCon;
 	
-	
-	//DATABASE MANAGERS
-	private static UserManagement userManagement;
-	private static CommunityManagement communityManagement;
-	
-	public static DatabaseUtils getInstance(){
-		if(INSTANCE==null){
-			INSTANCE = new DatabaseUtils();
+	public DatabaseUtils(SQLConnection sqlCon){
+		this.sqlCon = sqlCon;
+	}
+
+	/**
+	 * This method checks, if the given ResultSet is empty|has zero rows
+	 * 
+	 * @param rs
+	 *            the ResultSet, that should be checked.
+	 * @return true = the ResultSet is empty.
+	 */
+	public boolean isResultSetEmpty(ResultSet rs) {
+		try {
+			if (!rs.next()) {
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		return INSTANCE;
-	}
-	
-	public void setSQLConnection(SQLConnection sqlCon){
-		userManagement = new UserManagement(sqlCon);
-		communityManagement = new CommunityManagement(sqlCon);
+		return false;
 	}
 
 	
-	public static HashMap<String, Boolean> registerNewUser(User newUser){
-		return userManagement.register(newUser);
+	/**
+	 * This function will create a query, that will delete all information, stored in the given database table.
+	 * @param tableName the name of the table, that will be cleared.
+	 */
+	public void clearTable(String tableName){
+		String sqlQuery = "DELETE FROM "+tableName;
+		sqlCon.sendQuery(sqlQuery);
+		
 	}
 	
-	public static HashMap<String, Boolean> loginUser(User user){
-		return userManagement.login(user);
-	}
-	
-	public static User getUserData(String userName){
-		return userManagement.getUserValues(userName);
-	}
-	
-	public static boolean createNewCommunity(String name, String password, int adminID){
-		return communityManagement.createNewCommunity(name,password, adminID);
-	}
-	
-	public static List<Community> getCummunitiesForUser(int userID){
-		return communityManagement.getCummunities(userID);
+	/**
+	 * This function creates a query and sends it to the database. The ResultSet will show the 
+	 * {@link Manager} ID for the given {@link User} in the given {@link Community};
+	 * @param userID the ID of the {@link User}, that owns the {@link Manager}
+	 * @param communityID the ID of the {@link Community}, in which the {@link Manager} plays
+	 * @return the ID of the searched {@link Manager} or -1, if no {@link Manager} was found.
+	 */
+	public int getManagerID(int userID,
+			int communityID) {
+		try {
+			String condition = "Manager.Nutzer_ID=" + userID
+					+ " AND Manager.Spielrunde_ID=" + communityID;
+			return Integer.valueOf(getUniqueValue( "Manager.ID",
+					"Manager INNER JOIN Nutzer", condition).toString());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -1;
+		}
 	}
 
-	public static HashMap<String, Boolean> enterCommunity(String communityName,
-			String communityPassword, int userID) {
-		return communityManagement.enterCommunity(communityName,communityPassword,userID);
+	/**
+	 * This function creates a query and sends it to the database. The ResultSet will show the 
+	 * {@link Manager} ID for the given {@link User} in the given {@link Community};
+	 * @param userID the ID of the {@link User}, that owns the {@link Manager}
+	 * @param communityName the name of the {@link Community}, in which the {@link Manager} plays
+	 * @return the ID of the searched {@link Manager} or -1, if no {@link Manager} was found.
+	 */
+	public int getManagerID(int userID,
+			String communityName) {
+			try {
+				int communityID = Integer.valueOf(DatabaseRequests.getUniqueValue("Spielrunde.ID", "Spielrunde", "Spielrunde.Name='"+ communityName+"'").toString());
+				return getManagerID(userID, communityID);
+			} catch (IOException e) {
+				e.printStackTrace();
+				return -1;
+			}
+	}
+
+	/**
+	 * This method searches for the name of the team with the given ID.
+	 * @param id the ID of the team.
+	 * @return the name of the team or "", when there was no team with the given ID
+	 */
+	public String getTeamNameForID( int id){
+		String sqlQuery ="Select Name from Verein where Verein.ID="+id;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		if (!isResultSetEmpty(rs)) {
+			try {
+				while (rs.next()) {
+					return  rs.getString("Name");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} 
+		return "";
+	}
+	
+	/**
+	 * This method can be used to get exactly one value from the database.
+	 * @param coloumName the name of the coloum
+	 * @param table the name of the table
+	 * @param whereCondition the search condition (without where)
+	 * @return the value as Object
+	 * @throws IOException when there is no value, that matches the condition.
+	 */
+	public Object getUniqueValue( String coloumName,
+			String table, String whereCondition) throws IOException {
+		String sqlQuery = "SELECT " + coloumName + " FROM " + table + " WHERE "
+				+ whereCondition;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		try {
+			if (!isResultSetEmpty(rs)) {
+				rs = sqlCon.sendQuery(sqlQuery);
+				while (rs.next()) {
+					return rs.getString(coloumName);
+				}
+			} else {
+				throw new IOException("The value does not exist!");
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * This method sends the Query to the database.
+	 */
+	public void sendSimpleQuery(String query) {
+		sqlCon.sendQuery(query);
 	}
 }

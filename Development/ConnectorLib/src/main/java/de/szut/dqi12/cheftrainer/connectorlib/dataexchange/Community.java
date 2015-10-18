@@ -22,7 +22,7 @@ public class Community {
 	
 	public Community(){
 		managers= new ArrayList<>();
-		managerDictionary = new HashMap();
+		managerDictionary = new HashMap<Integer, Manager>();
 	}
 	
 	public void findeUsersManager(String userName){

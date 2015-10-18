@@ -134,7 +134,6 @@ public class RegistrationController {
 						"Something went wrong during your registration",
 						"Please check your server details!", AlertType.ERROR);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
