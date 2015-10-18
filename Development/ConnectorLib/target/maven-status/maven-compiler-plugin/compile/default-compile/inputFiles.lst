@@ -9,9 +9,11 @@ D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\C
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Manager.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\callables\HandshakeAck.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\clientside\ClientProperties.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\dataexchange\RealTeam.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\serverside\ClientHandler.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\cipher\CipherFactory.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\serverside\ServerProperties.java
+D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\dataexchange\ManagerTeam.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\messages\HandshakeMapperCreator.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\callables\CallableController.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Market.java
@@ -23,7 +25,6 @@ D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\C
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Transaction.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\messageids\ClientToServer_MessageIDs.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\callables\CallableMappingException.java
-D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Team.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\messages\Message.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\serverside\Server.java
 D:\Programme\Programmieren\Repositories\CheftrainerFootballManager\Development\ConnectorLib\src\main\java\de\szut\dqi12\cheftrainer\connectorlib\callables\RSAPublicKey.java

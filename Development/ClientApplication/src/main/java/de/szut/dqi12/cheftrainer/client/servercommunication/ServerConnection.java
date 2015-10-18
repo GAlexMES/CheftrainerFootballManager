@@ -6,7 +6,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import de.szut.dqi12.cheftrainer.client.MainApp;
+import de.szut.dqi12.cheftrainer.client.ClientApplication;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
@@ -21,7 +21,7 @@ public class ServerConnection {
 	public static Client createServerConnection(ClientProperties clientProps ) throws IOException{
 		URL path = null;
 		try {
-			String pathAsString = MainApp.class.getResource(".").toURI().toString();
+			String pathAsString = ClientApplication.class.getResource(".").toURI().toString();
 			URI uriPath = new URI(pathAsString+"callables/");
 			path = uriPath.toURL();
 		} catch (MalformedURLException e) {

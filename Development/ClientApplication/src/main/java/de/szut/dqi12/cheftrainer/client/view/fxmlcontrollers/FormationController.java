@@ -54,8 +54,6 @@ public class FormationController {
 	}
 
 	public void setClickedListener() {
-				
-		
 		for (Node n : formationFrame.getChildren()) {
 			((Label) n).setOnMouseClicked(new EventHandler<Event>() {
 				Player currentPlayer = players.get(0);

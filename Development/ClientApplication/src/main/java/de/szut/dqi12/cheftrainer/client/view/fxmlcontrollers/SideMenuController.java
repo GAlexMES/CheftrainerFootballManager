@@ -30,7 +30,7 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
-import de.szut.dqi12.cheftrainer.client.MainApp;
+import de.szut.dqi12.cheftrainer.client.ClientApplication;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 
@@ -76,7 +76,7 @@ public class SideMenuController {
 	private void generateButtons(VBox box) {
 		try {
 			//reads the sideMenuButtons.xml
-			Path buttonDefinitionFile = Paths.get(MainApp.class.getResource(
+			Path buttonDefinitionFile = Paths.get(ClientApplication.class.getResource(
 					"/definitions/sideMenuButtons.xml").toURI());
 			
 			List<String> xmlLines = Files.readAllLines(buttonDefinitionFile);
@@ -121,7 +121,7 @@ public class SideMenuController {
 		Button tempButton = new Button(buttonName);
 		// sets the button image with the source, defined in the xml
 		Image image = new Image(
-				MainApp.class.getResourceAsStream("/images/"
+				ClientApplication.class.getResourceAsStream("/images/"
 						+ e.getChildText("imageName")));
 		tempButton.setGraphic(new ImageView(image));
 		//sets height and other properties of the button

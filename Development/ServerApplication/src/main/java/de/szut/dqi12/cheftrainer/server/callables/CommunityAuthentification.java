@@ -1,24 +1,32 @@
 package de.szut.dqi12.cheftrainer.server.callables;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
-import de.szut.dqi12.cheftrainer.utils.JSONUtils;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.usercommunication.ClientUpdate;
+import de.szut.dqi12.cheftrainer.server.utils.JSONUtils;
 
 /**
  * This class handles messaged with the id "CommunityAuthentification".
+ * 
  * @author Alexander Brennecke
  *
  */
 public class CommunityAuthentification extends CallableAbstract {
 
 	/**
-	 * This method is called by the message controller, whenever the message controller arrives a message with the ID "CommunityAuthentification".
+	 * This method is called by the message controller, whenever the message
+	 * controller arrives a message with the ID "CommunityAuthentification".
 	 */
 	@Override
 	public void messageArrived(Message message) {
@@ -29,44 +37,110 @@ public class CommunityAuthentification extends CallableAbstract {
 			break;
 		case "enter":
 			enterCommunity(communityJSON);
+			break;
 		}
 	}
-	
+
 	/**
-	 * This method is called, when the CommunityAuthentification Message has the type "enter".
-	 * It uses the database to check, if the user can enter the given community. It sends and ACK to the client.
-	 * @param communityJSON a JSONObject with all required information to enter a community.
+	 * This method is called, when the CommunityAuthentification Message has the
+	 * type "enter". It uses the database to check, if the user can enter the
+	 * given community. It sends and ACK to the client.
+	 * 
+	 * @param communityJSON
+	 *            a JSONObject with all required information to enter a
+	 *            community.
 	 */
-	private void enterCommunity(JSONObject communityJSON){
+	private void enterCommunity(JSONObject communityJSON) {
 		String communityName = communityJSON.getString("communityName");
 		String communityPassword = communityJSON.getString("password");
 		int userID = mesController.getSession().getUserID();
-		HashMap<String,Boolean> enterFeedback = DatabaseUtils.enterCommunity(communityName, communityPassword, userID);
+		HashMap<String, Boolean> enterFeedback = DatabaseRequests.enterCommunity(communityName, communityPassword,
+				userID);
 		Message enterACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 		JSONObject enterACKJSON = JSONUtils.mapToJSON(enterFeedback);
+
+		updateSessionAndClient();
+
 		enterACKJSON.put("type", "enter");
 		enterACK.setMessageContent(enterACKJSON);
 		mesController.sendMessage(enterACK);
 	}
 
 	/**
-	 * This method is called, when the CommunityAuthentification Message has the type "creation".
-	 * It uses the database to create a new community, if it is possible.
-	 * @param communityJSON a JSONObject with all required information to create a new community.
+	 * This function checks, if the CommunityList in the Session object is up to date.
+	 */
+	private void updateSessionAndClient() {
+		int userID = mesController.getSession().getUserID();
+		List<Integer>  communityID = getNewCommunityID(userID);
+		for(Integer i : communityID){
+			updateSession(i);
+			sendUpdateToClient(i);
+		}
+	}
+
+	/**
+	 * This method takes the Community with the given ID and sets it to the session.
+	 * @param communityID
+	 */
+	private void updateSession(int communityID) {
+		Community community = DatabaseRequests.getCummunityForID(communityID);
+		mesController.getSession().addCommunity(community);
+	}
+
+	/**
+	 * This method compares the communities in the session object with the communities in the database,
+	 * @param userID the ID of the user, that has a manager in the compared communities
+	 * @return a List of Integers. Each Integer displays the ID of a {@link Community} , that is in the Database but not in the {@link Session}
+	 */
+	private List<Integer> getNewCommunityID(int userID) {
+		Set<Integer> knownIDs = mesController.getSession().getCommunityMap().keySet();
+		List<Integer> allIDs = DatabaseRequests.getCummunityIDsForUser(userID);
+
+		List<Integer> retval = new ArrayList<Integer>();
+		for (Integer i : knownIDs) {
+			if (allIDs.contains(i)) {
+				retval.add(i);
+			}
+		}
+		return retval;
+	}
+
+	/**
+	 * This method creates a new Update Message, containing an Community, for the Client and sends it.
+	 * @param communityID The ID of the Community, that will be send to the client.
+	 */
+	private void sendUpdateToClient(int communityID) {
+		Message communityListUpdate = new Message(ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
+
+		JSONObject updateJSON = new JSONObject();
+		updateJSON.put("type", "newCommunity");
+		updateJSON.put("community", ClientUpdate.createCommunityMessage(communityID));
+		communityListUpdate.setMessageContent(updateJSON);
+		
+		mesController.sendMessage(communityListUpdate);
+	}
+
+
+	/**
+	 * This method is called, when the CommunityAuthentification Message has the
+	 * type "creation". It uses the database to create a new community, if it is
+	 * possible.
+	 * 
+	 * @param communityJSON
+	 *            a JSONObject with all required information to create a new
+	 *            community.
 	 */
 	private void createNewCommunity(JSONObject communityJSON) {
 		String communityName = communityJSON.getString("communityName");
 		String communityPassword = communityJSON.getString("communityPassword");
-		int adminID = mesController.getSession().getUserID();
-		boolean communityCreated = DatabaseUtils.createNewCommunity(
-				communityName, communityPassword, adminID);
+		int userID = mesController.getSession().getUserID();
+		boolean communityCreated = DatabaseRequests.createNewCommunity(communityName, communityPassword, userID);
 
-		if(communityCreated){
-			int userID = mesController.getSession().getUserID();
-			DatabaseUtils.enterCommunity(communityName, communityPassword, userID);
+		if (communityCreated) {
+			DatabaseRequests.enterCommunity(communityName, communityPassword, userID);
+			updateSessionAndClient();
 		}
-		Message creationACK = new Message(
-				ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
+		Message creationACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 
 		JSONObject creationACKJSON = new JSONObject();
 		creationACKJSON.put("type", "creation");
@@ -76,5 +150,5 @@ public class CommunityAuthentification extends CallableAbstract {
 
 		mesController.sendMessage(creationACK);
 	}
-	
+
 }

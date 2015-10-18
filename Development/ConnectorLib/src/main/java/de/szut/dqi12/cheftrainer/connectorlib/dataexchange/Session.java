@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -98,6 +99,15 @@ public class Session {
 	public HashMap<Integer, Community> getCommunityMap() {
 		return communityMap;
 	}
+	
+	public List<Community> getCommunities(){
+		List<Community> retval = new ArrayList<Community>();
+		for(Integer s : communityMap.keySet()){
+			retval.add(communityMap.get(s));
+		}
+		return retval;
+	}
+	
 
 	/**
 	 * Should only be used on the server side.

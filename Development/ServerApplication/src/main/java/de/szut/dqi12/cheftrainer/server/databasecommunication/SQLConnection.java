@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -8,14 +9,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
+import de.szut.dqi12.cheftrainer.server.Controller;
+import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
+
 /**
  * This class is used to connect to a existing database.
+ * 
  * @author Alexander Brennecke
  *
  */
 public class SQLConnection {
 
-	//INITIALISATION
+	// INITIALISATION
 	private final String SQLEXCEPTION_NORESULT = "query does not return ResultSet";
 	private final String SQLEXCEPTION_ERROR = "[SQLITE_ERROR]";
 	private final String SQLEXCEPTION_BUSY = "[SQLITE_BUSY]";
@@ -24,24 +31,34 @@ public class SQLConnection {
 	private Statement statement = null;
 	private String name = "";
 
-	
+	private final static Logger LOGGER = Logger.getLogger(SQLConnection.class);
+
 	private ArrayList<String> tableNames = new ArrayList<String>();
 
 	/**
 	 * Constructor
-	 * @param name of the database
+	 * 
+	 * @param name
+	 *            of the database
 	 */
-	public SQLConnection(String name) {
+	public SQLConnection(String name, String sqlPath, boolean init)
+			throws IOException {
 		this.name = name;
-		DatabaseUtils.getInstance().setSQLConnection(this);
+		DatabaseRequests.getInstance().setSQLConnection(this);
+		loadDB(sqlPath);
+		if (init) {
+			ServerInitialator.databaseInitalisation();
+		}
 	}
 
+	
 	/**
 	 * Tries to connect to the given db file
 	 * 
-	 * @param path to the db file
+	 * @param path
+	 *            to the db file
 	 */
-	public void loadDB(String path) {
+	private void loadDB(String path) {
 
 		final String url = "jdbc:sqlite:" + path;
 
@@ -62,9 +79,11 @@ public class SQLConnection {
 					tableNames.add(rs.getString(3));
 				}
 			}
+
 			statement = con.createStatement();
 
-			statement.executeQuery("ATTACH '" + name + "' as " + name.substring(0, name.length() - 3));
+			statement.executeQuery("ATTACH '" + name + "' as "
+					+ name.substring(0, name.length() - 3));
 
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -73,7 +92,9 @@ public class SQLConnection {
 
 	/**
 	 * Tries to send a query to the database
-	 * @param command query as String
+	 * 
+	 * @param command
+	 *            query as String
 	 * @return ResultSet with the retval of the database
 	 */
 	public ResultSet sendQuery(String command) {
@@ -87,14 +108,15 @@ public class SQLConnection {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * This method handles SQLExceptions.
-	 * @param sqle SQLException
+	 * 
+	 * @param sqle
+	 *            SQLException
 	 */
-	private void handleSQLException (SQLException sqle){
+	private void handleSQLException(SQLException sqle) {
 		if (sqle.getMessage().contains(SQLEXCEPTION_NORESULT)) {
-			System.err.println("No return Data. Use lastResult");
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_ERROR)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
 			System.err.print(sqLiteError);
@@ -106,9 +128,8 @@ public class SQLConnection {
 		}
 	}
 
-	
-	//GETTER&SETTER
-	///////////////
+	// GETTER&SETTER
+	// /////////////
 	public String getName() {
 		return this.name;
 	}
@@ -116,8 +137,8 @@ public class SQLConnection {
 	public ArrayList<String> getTableNames() {
 		return this.tableNames;
 	}
-	
-	public Connection getConnection(){
+
+	public Connection getConnection() {
 		return con;
 	}
 }

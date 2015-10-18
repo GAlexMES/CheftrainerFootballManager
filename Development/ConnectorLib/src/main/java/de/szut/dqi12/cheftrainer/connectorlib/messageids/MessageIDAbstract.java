@@ -24,10 +24,8 @@ public abstract class MessageIDAbstract {
 			try {
 				idList.add(((String)f.get(this)));
 			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

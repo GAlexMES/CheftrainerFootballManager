@@ -1,11 +1,11 @@
-package de.szut.dqi12.cheftrainer.utils;
+package de.szut.dqi12.cheftrainer.server.utils;
 
 import java.util.HashMap;
 
 import org.json.JSONObject;
 
 /**
- * This class provides a few JSON method, which could be used to tranform JSONObject etc. to something else. Or other way rounde.
+ * This class provides a few JSON method, which could be used to transform JSONObject etc. to something else. Or other way round.
  * @author Alexander Brennecke
  *
  */

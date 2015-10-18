@@ -98,7 +98,6 @@ public class GUIInitialator {
 
 			loginDialogStage.showAndWait();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -8,6 +8,8 @@ import java.util.List;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
 
 /**
  * This class is used to communicate with the database.
@@ -18,6 +20,8 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 public class CommunityManagement {
 
 	private SQLConnection sqlCon;
+	
+	private static final int BUDGET = 15000000;
 
 	/**
 	 * Constructor.
@@ -34,21 +38,32 @@ public class CommunityManagement {
 	 */
 	public List<Community> getCummunities(int userID) {
 		List<Community> retval = new ArrayList<>();
+		List<Integer> idList = getCommunityIDsForUser(userID);
+		for (Integer i : idList) {
+			retval.add(getCommunity(i));
+		}
+		return retval;
+	}
+	
+	/**
+	 * This method fetches all CommunityIDs from the database, in which a User with the given ID has a {@link Manager}.
+	 * @param userID the ID of the User, that {@link Community}IDs will be returned 
+	 * @return a List of Integer with IDs for {@link Community} inside.
+	 */
+	public List<Integer> getCommunityIDsForUser(int userID){
 		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde INNER JOIN Manager WHERE Manager.Nutzer_ID ="
 				+ userID + " AND Manager.Spielrunde_ID=Spielrunde.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		List<Integer> idList = new ArrayList<>();
+		List<Integer> retval = new ArrayList<>();
 		try {
 			while (rs.next()) {
 				int id = rs.getInt("ID");
-				idList.add(id);
+				retval.add(id);
 			}
 		} catch (SQLException e) {
 
 		}
-		for (Integer i : idList) {
-			retval.add(getCommunity(i));
-		}
+		
 		return retval;
 	}
 
@@ -57,7 +72,7 @@ public class CommunityManagement {
 	 * @param communityID the ID of the Community, that information should be collect in the database.
 	 * @return a Community Object for the given community ID
 	 */
-	private Community getCommunity(int communityID) {
+	public Community getCommunity(int communityID) {
 		Community retval = new Community();
 		String sqlQuery = "Select * FROM Spielrunde WHERE ID = " + communityID;
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
@@ -77,7 +92,7 @@ public class CommunityManagement {
 	 * @param communityID the ID of the community
 	 * @return a List of Manager Objects.
 	 */
-	private List<Manager> getManagers(int communityID) {
+	public List<Manager> getManagers(int communityID) {
 		List<Manager> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Manager.ID, Nutzer.Nutzername, Manager.Budget, Manager.Punkte "
 				+ "FROM  Manager INNER JOIN  Nutzer WHERE Spielrunde_ID="
@@ -94,6 +109,11 @@ public class CommunityManagement {
 			}
 		} catch (SQLException e) {
 		}
+		for(Manager m : retval){
+			List<Player> playerList = getTeam(m.getID());
+			Player [] playerArray = playerList.toArray(new Player[playerList.size()]);
+			m.addPlayer(playerArray);
+		}
 		return retval;
 	}
 
@@ -108,7 +128,7 @@ public class CommunityManagement {
 		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name
 				+ "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		if (isResultSetEmpty(rs)) {
+		if (DatabaseRequests.isResultSetEmpty(rs)) {
 			return createCommunity(name, password, adminID);
 		}
 		return false;
@@ -148,7 +168,8 @@ public class CommunityManagement {
 				retval.put("correctPassword", true);
 				if (!existUserInCommunity(userID, communityName)) {
 					retval.put("userDoesNotExist", true);
-					createNewManager(communityName, userID);
+					boolean created = createNewManager(communityName, userID);
+					retval.put("managerCreated", created);
 				}
 			}
 		}
@@ -165,7 +186,7 @@ public class CommunityManagement {
 				+ communityName + "'";
 
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistCommunity);
-		return !isResultSetEmpty(rs);
+		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 
 	/**
@@ -184,13 +205,34 @@ public class CommunityManagement {
 			String sqlQuery = "INSERT INTO Manager (Nutzer_ID, Spielrunde_ID) VALUES ('"
 					+ userID + "','" + communityID + "')";
 			sqlCon.sendQuery(sqlQuery);
+			
+			int managerID = DatabaseRequests.getManagerID(userID, communityID);
+			TeamGenerator tg = new TeamGenerator();
+			int teamWorth = tg.generateTeamForUser(managerID, communityID);
+			int budget = BUDGET;
+			
+			int maxTeamWorth = (int)(TeamGenerator.TEAM_WORTH*(1+TeamGenerator.TEAM_WORTH_TOLERANZ));
+			int minTeamWorth = (int)(TeamGenerator.TEAM_WORTH*(1-TeamGenerator.TEAM_WORTH_TOLERANZ));
+			
+			if (teamWorth>maxTeamWorth){
+				budget = BUDGET - (maxTeamWorth - teamWorth);
+			}
+			else if(teamWorth<minTeamWorth){
+				budget = BUDGET + (minTeamWorth- teamWorth);
+			}
+			
+			sqlQuery = "UPDATE Manager SET Budget='"+budget+"'"
+					+ "WHERE ID="+managerID;
+			sqlCon.sendQuery(sqlQuery);
+			
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 		return false;
 	}
-
+	
 	/**
 	 * This method checks, if the given password and community match together.
 	 * @param password the md5 password of the community.
@@ -201,7 +243,7 @@ public class CommunityManagement {
 		String sqlQuery = "SELECT Passwort FROM Spielrunde" + " WHERE Name='"
 				+ communityName + "'" + " AND Passwort='" + password + "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		return !isResultSetEmpty(rs);
+		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 
 	/**
@@ -219,26 +261,36 @@ public class CommunityManagement {
 				+ "'"
 				+ " AND Spielrunde.ID=Manager.Spielrunde_ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistUser);
-		return !isResultSetEmpty(rs);
+		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
-
+	
 	/**
-	 * This method checks, if the given ResultSet is empty|has zero rows
-	 * @param rs the ResultSet, that should be checked.
-	 * @return true = the ResultSet is empty.
+	 * This method creates a List of {@link Player} for the given {@link Manager} out of the database values.
+	 * @param managerID the id of the {@link Manager}, that team should be fetched from the database. 
+	 * @return a List of {@link Player} Objects, which presents the team of the {@link Manager}
 	 */
-	private boolean isResultSetEmpty(ResultSet rs) {
+	public List<Player> getTeam(int managerID){
+		List<Player> playerList = new ArrayList<>();
+		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein"
+				+ " WHERE Mannschaft.Manager_ID="+managerID
+				+ " AND Spieler.Verein_ID = Verein.ID"
+				+ " AND Mannschaft.Spieler_ID=Spieler.ID";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
-			int counter = 0;
 			while (rs.next()) {
-				counter++;
-			}
-			if (counter == 0) {
-				return true;
+				Player p = new Player();
+				p.setID(rs.getInt("ID"));
+				p.setName(rs.getString("Name"));
+				p.setTeamName(rs.getString("Vereinsname"));
+				p.setPosition(rs.getString("Position"));
+				p.setNumber(rs.getInt("Nummer"));
+				p.setPlays(rs.getBoolean("Aufgestellt"));
+				p.setWorth(rs.getInt("Marktwert"));
+				p.setPoints(rs.getInt("Punkte"));
+				playerList.add(p);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
 		}
-		return false;
+		return playerList;
 	}
 }
