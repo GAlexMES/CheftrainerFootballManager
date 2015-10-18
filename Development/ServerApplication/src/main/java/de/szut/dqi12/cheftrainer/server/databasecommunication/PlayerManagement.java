@@ -1,7 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
-import java.sql.ResultSet;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -16,25 +15,15 @@ import de.szut.dqi12.cheftrainer.server.parsing.TeamParser;
  * @author Alexander Brennecke
  *
  */
-public class InitializationManagement {
+public class PlayerManagement {
 
 	private SQLConnection sqlCon;
 	
-	private final static Logger LOGGER = Logger.getLogger(InitializationManagement.class);
+	private final static Logger LOGGER = Logger.getLogger(PlayerManagement.class);
 	private int teamCounter = 0;
 
-	public InitializationManagement(SQLConnection sqlCon) {
+	public PlayerManagement(SQLConnection sqlCon) {
 		this.sqlCon = sqlCon;
-	}
-
-	/**
-	 * This method checks, if any {@link Player} exists in the database.
-	 * @return true = there is min. one {@link Player} in the database.
-	 */
-	public boolean existPlayer() {
-		String sqlQuery = "Select ID from Spieler";
-		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 
 	/**
@@ -52,7 +41,7 @@ public class InitializationManagement {
 			List<RealTeam> teamList = TeamParser.getTeams();
 			LOGGER.info("Validating database: 10% Done");
 			String condition = "Name='"+leagueName+"'";
-			int leagueID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Liga",condition));
+			int leagueID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Liga",condition).toString());
 			teamList.forEach(t -> addTeam(t, leagueID));
 		} catch (IOException e) {
 			throw e;
@@ -89,7 +78,7 @@ public class InitializationManagement {
 					+ t.getTeamName() + "','" + leagueID + "')";
 			sqlCon.sendQuery(sqlQuery);
 			String condition = "Vereinsname='"+t.getTeamName()+"'";
-			int teamID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Verein",condition ));
+			int teamID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Verein",condition ).toString());
 			List<Player> playerList = t.getPlayerList();
 			playerList.forEach(p -> addPlayer(p, teamID));
 		} catch (Exception e) {

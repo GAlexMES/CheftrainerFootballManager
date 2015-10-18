@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
@@ -25,11 +26,12 @@ public class DatabaseRequests {
 	//DATABASE MANAGERS
 	private static UserManagement userManagement;
 	private static CommunityManagement communityManagement;
-	private static InitializationManagement initializationManagement;
+	private static PlayerManagement playerManagement;
 	private static LogicManagement logicManagement;
 	private static SchedulePointManagement schedulePointManagement;
 	private static ServerPropertiesManagement serverPropertiesManagement;
 	private static DatabaseUtils databaseUtils;
+	private static PointManagement pointManagement;
 	
 	public static DatabaseRequests getInstance(){
 		if(INSTANCE==null){
@@ -41,11 +43,12 @@ public class DatabaseRequests {
 	public void setSQLConnection(SQLConnection sqlCon){
 		userManagement = new UserManagement(sqlCon);
 		communityManagement = new CommunityManagement(sqlCon);
-		initializationManagement = new InitializationManagement(sqlCon);;
+		playerManagement = new PlayerManagement(sqlCon);
 		logicManagement = new LogicManagement(sqlCon);
 		schedulePointManagement = new SchedulePointManagement(sqlCon);
 		serverPropertiesManagement = new ServerPropertiesManagement(sqlCon);
 		databaseUtils = new DatabaseUtils(sqlCon);
+		pointManagement = new PointManagement(sqlCon);
 	}
 
 	
@@ -86,12 +89,8 @@ public class DatabaseRequests {
 		return communityManagement.enterCommunity(communityName,communityPassword,userID);
 	}
 	
-	public static boolean existRealPlayer(){
-		return initializationManagement.existPlayer();
-	}
-
 	public static void loadRealPlayers(String leagueName, String leagueCountry) throws IOException{
-		initializationManagement.loadRealPlayers(leagueName, leagueCountry);
+		playerManagement.loadRealPlayers(leagueName, leagueCountry);
 	}
 	
 	public static int getHeighstPlayerID(){
@@ -161,8 +160,16 @@ public class DatabaseRequests {
 		return databaseUtils.getTeamNameForID(id);
 	}
 	
-	public static int getUniqueValue( String coloumName,
+	public static void sendSimpleQuery(String query){
+		databaseUtils.sendSimpleQuery(query);
+	}
+	
+	public static Object getUniqueValue( String coloumName,
 			String table, String whereCondition) throws IOException {
 		return databaseUtils.getUniqueValue(coloumName, table, whereCondition);
+	}
+	
+	public static void writePointsToDatabase(Map<String, Player> playerList) {
+		pointManagement.updatePointsOfPlayers(playerList);
 	}
 }

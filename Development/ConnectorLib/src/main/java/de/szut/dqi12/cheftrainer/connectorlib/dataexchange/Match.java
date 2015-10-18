@@ -2,6 +2,8 @@ package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
 public class Match {
 	
+	private int matchDay;
+	private int season;
 	private String date;
 	private String time;
 	private String home;
@@ -74,6 +76,18 @@ public class Match {
 	}
 	public void setGoalsGuest(int goalsGuest) {
 		this.goalsGuest = goalsGuest;
+	}
+	public int getMatchDay() {
+		return matchDay;
+	}
+	public void setMatchDay(int matchDay) {
+		this.matchDay = matchDay;
+	}
+	public int getSeason() {
+		return season;
+	}
+	public void setSeason(int season) {
+		this.season = season;
 	}
 
 	

@@ -9,12 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
+import de.szut.dqi12.cheftrainer.server.ServerApplication;
 
 /**
  * This class should be used to parse information, which are required for a matchday, a match or a season
@@ -28,9 +30,9 @@ public class ScheduleParser {
 	private String scheduleRoot = sportalRoot
 			+ "/fussball/bundesliga/spielplan/spielplan-spieltag-";
 	private int matchday;
-	private int season;
 	private List<Match> matches;
 
+	private final static Logger LOGGER = Logger.getLogger(ScheduleParser.class);
 	
 	/**
 	 * This method parses the information for the given matchday in the given season to Match objects.
@@ -42,7 +44,6 @@ public class ScheduleParser {
 	public List<Match> createSchedule(int matchday, int season)
 			throws MalformedURLException {
 		this.matchday = matchday;
-		this.season = season;
 		matches = new ArrayList<>();
 		URL scheduleURL = new URL(scheduleRoot + matchday + "-saison-" + season
 				+ "-" + (season + 1));
@@ -54,7 +55,7 @@ public class ScheduleParser {
 			Elements games = scheduleDiv.getElementsByAttributeValue("class",
 					"table_content table_content_wetten");
 			for(Element e : games){
-				matches.add(createMatch(e));
+				matches.add(createMatch(e,season));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -67,7 +68,7 @@ public class ScheduleParser {
 	 * @param e the HTML Element from sportal.de
 	 * @return a new Match object
 	 */
-	private Match createMatch(Element e) {
+	private Match createMatch(Element e, int season) {
 		String date = e.select("span[class=date]").text();
 		if (matchday < 18) {
 			date += String.valueOf(season);
@@ -92,7 +93,6 @@ public class ScheduleParser {
 	 * @return the id of the match as int
 	 */
 	public static int getSportalID(String url) {
-
 		try {
 			Document doc = Jsoup.connect(sportalRoot + url).get();
 			Element navigation = doc.getElementById("kompaktformat_topnavi");
@@ -100,11 +100,68 @@ public class ScheduleParser {
 			String[] hrefParts = firstnavigationIcon.attr("href").split("-");
 			String completeID = hrefParts[hrefParts.length - 1];
 			return Integer.valueOf(completeID);
-
 		} catch (IOException e) {
 			e.printStackTrace();
+		}catch(NullPointerException npe){
+			boolean isPage404 = isPageSportal404(url);
+			if(isPage404){
+				return -1;
+			}
+			else{
+				boolean wrongContent = hasSportalPageWrongContent(url);
+				if(wrongContent){
+					return -1;
+				}
+				npe.printStackTrace();
+			}
 		}
 		return -1;
+	}
+	
+	/**
+	 * This function checks, if the sportal webside has the navigation bar, to find the id of the game.
+	 * @param url the url of a game detail page on sportal.
+	 * @return true = webside has wrong content.
+	 */
+	private static boolean hasSportalPageWrongContent(String url){
+		try{
+			Document doc = Jsoup.connect(sportalRoot + url).get();
+			Element impressumContent = doc.getElementById("kompaktformat_topnavi");
+			if(impressumContent==null){
+				LOGGER.error("The page of the given game URL  was invalid! It was: "+url);
+				return true;
+			}
+			return false;
+		} catch(NullPointerException npe){
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
+	/**
+	 * This function checks, if the given URL is a sportal 404 page.
+	 * @param url the url, that should be checked.
+	 * @return true = it is a 404 Error page.
+	 */
+	private static boolean isPageSportal404(String url){
+		try{
+			Document doc = Jsoup.connect(sportalRoot + url).get();
+			Element impressumContent = doc.getElementById("impressumContent");
+			String text = impressumContent.getElementsByTag("h1").text();
+			if(text.equals("Ooops, diese Seite…")){
+				LOGGER.error("The URL of a game was invalid! It results in a 404. It was: "+url);
+				return true;
+			}
+			return false;
+		} catch(NullPointerException npe){
+			return false;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 	
 	/**
@@ -126,7 +183,9 @@ public class ScheduleParser {
 				Element currentMatch = matchDay;
 				for(int i = 0; i<9;i++){
 					Element match = currentMatch.nextElementSibling();
-					Match m = createMatch(match);
+					Match m = createMatch(match, season);
+					m.setSeason(season);
+					m.setMatchDay(matchDayID);
 					retval.get(matchDayID).add(m);
 					currentMatch=match;
 				}

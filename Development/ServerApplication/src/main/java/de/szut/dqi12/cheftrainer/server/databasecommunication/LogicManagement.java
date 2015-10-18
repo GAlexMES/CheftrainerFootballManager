@@ -31,7 +31,7 @@ public class LogicManagement {
 	public int getHeightsPlayerID() {
 		try {
 			String condition = "name='Spieler'";
-			return Integer.valueOf(DatabaseRequests.getUniqueValue("seq", "sqlite_sequence", condition));
+			return Integer.valueOf(DatabaseRequests.getUniqueValue("seq", "sqlite_sequence", condition).toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

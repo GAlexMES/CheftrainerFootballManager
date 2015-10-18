@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.server.Controller;
+import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
 
 /**
  * This class is used to connect to a existing database.
@@ -30,7 +31,7 @@ public class SQLConnection {
 	private Statement statement = null;
 	private String name = "";
 
-	private final static Logger LOGGER = Logger.getLogger(Controller.class);
+	private final static Logger LOGGER = Logger.getLogger(SQLConnection.class);
 
 	private ArrayList<String> tableNames = new ArrayList<String>();
 
@@ -46,43 +47,11 @@ public class SQLConnection {
 		DatabaseRequests.getInstance().setSQLConnection(this);
 		loadDB(sqlPath);
 		if (init) {
-			init();
+			ServerInitialator.databaseInitalisation();
 		}
 	}
 
-	public void init() throws IOException {
-		LOGGER.info("Start validating Database!");
-		Boolean finishedPlayerParsing = DatabaseRequests
-				.getServerPropsAsBoolean(ServerPropertiesManagement.FINISHED_PLAYER_PARSING);
-		if (!(finishedPlayerParsing)) {
-			DatabaseRequests.clearTable("Spieler");
-			try {
-				DatabaseRequests.loadRealPlayers("Bundesliga", "Deutschland");
-				LOGGER.info("Validating database: 100% done");
-				DatabaseRequests.setServerProperty(
-						ServerPropertiesManagement.FINISHED_PLAYER_PARSING, true);
-			} catch (IOException io) {
-				DatabaseRequests.setServerProperty(
-						ServerPropertiesManagement.FINISHED_PLAYER_PARSING,
-						false);
-				LOGGER.error("Validating database failed: ");
-				LOGGER.error(io);
-				throw io;
-			}
-			
-		}
-
-		int currentSeason = DatabaseRequests.getCurrentSeasonFromSportal();
-		if (currentSeason > 2014) {
-			LOGGER.info("Start collecting points for current season ("
-					+ currentSeason + "-" + (currentSeason + 1));
-			DatabaseRequests.initializeScheduleForSeason(currentSeason);
-		} else {
-			LOGGER.error("Failed collecting points, current season is invalid: "
-					+ currentSeason);
-		}
-	}
-
+	
 	/**
 	 * Tries to connect to the given db file
 	 * 
