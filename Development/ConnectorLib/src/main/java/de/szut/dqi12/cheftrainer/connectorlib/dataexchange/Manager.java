@@ -14,7 +14,8 @@ public class Manager {
 	private String name;
 	private Double money;
 	private List<Player> players;
-	private List<String> lineUp;
+	private List<Player> lineUp;
+	private Formation formation;
 	private int points;
 	private List<Transaction> transactions;
 	private int teamWorth;
@@ -24,7 +25,7 @@ public class Manager {
 		this.money = money;
 		this.points = points;
 		this.players = new ArrayList<Player>();
-		this.lineUp = new ArrayList<String>();
+		this.lineUp = new ArrayList<Player>();
 	}
 
 	public void addTransaction(Transaction transaction) {
@@ -33,6 +34,14 @@ public class Manager {
 
 	public List<Transaction> getTransactions() {
 		return transactions;
+	}
+
+	public Formation getFormation() {
+		return formation;
+	}
+
+	public void setFormation(Formation formation) {
+		this.formation = formation;
 	}
 
 	public void setTransactions(List<Transaction> transactions) {
@@ -51,11 +60,11 @@ public class Manager {
 		}
 	}
 
-	public List<String> getLineUp() {
+	public List<Player> getLineUp() {
 		return lineUp;
 	}
 
-	public void setLineUp(ArrayList<String> lineUp) {
+	public void setLineUp(ArrayList<Player> lineUp) {
 		this.lineUp = lineUp;
 	}
 

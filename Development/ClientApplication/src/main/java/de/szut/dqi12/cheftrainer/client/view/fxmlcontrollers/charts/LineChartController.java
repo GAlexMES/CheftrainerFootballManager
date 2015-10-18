@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
+package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts;
 
 import java.util.HashMap;
 
@@ -15,9 +15,9 @@ public class LineChartController<Y, X> {
 	final NumberAxis xAxis = new NumberAxis();
 	final NumberAxis yAxis = new NumberAxis();
 	@FXML
-	GridPane lineChart;
-	ObservableList<XYChart.Series<String, Integer>> data;
-	LineChart<String, Integer> chart;
+	private GridPane lineChart;
+	private ObservableList<XYChart.Series<String, Integer>> data;
+	private LineChart<String, Integer> chart;
 
 	public void init() {
 
@@ -25,17 +25,32 @@ public class LineChartController<Y, X> {
 
 		chart = (LineChart) lineChart.getChildren().get(0);
 	}
+
 	
-	public void setTitle(String name){
+	
+	public LineChart<String, Integer> getChart() {
+		return chart;
+	}
+
+
+
+	public void setTitle(String name) {
 		chart.setTitle(name);
 	}
 
 	public void setData(HashMap<String, Integer> data) {
 		Series<String, Integer> series = new Series<String, Integer>();
 		for (String key : data.keySet()) {
-			series.getData().add(new XYChart.Data(key, data.get(key)));
+
+			series.getData().add(
+					new XYChart.Data<String, Integer>(key, data.get(key)));
 		}
-		this.data.clear();
+
+		try {
+			this.data.clear();
+		} catch (Exception e) {
+			// e.printStackTrace();
+		}
 		this.data.add(series);
 		this.chart.getData().clear();
 		this.chart.setData(this.data);
@@ -53,9 +68,21 @@ public class LineChartController<Y, X> {
 
 	}
 
+	/**
+	 * 
+	 * @param xValue
+	 *            Wert fuer X-Achse
+	 * @param yValue
+	 *            Wert fuer Y-Achse
+	 * @param series
+	 *            Die Position des Graphes (0 fuer ersten Graph)
+	 */
 	public void addValue(String xValue, int yValue, int series) {
 
 		try {
+			if (this.chart.getData().size() == 0) {
+				this.chart.getData().add(new Series<String, Integer>());
+			}
 			this.chart.getData().get(series).getData()
 					.add(new XYChart.Data(xValue, yValue));
 		} catch (Exception e) {

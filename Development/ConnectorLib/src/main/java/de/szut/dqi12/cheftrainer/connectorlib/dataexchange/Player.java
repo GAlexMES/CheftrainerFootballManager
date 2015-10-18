@@ -79,6 +79,38 @@ public class Player {
 		return yellowRedCard;
 	}
 
+	public Position getPosition() {
+		return position;
+	}
+
+	public String getTeamName() {
+		return teamName;
+	}
+
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
+	}
+
+	public int getGoals() {
+		return goals;
+	}
+
+	public void setGoals(int goals) {
+		this.goals = goals;
+	}
+
+	public boolean isRedCard() {
+		return redCard;
+	}
+
+	public void setRedCard(boolean redCard) {
+		this.redCard = redCard;
+	}
+
+	public boolean isYellowRedCard() {
+		return yellowRedCard;
+	}
+
 	public void setYellowRedCard(boolean yellowRedCard) {
 		this.yellowRedCard = yellowRedCard;
 	}

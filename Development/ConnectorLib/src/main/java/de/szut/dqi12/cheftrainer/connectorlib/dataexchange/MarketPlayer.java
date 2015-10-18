@@ -6,14 +6,14 @@ import javafx.beans.property.StringProperty;
 public class MarketPlayer {
 	private final StringProperty playerName;
 	private final StringProperty points;
-	private final StringProperty price;
+	private final StringProperty werth;
 
-	public MarketPlayer(String communityName, String points,
+	public MarketPlayer(String playerName, String points,
 			String price) {
 		super();
-		this.playerName =  new SimpleStringProperty(communityName);
+		this.playerName =  new SimpleStringProperty(playerName);
 		this.points =  new SimpleStringProperty(points);
-		this.price =  new SimpleStringProperty(price);
+		this.werth =  new SimpleStringProperty(price);
 		
 	}
 
@@ -25,8 +25,8 @@ public class MarketPlayer {
 		return points;
 	}
 
-	public StringProperty getPrice() {
-		return price;
+	public StringProperty getWerth() {
+		return werth;
 	}
 
 
