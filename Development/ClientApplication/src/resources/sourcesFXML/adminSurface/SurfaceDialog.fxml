@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.GridPane?>
+
+<!--	wird durch nicht verwendet!!!!
+
+ #Membervariable von Admininterface. Durch show oeffnen. durch etwas anderes klicken in AdminInter schliessen.
+-->
+
+
+<GridPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40">
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <ListView prefHeight="200.0" prefWidth="200.0" />
+   </children>
+</GridPane>
