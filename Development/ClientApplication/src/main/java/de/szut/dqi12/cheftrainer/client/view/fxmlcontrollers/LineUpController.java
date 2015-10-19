@@ -3,6 +3,7 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -15,7 +16,9 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
@@ -48,11 +51,11 @@ public class LineUpController {
 		FXMLLoader currentContentLoader = new FXMLLoader();
 
 		URL fxmlFile;
-		switch (formation) {
-		case forfortwo:
+		switch (formation.getName()) {
+		case FormationFactory.FOUR_FOUR_TWO:
 			fxmlFile = classLoader.getResource("sourcesFXML/442.fxml");
 			break;
-		case vorfiveone:
+		case FormationFactory.FOUR_FIVE_ONE:
 			fxmlFile = classLoader.getResource("sourcesFXML/451.fxml");
 			break;
 		default:
@@ -141,10 +144,9 @@ public class LineUpController {
 	public boolean changeFormation(Formation formation) {
 		try {
 			Session session = Controller.getInstance().getSession();
-			FXMLLoader currentContentLoader = getLoader(session
-					.getCommunityMap().get(session.getCurrentCommunity())
-					.getManagers().get(session.getCurrentManager())
-					.getFormation());
+			Community currentCommunity = session.getCommunityMap().get(session.getCurrentCommunity());
+			Manager currentManager = currentCommunity.getManagers().get(session.getCurrentManager());
+			FXMLLoader currentContentLoader = getLoader(currentManager.getFormation());
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 			fController = ((FormationController) currentContentLoader
 					.getController());
@@ -240,9 +242,10 @@ public class LineUpController {
 		dialog = new GridPane();
 		Label l;
 		int i = 0;
-		for (Formation formation : Formation.values()) {
-
-			l = new Label(formation.name());
+		FormationFactory ff = new FormationFactory();
+		List<Formation> formations = ff.getFormations();
+		for (Formation formation : formations) {
+			l = new Label(formation.getName());
 			dialog.add(l, 0, i);
 			i++;
 			l.setOnMouseClicked(new EventHandler<Event>() {
