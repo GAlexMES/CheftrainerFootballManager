@@ -6,10 +6,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
-import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.GridPane;
 
+/**
+ * This is the controller for the gui-component BarChart
+ * @author Robin
+ *
+ */
 public class BarChartController {
 	@FXML
 	private GridPane barChart;
@@ -25,7 +29,10 @@ public class BarChartController {
 		return chart;
 	}
 
-
+	/**
+	 * This method have to be called before all other methods.
+	 * Initialization of components.
+	 */
 	public void init() {
 
 		chart = (BarChart) barChart.getChildren().get(0);
@@ -33,7 +40,10 @@ public class BarChartController {
 		data.add(series);
 		chart.setData(data);
 	}
-	
+	/**
+	 * Fills the Chart
+	 * @param data Data for chart.
+	 */
 	public void setData(HashMap<String, Integer> data){
 		try{
 			series.getData().clear();
