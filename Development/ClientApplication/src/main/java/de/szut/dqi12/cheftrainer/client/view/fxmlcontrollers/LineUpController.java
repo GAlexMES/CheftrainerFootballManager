@@ -18,6 +18,7 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
 /**
@@ -91,16 +92,16 @@ public class LineUpController {
 				Player keeper = players.get(0);
 				for (Player p : players) {
 					switch (p.getPosition()) {
-					case Defence:
+					case Position.DEFENCE:
 						defence.add(p);
 						break;
-					case Middel:
+					case Position.MIDDLE:
 						middel.add(p);
 						break;
-					case Offence:
+					case Position.OFFENCE:
 						offence.add(p);
 						defence: break;
-					case Keeper:
+					case Position.KEEPER:
 						keeper = p;
 						break;
 					default:
@@ -157,16 +158,16 @@ public class LineUpController {
 			Player keeper = players.get(0);
 			for (Player p : players) {
 				switch (p.getPosition()) {
-				case Defence:
+				case Position.DEFENCE:
 					defence.add(p);
 					break;
-				case Middel:
+				case Position.MIDDLE:
 					middel.add(p);
 					break;
-				case Offence:
+				case Position.OFFENCE:
 					offence.add(p);
 					break;
-				case Keeper:
+				case Position.KEEPER:
 					keeper = p;
 					break;
 				default:
