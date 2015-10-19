@@ -20,6 +20,11 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
+/**
+ * This is the controller for the gui-module LineUp
+ * @author Robin
+ *
+ */
 public class LineUpController {
 	@FXML
 	private GridPane lineUpFrame;
