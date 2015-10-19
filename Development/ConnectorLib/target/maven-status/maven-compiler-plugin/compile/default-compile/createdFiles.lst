@@ -1,3 +1,4 @@
+de\szut\dqi12\cheftrainer\connectorlib\clientside\ConnectionDiedListener.class
 de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Manager.class
 de\szut\dqi12\cheftrainer\connectorlib\callables\CallableController.class
 de\szut\dqi12\cheftrainer\connectorlib\serverside\ClientHandler.class
@@ -22,6 +23,8 @@ de\szut\dqi12\cheftrainer\connectorlib\messageids\ServerToClient_MessageIDs.clas
 de\szut\dqi12\cheftrainer\connectorlib\messageids\MessageIDAbstract.class
 de\szut\dqi12\cheftrainer\connectorlib\dataexchange\User.class
 de\szut\dqi12\cheftrainer\connectorlib\callables\CallableAbstract.class
+de\szut\dqi12\cheftrainer\connectorlib\dataexchange\FormationFactory.class
+de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Position.class
 de\szut\dqi12\cheftrainer\connectorlib\messages\HandshakeMapperCreator.class
 de\szut\dqi12\cheftrainer\connectorlib\dataexchange\RealTeam.class
 de\szut\dqi12\cheftrainer\connectorlib\callables\HandshakeAck.class
@@ -30,4 +33,7 @@ de\szut\dqi12\cheftrainer\connectorlib\clientside\Client.class
 de\szut\dqi12\cheftrainer\connectorlib\messages\IDClass_Path_Mapper.class
 de\szut\dqi12\cheftrainer\connectorlib\messages\MessageController.class
 de\szut\dqi12\cheftrainer\connectorlib\messageids\Handshake_MessageIDs.class
+de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Match.class
+de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Formation.class
+de\szut\dqi12\cheftrainer\connectorlib\dataexchange\MarketPlayer.class
 de\szut\dqi12\cheftrainer\connectorlib\logging\LoggingMessages.class

@@ -14,6 +14,8 @@ public class ClientProperties {
 	private String serverIP;
 	private int port;
 	private List<IDClass_Path_Mapper> idMappers = new ArrayList<IDClass_Path_Mapper>();
+
+	private ConnectionDiedListener cdl;
 	
 	// GETTER AND SETTER
 	public String getServerIP() {
@@ -33,5 +35,11 @@ public class ClientProperties {
 	}
 	public List<IDClass_Path_Mapper> getIDMappers(){
 		return idMappers;
+	}
+	public void addConnectionDiedListener(ConnectionDiedListener cdl){
+		this.cdl = cdl;
+	}
+	public ConnectionDiedListener getConnectionDiedListener(){
+		return this.cdl;
 	}
 }

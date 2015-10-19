@@ -1,5 +1,7 @@
 package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
+import org.json.JSONObject;
+
 public class Formation {
 	
 	private int defenders;
@@ -37,5 +39,20 @@ public class Formation {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Formation(JSONObject json){
+		this.defenders = json.getInt(Position.DEFENCE);
+		this.middfielders = json.getInt(Position.MIDDLE);
+		this.offensives= json.getInt(Position.OFFENCE);
+		this.name=defenders+"-"+middfielders+"-"+offensives;
+	}
+	
+	public JSONObject toJSON(){
+		JSONObject retval = new JSONObject();
+		retval.put(Position.DEFENCE, defenders);
+		retval.put(Position.MIDDLE, middfielders);
+		retval.put(Position.OFFENCE, offensives);
+		return retval;
 	}
 }

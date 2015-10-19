@@ -14,6 +14,8 @@ import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
@@ -36,7 +38,6 @@ public class UserCommunityList extends CallableAbstract {
 	 */
 	@Override
 	public void messageArrived(Message message) {
-		System.out.println(message.getMessageContent());
 		JSONObject jsonMessage = new JSONObject(message.getMessageContent());
 		switch (jsonMessage.getString("type")) {
 		case "init":
@@ -83,7 +84,9 @@ public class UserCommunityList extends CallableAbstract {
 	 * contain a {@link JSONArray} with information about at least one
 	 * {@link Community}
 	 * 
-	 * @param message the {@link JSONObject}, that fits with the conditions given above.
+	 * @param message
+	 *            the {@link JSONObject}, that fits with the conditions given
+	 *            above.
 	 */
 	private void newList(JSONObject message) {
 		String userName = mesController.getSession().getUser().getUserName();
@@ -141,12 +144,14 @@ public class UserCommunityList extends CallableAbstract {
 	}
 
 	/**
-	 * This method parses a {@link JSONObject} to a {@link Community} object. Following keys must be available:
-	 * <li> ID -> Int
-	 * <li> Name -> String
-	 * <li> Managers -> {@link JSONArray}
-	 * @param communityJSON a {@link JSONObject}, that contains all of the keys above.
-	 * @return a {@link Community} object, created out of the data, given in the communityJSON.
+	 * This method parses a {@link JSONObject} to a {@link Community} object.
+	 * Following keys must be available: <li>ID -> Int <li>Name -> String <li>
+	 * Managers -> {@link JSONArray}
+	 * 
+	 * @param communityJSON
+	 *            a {@link JSONObject}, that contains all of the keys above.
+	 * @return a {@link Community} object, created out of the data, given in the
+	 *         communityJSON.
 	 */
 	private Community jsonToCommunity(JSONObject communityJSON) {
 		Community retval = new Community();
@@ -175,6 +180,8 @@ public class UserCommunityList extends CallableAbstract {
 			double money = new Double(managerJSON.getDouble("Money"));
 			int points = managerJSON.getInt("Points");
 			Manager manager = new Manager(name, money, points);
+			JSONObject formationJSON = managerJSON.getJSONObject("Formation");
+			manager.setFormation(new Formation(formationJSON));
 			manager.setID(managerJSON.getInt("ID"));
 			JSONArray managersTeam = managerJSON.getJSONArray("Team");
 			List<Player> playerList = new ArrayList<>();

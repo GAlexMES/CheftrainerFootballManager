@@ -38,7 +38,6 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-
 		<dependency>
 			<groupId>de.szut.dqi12.cheftrainer</groupId>
 			<artifactId>ConnectorLib</artifactId>
@@ -46,7 +45,6 @@
 			<scope>system</scope>
 			<systemPath>${project.basedir}/../ConnectorLib/target/ConnectorLib.jar</systemPath>
 		</dependency>
-
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>

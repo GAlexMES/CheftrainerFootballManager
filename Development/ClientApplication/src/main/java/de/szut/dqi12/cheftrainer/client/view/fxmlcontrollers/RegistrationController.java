@@ -17,6 +17,8 @@ import javafx.stage.Stage;
 
 import org.json.JSONObject;
 
+import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.servercommunication.ConnectionRefusedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
@@ -207,6 +209,7 @@ public class RegistrationController {
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
+		clientProps.addConnectionDiedListener(new ConnectionRefusedListener(Controller.getInstance()));
 		try {
 			serverCon = ServerConnection.createServerConnection(clientProps);
 		} catch (IOException e) {
