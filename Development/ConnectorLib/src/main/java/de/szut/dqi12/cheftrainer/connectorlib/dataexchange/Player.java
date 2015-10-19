@@ -48,7 +48,7 @@ public class Player {
 		this.name = name;
 		this.points = points;
 	}
-
+	
 	public String getTeamName() {
 		return teamName;
 	}
@@ -126,7 +126,7 @@ public class Player {
 	}
 	
 	public boolean plays(){
-		return this.plays();
+		return this.plays;
 	}
 	
 	public void setPosition(String position){

@@ -96,4 +96,14 @@ public class PlayerManagement {
 		String sqlString = "INSERT INTO Liga ('Name','Land') VALUES('"+name+"','"+country+"')";
 		sqlCon.sendQuery(sqlString);
 	}
+
+	public void setManagersFormation(int managerID, int defenders,
+			int middfielders, int offensives) {
+		String sqlQuery = "UPDATE Manager Set Anzahl_Abwehr = "+defenders
+				+", Anzahl_Mittelfeld="+middfielders
+				+", Anzahl_Stuermer="+offensives+
+				" Where ID = "+managerID;
+		sqlCon.sendQuery(sqlQuery);
+		
+	}
 }

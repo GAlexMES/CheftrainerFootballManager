@@ -80,9 +80,9 @@ public class LogicManagement {
 	 * @param managerID the ID of the {@link Manager}, that should own the {@link Player};
 	 * @param playerID the ID of the {@link Player}, that should be owned by the {@link Manager};
 	 */
-	public void addPlayerToManager(int managerID, int playerID) {
+	public void addPlayerToManager(int managerID, int playerID, boolean plays) {
 		String sqlQuery = "INSERT INTO Mannschaft ('Manager_ID','Spieler_ID','Aufgestellt') "
-						+	" VALUES ('"+managerID+"','"+playerID+"','false')";
+						+	" VALUES ('"+managerID+"','"+playerID+"','"+plays+"')";
 		sqlCon.sendQuery(sqlQuery);
 	}
 

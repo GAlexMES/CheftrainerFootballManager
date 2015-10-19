@@ -105,8 +105,8 @@ public class DatabaseRequests {
 		return logicManagement.isPlayerOwened(playerID, communityID);
 	}
 
-	public static void addPlayerToManager(int managerID, int playerID) {
-		logicManagement.addPlayerToManager(managerID, playerID);
+	public static void addPlayerToManager(int managerID, int playerID, boolean plays) {
+		logicManagement.addPlayerToManager(managerID, playerID, plays);
 		
 	}
 
@@ -171,5 +171,11 @@ public class DatabaseRequests {
 	
 	public static void writePointsToDatabase(Map<String, Player> playerList) {
 		pointManagement.updatePointsOfPlayers(playerList);
+	}
+
+	public static void setManagersFormation(int managerID,
+			int defenders,
+			int middfielders, int offensives) {
+		playerManagement.setManagersFormation(managerID, defenders, middfielders, offensives);
 	}
 }
