@@ -13,9 +13,12 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
+/**
+ * This is the controller of the different Formations 
+ * @author Robin
+ */
 public class FormationController {
 	@FXML
 	private GridPane formationFrame;
@@ -33,7 +36,10 @@ public class FormationController {
 	public GridPane getFrame() {
 		return formationFrame;
 	}
-
+	
+	/**
+	 * This method loads the players of the current Manager
+	 */
 	public void loadPlayers() {
 		Session session = Controller.getInstance().getSession();
 		players = (ArrayList<Player>) session.getCommunityMap()
@@ -41,6 +47,10 @@ public class FormationController {
 				.getManager(session.getCurrentManager()).getLineUp();
 	}
 
+	/**
+	 * This method generates a Label for every player
+	 * @return ArrayList which contains all Labels for every player
+	 */
 	public ArrayList<Label> getPlayers() {
 		ArrayList<Label> players = new ArrayList<Label>();
 		try {
@@ -52,7 +62,10 @@ public class FormationController {
 			return null;
 		}
 	}
-
+	
+	/**
+	 * This method adds an listener for every Label, which opens an dialog to change a player
+	 */
 	public void setClickedListener() {
 		for (Node n : formationFrame.getChildren()) {
 			((Label) n).setOnMouseClicked(new EventHandler<Event>() {
