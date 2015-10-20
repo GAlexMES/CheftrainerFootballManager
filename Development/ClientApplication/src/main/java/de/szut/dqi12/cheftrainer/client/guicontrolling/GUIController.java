@@ -2,17 +2,13 @@ package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.ManagerTeam;
 
 /**
  * The GUIController controlles the GUIInitialator to replacement GUI
