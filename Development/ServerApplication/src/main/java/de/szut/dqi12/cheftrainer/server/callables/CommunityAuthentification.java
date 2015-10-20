@@ -97,8 +97,8 @@ public class CommunityAuthentification extends CallableAbstract {
 		List<Integer> allIDs = DatabaseRequests.getCummunityIDsForUser(userID);
 
 		List<Integer> retval = new ArrayList<Integer>();
-		for (Integer i : knownIDs) {
-			if (allIDs.contains(i)) {
+		for (Integer i : allIDs) {
+			if (!knownIDs.contains(i)) {
 				retval.add(i);
 			}
 		}

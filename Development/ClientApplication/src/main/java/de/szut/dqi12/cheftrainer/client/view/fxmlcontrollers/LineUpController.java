@@ -26,10 +26,11 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
 /**
  * This is the controller for the gui-module LineUp
+ * 
  * @author Robin
  *
  */
-public class LineUpController {
+public class LineUpController implements ControllerInterface {
 	@FXML
 	private GridPane lineUpFrame;
 
@@ -39,10 +40,12 @@ public class LineUpController {
 	public GridPane getFrame() {
 		return lineUpFrame;
 	}
-	
+
 	/**
 	 * Loads the matching FXMLLoader for the used Formation
-	 * @param formation used Formation
+	 * 
+	 * @param formation
+	 *            used Formation
 	 * @return the matching FXMLLoader for the used Formation
 	 */
 	private FXMLLoader getLoader(Formation formation) {
@@ -50,13 +53,14 @@ public class LineUpController {
 		ClassLoader classLoader = getClass().getClassLoader();
 		FXMLLoader currentContentLoader = new FXMLLoader();
 
+		String path = "formations/Formation";
 		URL fxmlFile;
 		switch (formation.getName()) {
 		case FormationFactory.FOUR_FOUR_TWO:
-			fxmlFile = classLoader.getResource("sourcesFXML/442.fxml");
+			fxmlFile = classLoader.getResource(path+"442.fxml");
 			break;
 		case FormationFactory.FOUR_FIVE_ONE:
-			fxmlFile = classLoader.getResource("sourcesFXML/451.fxml");
+			fxmlFile = classLoader.getResource(path+"451.fxml");
 			break;
 		default:
 			return null;
@@ -67,19 +71,30 @@ public class LineUpController {
 	}
 
 	/**
-	 * This method have to be called before all other methods.
-	 * It initializates every gui-components
+	 * This method have to be called before all other methods. It initializates
+	 * every gui-components
+	 * 
 	 * @return success or not
 	 */
-	public boolean init() {
-		// BUG: es muss geschaut werden ob die reihenfolge richtig ist, wie die spieler den labels zugeordnet werden. Gegebenfalls wie in der anderen Funktion machen, wo auf labelnamen geprueft wird
+	@Override
+	public void init() {
+		// BUG: es muss geschaut werden ob die reihenfolge richtig ist, wie die
+		// spieler den labels zugeordnet werden. Gegebenfalls wie in der anderen
+		// Funktion machen, wo auf labelnamen geprueft wird
 		try {
 			Session session = Controller.getInstance().getSession();
+			// TODO: Stimmt so! Jedoch wird die CurrentCommunity nie gesetzt, daher fliegt hier ein nullpointer. 
+			// Muss gesetzt werden, wenn im CommunitiesFrame auf eine Community geklickt wird. Zu testzwecken wird daher aktuell immer "1" übergeben.
+//			Community community = session.getCommunityMap().get(session.getCurrentCommunity());
+			
+			Community community = session.getCommunityMap().get(1);
+			
+			Formation formation = community.getManagers().get(session.getCurrentManager())
+					.getFormation();
+			
+			
 			ClassLoader classLoader = getClass().getClassLoader();
-			FXMLLoader currentContentLoader = getLoader(session
-					.getCommunityMap().get(session.getCurrentCommunity())
-					.getManagers().get(session.getCurrentManager())
-					.getFormation());
+			FXMLLoader currentContentLoader = getLoader(formation);
 
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 			fController = ((FormationController) currentContentLoader
@@ -123,30 +138,32 @@ public class LineUpController {
 					index++;
 				}
 				lineUpFrame.add(newContentPane, 0, 0);
-				return true;
 			} catch (NullPointerException e) {
 				e.printStackTrace();
-				return false;
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
 		}
 
 	}
 
 	/**
 	 * Changes the shown Formation
-	 * @param formation the new Formation
+	 * 
+	 * @param formation
+	 *            the new Formation
 	 * @return success or not
 	 */
 	public boolean changeFormation(Formation formation) {
 		try {
 			Session session = Controller.getInstance().getSession();
-			Community currentCommunity = session.getCommunityMap().get(session.getCurrentCommunity());
-			Manager currentManager = currentCommunity.getManagers().get(session.getCurrentManager());
-			FXMLLoader currentContentLoader = getLoader(currentManager.getFormation());
+			Community currentCommunity = session.getCommunityMap().get(
+					session.getCurrentCommunity());
+			Manager currentManager = currentCommunity.getManagers().get(
+					session.getCurrentManager());
+			FXMLLoader currentContentLoader = getLoader(currentManager
+					.getFormation());
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 			fController = ((FormationController) currentContentLoader
 					.getController());
@@ -214,9 +231,10 @@ public class LineUpController {
 			return false;
 		}
 	}
+
 	/**
-	 * Is Called when the Button "save" is clicked.
-	 * Saves the current Formation and line-up.
+	 * Is Called when the Button "save" is clicked. Saves the current Formation
+	 * and line-up.
 	 */
 	public void saveButtonClicked() {
 		Session s = Controller.getInstance().getSession();
@@ -232,8 +250,8 @@ public class LineUpController {
 	}
 
 	/**
-	 * Is called when the Button "change formation" is clicked.
-	 * Opens a dialog to choose a new Formation.
+	 * Is called when the Button "change formation" is clicked. Opens a dialog
+	 * to choose a new Formation.
 	 */
 	public void formationButtonClicked() {
 		GridPane dialog;

@@ -17,14 +17,14 @@
 		<imageName>trade.png</imageName>
 		<triggerButton>false</triggerButton>
 		<logoutButton>false</logoutButton>
-		<fxmlComponent>TestFrame</fxmlComponent>
+		<fxmlComponent></fxmlComponent>
 	</button>
 	<button position="3">
 		<text>Aufstellung</text>
 		<imageName>lineup.png</imageName>
 		<triggerButton>false</triggerButton>
 		<logoutButton>false</logoutButton>
-		<fxmlComponent></fxmlComponent>
+		<fxmlComponent>LineUp</fxmlComponent>
 	</button>
 	<button position="4">
 		<text>Statistik</text>

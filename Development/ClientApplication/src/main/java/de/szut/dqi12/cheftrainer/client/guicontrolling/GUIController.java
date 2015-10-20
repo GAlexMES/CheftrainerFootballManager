@@ -11,10 +11,13 @@ import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.ManagerTeam;
 
 /**
- * The GUIController controlles the GUIInitialator to replacement GUI components.
+ * The GUIController controlles the GUIInitialator to replacement GUI
+ * components.
+ * 
  * @author Alexander Brennecke
  *
  */
@@ -26,10 +29,12 @@ public class GUIController {
 	private Stage currentDialogStage;
 	private ClassLoader classLoader;
 	private URL fxmlFile;
-	
+
 	/**
 	 * Constructor
-	 * @param primaryStage needs a Stage to display GUI Elements onto it.
+	 * 
+	 * @param primaryStage
+	 *            needs a Stage to display GUI Elements onto it.
 	 */
 
 	public GUIController(Stage primaryStage) {
@@ -46,6 +51,7 @@ public class GUIController {
 
 	/**
 	 * Should be used to initialize this class for singleton pattern.
+	 * 
 	 * @param primaryStage
 	 * @return
 	 */
@@ -68,16 +74,16 @@ public class GUIController {
 	 */
 	public void showMainApplication() {
 		Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-            	guiInitialator.closeLoginDialog();
-            	guiInitialator.initRootLayout();
-        		guiInitialator.showMenuLayout();
-        		setContentFrameByName("CommunitiesFrame.fxml", false);
-        		guiInitialator.getSideMenuController().expandColums();
-            }
-        });
-		
+			@Override
+			public void run() {
+				guiInitialator.closeLoginDialog();
+				guiInitialator.initRootLayout();
+				guiInitialator.showMenuLayout();
+				setContentFrameByName("CommunitiesFrame.fxml", false);
+				guiInitialator.getSideMenuController().expandColums();
+			}
+		});
+
 	}
 
 	/**
@@ -89,7 +95,7 @@ public class GUIController {
 	 *            de\szut\dqi12\cheftrainer\client\view\fxmlSources</li>
 	 */
 	public void setContentFrameByName(String fxmlFileName, boolean update) {
-		setContentFrameByPath(fxmlFileName,update);
+		setContentFrameByPath(fxmlFileName, update);
 	}
 
 	/**
@@ -102,19 +108,19 @@ public class GUIController {
 	public void setContentFrameByPath(String path, boolean update) {
 		try {
 			currentContentLoader = new FXMLLoader();
-			fxmlFile = classLoader.getResource("sourcesFXML/"+path);
+			fxmlFile = classLoader.getResource("sourcesFXML/" + path);
 			currentContentLoader.setLocation(fxmlFile);
-			GridPane newContentPane = (GridPane)currentContentLoader.load();
-			
-			if(currentContentLoader.getController().getClass()==CommunitiesController.class){
-				ManagerTeam t = new ManagerTeam("",0D,"");
-				List<ManagerTeam> teamList = new ArrayList<>();
-				teamList.add(t);
-				((CommunitiesController)currentContentLoader.getController()).initTable();
+			GridPane newContentPane = (GridPane) currentContentLoader.load();
+
+			try {
+				((ControllerInterface) currentContentLoader.getController())
+						.init();
+			} catch (Exception e) {
+
 			}
-			
+
 			newContentPane.autosize();
-			
+
 			if (update) {
 				GridPane currentContentPane = ((GridPane) guiInitialator
 						.getRootlayout());
@@ -127,6 +133,9 @@ public class GUIController {
 		}
 	}
 
+	public void initController() {
+	}
+
 	public GUIInitialator getGUIInitialator() {
 		return guiInitialator;
 	}
@@ -135,16 +144,16 @@ public class GUIController {
 		guiInitialator.closeMainApplication();
 		showLogin();
 	}
-	
-	public FXMLLoader getCurrentContentLoader(){
+
+	public FXMLLoader getCurrentContentLoader() {
 		return currentContentLoader;
 	}
 
 	public void setCurrentDialogStage(Stage dialogStage) {
 		this.currentDialogStage = dialogStage;
 	}
-	
-	public Stage getCurrentDialogStage(){
+
+	public Stage getCurrentDialogStage() {
 		return this.currentDialogStage;
 	}
 
@@ -154,6 +163,6 @@ public class GUIController {
 			public void run() {
 				currentDialogStage.close();
 			}
-		});		
+		});
 	}
 }

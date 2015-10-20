@@ -19,7 +19,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.ManagerTeam;
  * @author Robin Bley, Alexander Brennecke
  *
  */
-public class CommunitiesController {
+public class CommunitiesController implements ControllerInterface{
 
 	@FXML
 	private TableView<ManagerTeam> communitiesTable;
@@ -31,6 +31,14 @@ public class CommunitiesController {
 	private TableColumn<ManagerTeam, String> rangColumn;
 	private ObservableList<ManagerTeam> data;
 
+	
+	@Override
+	public void init() {
+		ManagerTeam t = new ManagerTeam("",0D,"");
+		List<ManagerTeam> teamList = new ArrayList<>();
+		teamList.add(t);
+		initTable();
+	}
 	
 	public CommunitiesController() {
 		nameColumn = new TableColumn<ManagerTeam, String>();
@@ -146,5 +154,4 @@ public class CommunitiesController {
 			e.printStackTrace();
 		}
 	}
-	
 }
