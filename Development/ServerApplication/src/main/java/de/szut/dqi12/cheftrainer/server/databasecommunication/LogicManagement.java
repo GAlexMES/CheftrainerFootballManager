@@ -70,7 +70,8 @@ public class LogicManagement {
 	public boolean isPlayerOwened(int playerID, int communityID) {
 		String sqlQuery = "SELECT * FROM Mannschaft INNER JOIN Manager "
 						+ "WHERE Manager.Spielrunde_ID='"+communityID+"'"
-						+ " AND Mannschaft.Spieler_ID='"+playerID+"'";
+						+ " AND Mannschaft.Spieler_ID='"+playerID+"'"
+						+ " AND Mannschaft.Manager_ID = Manager.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		return !DatabaseRequests.isResultSetEmpty(rs);
 	}

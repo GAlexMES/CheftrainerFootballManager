@@ -103,7 +103,7 @@ public class CommunityManagement {
 			}
 		} catch (SQLException e) {
 		}
-		retval.addManagers(getManagers(communityID));
+		retval.addManagers(getManagers(communityID,retval.getName()));
 		return retval;
 	}
 
@@ -114,19 +114,19 @@ public class CommunityManagement {
 	 *            the ID of the community
 	 * @return a List of Manager Objects.
 	 */
-	public List<Manager> getManagers(int communityID) {
+	public List<Manager> getManagers(int communityID, String communityName) {
 		List<Manager> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Manager.*, Nutzer.Nutzername "
-				+ "FROM  Manager INNER JOIN  Nutzer WHERE Spielrunde_ID="
+				+ "FROM  Manager INNER JOIN Nutzer WHERE Spielrunde_ID="
 				+ communityID + " AND Manager.Nutzer_ID=Nutzer.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
 			while (rs.next()) {
 				try {
 					String managerName = rs.getString("Nutzername");
-					double money = rs.getDouble("Budget");
+//					double money = rs.getDouble("Budget");
 					int points = rs.getInt("Punkte");
-					Manager manager = new Manager(managerName, money, points);
+					Manager manager = new Manager(managerName, null, points,communityName);
 					int defenders = rs.getInt("Anzahl_Abwehr");
 					int middfielders = rs.getInt("Anzahl_Mittelfeld");
 					int offensives = rs.getInt("Anzahl_Stuermer");

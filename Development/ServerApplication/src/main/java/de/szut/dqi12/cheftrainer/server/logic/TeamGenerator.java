@@ -112,8 +112,7 @@ public class TeamGenerator {
 			Player p = getNewRandomPlayer();
 			if (p != null && !idList.contains(p.getID())) {
 				idList.add(p.getID());
-				if (!isPlayerInUse(p.getID())
-						&& playerFitsInTeam(p.getPosition())) {
+				if (!isPlayerInUse(p.getID())&& playerFitsInTeam(p.getPosition())) {
 					playerList.add(p);
 					updatePlayerPerPosition(p.getPosition(), 1);
 					teamWorth += p.getWorth();

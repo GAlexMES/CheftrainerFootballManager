@@ -64,7 +64,7 @@ public class ServerHandler implements Runnable {
 				System.out.println("receive:   "+message);
 			}
 		} catch (Exception ex) {
-			LOGGER.error(ex.getStackTrace());
+			LOGGER.error(ex.getMessage());
 		}
 		finally{
 			cdl.connectionDied();

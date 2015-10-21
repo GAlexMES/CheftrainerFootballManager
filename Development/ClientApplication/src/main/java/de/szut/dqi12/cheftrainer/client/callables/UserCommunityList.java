@@ -3,14 +3,12 @@ package de.szut.dqi12.cheftrainer.client.callables;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.fxml.FXMLLoader;
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
-import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
@@ -74,7 +72,6 @@ public class UserCommunityList extends CallableAbstract {
 				.getUserName());
 		;
 		Controller.getInstance().getSession().addCommunity(community);
-		addCommunityToView(community);
 	}
 
 	/**
@@ -93,29 +90,6 @@ public class UserCommunityList extends CallableAbstract {
 		List<Community> communities = jsonArrayToCommnityList(communityList,
 				userName);
 		Controller.getInstance().getSession().addCommunities(communities);
-		communities.forEach(c -> addCommunityToView(c));
-	}
-
-	/**
-	 * Displays the given list to the table of communities in the communities
-	 * frame
-	 * 
-	 * @param communities
-	 *            the List of the Communities, that should be displayed.
-	 * 
-	 */
-
-	private void addCommunityToView(Community community) {
-		FXMLLoader loader = GUIController.getInstance()
-				.getCurrentContentLoader();
-		CommunitiesController cc = loader.getController();
-		String name = community.getName();
-		// double money = community.getUsersManager().getMoney();
-		double teamWorth = community.getUsersManager().getTeamWorth();
-		// TODO: RANG!!
-		int rang = 0;
-		cc.addRow(name, teamWorth, rang);
-
 	}
 
 	/**
@@ -157,7 +131,10 @@ public class UserCommunityList extends CallableAbstract {
 		retval.setCommunityID(communityJSON.getInt("ID"));
 		retval.setName(communityJSON.getString("Name"));
 		JSONArray managersJSON = communityJSON.getJSONArray("Managers");
-		retval.addManagers(createManagerList(managersJSON));
+		retval.addManagers(createManagerList(managersJSON, retval.getName()));
+		
+		String userName = Controller.getInstance().getSession().getUser().getUserName();
+		retval.findeUsersManager(userName);
 		return retval;
 	}
 
@@ -170,24 +147,29 @@ public class UserCommunityList extends CallableAbstract {
 	 * @return a List with all Managers in it, that could be created with the
 	 *         given JSONArray
 	 */
-	private List<Manager> createManagerList(JSONArray managersJSON) {
+	private List<Manager> createManagerList(JSONArray managersJSON, String communityName) {
 		List<Manager> retval = new ArrayList<>();
 		for (int i = 0; i < managersJSON.length(); i++) {
 			JSONObject managerJSON = new JSONObject(managersJSON.get(i)
 					.toString());
 			String name = managerJSON.getString("Name");
-			double money = new Double(managerJSON.getDouble("Money"));
 			int points = managerJSON.getInt("Points");
-			Manager manager = new Manager(name, money, points);
-			JSONObject formationJSON = managerJSON.getJSONObject("Formation");
-			manager.setFormation(new Formation(formationJSON));
-			manager.setID(managerJSON.getInt("ID"));
+			
 			JSONArray managersTeam = managerJSON.getJSONArray("Team");
+			
+			int teamWorth = 0;
 			List<Player> playerList = new ArrayList<>();
 			for (int m = 0; m < managersTeam.length(); m++) {
 				JSONObject playerJSON = managersTeam.getJSONObject(m);
-				playerList.add(new Player(playerJSON));
+				Player tempPlayer = new Player(playerJSON);
+				playerList.add(tempPlayer);
+				teamWorth = teamWorth +tempPlayer.getWorth();
 			}
+			
+			Manager manager = new Manager(name, teamWorth, points,communityName);
+			JSONObject formationJSON = managerJSON.getJSONObject("Formation");
+			manager.setFormation(new Formation(formationJSON));
+			manager.setID(managerJSON.getInt("ID"));
 			manager.addPlayer(playerList);
 			retval.add(manager);
 		}

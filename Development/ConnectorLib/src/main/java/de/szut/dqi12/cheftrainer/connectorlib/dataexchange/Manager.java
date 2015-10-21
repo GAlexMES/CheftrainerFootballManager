@@ -1,7 +1,10 @@
 package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.beans.property.SimpleStringProperty;
 
 /**
  * 
@@ -13,19 +16,39 @@ public class Manager {
 	private int id;
 	private String name;
 	private Double money;
+	private Integer teamWorth;
 	private List<Player> players;
 	private List<Player> lineUp;
 	private Formation formation;
 	private int points;
+	private int rang;
 	private List<Transaction> transactions;
-	private int teamWorth;
+	
+	private final SimpleStringProperty communityNameProperty;
+	private final SimpleStringProperty teamWorthProperty;
+	private final SimpleStringProperty rangProperty;
 
-	public Manager(String name, Double money, int points) {
-		this.name = name;
-		this.money = money;
-		this.points = points;
+    public Manager() {
+    	this(null,null,null,null);
+    }
+
+	public Manager(String managerName, Integer teamWorth, Integer rang, String communityName){
+		communityNameProperty =  new SimpleStringProperty(communityName);
+		teamWorthProperty =  new SimpleStringProperty(teamWorth+"€");
+		rangProperty =  new SimpleStringProperty(String.valueOf(rang));
+		
+		this.name =managerName;
+		this.teamWorth =teamWorth;
+		this.rang= rang;
 		this.players = new ArrayList<Player>();
 		this.lineUp = new ArrayList<Player>();
+	}
+
+	
+	private String formatDouble(Double d){
+		NumberFormat f = NumberFormat.getInstance();
+		f.setGroupingUsed(false);
+		return f.format(d);
 	}
 
 	public void addTransaction(Transaction transaction) {
@@ -56,7 +79,6 @@ public class Manager {
 	public void addPlayer(Player... player) {
 		for (Player p : player) {
 			this.players.add(p);
-			teamWorth += p.getWorth();
 		}
 	}
 
@@ -92,12 +114,24 @@ public class Manager {
 		this.id = id;
 	}
 
-	public int getTeamWorth() {
+	public Integer getTeamWorth() {
 		return teamWorth;
 	}
 	
-	public void setTeamWorth(int teamWorth){
+	public void setTeamWorth(Integer teamWorth){
 		this.teamWorth = teamWorth;
+	}
+
+	public SimpleStringProperty getCommunityNameProperty() {
+		return communityNameProperty;
+	}
+
+	public SimpleStringProperty getTeamWorthProperty() {
+		return teamWorthProperty;
+	}
+
+	public SimpleStringProperty getRangProperty() {
+		return rangProperty;
 	}
 
 }

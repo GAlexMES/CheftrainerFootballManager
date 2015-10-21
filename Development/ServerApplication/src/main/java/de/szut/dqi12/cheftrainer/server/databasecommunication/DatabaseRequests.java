@@ -80,8 +80,8 @@ public class DatabaseRequests {
 		return communityManagement.getCommunity(communityID);
 	}
 	
-	public static List<Manager> getManagers(int communityID){
-		return communityManagement.getManagers(communityID);
+	public static List<Manager> getManagers(int communityID, String communityName){
+		return communityManagement.getManagers(communityID, communityName);
 	}
 
 	public static HashMap<String, Boolean> enterCommunity(String communityName,

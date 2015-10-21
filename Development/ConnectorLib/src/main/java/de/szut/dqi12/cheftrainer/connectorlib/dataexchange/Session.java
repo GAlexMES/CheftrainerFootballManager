@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 
@@ -23,6 +25,8 @@ public class Session {
 	private int currentCommunity;
 
 	private ClientHandler clientHandler;
+	
+	private ObservableList<Manager> managerTableData= FXCollections.observableArrayList();
 
 	private HashMap<Integer, Community> communityMap;
 
@@ -53,11 +57,12 @@ public class Session {
 
 	public void addCommunity(Community community) {
 		communityMap.put(community.getCommunityID(), community);
+		managerTableData.add(community.getUsersManager());
 	}
 
 	public void addCommunities(List<Community> communities) {
 		for (Community c : communities) {
-			communityMap.put(c.getCommunityID(), c);
+			addCommunity(c);
 		}
 	}
 
@@ -108,6 +113,16 @@ public class Session {
 		return retval;
 	}
 	
+	
+	
+
+	public ObservableList<Manager> getManagerObservable() {
+		return managerTableData;
+	}
+
+	public void setManagerTableData(ObservableList<Manager> managerTableData) {
+		this.managerTableData = managerTableData;
+	}
 
 	/**
 	 * Should only be used on the server side.
