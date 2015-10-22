@@ -83,13 +83,9 @@ public class LineUpController implements ControllerInterface {
 		// Funktion machen, wo auf labelnamen geprueft wird
 		try {
 			Session session = Controller.getInstance().getSession();
-			// TODO: Stimmt so! Jedoch wird die CurrentCommunity nie gesetzt, daher fliegt hier ein nullpointer. 
-			// Muss gesetzt werden, wenn im CommunitiesFrame auf eine Community geklickt wird. Zu testzwecken wird daher aktuell immer "1" übergeben.
-//			Community community = session.getCommunityMap().get(session.getCurrentCommunity());
+			Community community = session.getCurrentCommunity();
 			
-			Community community = session.getCommunityMap().get(1);
-			
-			Formation formation = community.getManagers().get(session.getCurrentManager())
+			Formation formation = community.getManagers().get(session.getCurrentManagerID())
 					.getFormation();
 			
 			
@@ -101,9 +97,8 @@ public class LineUpController implements ControllerInterface {
 					.getController());
 			fController.setClickedListener();
 			try {
-				ArrayList<Player> players = (ArrayList<Player>) session
-						.getCommunityMap().get(session.getCommunityMap())
-						.getManager(session.getCurrentManager()).getLineUp();
+				int currentManagerID = session.getCurrentManagerID();
+				ArrayList<Player> players = (ArrayList<Player>) community.getManager(currentManagerID).getLineUp();
 				ArrayList<Player> defence = new ArrayList<Player>();
 				ArrayList<Player> middel = new ArrayList<Player>();
 				ArrayList<Player> offence = new ArrayList<Player>();
@@ -158,19 +153,16 @@ public class LineUpController implements ControllerInterface {
 	public boolean changeFormation(Formation formation) {
 		try {
 			Session session = Controller.getInstance().getSession();
-			Community currentCommunity = session.getCommunityMap().get(
-					session.getCurrentCommunity());
+			Community currentCommunity = session.getCurrentCommunity();
 			Manager currentManager = currentCommunity.getManagers().get(
-					session.getCurrentManager());
+					session.getCurrentManagerID());
 			FXMLLoader currentContentLoader = getLoader(currentManager
 					.getFormation());
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 			fController = ((FormationController) currentContentLoader
 					.getController());
 			fController.setClickedListener();
-			ArrayList<Player> players = (ArrayList<Player>) session
-					.getCommunityMap().get(session.getCommunityMap())
-					.getManager(session.getCurrentManager()).getPlayers();
+			ArrayList<Player> players = (ArrayList<Player>) currentManager.getPlayers();
 			ArrayList<Player> defence = new ArrayList<Player>();
 			ArrayList<Player> middel = new ArrayList<Player>();
 			ArrayList<Player> offence = new ArrayList<Player>();
@@ -238,8 +230,8 @@ public class LineUpController implements ControllerInterface {
 	 */
 	public void saveButtonClicked() {
 		Session s = Controller.getInstance().getSession();
-		Manager m = s.getCommunityMap().get(s.getCurrentCommunity())
-				.getManagers().get(s.getCurrentManager());
+		int currentManagerID = s.getCurrentManagerID();
+		Manager m = s.getCurrentCommunity().getManager(currentManagerID);
 		if (currentFormation != m.getFormation()
 				|| fController.getCurrentPlayers() != m.getLineUp()) {
 			Controller.getInstance().save(fController.getCurrentPlayers(),

@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
@@ -42,9 +43,9 @@ public class FormationController {
 	 */
 	public void loadPlayers() {
 		Session session = Controller.getInstance().getSession();
-		players = (ArrayList<Player>) session.getCommunityMap()
-				.get(session.getCommunityMap())
-				.getManager(session.getCurrentManager()).getLineUp();
+		Community currentCommunity = session.getCurrentCommunity();
+		int currentManagerID = session.getCurrentManagerID();
+		players = (ArrayList<Player>) currentCommunity.getManager(currentManagerID).getLineUp();
 	}
 
 	/**

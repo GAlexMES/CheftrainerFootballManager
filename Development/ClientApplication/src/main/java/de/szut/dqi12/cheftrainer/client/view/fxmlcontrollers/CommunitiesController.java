@@ -6,7 +6,9 @@ import javafx.scene.control.TableView;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
 /**
  * This is the controller for the CommunitiesFrame.
@@ -54,7 +56,8 @@ public class CommunitiesController implements ControllerInterface{
 	}
 	
 	private void communityPressed(Manager manager) {
-		System.out.println("pressed: " + manager.getID());
+		Session session = Controller.getInstance().getSession();
+		session.setCurrentManager(manager);
 	}
 
 	/**

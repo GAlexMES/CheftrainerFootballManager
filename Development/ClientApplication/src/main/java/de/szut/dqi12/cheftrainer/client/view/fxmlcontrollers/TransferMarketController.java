@@ -22,6 +22,7 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 
 /**
@@ -46,16 +47,12 @@ public class TransferMarketController {
 	private ArrayList<Transaction> transactions;
 
 	public TransferMarketController() {
-		Community com = Controller
-				.getInstance()
-				.getSession()
-				.getCommunityMap()
-				.get(Controller.getInstance().getSession()
-						.getCurrentCommunity());
+		Session session = Controller.getInstance().getSession();
+		Community com = session.getCurrentCommunity();
 		data = FXCollections.observableArrayList();
 		players = (ArrayList<Player>) com.getMarket().getPlayers();
 		transactions = (ArrayList<Transaction>) com.getManagers()
-				.get(Controller.getInstance().getSession().getCurrentManager())
+				.get(Controller.getInstance().getSession().getCurrentManagerID())
 				.getTransactions();
 	}
 	/**

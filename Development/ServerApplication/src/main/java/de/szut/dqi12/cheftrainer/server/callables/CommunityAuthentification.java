@@ -93,7 +93,7 @@ public class CommunityAuthentification extends CallableAbstract {
 	 * @return a List of Integers. Each Integer displays the ID of a {@link Community} , that is in the Database but not in the {@link Session}
 	 */
 	private List<Integer> getNewCommunityID(int userID) {
-		Set<Integer> knownIDs = mesController.getSession().getCommunityMap().keySet();
+		Set<Integer> knownIDs = mesController.getSession().getCommunityIDMap().keySet();
 		List<Integer> allIDs = DatabaseRequests.getCummunityIDsForUser(userID);
 
 		List<Integer> retval = new ArrayList<Integer>();
