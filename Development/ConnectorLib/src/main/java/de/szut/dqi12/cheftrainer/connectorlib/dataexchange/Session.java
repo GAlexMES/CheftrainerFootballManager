@@ -37,7 +37,8 @@ public class Session {
 	
 	public void setCurrentManager(Manager currentManager) {
 		setCurrentManager(currentManager.getID());
-		Community currentCommunity = communityNameMap.get(currentManager.getCommunityNameProperty());
+		String communityName = currentManager.getCommunityNameProperty().getValue();
+		Community currentCommunity = communityNameMap.get(communityName);
 		currentCommunityID = currentCommunity.getCommunityID();
 	}
 
@@ -78,12 +79,26 @@ public class Session {
 	public void addCommunity(Community community) {
 		communityIDMap.put(community.getCommunityID(), community);
 		communityNameMap.put(community.getName(), community);
-		managerTableData.add(community.getUsersManager());
+		community.findeUsersManager(user.getUserName());
+		addManagerToTable(community.getUsersManager());
 	}
 
 	public void addCommunities(List<Community> communities) {
+		List<Manager> managerList = new ArrayList<>();
 		for (Community c : communities) {
-			addCommunity(c);
+			communityIDMap.put(c.getCommunityID(), c);
+			communityNameMap.put(c.getName(), c);
+			c.findeUsersManager(user.getUserName());
+			managerList.add(c.getUsersManager());
+		}
+		addManagerToTable(managerList.toArray(new Manager[managerList.size()]));
+	}
+	
+	public void addManagerToTable(Manager... managers){
+		for(Manager m : managers){
+			if(m != null){
+				managerTableData.add(m);
+			}
 		}
 	}
 
@@ -142,9 +157,6 @@ public class Session {
 		return managerTableData;
 	}
 
-	public void setManagerTableData(ObservableList<Manager> managerTableData) {
-		this.managerTableData = managerTableData;
-	}
 
 	/**
 	 * Should only be used on the server side.

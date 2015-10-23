@@ -6,7 +6,6 @@ import javafx.scene.control.TableView;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
@@ -30,13 +29,14 @@ public class CommunitiesController implements ControllerInterface{
 	
 	@Override
 	public void init() {
-		communitiesTable.setItems(Controller.getInstance().getSession().getManagerObservable());
+		
 	}
 	
 	public CommunitiesController() {
 		nameColumn = new TableColumn<Manager, String>();
 		worthColumn = new TableColumn<Manager, String>();
 		rangColumn = new TableColumn<Manager, String>();
+		
 		UpdateUtils.getCommunityUpdate();
 	}
 
@@ -47,6 +47,8 @@ public class CommunitiesController implements ControllerInterface{
 	 */
 	@FXML
 	public void initialize() {
+		communitiesTable.setItems(Controller.getInstance().getSession().getManagerObservable());
+		
 		nameColumn.setCellValueFactory(cellData -> cellData.getValue().getCommunityNameProperty());
 		worthColumn.setCellValueFactory(cellData -> cellData.getValue().getTeamWorthProperty());
 		rangColumn.setCellValueFactory(cellData -> cellData.getValue().getRangProperty());

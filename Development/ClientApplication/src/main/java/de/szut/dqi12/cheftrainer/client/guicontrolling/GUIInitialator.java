@@ -57,7 +57,9 @@ public class GUIInitialator {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				mainApplicationStage.close();
+				if (mainApplicationStage != null) {
+					mainApplicationStage.close();
+				}
 			}
 		});
 	}
