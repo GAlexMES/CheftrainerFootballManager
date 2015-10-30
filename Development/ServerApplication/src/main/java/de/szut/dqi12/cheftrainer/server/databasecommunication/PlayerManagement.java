@@ -59,7 +59,7 @@ public class PlayerManagement {
 		String sqlQuery = "INSERT INTO Spieler (Name,Verein_ID, Position, Punkte, Marktwert, Nummer) "
 						+ "VALUES ('"+p.getName()+ "','"
 						+ teamID +"','"
-						+ p.getPositionString() +"','"
+						+ p.getPosition() +"','"
 						+ "0','"
 						+ worth + "','"
 						+ p.getNumber() +"')";

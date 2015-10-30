@@ -13,8 +13,7 @@ public class Player {
 	private String name;
 	private int points;
 	private int number;
-	private String positionString;
-	private Position position;
+	private String position;
 	private int ID;
 	private int goals;
 	private boolean redCard;
@@ -90,14 +89,6 @@ public class Player {
 		ID = iD;
 	}
 
-	public String getPositionString() {
-		return positionString;
-	}
-
-	public void setPosition(String position) {
-		this.positionString = position;
-	}
-
 	public int getNumber() {
 		return number;
 	}
@@ -110,7 +101,7 @@ public class Player {
 		return worth;
 	}
 	
-	public Position getPosition() {
+	public String getPosition() {
 		return position;
 	}
 
@@ -138,6 +129,10 @@ public class Player {
 		return this.plays();
 	}
 	
+	public void setPosition(String position){
+		this.position = position;
+	}
+	
 	public JSONObject getJSONFromPlayer() {
 		JSONObject retval = new JSONObject();
 		retval.put("name", this.getName());
@@ -145,7 +140,7 @@ public class Player {
 		retval.put("number", this.getNumber());
 		retval.put("points", this.getPoints());
 		retval.put("worth", this.getWorth());
-		retval.put("position", this.getPositionString());
+		retval.put("position", this.getPosition());
 		retval.put("team", this.getTeamName());
 		return retval;
 	}
