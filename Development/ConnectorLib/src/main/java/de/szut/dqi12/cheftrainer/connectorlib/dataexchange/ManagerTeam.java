@@ -17,6 +17,8 @@ public class ManagerTeam {
 		this.wertDesTeams =  new SimpleStringProperty(formatDouble(wertDesTeams)+"€");
 		this.plazierung =  new SimpleStringProperty(plazierung);
 	}
+	
+	
 
 	public StringProperty getCommunityName() {
 		return communityName;

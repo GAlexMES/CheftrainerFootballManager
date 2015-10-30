@@ -24,38 +24,27 @@ public class CommunitiesController {
 	@FXML
 	private TableView<ManagerTeam> communitiesTable;
 	@FXML
-	private TableColumn<ManagerTeam, String> nameColumn;
+	private TableColumn<ManagerTeam, String> communityNameColumn;
 	@FXML
-	private TableColumn<ManagerTeam, String> worthColumn;
+	private TableColumn<ManagerTeam, String> wertDesTeamsColumn;
 	@FXML
-	private TableColumn<ManagerTeam, String> rangColumn;
+	private TableColumn<ManagerTeam, String> plazierungColumn;
 	private ObservableList<ManagerTeam> data;
 
-	
 	public CommunitiesController() {
-		nameColumn = new TableColumn<ManagerTeam, String>();
-		worthColumn = new TableColumn<ManagerTeam, String>();
-		rangColumn = new TableColumn<ManagerTeam, String>();
+		communityNameColumn = new TableColumn<ManagerTeam, String>();
+		wertDesTeamsColumn = new TableColumn<ManagerTeam, String>();
+		plazierungColumn = new TableColumn<ManagerTeam, String>();
 		data = FXCollections.observableArrayList();
 		UpdateUtils.getCommunityUpdate();
 	}
 
 	
-	/**
-	 * This method adds a row into the table of the CommunitiesFrame
-	 * @param communityName	The name of the community
-	 * @param wertDesTeams The worth of the team
-	 * @param rang The rang of the User in this community
-	 */
 	public void addRow(String communityName, double wertDesTeams, int rang) {
 		data.add(new ManagerTeam(communityName, wertDesTeams, String
 				.valueOf(rang)));
 	}
 	
-	/**
-	 * This method reloads the table of the communityFrame
-	 * @param teams List of all ManagerTeams
-	 */
 	public void reloadTable(List<ManagerTeam> teams) {
 		List<ManagerTeam> currentData = new ArrayList<>();
 		
@@ -70,21 +59,17 @@ public class CommunitiesController {
 		}
 	}
 
-	/**
-	 * Initialization of gui-components.
-	 * This method have to be called before this object be used.
-	 */
 	public void initTable() {
 
 		// for (int i = 0; teams.size() > i; i++) {
 		// data.add(teams.get(i));
 		// }
 
-		nameColumn.setCellValueFactory(data -> data.getValue()
+		communityNameColumn.setCellValueFactory(data -> data.getValue()
 				.getCommunityName());
-		rangColumn.setCellValueFactory(data -> data.getValue()
+		plazierungColumn.setCellValueFactory(data -> data.getValue()
 				.getPlazierung());
-		worthColumn.setCellValueFactory(data -> data.getValue()
+		wertDesTeamsColumn.setCellValueFactory(data -> data.getValue()
 				.getWertDesTeams());
 
 		communitiesTable.setItems(data);
@@ -92,7 +77,8 @@ public class CommunitiesController {
 	}
 
 	/**
-	 * This method adds every row of the table one listener
+	 * Diese Funktion wird aufgerufen, wenn auf eine Reihe der Tabelle ein
+	 * Doppelklick ausgeuebt wird.
 	 */
 	public void addListener() {
 		communitiesTable.setRowFactory(tv -> {
