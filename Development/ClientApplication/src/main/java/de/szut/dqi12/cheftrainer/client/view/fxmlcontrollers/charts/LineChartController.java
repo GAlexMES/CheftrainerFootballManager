@@ -11,13 +11,6 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.layout.GridPane;
 
-/**
- * This is the Controller for the gui-component LineChart
- * @author Robin
- *
- * @param <Y>
- * @param <X>
- */
 public class LineChartController<Y, X> {
 	final NumberAxis xAxis = new NumberAxis();
 	final NumberAxis yAxis = new NumberAxis();
@@ -26,10 +19,6 @@ public class LineChartController<Y, X> {
 	private ObservableList<XYChart.Series<String, Integer>> data;
 	private LineChart<String, Integer> chart;
 
-	/**
-	 * This method have to be called before all other methods.
-	 * Initialization of components.
-	 */
 	public void init() {
 
 		data = FXCollections.observableArrayList();
@@ -49,10 +38,6 @@ public class LineChartController<Y, X> {
 		chart.setTitle(name);
 	}
 
-	/**
-	 * Fill the Chart.
-	 * @param data Data for Chart.
-	 */
 	public void setData(HashMap<String, Integer> data) {
 		Series<String, Integer> series = new Series<String, Integer>();
 		for (String key : data.keySet()) {
@@ -72,10 +57,6 @@ public class LineChartController<Y, X> {
 
 	}
 
-	/**
-	 * Adds one Series.
-	 * @param data Data for Series.
-	 */
 	public void addSeries(HashMap<String, Integer> data) {
 		Series<String, Integer> series = new Series<String, Integer>();
 		for (String key : data.keySet()) {
@@ -88,10 +69,13 @@ public class LineChartController<Y, X> {
 	}
 
 	/**
-	 * Adds one Point on Chart
-	 * @param xValue x-value
-	 * @param yValue y-value
-	 * @param series position of Series (0 for the first Series)
+	 * 
+	 * @param xValue
+	 *            Wert fuer X-Achse
+	 * @param yValue
+	 *            Wert fuer Y-Achse
+	 * @param series
+	 *            Die Position des Graphes (0 fuer ersten Graph)
 	 */
 	public void addValue(String xValue, int yValue, int series) {
 

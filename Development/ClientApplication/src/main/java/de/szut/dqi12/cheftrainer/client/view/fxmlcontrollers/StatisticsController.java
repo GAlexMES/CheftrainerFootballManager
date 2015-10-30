@@ -1,7 +1,6 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.fxml.FXML;
@@ -10,17 +9,9 @@ import javafx.scene.layout.GridPane;
 
 import org.apache.log4j.chainsaw.Main;
 
-import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts.BarChartController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts.LineChartController;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
-/**
- * This is the controller for the different charts.
- * @author Robin
- *
- */
 public class StatisticsController {
 
 	private BarChartController barController;
@@ -29,10 +20,6 @@ public class StatisticsController {
 	@FXML
 	private GridPane stats;
 
-	/**
-	 * This method have to be called before all other methods
-	 * Initialization of gui-components
-	 */
 	public void init() {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(Main.class.getResource("stats/BarChart.fxml"));
@@ -54,38 +41,45 @@ public class StatisticsController {
 		lineController.init();
 	}
 
-	/**
-	 * Fills the LineChart with data
-	 */
+	private void getData() {
+		// vom Controller Daten beziehen!
+	}
+
 	public void setLineChart() {
-		//HIER SOLLTEN NICHT DIE AKTUELLEN PUNKTE DER MANAGER STEHEN SONDERN DER VERLAUF DER PUNKTE
-		Session s = Controller.getInstance().getSession();
-		ArrayList<Manager> managers = (ArrayList<Manager>) s.getCommunities().get(s.getCurrentCommunity()).getManagers();
-		//FALSCHE DATEN
-		HashMap<String, Integer> data = new HashMap<String, Integer>();
-		for(Manager m : managers){
-			data.put(m.getName(), m.getPoints());
-		}
-		//FALSCHE DATEN ENDE
+
+		// Muell Anfang
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		map.put("Robin", 234);
+		map.put("Alex", 224);
+		map.put("Hans", 214);
+		map.put("Dieter", 14);
+
+		// Muell ende
+
+		//getData()
+		//Daten parsen und in eine map schmeisen
 		
-		lineController.setData(data);
+		lineController.setData(map);
 		stats.getChildren().set(0, lineController.getChart());
 
 	}
-	/**
-	 * Fills the BarChart with data
-	 */
+
 	public void setBarChart() {
-		Session s = Controller.getInstance().getSession();
-		ArrayList<Manager> managers = (ArrayList<Manager>) s.getCommunities().get(s.getCurrentCommunity()).getManagers();
+		// Muell Anfang
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
+		map.put("Robin", 234);
+		map.put("Alex", 224);
+		map.put("Hans", 214);
+		map.put("Dieter", 14);
+
+		// Muell ende
 		
-		HashMap<String, Integer> data = new HashMap<String, Integer>();
-		for(Manager m : managers){
-			data.put(m.getName(), m.getPoints());
-		}
-	
+		
+		
+		//getData()
+		//Daten parsen und in eine map schmeisen
 		stats.getChildren().set(0, barController.getChart());
-		barController.setData(data);
+		barController.setData(map);
 
 	}
 
