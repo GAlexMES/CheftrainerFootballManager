@@ -16,8 +16,8 @@
    <children>
       <ButtonBar maxHeight="60.0" minHeight="60.0" minWidth="-Infinity" prefHeight="60.0" prefWidth="600.0" GridPane.rowIndex="1">
          <buttons>
-          <Button fx:id="formationButton" mnemonicParsing="false" text="Formation ändern" />
-            <Button fx:id="saveButton" mnemonicParsing="false" text="Speichern" />
+          <Button mnemonicParsing="false" onAction="#formationButtonClicked" text="Formation ändern" />
+            <Button mnemonicParsing="false" onAction="#saveButtonClicked" text="Speichern" />
          </buttons>
       </ButtonBar>
    </children>

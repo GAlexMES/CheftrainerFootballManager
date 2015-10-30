@@ -228,6 +228,7 @@ public class LineUpController implements ControllerInterface {
 	 * Is Called when the Button "save" is clicked. Saves the current Formation
 	 * and line-up.
 	 */
+	@FXML
 	public void saveButtonClicked() {
 		Session s = Controller.getInstance().getSession();
 		int currentManagerID = s.getCurrentManagerID();
@@ -245,6 +246,7 @@ public class LineUpController implements ControllerInterface {
 	 * Is called when the Button "change formation" is clicked. Opens a dialog
 	 * to choose a new Formation.
 	 */
+	@FXML
 	public void formationButtonClicked() {
 		GridPane dialog;
 		Stage dialogStage = new Stage();
