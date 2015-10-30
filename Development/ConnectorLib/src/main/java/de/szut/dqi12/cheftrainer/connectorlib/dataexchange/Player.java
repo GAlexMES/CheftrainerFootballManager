@@ -13,7 +13,8 @@ public class Player {
 	private String name;
 	private int points;
 	private int number;
-	private String position;
+	private String positionString;
+	private Position position;
 	private int ID;
 	private int goals;
 	private boolean redCard;
@@ -47,6 +48,39 @@ public class Player {
 	public Player(String name, int points) {
 		this.name = name;
 		this.points = points;
+	}
+	
+	
+	public String getTeamName() {
+		return teamName;
+	}
+
+	public void setTeamName(String teamName) {
+		this.teamName = teamName;
+	}
+
+	public int getGoals() {
+		return goals;
+	}
+
+	public void setGoals(int goals) {
+		this.goals = goals;
+	}
+
+	public boolean isRedCard() {
+		return redCard;
+	}
+
+	public void setRedCard(boolean redCard) {
+		this.redCard = redCard;
+	}
+
+	public boolean isYellowRedCard() {
+		return yellowRedCard;
+	}
+
+	public Position getPosition() {
+		return position;
 	}
 
 	public String getTeamName() {
@@ -89,6 +123,14 @@ public class Player {
 		ID = iD;
 	}
 
+	public String getPositionString() {
+		return positionString;
+	}
+
+	public void setPosition(String position) {
+		this.positionString = position;
+	}
+
 	public int getNumber() {
 		return number;
 	}
@@ -101,7 +143,7 @@ public class Player {
 		return worth;
 	}
 	
-	public String getPosition() {
+	public Position getPosition() {
 		return position;
 	}
 
@@ -129,10 +171,6 @@ public class Player {
 		return this.plays();
 	}
 	
-	public void setPosition(String position){
-		this.position = position;
-	}
-	
 	public JSONObject getJSONFromPlayer() {
 		JSONObject retval = new JSONObject();
 		retval.put("name", this.getName());
@@ -140,7 +178,7 @@ public class Player {
 		retval.put("number", this.getNumber());
 		retval.put("points", this.getPoints());
 		retval.put("worth", this.getWorth());
-		retval.put("position", this.getPosition());
+		retval.put("position", this.getPositionString());
 		retval.put("team", this.getTeamName());
 		return retval;
 	}

@@ -3,8 +3,12 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
+import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -15,20 +19,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import de.szut.dqi12.cheftrainer.client.Controller;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
-/**
- * This is the controller for the gui-module LineUp
- * @author Robin
- *
- */
 public class LineUpController {
 	@FXML
 	private GridPane lineUpFrame;
@@ -39,23 +30,18 @@ public class LineUpController {
 	public GridPane getFrame() {
 		return lineUpFrame;
 	}
-	
-	/**
-	 * Loads the matching FXMLLoader for the used Formation
-	 * @param formation used Formation
-	 * @return the matching FXMLLoader for the used Formation
-	 */
-	private FXMLLoader getLoader(Formation formation) {
+
+	public FXMLLoader getLoader(Formation formation) {
 		currentFormation = formation;
 		ClassLoader classLoader = getClass().getClassLoader();
 		FXMLLoader currentContentLoader = new FXMLLoader();
 
 		URL fxmlFile;
-		switch (formation.getName()) {
-		case FormationFactory.FOUR_FOUR_TWO:
+		switch (formation) {
+		case forfortwo:
 			fxmlFile = classLoader.getResource("sourcesFXML/442.fxml");
 			break;
-		case FormationFactory.FOUR_FIVE_ONE:
+		case vorfiveone:
 			fxmlFile = classLoader.getResource("sourcesFXML/451.fxml");
 			break;
 		default:
@@ -66,13 +52,10 @@ public class LineUpController {
 
 	}
 
-	/**
-	 * This method have to be called before all other methods.
-	 * It initializates every gui-components
-	 * @return success or not
-	 */
 	public boolean init() {
-		// möglicher BUG: es muss geschaut werden ob die reihenfolge richtig ist, wie die spieler den labels zugeordnet werden. Gegebenfalls wie in der anderen Funktion machen, wo auf labelnamen geprueft wird
+		// BUG: es muss auf namen des Labels geprueft werden. Position muss
+		// stimmen.
+		// Aktuell werden spieler einfach nacheinander reingeschmissen
 		try {
 			Session session = Controller.getInstance().getSession();
 			ClassLoader classLoader = getClass().getClassLoader();
@@ -95,16 +78,16 @@ public class LineUpController {
 				Player keeper = players.get(0);
 				for (Player p : players) {
 					switch (p.getPosition()) {
-					case Position.DEFENCE:
+					case Defence:
 						defence.add(p);
 						break;
-					case Position.MIDDLE:
+					case Middel:
 						middel.add(p);
 						break;
-					case Position.OFFENCE:
+					case Offence:
 						offence.add(p);
 						defence: break;
-					case Position.KEEPER:
+					case Keeper:
 						keeper = p;
 						break;
 					default:
@@ -136,21 +119,23 @@ public class LineUpController {
 
 	}
 
-	/**
-	 * Changes the shown Formation
-	 * @param formation the new Formation
-	 * @return success or not
-	 */
 	public boolean changeFormation(Formation formation) {
+		// UMFERTIG LABELS NAMEN UEBERGEBEN
 		try {
 			Session session = Controller.getInstance().getSession();
-			Community currentCommunity = session.getCommunityMap().get(session.getCurrentCommunity());
-			Manager currentManager = currentCommunity.getManagers().get(session.getCurrentManager());
-			FXMLLoader currentContentLoader = getLoader(currentManager.getFormation());
+			ClassLoader classLoader = getClass().getClassLoader();
+			FXMLLoader currentContentLoader = getLoader(session
+					.getCommunityMap().get(session.getCurrentCommunity())
+					.getManagers().get(session.getCurrentManager())
+					.getFormation());
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
+
+			// ///////vieleicht falsche sachen, falsche player weil er aus
+			// controller holt
 			fController = ((FormationController) currentContentLoader
 					.getController());
 			fController.setClickedListener();
+			// /////////////////////
 			ArrayList<Player> players = (ArrayList<Player>) session
 					.getCommunityMap().get(session.getCommunityMap())
 					.getManager(session.getCurrentManager()).getPlayers();
@@ -160,16 +145,16 @@ public class LineUpController {
 			Player keeper = players.get(0);
 			for (Player p : players) {
 				switch (p.getPosition()) {
-				case Position.DEFENCE:
+				case Defence:
 					defence.add(p);
 					break;
-				case Position.MIDDLE:
+				case Middel:
 					middel.add(p);
 					break;
-				case Position.OFFENCE:
+				case Offence:
 					offence.add(p);
-					break;
-				case Position.KEEPER:
+					defence: break;
+				case Keeper:
 					keeper = p;
 					break;
 				default:
@@ -214,11 +199,7 @@ public class LineUpController {
 			return false;
 		}
 	}
-	/**
-	 * Is Called when the Button "save" is clicked.
-	 * Saves the current Formation and line-up.
-	 */
-	@FXML
+
 	public void saveButtonClicked() {
 		Session s = Controller.getInstance().getSession();
 		Manager m = s.getCommunityMap().get(s.getCurrentCommunity())
@@ -232,11 +213,6 @@ public class LineUpController {
 		}
 	}
 
-	/**
-	 * Is called when the Button "change formation" is clicked.
-	 * Opens a dialog to choose a new Formation.
-	 */
-	@FXML
 	public void formationButtonClicked() {
 		GridPane dialog;
 		Stage dialogStage = new Stage();
@@ -244,10 +220,9 @@ public class LineUpController {
 		dialog = new GridPane();
 		Label l;
 		int i = 0;
-		FormationFactory ff = new FormationFactory();
-		List<Formation> formations = ff.getFormations();
-		for (Formation formation : formations) {
-			l = new Label(formation.getName());
+		for (Formation formation : Formation.values()) {
+
+			l = new Label(formation.name());
 			dialog.add(l, 0, i);
 			i++;
 			l.setOnMouseClicked(new EventHandler<Event>() {
