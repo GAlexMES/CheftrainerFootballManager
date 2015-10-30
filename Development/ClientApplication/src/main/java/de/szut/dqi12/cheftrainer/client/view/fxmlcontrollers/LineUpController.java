@@ -72,7 +72,7 @@ public class LineUpController {
 	 * @return success or not
 	 */
 	public boolean init() {
-		// BUG: es muss geschaut werden ob die reihenfolge richtig ist, wie die spieler den labels zugeordnet werden. Gegebenfalls wie in der anderen Funktion machen, wo auf labelnamen geprueft wird
+		// möglicher BUG: es muss geschaut werden ob die reihenfolge richtig ist, wie die spieler den labels zugeordnet werden. Gegebenfalls wie in der anderen Funktion machen, wo auf labelnamen geprueft wird
 		try {
 			Session session = Controller.getInstance().getSession();
 			ClassLoader classLoader = getClass().getClassLoader();
@@ -218,6 +218,7 @@ public class LineUpController {
 	 * Is Called when the Button "save" is clicked.
 	 * Saves the current Formation and line-up.
 	 */
+	@FXML
 	public void saveButtonClicked() {
 		Session s = Controller.getInstance().getSession();
 		Manager m = s.getCommunityMap().get(s.getCurrentCommunity())
@@ -235,6 +236,7 @@ public class LineUpController {
 	 * Is called when the Button "change formation" is clicked.
 	 * Opens a dialog to choose a new Formation.
 	 */
+	@FXML
 	public void formationButtonClicked() {
 		GridPane dialog;
 		Stage dialogStage = new Stage();
