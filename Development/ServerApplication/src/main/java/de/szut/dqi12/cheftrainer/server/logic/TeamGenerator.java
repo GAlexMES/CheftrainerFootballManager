@@ -89,9 +89,9 @@ public class TeamGenerator {
 			if (p != null && !idList.contains(p.getID())) {
 				idList.add(p.getID());
 				if (!isPlayerInUse(p.getID())
-						&& playerFitsInTeam(p.getPositionString())) {
+						&& playerFitsInTeam(p.getPosition())) {
 					playerList.add(p);
-					updatePlayerPerPosition(p.getPositionString(), 1);
+					updatePlayerPerPosition(p.getPosition(), 1);
 					teamWorth += p.getWorth();
 					LOGGER.info("Team generation: "
 							+ ((goalkeepers + defenders + middfielders + offensives) * 6.5)
@@ -184,14 +184,14 @@ public class TeamGenerator {
 
 				boolean betterWorth = com.compare(newPlayer.getWorth(),
 						currentPlayer.getWorth()) < 0;
-				boolean samePosition = newPlayer.getPositionString().equals(
-						currentPlayer.getPositionString());
+				boolean samePosition = newPlayer.getPosition().equals(
+						currentPlayer.getPosition());
 				boolean notInUse = !isPlayerInUse(newPlayer.getID())
 						&& !currentPlayerIDs.contains(newPlayer.getID());
 
 				if (betterWorth && samePosition && notInUse) {
-					if (newPlayer.getPositionString().equals(
-							currentPlayer.getPositionString())) {
+					if (newPlayer.getPosition().equals(
+							currentPlayer.getPosition())) {
 						teamWorth -= currentPlayer.getWorth();
 						teamWorth += newPlayer.getWorth();
 						playerList.remove(currentPlayer);
