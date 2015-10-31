@@ -46,6 +46,7 @@ public class GUIInitialator {
 	public GUIInitialator(Stage primaryStage) {
 		this.rStage = primaryStage;
 		this.rStage.setTitle("Cheftrainer Football Manager");
+		this.rStage.setMinWidth(500);
 		classLoader = getClass().getClassLoader();
 		currentFXMLLoader = new FXMLLoader();
 	}
