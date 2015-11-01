@@ -64,6 +64,7 @@ public class ServerHandler implements Runnable {
 				System.out.println("receive:   "+message);
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			LOGGER.error(ex.getStackTrace());
 		}
 		finally{

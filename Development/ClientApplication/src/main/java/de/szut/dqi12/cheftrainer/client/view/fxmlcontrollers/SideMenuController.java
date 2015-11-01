@@ -34,6 +34,7 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.ClientApplication;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
+import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 
 /**
  * Controller for the side menu
@@ -46,9 +47,6 @@ public class SideMenuController {
 	// DEFINITIONS
 	@FXML
 	private VBox sideMenu;
-
-	@FXML
-	private ColumnConstraints contentColumn;
 
 	private GUIInitialator guiInitilator;
 	private boolean sideMenuFlag = true;
@@ -235,6 +233,7 @@ public class SideMenuController {
 		}
 		sideMenuFlag = false;
 		collapseColums();
+		updateWidthPercentage();
 	}
 
 	/**
@@ -265,11 +264,22 @@ public class SideMenuController {
 			((Button) buttonList.get(i)).setText(sideMenuButtonTitles.get(i));
 			((Button) buttonList.get(i)).setPrefWidth(expandedWidth);
 		}
-		Stage primaryStage = guiInitilator.getPrimaryStage();
-		double stageWidth = primaryStage.getWidth();
-		contentColumn.setMaxWidth(stageWidth - expandedWidth);
 		sideMenuFlag = true;
 		expandColums();
+		updateWidthPercentage();
+	}
+	
+	public void updateWidthPercentage(){
+		double width = 0.0;
+		
+		if(sideMenuFlag){
+			width = expandedWidth;
+		}
+		else{
+			width=collapsedWidth;
+		}
+		rLayout.getColumnConstraints().get(0).setMinWidth(width);
+		rLayout.getColumnConstraints().get(1).setMaxWidth(rLayout.getWidth()-width);
 	}
 
 	/**
@@ -289,5 +299,4 @@ public class SideMenuController {
 	public List<String> getSideMenuButtonTitles() {
 		return sideMenuButtonTitles;
 	}
-
 }

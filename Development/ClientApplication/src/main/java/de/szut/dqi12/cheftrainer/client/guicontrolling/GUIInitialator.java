@@ -6,6 +6,8 @@ import java.net.URL;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.SideMenuController;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -30,7 +32,7 @@ public class GUIInitialator {
 	private GridPane rLayout;
 	private AnchorPane loginLayout;
 
-	private SideMenuController controller;
+	private SideMenuController sideMenuController;
 	private LoginController loginController;
 
 	private FXMLLoader currentFXMLLoader;
@@ -119,8 +121,20 @@ public class GUIInitialator {
 
 			// displays the RootFrame.fxml on screen
 			mainApplicationStage = new Stage();
-			mainApplicationStage.setMinWidth(600.0);
+			mainApplicationStage.setMinWidth(750.0);
 			Scene scene = new Scene(rLayout);
+			scene.widthProperty().addListener(new ChangeListener<Number>() {
+				@Override
+				public void changed(
+						ObservableValue<? extends Number> observableValue,
+						Number oldSceneWidth, Number newSceneWidth) {
+					try {
+						sideMenuController.updateWidthPercentage();
+					} catch (NullPointerException npe) {
+
+					}
+				}
+			});
 			mainApplicationStage.setScene(scene);
 			mainApplicationStage.show();
 
@@ -143,8 +157,8 @@ public class GUIInitialator {
 			rLayout.add(menuLayout, 0, 0);
 
 			// defines the SideMenuController
-			controller = menuLoader.getController();
-			controller.setGUIInitialator(this);
+			sideMenuController = menuLoader.getController();
+			sideMenuController.setGUIInitialator(this);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -155,12 +169,16 @@ public class GUIInitialator {
 		return rStage;
 	}
 
+	public Stage getMainApplicationStage() {
+		return mainApplicationStage;
+	}
+
 	public GridPane getRootlayout() {
 		return this.rLayout;
 	}
 
 	public SideMenuController getSideMenuController() {
-		return this.controller;
+		return this.sideMenuController;
 	}
 
 	public LoginController getLoginController() {
