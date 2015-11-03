@@ -5,13 +5,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -162,8 +163,11 @@ public class LineUpController implements ControllerInterface {
 					.getController());
 			fController.init();
 
-			ArrayList<Node> labels = (ArrayList<Node>) newContentPane
-					.getChildren();
+			
+			ArrayList<Node> labels = new ArrayList<Node>();
+			for(Node n : newContentPane.getChildren()){
+				labels.add(n);
+			}
 			ArrayList<Node> labelscopy = (ArrayList<Node>) labels.clone();
 			ArrayList<Player> players;
 			if (formation == currentManager.getFormation()) {
@@ -287,12 +291,13 @@ public class LineUpController implements ControllerInterface {
 		Stage dialogStage = new Stage();
 
 		dialog = new GridPane();
-		PlayerLabel l;
+		Label l;
 		int i = 0;
 		FormationFactory ff = new FormationFactory();
 		List<Formation> formations = ff.getFormations();
 		for (Formation formation : formations) {
-			l = new PlayerLabel();
+			l = new Label();
+			l.setText(formation.getName());
 			dialog.add(l, 0, i);
 			i++;
 			l.setOnMouseClicked(new EventHandler<Event>() {

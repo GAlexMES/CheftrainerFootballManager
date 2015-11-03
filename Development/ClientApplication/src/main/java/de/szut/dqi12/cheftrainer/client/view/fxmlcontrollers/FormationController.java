@@ -34,6 +34,7 @@ public class FormationController {
 			case "Verteidigung":
 				n = new PlayerLabel();
 				((PlayerLabel)n).setPosition(Position.DEFENCE);
+//				((Label)n).setText("11");
 				break;
 			case "Sturm":
 				n = new PlayerLabel();
