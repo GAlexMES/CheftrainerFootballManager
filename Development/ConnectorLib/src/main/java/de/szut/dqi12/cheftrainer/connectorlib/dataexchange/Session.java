@@ -42,7 +42,7 @@ public class Session {
 		Community currentCommunity = communityNameMap.get(communityName);
 		currentCommunityID = currentCommunity.getCommunityID();
 		
-		transferMarketTableData =FXCollections.observableArrayList();
+		transferMarketTableData = FXCollections.observableArrayList();
 		List<Player> playerList= currentCommunity.getMarket().getPlayers();
 		for(Player  p : playerList){
 			transferMarketTableData.add(p.getMarketPlayer());

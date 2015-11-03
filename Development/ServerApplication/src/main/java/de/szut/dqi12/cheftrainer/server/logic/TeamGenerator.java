@@ -109,7 +109,7 @@ public class TeamGenerator {
 
 		while (goalkeepers + defenders + middfielders + offensives < NUMBER_OF_PLAYER
 				&& idList.size() < heighestPlayerID - 1) {
-			Player p = getNewRandomPlayer();
+			Player p = getNewRandomPlayer(heighestPlayerID);
 			if (p != null && !idList.contains(p.getID())) {
 				idList.add(p.getID());
 				if (!isPlayerInUse(p.getID())&& playerFitsInTeam(p.getPosition())) {
@@ -188,7 +188,7 @@ public class TeamGenerator {
 		List<Integer> idList = new ArrayList<>();
 
 		while (!playerFound && idList.size() < heighestPlayerID - 1) {
-			Player newPlayer = getNewRandomPlayer();
+			Player newPlayer = getNewRandomPlayer(heighestPlayerID);
 
 			if (newPlayer == null) {
 				noPlayerFoundCounter++;
@@ -232,7 +232,7 @@ public class TeamGenerator {
 	 * @param p
 	 *            the player, that should be mapped to the manager
 	 */
-	private void updateDatabaseWithPlayers(Player p) {
+	public void updateDatabaseWithPlayers(Player p) {
 		DatabaseRequests.addPlayerToManager(managerID, p.getID(), p.plays());
 	}
 
@@ -294,7 +294,7 @@ public class TeamGenerator {
 	 * 
 	 * @return a new random Player object with values from the database
 	 */
-	private Player getNewRandomPlayer() {
+	public static Player getNewRandomPlayer(int heighestPlayerID) {
 		Random rn = new Random();
 		int playerID = 0 + rn.nextInt(heighestPlayerID - 1);
 

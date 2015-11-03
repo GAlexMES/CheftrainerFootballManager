@@ -178,4 +178,8 @@ public class DatabaseRequests {
 			int middfielders, int offensives) {
 		playerManagement.setManagersFormation(managerID, defenders, middfielders, offensives);
 	}
+
+	public static void putPlayerOnExchangeMarket(Player p, String communityName) {
+		playerManagement. putPlayerOnExchangeMarket(p,  communityName);
+	}
 }

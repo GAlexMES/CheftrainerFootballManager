@@ -5,6 +5,7 @@ import java.util.List;
 
 
 
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
@@ -134,7 +136,7 @@ public class UserCommunityList extends CallableAbstract {
 		retval.setName(communityJSON.getString("Name"));
 		JSONArray managersJSON = communityJSON.getJSONArray("Managers");
 		retval.addManagers(createManagerList(managersJSON, retval.getName()));
-		
+		retval.setMarket(new Market(communityJSON.getJSONArray("ExchangeMarket")));
 		String userName = Controller.getInstance().getSession().getUser().getUserName();
 		retval.findeUsersManager(userName);
 		return retval;

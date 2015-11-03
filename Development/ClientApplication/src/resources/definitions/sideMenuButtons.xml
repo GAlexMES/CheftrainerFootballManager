@@ -20,7 +20,7 @@
 		<triggerButton>false</triggerButton>
 		<logoutButton>false</logoutButton>
 		<alwaysClickable>false</alwaysClickable>
-		<fxmlComponent>TransferMarkt</fxmlComponent>
+		<fxmlComponent>TransferMarket</fxmlComponent>
 	</button>
 	<button position="3">
 		<text>Aufstellung</text>

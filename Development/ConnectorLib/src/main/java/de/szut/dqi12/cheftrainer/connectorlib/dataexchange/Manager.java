@@ -1,6 +1,5 @@
 package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 

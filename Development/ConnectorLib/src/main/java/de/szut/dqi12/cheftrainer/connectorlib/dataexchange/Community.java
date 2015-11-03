@@ -39,6 +39,10 @@ public class Community {
 		this.market = market;
 	}
 	
+	public void setMarket(Market market){
+		this.market = market;
+	}
+	
 	public void addManager(Manager manager){
 		this.managers.add(manager);
 		managerDictionary.put(manager.getID(), manager);

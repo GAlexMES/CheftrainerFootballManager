@@ -13,6 +13,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
 
@@ -24,8 +25,9 @@ import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
  *
  */
 public class CommunityManagement {
-	
-	private final static Logger LOGGER = Logger.getLogger(CommunityManagement.class);
+
+	private final static Logger LOGGER = Logger
+			.getLogger(CommunityManagement.class);
 
 	private SQLConnection sqlCon;
 	private FormationFactory formationFactory;
@@ -103,7 +105,29 @@ public class CommunityManagement {
 			}
 		} catch (SQLException e) {
 		}
-		retval.addManagers(getManagers(communityID,retval.getName()));
+		retval.addManagers(getManagers(communityID, retval.getName()));
+		retval.setMarket(getMarket(communityID));
+		return retval;
+	}
+
+	private Market getMarket(int communityID) {
+		Market retval = new Market();
+
+		String sqlQuery = "SELECT * FROM Transfermarkt "
+				+"INNER JOIN Spieler INNER JOIN Verein"
+				+ " WHERE Spieler.ID = Spieler_ID" 
+				+ " AND Verein_ID = Verein.ID"
+				+ " AND Spielrunde_ID = " + communityID;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		try {
+			while (rs.next()) {
+				Player p = getPlayerFromResult(rs);
+				p.setTeamName(rs.getString("Vereinsname"));
+				retval.addPlayer(p);
+			}
+		} catch (SQLException e) {
+		}
+
 		return retval;
 	}
 
@@ -124,10 +148,11 @@ public class CommunityManagement {
 			while (rs.next()) {
 				try {
 					String managerName = rs.getString("Nutzername");
-					//TODO: benötigt?
-					//double money = rs.getDouble("Budget");
+					// TODO: benötigt?
+					// double money = rs.getDouble("Budget");
 					int points = rs.getInt("Punkte");
-					Manager manager = new Manager(managerName, null, points,communityName);
+					Manager manager = new Manager(managerName, null, points,
+							communityName);
 					int defenders = rs.getInt("Anzahl_Abwehr");
 					int middfielders = rs.getInt("Anzahl_Mittelfeld");
 					int offensives = rs.getInt("Anzahl_Stuermer");
@@ -137,7 +162,8 @@ public class CommunityManagement {
 					manager.setID(rs.getInt("ID"));
 					retval.add(manager);
 				} catch (IOException ioe) {
-					LOGGER.error("Invalid formation was read out of the database!   "+ioe.getStackTrace());
+					LOGGER.error("Invalid formation was read out of the database!   "
+							+ ioe.getStackTrace());
 				}
 			}
 		} catch (SQLException e) {
@@ -251,12 +277,10 @@ public class CommunityManagement {
 	 * @return true = manager was created successful.
 	 */
 	private boolean createNewManager(String communityName, int userID) {
-		ResultSet rs;
-		String sqlQueryCommunityID = "SELECT ID FROM Spielrunde WHERE Name='"
-				+ communityName + "'";
-		rs = sqlCon.sendQuery(sqlQueryCommunityID);
 		try {
-			int communityID = rs.getInt("ID");
+			String condition = "Name='" + communityName + "'";
+			int communityID = Integer.valueOf(DatabaseRequests.getUniqueValue(
+					"ID", "Spielrunde", condition).toString());
 			String sqlQuery = "INSERT INTO Manager (Nutzer_ID, Spielrunde_ID) VALUES ('"
 					+ userID + "','" + communityID + "')";
 			sqlCon.sendQuery(sqlQuery);
@@ -280,7 +304,7 @@ public class CommunityManagement {
 			sqlCon.sendQuery(sqlQuery);
 
 			return true;
-		} catch (SQLException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
@@ -325,6 +349,21 @@ public class CommunityManagement {
 		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 
+	private Player getPlayerFromResult(ResultSet rs) {
+		Player p = new Player();
+		try {
+			p.setID(rs.getInt("ID"));
+			p.setName(rs.getString("Name"));
+			p.setPosition(rs.getString("Position"));
+			p.setNumber(rs.getInt("Nummer"));
+			p.setWorth(rs.getInt("Marktwert"));
+			p.setPoints(rs.getInt("Punkte"));
+		} catch (SQLException sqe) {
+			sqe.printStackTrace();
+		}
+		return p;
+	}
+
 	/**
 	 * This method creates a List of {@link Player} for the given
 	 * {@link Manager} out of the database values.
@@ -345,22 +384,14 @@ public class CommunityManagement {
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
 			while (rs.next()) {
-				Player p = new Player();
-				p.setID(rs.getInt("ID"));
-				p.setName(rs.getString("Name"));
+				Player p = getPlayerFromResult(rs);
 				p.setTeamName(rs.getString("Vereinsname"));
-				p.setPosition(rs.getString("Position"));
-				p.setNumber(rs.getInt("Nummer"));
-				p.setWorth(rs.getInt("Marktwert"));
-				p.setPoints(rs.getInt("Punkte"));
-
 				int play = rs.getInt("Aufgestellt");
-				if(play==1){
+				if (play == 1) {
 					p.setPlays(true);
-				}
-				else{
+				} else {
 					p.setPlays(false);
-					
+
 				}
 				playerList.add(p);
 			}

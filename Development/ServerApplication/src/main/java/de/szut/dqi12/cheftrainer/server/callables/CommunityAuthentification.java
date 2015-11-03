@@ -13,6 +13,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.logic.ExchangeMarketGenerator;
 import de.szut.dqi12.cheftrainer.server.usercommunication.ClientUpdate;
 import de.szut.dqi12.cheftrainer.server.utils.JSONUtils;
 
@@ -137,6 +138,7 @@ public class CommunityAuthentification extends CallableAbstract {
 		boolean communityCreated = DatabaseRequests.createNewCommunity(communityName, communityPassword, userID);
 
 		if (communityCreated) {
+			ExchangeMarketGenerator.createNewMarket(communityName);
 			DatabaseRequests.enterCommunity(communityName, communityPassword, userID);
 			updateSessionAndClient();
 		}

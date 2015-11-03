@@ -22,6 +22,7 @@ public class ClientUpdate {
 			managersJSON.put(managerToJson(m));
 		}
 		retval.put("Managers", managersJSON);
+		retval.put("ExchangeMarket",community.getMarket().toJSON());
 		return retval;
 	}
 	
@@ -45,7 +46,7 @@ public class ClientUpdate {
 	private static JSONArray teamToJson(List<Player> playerList){
 		JSONArray teamJSON = new JSONArray();
 		for(Player p : playerList){
-			teamJSON.put(p.getJSONFromPlayer());
+			teamJSON.put(p.toJSON());
 		}
 		return teamJSON;
 	}

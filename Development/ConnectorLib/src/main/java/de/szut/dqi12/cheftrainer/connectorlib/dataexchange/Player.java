@@ -1,11 +1,5 @@
 package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
-import javafx.beans.InvalidationListener;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-
 import org.json.JSONObject;
 
 
@@ -148,7 +142,7 @@ public class Player {
 		this.position = position;
 	}
 	
-	public JSONObject getJSONFromPlayer() {
+	public JSONObject toJSON() {
 		JSONObject retval = new JSONObject();
 		retval.put("name", this.getName());
 		retval.put("id", this.getID());
@@ -170,6 +164,7 @@ public class Player {
 		this.setPosition(playerJSON.getString("position"));
 		this.setTeamName(playerJSON.getString("team"));
 		this.setPlays(playerJSON.getBoolean("plays"));
+		marketPlayer = new MarketPlayer(name, String.valueOf(points), "no information available",this);
 	}
 	
 	public PlayerLabel getLabel() {
