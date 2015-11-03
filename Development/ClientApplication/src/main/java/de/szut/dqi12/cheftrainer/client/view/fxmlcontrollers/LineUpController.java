@@ -11,7 +11,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -312,6 +311,18 @@ public class LineUpController implements ControllerInterface {
 		dialogStage.setScene(scene);
 		dialogStage.showAndWait();
 
+	}
+
+	@Override
+	public void enterPressed() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void messageArrived() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

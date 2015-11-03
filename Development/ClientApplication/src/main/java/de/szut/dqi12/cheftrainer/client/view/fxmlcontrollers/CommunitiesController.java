@@ -91,4 +91,14 @@ public class CommunitiesController implements ControllerInterface{
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void enterPressed() {
+	}
+
+	@Override
+	public void messageArrived() {
+		// TODO Auto-generated method stub
+		
+	}
 }

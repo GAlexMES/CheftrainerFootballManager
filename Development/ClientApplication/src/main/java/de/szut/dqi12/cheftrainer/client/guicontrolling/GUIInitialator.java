@@ -3,8 +3,8 @@ package de.szut.dqi12.cheftrainer.client.guicontrolling;
 import java.io.IOException;
 import java.net.URL;
 
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.SideMenuController;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.LoginController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
