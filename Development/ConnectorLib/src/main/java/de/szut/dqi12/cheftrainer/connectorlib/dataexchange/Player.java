@@ -20,8 +20,21 @@ public class Player {
 	private boolean yellowRedCard;
 	private String teamName;
 	private boolean plays;
+	private PlayerLabel label;
 		
 	
+	public PlayerLabel getLabel() {
+		return label;
+	}
+
+	public void setLabel(PlayerLabel label) {
+		this.label = label;
+	}
+
+	public boolean isPlays() {
+		return plays;
+	}
+
 	public Player(){
 	}
 	
@@ -29,7 +42,7 @@ public class Player {
 		getPlayerFromJSON(playerJSON);
 	}
 	
-	public Player(int worth, String name, int points, Position position) {
+	public Player(int worth, String name, int points, String position) {
 		this.worth = worth;
 		this.name = name;
 		this.points = points;
