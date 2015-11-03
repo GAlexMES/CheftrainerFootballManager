@@ -4,12 +4,14 @@
 		<text></text>
 		<imageName>menu.png</imageName>
 		<triggerButton>true</triggerButton>
+		<alwaysClickable>true</alwaysClickable>
 	</button>
 	<button position="1">
 		<text>Communities</text>
 		<imageName>communities.png</imageName>
 		<triggerButton>false</triggerButton>
 		<logoutButton>false</logoutButton>
+		<alwaysClickable>true</alwaysClickable>
 		<fxmlComponent>CommunitiesFrame</fxmlComponent>
 	</button>
 	<button position="2">
@@ -17,6 +19,7 @@
 		<imageName>trade.png</imageName>
 		<triggerButton>false</triggerButton>
 		<logoutButton>false</logoutButton>
+		<alwaysClickable>false</alwaysClickable>
 		<fxmlComponent></fxmlComponent>
 	</button>
 	<button position="3">
@@ -24,6 +27,7 @@
 		<imageName>lineup.png</imageName>
 		<triggerButton>false</triggerButton>
 		<logoutButton>false</logoutButton>
+		<alwaysClickable>false</alwaysClickable>
 		<fxmlComponent>LineUp</fxmlComponent>
 	</button>
 	<button position="4">
@@ -31,6 +35,7 @@
 		<imageName>statistic.png</imageName>
 		<triggerButton>false</triggerButton>
 		<logoutButton>false</logoutButton>
+		<alwaysClickable>false</alwaysClickable>
 		<fxmlComponent></fxmlComponent>
 	</button>
 	<button position="5">
@@ -38,6 +43,7 @@
 		<imageName>logout.png</imageName>
 		<triggerButton>false</triggerButton>
 		<logoutButton>true</logoutButton>
+		<alwaysClickable>true</alwaysClickable>
 		<fxmlComponent></fxmlComponent>
 	</button>
 </Buttons>

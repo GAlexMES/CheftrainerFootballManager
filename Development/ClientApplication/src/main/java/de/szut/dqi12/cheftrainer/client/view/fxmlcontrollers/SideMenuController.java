@@ -51,12 +51,13 @@ public class SideMenuController {
 	private GUIInitialator guiInitilator;
 	private boolean sideMenuFlag = true;
 
-	public static  double expandedWidth = 200.0;
+	public static double expandedWidth = 200.0;
 	private double collapsedWidth = 100.0;
 
 	private GridPane rLayout = null;
 
 	private List<String> sideMenuButtonTitles = new ArrayList<String>();
+	private List<String> alwaysClickableButtons = new ArrayList<>();
 
 	private Map<String, String> button_FXMLComponent = new HashMap<>();
 
@@ -145,19 +146,34 @@ public class SideMenuController {
 		// to the map
 		button_FXMLComponent.put(buttonName, e.getChildText("fxmlComponent"));
 
+		tempButton = addCorrectListener(tempButton, e);
+		tempButton = setClickable(tempButton, e);
+		return tempButton;
+	}
+
+	private Button setClickable(Button button, Element e) {
+		if (e.getChildText("alwaysClickable").equals("true")) {
+			button.setDisable(false);
+		} else {
+			button.setDisable(true);
+		}
+		return button;
+	}
+
+	private Button addCorrectListener(Button button, Element e) {
 		// checks if the button is the toggle button(toggles the menu)
 		if (e.getChildText("triggerButton").equals("true")) {
 			// sets the onAction to the triggerSideMenu function
-			tempButton.setOnAction(this::triggerSideMenu);
+			button.setOnAction(this::triggerSideMenu);
 		} else if (e.getChildText("logoutButton").equals("true")) {
 			Controller controller = Controller.getInstance();
 			// sets the onAction to the logout function
-			tempButton.setOnAction(controller::resetApplication);
+			button.setOnAction(controller::resetApplication);
 		} else {
 			// sets the onAction to the buttonPressed function
-			tempButton.setOnAction(this::buttonPressed);
+			button.setOnAction(this::buttonPressed);
 		}
-		return tempButton;
+		return button;
 	}
 
 	/**
@@ -268,18 +284,18 @@ public class SideMenuController {
 		expandColums();
 		updateWidthPercentage();
 	}
-	
-	public void updateWidthPercentage(){
+
+	public void updateWidthPercentage() {
 		double width = 0.0;
-		
-		if(sideMenuFlag){
+
+		if (sideMenuFlag) {
 			width = expandedWidth;
-		}
-		else{
-			width=collapsedWidth;
+		} else {
+			width = collapsedWidth;
 		}
 		rLayout.getColumnConstraints().get(0).setMinWidth(width);
-		rLayout.getColumnConstraints().get(1).setMaxWidth(rLayout.getWidth()-width);
+		rLayout.getColumnConstraints().get(1)
+				.setMaxWidth(rLayout.getWidth() - width);
 	}
 
 	/**
@@ -295,8 +311,19 @@ public class SideMenuController {
 		contentColoum.setMinWidth(rLayout.getWidth() - expandedWidth - 100);
 	}
 
+	public void triggerButtonClickable(boolean clickable) {
+		ObservableList<Node> buttonList = ((VBox) rLayout.lookup("#sideMenu"))
+				.getChildren();
+		for(Node n : buttonList){
+			if(!alwaysClickableButtons.contains(((Button)n).getText())){
+				((Button)n).setDisable(!clickable);
+			}
+		}
+	}
+	
 	// GETTER AND SETTER
 	public List<String> getSideMenuButtonTitles() {
 		return sideMenuButtonTitles;
 	}
+
 }

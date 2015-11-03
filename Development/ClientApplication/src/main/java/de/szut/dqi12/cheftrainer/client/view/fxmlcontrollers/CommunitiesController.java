@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
@@ -60,6 +61,7 @@ public class CommunitiesController implements ControllerInterface{
 	private void communityPressed(Manager manager) {
 		Session session = Controller.getInstance().getSession();
 		session.setCurrentManager(manager);
+		GUIController.getInstance().enableButtons();
 	}
 
 	/**
