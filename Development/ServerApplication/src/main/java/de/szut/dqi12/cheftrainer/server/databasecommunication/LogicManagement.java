@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -82,8 +83,12 @@ public class LogicManagement {
 	 * @param playerID the ID of the {@link Player}, that should be owned by the {@link Manager};
 	 */
 	public void addPlayerToManager(int managerID, int playerID, boolean plays) {
+		int play = 0;
+		if(plays){
+			play = 1;
+		}
 		String sqlQuery = "INSERT INTO Mannschaft ('Manager_ID','Spieler_ID','Aufgestellt') "
-						+	" VALUES ('"+managerID+"','"+playerID+"','"+plays+"')";
+						+	" VALUES ('"+managerID+"','"+playerID+"','"+play+"')";
 		sqlCon.sendQuery(sqlQuery);
 	}
 

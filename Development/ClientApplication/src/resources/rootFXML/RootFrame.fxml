@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
 
-<GridPane fx:id="rootFrame" gridLinesVisible="true" minWidth="750.0" prefHeight="790.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+<GridPane fx:id="rootFrame" gridLinesVisible="true" minWidth="500.0" prefHeight="400.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
 <columnConstraints>
     <ColumnConstraints hgrow="NEVER" fx:id="menuColumn" maxWidth="200.0"  minWidth="100.0" prefWidth="100.0" />
     <ColumnConstraints fx:id="contentColumn" prefWidth="550.0" hgrow="SOMETIMES"  />

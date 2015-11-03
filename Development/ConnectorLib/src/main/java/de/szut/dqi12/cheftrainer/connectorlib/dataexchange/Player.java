@@ -142,6 +142,7 @@ public class Player {
 		retval.put("worth", this.getWorth());
 		retval.put("position", this.getPosition());
 		retval.put("team", this.getTeamName());
+		retval.put("plays", this.plays());
 		return retval;
 	}
 	
@@ -153,6 +154,7 @@ public class Player {
 		this.setWorth(playerJSON.getInt("worth"));
 		this.setPosition(playerJSON.getString("position"));
 		this.setTeamName(playerJSON.getString("team"));
+		this.setPlays(playerJSON.getBoolean("plays"));
 	}
 	
 

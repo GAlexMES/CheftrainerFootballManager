@@ -121,7 +121,7 @@ public class GUIInitialator {
 
 			// displays the RootFrame.fxml on screen
 			mainApplicationStage = new Stage();
-			mainApplicationStage.setMinWidth(750.0);
+			mainApplicationStage.setMinWidth(500.0);
 			Scene scene = new Scene(rLayout);
 			scene.widthProperty().addListener(new ChangeListener<Number>() {
 				@Override

@@ -124,7 +124,8 @@ public class CommunityManagement {
 			while (rs.next()) {
 				try {
 					String managerName = rs.getString("Nutzername");
-//					double money = rs.getDouble("Budget");
+					//TODO: benötigt?
+					//double money = rs.getDouble("Budget");
 					int points = rs.getInt("Punkte");
 					Manager manager = new Manager(managerName, null, points,communityName);
 					int defenders = rs.getInt("Anzahl_Abwehr");
@@ -350,9 +351,17 @@ public class CommunityManagement {
 				p.setTeamName(rs.getString("Vereinsname"));
 				p.setPosition(rs.getString("Position"));
 				p.setNumber(rs.getInt("Nummer"));
-				p.setPlays(rs.getBoolean("Aufgestellt"));
 				p.setWorth(rs.getInt("Marktwert"));
 				p.setPoints(rs.getInt("Punkte"));
+
+				int play = rs.getInt("Aufgestellt");
+				if(play==1){
+					p.setPlays(true);
+				}
+				else{
+					p.setPlays(false);
+					
+				}
 				playerList.add(p);
 			}
 		} catch (SQLException e) {

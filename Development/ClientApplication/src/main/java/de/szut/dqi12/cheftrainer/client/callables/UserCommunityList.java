@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
+import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
@@ -39,6 +41,7 @@ public class UserCommunityList extends CallableAbstract {
 		switch (jsonMessage.getString("type")) {
 		case "init":
 			newList(jsonMessage);
+			UpdateUtils.initUpdateReceived();
 			break;
 		case "updateCommunity":
 			updateList(jsonMessage);
@@ -70,7 +73,6 @@ public class UserCommunityList extends CallableAbstract {
 				.getJSONObject("community"));
 		community.findeUsersManager(mesController.getSession().getUser()
 				.getUserName());
-		;
 		Controller.getInstance().getSession().addCommunity(community);
 	}
 
