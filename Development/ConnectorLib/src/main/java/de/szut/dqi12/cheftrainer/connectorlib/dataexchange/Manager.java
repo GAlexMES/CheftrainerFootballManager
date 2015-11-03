@@ -45,12 +45,6 @@ public class Manager {
 	}
 
 	
-	private String formatDouble(Double d){
-		NumberFormat f = NumberFormat.getInstance();
-		f.setGroupingUsed(false);
-		return f.format(d);
-	}
-
 	public void addTransaction(Transaction transaction) {
 		this.transactions.add(transaction);
 	}

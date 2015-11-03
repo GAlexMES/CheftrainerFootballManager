@@ -15,6 +15,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -27,11 +28,12 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 
 /**
  * This is the controller of the transfer-marked gui-component.
+ * 
  * @author Robin
  *
  */
 
-public class TransferMarketController {
+public class TransferMarketController implements ControllerInterface {
 	// @FXML
 	// GridPane market;
 	@FXML
@@ -42,66 +44,118 @@ public class TransferMarketController {
 	private TableColumn<MarketPlayer, String> pointsCol;
 	@FXML
 	private TableColumn<MarketPlayer, String> werthCol;
-	private ObservableList<MarketPlayer> data;
+
 	private ArrayList<Player> players;
 	private ArrayList<Transaction> transactions;
 
+	private MarketPlayer selectedMarketPlayer;
+
 	public TransferMarketController() {
-		Session session = Controller.getInstance().getSession();
-		Community com = session.getCurrentCommunity();
-		data = FXCollections.observableArrayList();
-		players = (ArrayList<Player>) com.getMarket().getPlayers();
-		transactions = (ArrayList<Transaction>) com.getManagers()
-				.get(Controller.getInstance().getSession().getCurrentManagerID())
-				.getTransactions();
-	}
-	/**
-	 * This method have to be called before all other methods.
-	 * Initialization of gui-components,
-	 */
-	public void init() {
-		addListener();
-		addAll();
-	}
-	/**
-	 * Adds all Players to table
-	 */
-	public void addAll() {
-		for (Player p : players) {
-			data.add(new MarketPlayer(p.getName(),
-					String.valueOf(p.getPoints()), String.valueOf(p.getWorth())));
-		}
-		nameCol.setCellValueFactory(data -> data.getValue().getPlayerName());
-		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
-		werthCol.setCellValueFactory(data -> data.getValue().getWerth());
-		marketTable.setItems(data);
-	}
-	/**
-	 * Fills new players into table.
-	 * @param players new players
-	 */
-	public void reloadTable(ArrayList<Player> players) {
-		data.clear();
-		this.players = players;
-		addAll();
-	}
-	
-	/**
-	 * Adds a row into the table.
-	 * @param player Data for one Row.
-	 */
-	public void addRow(MarketPlayer player) {
-		data.add(player);
-		nameCol.setCellValueFactory(data -> data.getValue().getPlayerName());
-		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
-		werthCol.setCellValueFactory(data -> data.getValue().getWerth());
-		marketTable.setItems(data);
+
 	}
 
 	/**
-	 * Is called when the Button "add player" is clicked.
-	 * Opens a dialog for adding a player to transfer-marked.
+	 * This method have to be called before all other methods. Initialization of
+	 * gui-components,
 	 */
+	@Override
+	public void init() {
+	}
+
+	/**
+	 * Adds all Players to table
+	 */
+	@FXML
+	public void initialize() {
+		marketTable.setItems(Controller.getInstance().getSession()
+				.getMarketPlayerObservable());
+		nameCol.setCellValueFactory(data -> data.getValue().getPlayerName());
+		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
+		werthCol.setCellValueFactory(data -> data.getValue().getWerth());
+
+		marketTable
+				.getSelectionModel()
+				.selectedItemProperty()
+				.addListener(
+						(observable, oldValue, newValue) -> playerPressed(newValue));
+
+		marketTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent mouseEvent) {
+				if (mouseEvent.getClickCount() == 2) {
+					onDoubleClick();
+				}
+			}
+		});
+	}
+
+	private void onDoubleClick() {
+		System.out.println(selectedMarketPlayer.getWerth().get());
+
+		GridPane dialog = new GridPane();
+		Stage dialogStage = new Stage();
+
+		// INDEXE MUESSTEN MOEGLICHERWEISE UEBERARBEITET WERDEN
+
+		dialog.add(new Label("Name of the Player "), 0, 0);
+		dialog.add(new Label(selectedMarketPlayer.getPlayerName().get()), 0, 1);
+		dialog.add(new Label("Actual Points "), 1, 0);
+		dialog.add(new Label(selectedMarketPlayer.getPoints().get()), 1, 1);
+		dialog.add(new Label("Werth "), 2, 0);
+		dialog.add(new Label(selectedMarketPlayer.getWerth().get()), 2, 1);
+		TextField field = new TextField();
+		field.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent t) {
+				char ar[] = t.getCharacter().toCharArray();
+				char ch = ar[t.getCharacter().toCharArray().length - 1];
+				if (!(ch >= '0' && ch <= '9')) {
+					t.consume();
+				}
+			}
+		});
+		Button but = new Button("offer");
+		but.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event) {
+				dialogStage.close();
+				Player currentPlayer;
+				if (Integer.valueOf(field.getText()) >= Integer.valueOf(selectedMarketPlayer
+						.getWerth().toString())) {
+					for (Player player : players) {
+						if (player.getName().equals(
+								selectedMarketPlayer.getPlayerName().toString())) {
+							currentPlayer = player;
+							Controller.getInstance().sendOffer(currentPlayer,
+									Integer.valueOf(field.getText()));
+							break;
+						}
+					}
+				} else {
+					// Hinweis anzeigen: Falsches angebot
+				}
+				//
+			}
+		});
+		dialog.add(field, 3, 1);
+		dialog.add(but, 4, 1);
+		dialogStage.setResizable(false);
+		dialogStage.setTitle("Players");
+		dialogStage.initModality(Modality.WINDOW_MODAL);
+		Scene scene = new Scene(dialog);
+
+		dialogStage.setScene(scene);
+		dialogStage.showAndWait();
+	}
+
+	private void playerPressed(MarketPlayer marketPlayer) {
+		this.selectedMarketPlayer = marketPlayer;
+	}
+
+	/**
+	 * Is called when the Button "add player" is clicked. Opens a dialog for
+	 * adding a player to transfer-marked.
+	 */
+	@FXML
 	public void addPlayer() {
 		GridPane dialog = new GridPane();
 		Button but;
@@ -162,11 +216,12 @@ public class TransferMarketController {
 	}
 
 	/**
-	 * Is called when the Button "show offers" is called.
-	 * Opens a dialog which shows all offers possibility's for every player.
+	 * Is called when the Button "show offers" is called. Opens a dialog which
+	 * shows all offers possibility's for every player.
 	 */
+	@FXML
 	public void showOffers() {
-		
+
 		GridPane dialog = new GridPane();
 		Button but;
 		int index = 1;
@@ -174,7 +229,7 @@ public class TransferMarketController {
 		dialog.add(new Label("price"), 1, 0);
 		dialog.add(new Label("action"), 2, 0);
 		for (Transaction tr : transactions) {
-			if(tr.isOutgoing()){
+			if (tr.isOutgoing()) {
 				but = new Button("remove from market");
 				but.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
@@ -183,7 +238,7 @@ public class TransferMarketController {
 						Controller.getInstance().answerOffer(tr, false);
 					}
 				});
-			}else{
+			} else {
 				but = new Button("accept");
 				but.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -210,77 +265,15 @@ public class TransferMarketController {
 		dialogStage.showAndWait();
 	}
 
-	/**
-	 * Adds a listener to every Row.
-	 */
-	public void addListener() {
-		marketTable.setRowFactory(tv -> {
-			TableRow<MarketPlayer> row = new TableRow<>();
-			row.setOnMouseClicked(event -> {
-				if (event.getClickCount() == 2 && (!row.isEmpty())) {
-					MarketPlayer rowData = row.getItem();
-					System.out.println(rowData.getWerth().get());
+	@Override
+	public void enterPressed() {
+		// TODO Auto-generated method stub
 
-					GridPane dialog = new GridPane();
-					Stage dialogStage = new Stage();
-					
-					//INDEXE MUESSTEN MOEGLICHERWEISE UEBERARBEITET WERDEN
-					
-					dialog.add(new Label("Name of the Player "), 0, 0);
-					dialog.add(new Label(rowData.getPlayerName().get()), 0, 1);
-					dialog.add(new Label("Actual Points "), 1, 0);
-					dialog.add(new Label(rowData.getPoints().get()), 1, 1);
-					dialog.add(new Label("Werth "), 2, 0);
-					dialog.add(new Label(rowData.getWerth().get()), 2, 1);
-					TextField field = new TextField();
-					field.addEventFilter(KeyEvent.KEY_TYPED,
-							new EventHandler<KeyEvent>() {
-								public void handle(KeyEvent t) {
-									char ar[] = t.getCharacter().toCharArray();
-									char ch = ar[t.getCharacter().toCharArray().length - 1];
-									if (!(ch >= '0' && ch <= '9')) {
-										t.consume();
-									}
-								}
-							});
-					Button but = new Button("offer");
-					but.setOnAction(new EventHandler<ActionEvent>() {
-						@Override
-						public void handle(ActionEvent event) {
-							dialogStage.close();
-							Player currentPlayer;
-							if (Integer.valueOf(field.getText()) >= Integer
-									.valueOf(rowData.getWerth().toString())) {
-								for (Player player : players) {
-									if (player.getName().equals(
-											rowData.getPlayerName().toString())) {
-										currentPlayer = player;
-										Controller.getInstance()
-												.sendOffer(
-														currentPlayer,
-														Integer.valueOf(field
-																.getText()));
-										break;
-									}
-								}
-							} else {
-								// Hinweis anzeigen: Falsches angebot
-							}
-							//
-						}
-					});
-					dialog.add(field, 3, 1);
-					dialog.add(but, 4, 1);
-					dialogStage.setResizable(false);
-					dialogStage.setTitle("Players");
-					dialogStage.initModality(Modality.WINDOW_MODAL);
-					Scene scene = new Scene(dialog);
+	}
 
-					dialogStage.setScene(scene);
-					dialogStage.showAndWait();
-				}
-			});
-			return row;
-		});
+	@Override
+	public void messageArrived() {
+		// TODO Auto-generated method stub
+
 	}
 }

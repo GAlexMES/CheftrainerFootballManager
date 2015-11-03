@@ -27,6 +27,7 @@ public class Session {
 	private ClientHandler clientHandler;
 	
 	private ObservableList<Manager> managerTableData= FXCollections.observableArrayList();
+	private ObservableList<MarketPlayer> transferMarketTableData = FXCollections.observableArrayList();
 
 	private HashMap<Integer, Community> communityIDMap;
 	private HashMap<String, Community> communityNameMap;
@@ -40,6 +41,12 @@ public class Session {
 		String communityName = currentManager.getCommunityNameProperty().getValue();
 		Community currentCommunity = communityNameMap.get(communityName);
 		currentCommunityID = currentCommunity.getCommunityID();
+		
+		transferMarketTableData =FXCollections.observableArrayList();
+		List<Player> playerList= currentCommunity.getMarket().getPlayers();
+		for(Player  p : playerList){
+			transferMarketTableData.add(p.getMarketPlayer());
+		}
 	}
 
 	public void setCurrentManager(int currentManager) {
@@ -53,6 +60,7 @@ public class Session {
 	public void setCurrentCommunityID(int currentCommunity) {
 		this.currentCommunityID = currentCommunity;
 	}
+	
 
 	public Session() {
 		communityIDMap = new HashMap<>();
@@ -155,6 +163,10 @@ public class Session {
 
 	public ObservableList<Manager> getManagerObservable() {
 		return managerTableData;
+	}
+	
+	public ObservableList<MarketPlayer> getMarketPlayerObservable() {
+		return transferMarketTableData;
 	}
 
 

@@ -1,5 +1,11 @@
 package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+
 import org.json.JSONObject;
 
 
@@ -21,31 +27,25 @@ public class Player {
 	private String teamName;
 	private boolean plays;
 	private PlayerLabel label;
-		
 	
-	public PlayerLabel getLabel() {
-		return label;
-	}
+	private MarketPlayer marketPlayer;
 
-	public void setLabel(PlayerLabel label) {
-		this.label = label;
-	}
-
-	public boolean isPlays() {
-		return plays;
-	}
-
+	
 	public Player(){
 	}
 	
 	public Player(JSONObject playerJSON){
 		getPlayerFromJSON(playerJSON);
+		marketPlayer = new MarketPlayer(name, String.valueOf(points), String.valueOf(worth),this);
 	}
 	
 	public Player(int worth, String name, int points, String position) {
 		this.worth = worth;
 		this.name = name;
 		this.points = points;
+		
+		marketPlayer = new MarketPlayer(name, String.valueOf(points), String.valueOf(worth),this);
+		
 		goals = 0;
 		redCard = false;
 		yellowRedCard = false;
@@ -55,6 +55,8 @@ public class Player {
 		this.name = name;
 		this.points = points;
 		this.teamName = teamName;
+		
+		marketPlayer = new MarketPlayer(name, String.valueOf(points), "no information available",this);
 	}
 	
 	public Player(String name, int points) {
@@ -170,5 +172,20 @@ public class Player {
 		this.setPlays(playerJSON.getBoolean("plays"));
 	}
 	
+	public PlayerLabel getLabel() {
+		return label;
+	}
+
+	public void setLabel(PlayerLabel label) {
+		this.label = label;
+	}
+
+	public boolean isPlays() {
+		return plays;
+	}
+	
+	public MarketPlayer getMarketPlayer(){
+		return marketPlayer;
+	}
 
 }
