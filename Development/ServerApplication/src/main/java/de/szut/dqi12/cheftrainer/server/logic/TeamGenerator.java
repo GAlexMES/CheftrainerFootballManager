@@ -2,12 +2,15 @@ package de.szut.dqi12.cheftrainer.server.logic;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
 
 /**
@@ -27,6 +30,14 @@ public class TeamGenerator {
 			+ NUMBER_OF_OFFENSIVE;
 	public static final int TEAM_WORTH = 20000000;
 	public static final double TEAM_WORTH_TOLERANZ = 0.25;
+	
+	private final int DEFAULT_NUMBER_KEEPERS = 1;
+	private final int DEFAULT_NUMBER_OFFENSIVES = 2;
+	private final int DEFAULT_NUMBER_MIDDFIELDERS = 4;
+	private final int DEFAULT_NUMBER_DEFENDERS = 4;
+	
+	
+	private Map<String, Integer> formation;
 
 	private int teamWorth = 0;
 	private int goalkeepers = 0;
@@ -38,6 +49,8 @@ public class TeamGenerator {
 	private int heighestPlayerID;
 	private int communityID;
 	private int managerID;
+	
+
 
 	private boolean breakFlag = false;
 
@@ -61,16 +74,27 @@ public class TeamGenerator {
 		this.managerID = managerID;
 		this.communityID = communityID;
 		playerList = createRandomTeam();
-
+		
 		if (correctWorth()) {
-
+			playerList= matchPlayersInFormation(playerList);
 			playerList.forEach(p -> updateDatabaseWithPlayers(p));
-
+			DatabaseRequests.setManagersFormation(managerID, DEFAULT_NUMBER_DEFENDERS,DEFAULT_NUMBER_MIDDFIELDERS,DEFAULT_NUMBER_OFFENSIVES);
 			LOGGER.info("Team generation: 100% done - completed!");
 		} else {
 			LOGGER.error("Team generation: failed, something went wrong!");
 		}
 		return teamWorth;
+	}
+	
+	public List<Player> matchPlayersInFormation(List<Player> playerList){
+		for(Player p : playerList){
+			String position = p.getPosition();
+			if (formation.get(position)>0){
+				p.setPlays(true);
+				formation.put(position, formation.get(position) -1);
+			}
+		}
+		return playerList;
 	}
 
 	/**
@@ -88,10 +112,9 @@ public class TeamGenerator {
 			Player p = getNewRandomPlayer();
 			if (p != null && !idList.contains(p.getID())) {
 				idList.add(p.getID());
-				if (!isPlayerInUse(p.getID())
-						&& playerFitsInTeam(p.getPositionString())) {
+				if (!isPlayerInUse(p.getID())&& playerFitsInTeam(p.getPosition())) {
 					playerList.add(p);
-					updatePlayerPerPosition(p.getPositionString(), 1);
+					updatePlayerPerPosition(p.getPosition(), 1);
 					teamWorth += p.getWorth();
 					LOGGER.info("Team generation: "
 							+ ((goalkeepers + defenders + middfielders + offensives) * 6.5)
@@ -131,7 +154,6 @@ public class TeamGenerator {
 		} else if (greaterThanMin) {
 			findBetterPlayer(INT_COMPARATOR);
 		}
-
 		if (!breakFlag) {
 			return correctWorth();
 		} else {
@@ -184,14 +206,14 @@ public class TeamGenerator {
 
 				boolean betterWorth = com.compare(newPlayer.getWorth(),
 						currentPlayer.getWorth()) < 0;
-				boolean samePosition = newPlayer.getPositionString().equals(
-						currentPlayer.getPositionString());
+				boolean samePosition = newPlayer.getPosition().equals(
+						currentPlayer.getPosition());
 				boolean notInUse = !isPlayerInUse(newPlayer.getID())
 						&& !currentPlayerIDs.contains(newPlayer.getID());
 
 				if (betterWorth && samePosition && notInUse) {
-					if (newPlayer.getPositionString().equals(
-							currentPlayer.getPositionString())) {
+					if (newPlayer.getPosition().equals(
+							currentPlayer.getPosition())) {
 						teamWorth -= currentPlayer.getWorth();
 						teamWorth += newPlayer.getWorth();
 						playerList.remove(currentPlayer);
@@ -211,7 +233,7 @@ public class TeamGenerator {
 	 *            the player, that should be mapped to the manager
 	 */
 	private void updateDatabaseWithPlayers(Player p) {
-		DatabaseRequests.addPlayerToManager(managerID, p.getID());
+		DatabaseRequests.addPlayerToManager(managerID, p.getID(), p.plays());
 	}
 
 	/**
@@ -288,5 +310,10 @@ public class TeamGenerator {
 		defenders = 0;
 		middfielders = 0;
 		offensives = 0;
+		formation = new HashMap<>();
+		formation.put(Position.KEEPER,DEFAULT_NUMBER_KEEPERS);
+		formation.put(Position.DEFENCE,DEFAULT_NUMBER_DEFENDERS);
+		formation.put(Position.MIDDLE,DEFAULT_NUMBER_MIDDFIELDERS);
+		formation.put(Position.OFFENCE,DEFAULT_NUMBER_MIDDFIELDERS);
 	}
 }

@@ -13,16 +13,28 @@ public class Player {
 	private String name;
 	private int points;
 	private int number;
-	private String positionString;
-	private Position position;
+	private String position;
 	private int ID;
 	private int goals;
 	private boolean redCard;
 	private boolean yellowRedCard;
 	private String teamName;
 	private boolean plays;
+	private PlayerLabel label;
 		
 	
+	public PlayerLabel getLabel() {
+		return label;
+	}
+
+	public void setLabel(PlayerLabel label) {
+		this.label = label;
+	}
+
+	public boolean isPlays() {
+		return plays;
+	}
+
 	public Player(){
 	}
 	
@@ -30,7 +42,7 @@ public class Player {
 		getPlayerFromJSON(playerJSON);
 	}
 	
-	public Player(int worth, String name, int points, Position position) {
+	public Player(int worth, String name, int points, String position) {
 		this.worth = worth;
 		this.name = name;
 		this.points = points;
@@ -50,39 +62,6 @@ public class Player {
 		this.points = points;
 	}
 	
-	
-	public String getTeamName() {
-		return teamName;
-	}
-
-	public void setTeamName(String teamName) {
-		this.teamName = teamName;
-	}
-
-	public int getGoals() {
-		return goals;
-	}
-
-	public void setGoals(int goals) {
-		this.goals = goals;
-	}
-
-	public boolean isRedCard() {
-		return redCard;
-	}
-
-	public void setRedCard(boolean redCard) {
-		this.redCard = redCard;
-	}
-
-	public boolean isYellowRedCard() {
-		return yellowRedCard;
-	}
-
-	public Position getPosition() {
-		return position;
-	}
-
 	public String getTeamName() {
 		return teamName;
 	}
@@ -123,14 +102,6 @@ public class Player {
 		ID = iD;
 	}
 
-	public String getPositionString() {
-		return positionString;
-	}
-
-	public void setPosition(String position) {
-		this.positionString = position;
-	}
-
 	public int getNumber() {
 		return number;
 	}
@@ -143,7 +114,7 @@ public class Player {
 		return worth;
 	}
 	
-	public Position getPosition() {
+	public String getPosition() {
 		return position;
 	}
 
@@ -168,7 +139,11 @@ public class Player {
 	}
 	
 	public boolean plays(){
-		return this.plays();
+		return this.plays;
+	}
+	
+	public void setPosition(String position){
+		this.position = position;
 	}
 	
 	public JSONObject getJSONFromPlayer() {
@@ -178,8 +153,9 @@ public class Player {
 		retval.put("number", this.getNumber());
 		retval.put("points", this.getPoints());
 		retval.put("worth", this.getWorth());
-		retval.put("position", this.getPositionString());
+		retval.put("position", this.getPosition());
 		retval.put("team", this.getTeamName());
+		retval.put("plays", this.plays());
 		return retval;
 	}
 	
@@ -191,6 +167,7 @@ public class Player {
 		this.setWorth(playerJSON.getInt("worth"));
 		this.setPosition(playerJSON.getString("position"));
 		this.setTeamName(playerJSON.getString("team"));
+		this.setPlays(playerJSON.getBoolean("plays"));
 	}
 	
 

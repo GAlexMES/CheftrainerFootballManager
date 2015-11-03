@@ -23,15 +23,15 @@
   </rowConstraints>
    <children>
       <Label text="Keeper" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-      <Label text="Verteitigung1" GridPane.rowIndex="2" />
-      <Label text="Verteidigung2" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <Label text="Verteidigung3" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-      <Label text="Verteidigung4" GridPane.columnIndex="6" GridPane.rowIndex="2" />
-      <Label text="Mittelfeld1" GridPane.rowIndex="1" />
-      <Label text="Mittelfeld2" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <Label text="Mittelfeld3" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-      <Label text="Mittelfeld4" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-      <Label text="Mittelfeld5" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-      <Label text="Sturm1" GridPane.columnIndex="3" />
+      <Label text="Verteitigung" GridPane.rowIndex="2" />
+      <Label text="Verteidigung" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+      <Label text="Verteidigung" GridPane.columnIndex="4" GridPane.rowIndex="2" />
+      <Label text="Verteidigung" GridPane.columnIndex="6" GridPane.rowIndex="2" />
+      <Label text="Mittelfeld" GridPane.rowIndex="1" />
+      <Label text="Mittelfeld" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <Label text="Mittelfeld" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+      <Label text="Mittelfeld" GridPane.columnIndex="5" GridPane.rowIndex="1" />
+      <Label text="Mittelfeld" GridPane.columnIndex="6" GridPane.rowIndex="1" />
+      <Label text="Sturm" GridPane.columnIndex="3" />
    </children>
 </GridPane>

@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
+package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -7,11 +7,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -22,7 +25,11 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.listeners.EnterPressedListener;
+import de.szut.dqi12.cheftrainer.client.servercommunication.ConnectionRefusedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerManager;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
@@ -39,7 +46,9 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  * @author Alexander Brennecke
  *
  */
-public class LoginController {
+public class LoginController implements ControllerInterface {
+
+	public static String ON_ACTION_KEY = "LoginMessageArrived";
 
 	// LINK TO FXML ELEMENTS ON GUI
 	@FXML
@@ -58,6 +67,8 @@ public class LoginController {
 	private AnchorPane buttonPane;
 	@FXML
 	private AnchorPane mainPane;
+	@FXML
+	private Button loginButton;
 
 	// are used to show/hide the server details
 	private double mainPaneMaxSize;
@@ -84,6 +95,11 @@ public class LoginController {
 
 		serverDetailsPane.visibleProperty().bind(
 				showDetailsCheck.selectedProperty());
+
+		ObservableList<Node> childs = mainPane.getChildren();
+		DialogUtils.addOnClickListener(childs, new EnterPressedListener(this));
+
+		ControllerManager.getInstance().registerController(this, ON_ACTION_KEY);
 	}
 
 	/**
@@ -106,32 +122,39 @@ public class LoginController {
 	 */
 	@FXML
 	public void login() {
-		TextField[] textFields = { loginField, passwordField, ipField,
-				portField };
-		List<String> errorList = DialogUtils.checkInputs(textFields);
-		if (errorList.size() == 0) {
-			try {
-				doLogin();
-			} catch (IOException e) {
+		System.out.println("login presses");
+		if (!loginButton.isDisabled()){
+			System.out.println("button is not disabled");
+			TextField[] textFields = { loginField, passwordField, ipField,
+					portField };
+			List<String> errorList = DialogUtils.checkInputs(textFields);
+			if (errorList.size() == 0) {
+				loginButton.setDisable(true);
+				try {
+					doLogin();
+				} catch (IOException e) {
+					AlertUtils.createSimpleDialog("Login failed",
+							"Something went wrong during your login",
+							"Please check your server details!",
+							AlertType.ERROR);
+				}
+			} else {
+				String errorMessage = AlertUtils.WRONG_INPUTS;
+				for (String s : errorList) {
+					errorMessage += "\n " + s;
+				}
 				AlertUtils.createSimpleDialog("Login failed",
-						"Something went wrong during your login",
-						"Please check your server details!", AlertType.ERROR);
+						"Something went wrong during your login", errorMessage,
+						AlertType.ERROR);
 			}
-		} else {
-			String errorMessage = AlertUtils.WRONG_INPUTS;
-			for (String s : errorList) {
-				errorMessage += "\n " + s;
-			}
-			AlertUtils.createSimpleDialog("Login failed",
-					"Something went wrong during your login", errorMessage,
-					AlertType.ERROR);
 		}
 	}
 
 	/**
-	 * Is called, when all required input fields are filled. 
-	 * Creates a new server connection and sends a message with the required data for a login to the server.
-	 * It also initializes a few parameters.
+	 * Is called, when all required input fields are filled. Creates a new
+	 * server connection and sends a message with the required data for a login
+	 * to the server. It also initializes a few parameters.
+	 * 
 	 * @throws IOException
 	 */
 	private void doLogin() throws IOException {
@@ -167,14 +190,17 @@ public class LoginController {
 	}
 
 	/**
-	 * Creates a new Client with the given parameters in the input fields. 
+	 * Creates a new Client with the given parameters in the input fields.
+	 * 
 	 * @return
 	 * @throws IOException
 	 */
-	private Client createServerCon() throws IOException{
+	private Client createServerCon() throws IOException {
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
+		clientProps.addConnectionDiedListener(new ConnectionRefusedListener(
+				Controller.getInstance()));
 		Session session = Controller.getInstance().getSession();
 		Client serverCon;
 		if (session != null) {
@@ -206,7 +232,8 @@ public class LoginController {
 		try {
 			FXMLLoader loader = new FXMLLoader();
 			ClassLoader classLoader = getClass().getClassLoader();
-			URL fxmlFile = classLoader.getResource("sourcesFXML/Registration.fxml");
+			URL fxmlFile = classLoader
+					.getResource("sourcesFXML/Registration.fxml");
 			loader.setLocation(fxmlFile);
 			AnchorPane page = (AnchorPane) loader.load();
 
@@ -260,5 +287,21 @@ public class LoginController {
 
 	public RegistrationController getRegistrationController() {
 		return registrationController;
+	}
+
+	@Override
+	public void init() {
+		// NOT USED HERE
+	}
+
+	@Override
+	public void enterPressed() {
+		login();
+	}
+
+	@Override
+	public void messageArrived() {
+		loginButton.setDisable(false);
+		System.out.println("button is now enabled");
 	}
 }

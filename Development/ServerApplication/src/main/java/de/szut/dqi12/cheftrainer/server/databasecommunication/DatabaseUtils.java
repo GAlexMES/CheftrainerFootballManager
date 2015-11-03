@@ -120,6 +120,8 @@ public class DatabaseUtils {
 			String table, String whereCondition) throws IOException {
 		String sqlQuery = "SELECT " + coloumName + " FROM " + table + " WHERE "
 				+ whereCondition;
+		String[] splittedColoumName = coloumName.split("\\.");
+		coloumName = splittedColoumName[splittedColoumName.length-1];
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
 			if (!isResultSetEmpty(rs)) {

@@ -38,6 +38,7 @@ public class ClientUpdate {
 		managerJSON.put("Name", m.getName());
 		managerJSON.put("ID", m.getID());
 		managerJSON.put("Team",teamToJson(m.getPlayers()));
+		managerJSON.put("Formation", m.getFormation().toJSON());
 		return managerJSON;
 	}
 	

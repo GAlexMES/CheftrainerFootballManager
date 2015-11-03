@@ -3,17 +3,18 @@ package de.szut.dqi12.cheftrainer.client.callables;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.fxml.FXMLLoader;
+
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
-import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesController;
+import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
@@ -36,11 +37,11 @@ public class UserCommunityList extends CallableAbstract {
 	 */
 	@Override
 	public void messageArrived(Message message) {
-		System.out.println(message.getMessageContent());
 		JSONObject jsonMessage = new JSONObject(message.getMessageContent());
 		switch (jsonMessage.getString("type")) {
 		case "init":
 			newList(jsonMessage);
+			UpdateUtils.initUpdateReceived();
 			break;
 		case "updateCommunity":
 			updateList(jsonMessage);
@@ -72,9 +73,7 @@ public class UserCommunityList extends CallableAbstract {
 				.getJSONObject("community"));
 		community.findeUsersManager(mesController.getSession().getUser()
 				.getUserName());
-		;
 		Controller.getInstance().getSession().addCommunity(community);
-		addCommunityToView(community);
 	}
 
 	/**
@@ -83,7 +82,9 @@ public class UserCommunityList extends CallableAbstract {
 	 * contain a {@link JSONArray} with information about at least one
 	 * {@link Community}
 	 * 
-	 * @param message the {@link JSONObject}, that fits with the conditions given above.
+	 * @param message
+	 *            the {@link JSONObject}, that fits with the conditions given
+	 *            above.
 	 */
 	private void newList(JSONObject message) {
 		String userName = mesController.getSession().getUser().getUserName();
@@ -91,29 +92,6 @@ public class UserCommunityList extends CallableAbstract {
 		List<Community> communities = jsonArrayToCommnityList(communityList,
 				userName);
 		Controller.getInstance().getSession().addCommunities(communities);
-		communities.forEach(c -> addCommunityToView(c));
-	}
-
-	/**
-	 * Displays the given list to the table of communities in the communities
-	 * frame
-	 * 
-	 * @param communities
-	 *            the List of the Communities, that should be displayed.
-	 * 
-	 */
-
-	private void addCommunityToView(Community community) {
-		FXMLLoader loader = GUIController.getInstance()
-				.getCurrentContentLoader();
-		CommunitiesController cc = loader.getController();
-		String name = community.getName();
-		// double money = community.getUsersManager().getMoney();
-		double teamWorth = community.getUsersManager().getTeamWorth();
-		// TODO: RANG!!
-		int rang = 0;
-		cc.addRow(name, teamWorth, rang);
-
 	}
 
 	/**
@@ -141,19 +119,24 @@ public class UserCommunityList extends CallableAbstract {
 	}
 
 	/**
-	 * This method parses a {@link JSONObject} to a {@link Community} object. Following keys must be available:
-	 * <li> ID -> Int
-	 * <li> Name -> String
-	 * <li> Managers -> {@link JSONArray}
-	 * @param communityJSON a {@link JSONObject}, that contains all of the keys above.
-	 * @return a {@link Community} object, created out of the data, given in the communityJSON.
+	 * This method parses a {@link JSONObject} to a {@link Community} object.
+	 * Following keys must be available: <li>ID -> Int <li>Name -> String <li>
+	 * Managers -> {@link JSONArray}
+	 * 
+	 * @param communityJSON
+	 *            a {@link JSONObject}, that contains all of the keys above.
+	 * @return a {@link Community} object, created out of the data, given in the
+	 *         communityJSON.
 	 */
 	private Community jsonToCommunity(JSONObject communityJSON) {
 		Community retval = new Community();
 		retval.setCommunityID(communityJSON.getInt("ID"));
 		retval.setName(communityJSON.getString("Name"));
 		JSONArray managersJSON = communityJSON.getJSONArray("Managers");
-		retval.addManagers(createManagerList(managersJSON));
+		retval.addManagers(createManagerList(managersJSON, retval.getName()));
+		
+		String userName = Controller.getInstance().getSession().getUser().getUserName();
+		retval.findeUsersManager(userName);
 		return retval;
 	}
 
@@ -166,22 +149,29 @@ public class UserCommunityList extends CallableAbstract {
 	 * @return a List with all Managers in it, that could be created with the
 	 *         given JSONArray
 	 */
-	private List<Manager> createManagerList(JSONArray managersJSON) {
+	private List<Manager> createManagerList(JSONArray managersJSON, String communityName) {
 		List<Manager> retval = new ArrayList<>();
 		for (int i = 0; i < managersJSON.length(); i++) {
 			JSONObject managerJSON = new JSONObject(managersJSON.get(i)
 					.toString());
 			String name = managerJSON.getString("Name");
-			double money = new Double(managerJSON.getDouble("Money"));
 			int points = managerJSON.getInt("Points");
-			Manager manager = new Manager(name, money, points);
-			manager.setID(managerJSON.getInt("ID"));
+			
 			JSONArray managersTeam = managerJSON.getJSONArray("Team");
+			
+			int teamWorth = 0;
 			List<Player> playerList = new ArrayList<>();
 			for (int m = 0; m < managersTeam.length(); m++) {
 				JSONObject playerJSON = managersTeam.getJSONObject(m);
-				playerList.add(new Player(playerJSON));
+				Player tempPlayer = new Player(playerJSON);
+				playerList.add(tempPlayer);
+				teamWorth = teamWorth +tempPlayer.getWorth();
 			}
+			
+			Manager manager = new Manager(name, teamWorth, points,communityName);
+			JSONObject formationJSON = managerJSON.getJSONObject("Formation");
+			manager.setFormation(new Formation(formationJSON));
+			manager.setID(managerJSON.getInt("ID"));
 			manager.addPlayer(playerList);
 			retval.add(manager);
 		}

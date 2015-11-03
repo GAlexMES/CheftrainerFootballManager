@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ClientHandler;
 
@@ -19,45 +21,84 @@ public class Session {
 	private int userID;
 	private User user;
 	private Client clientSocket;
-	private int currentManager;
-	private int currentCommunity;
+	private int currentManagerID;
+	private int currentCommunityID;
 
 	private ClientHandler clientHandler;
+	
+	private ObservableList<Manager> managerTableData= FXCollections.observableArrayList();
 
-	private HashMap<Integer, Community> communityMap;
+	private HashMap<Integer, Community> communityIDMap;
+	private HashMap<String, Community> communityNameMap;
 
-	public int getCurrentManager() {
-		return currentManager;
+	public int getCurrentManagerID() {
+		return currentManagerID;
+	}
+	
+	public void setCurrentManager(Manager currentManager) {
+		setCurrentManager(currentManager.getID());
+		String communityName = currentManager.getCommunityNameProperty().getValue();
+		Community currentCommunity = communityNameMap.get(communityName);
+		currentCommunityID = currentCommunity.getCommunityID();
 	}
 
 	public void setCurrentManager(int currentManager) {
-		this.currentManager = currentManager;
+		this.currentManagerID = currentManager;
 	}
 
-	public int getCurrentCommunity() {
-		return currentCommunity;
+	public int getCurrentCommunityID() {
+		return currentCommunityID;
 	}
 
-	public void setCurrentCommunity(int currentCommunity) {
-		this.currentCommunity = currentCommunity;
+	public void setCurrentCommunityID(int currentCommunity) {
+		this.currentCommunityID = currentCommunity;
 	}
 
 	public Session() {
-		communityMap = new HashMap<>();
+		communityIDMap = new HashMap<>();
+		communityNameMap = new HashMap<>();
 	}
-
+	
+	public Community getCurrentCommunity(){
+		return communityIDMap.get(currentCommunityID);
+	}
+	
+	public Community getCommunity(Integer id){
+		return communityIDMap.get(id);
+	}
+	
+	public Community getCommunity(String name){
+		return communityNameMap.get(name);
+	}
+	
 	public void updateCommunities(List<Community> communities) {
-		communityMap = new HashMap<>();
+		communityIDMap = new HashMap<>();
 		addCommunities(communities);
 	}
 
 	public void addCommunity(Community community) {
-		communityMap.put(community.getCommunityID(), community);
+		communityIDMap.put(community.getCommunityID(), community);
+		communityNameMap.put(community.getName(), community);
+		community.findeUsersManager(user.getUserName());
+		addManagerToTable(community.getUsersManager());
 	}
 
 	public void addCommunities(List<Community> communities) {
+		List<Manager> managerList = new ArrayList<>();
 		for (Community c : communities) {
-			communityMap.put(c.getCommunityID(), c);
+			communityIDMap.put(c.getCommunityID(), c);
+			communityNameMap.put(c.getName(), c);
+			c.findeUsersManager(user.getUserName());
+			managerList.add(c.getUsersManager());
+		}
+		addManagerToTable(managerList.toArray(new Manager[managerList.size()]));
+	}
+	
+	public void addManagerToTable(Manager... managers){
+		for(Manager m : managers){
+			if(m != null){
+				managerTableData.add(m);
+			}
 		}
 	}
 
@@ -96,18 +137,26 @@ public class Session {
 		this.userID = userID;
 	}
 
-	public HashMap<Integer, Community> getCommunityMap() {
-		return communityMap;
+	public HashMap<Integer, Community> getCommunityIDMap() {
+		return communityIDMap;
+	}
+	
+	public HashMap<String, Community> getCommunityNameMap() {
+		return communityNameMap;
 	}
 	
 	public List<Community> getCommunities(){
 		List<Community> retval = new ArrayList<Community>();
-		for(Integer s : communityMap.keySet()){
-			retval.add(communityMap.get(s));
+		for(Integer s : communityIDMap.keySet()){
+			retval.add(communityIDMap.get(s));
 		}
 		return retval;
 	}
-	
+
+	public ObservableList<Manager> getManagerObservable() {
+		return managerTableData;
+	}
+
 
 	/**
 	 * Should only be used on the server side.

@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
+package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -6,9 +6,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -17,7 +20,12 @@ import javafx.stage.Stage;
 
 import org.json.JSONObject;
 
+import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.listeners.EnterPressedListener;
+import de.szut.dqi12.cheftrainer.client.servercommunication.ConnectionRefusedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerManager;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
@@ -34,7 +42,9 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  * @author Alexander Brennecke
  *
  */
-public class RegistrationController {
+public class RegistrationController implements ControllerInterface {
+
+	public static String ON_ACTION_KEY = "RegistrationMessageArrived";
 
 	private Stage dialogStage;
 
@@ -63,6 +73,8 @@ public class RegistrationController {
 	private TextField portField;
 	@FXML
 	private TextField ipField;
+	@FXML
+	private Button registrationButton;
 
 	// are used to show/hide the server details
 	private double mainPaneMaxSize;
@@ -89,6 +101,11 @@ public class RegistrationController {
 
 		serverDetailsPane.visibleProperty().bind(
 				showDetailsCheck.selectedProperty());
+
+		ObservableList<Node> childs = registrationPane.getChildren();
+		DialogUtils.addOnClickListener(childs, new EnterPressedListener(this));
+
+		ControllerManager.getInstance().registerController(this, ON_ACTION_KEY);
 	}
 
 	public void setDialogStage(Stage dialogStage) {
@@ -124,7 +141,8 @@ public class RegistrationController {
 	@FXML
 	public void register() {
 		List<String> errorList = checkInputs();
-		if (errorList.size() == 0) {
+		if (!registrationButton.isDisabled() && errorList.size() == 0) {
+			registrationButton.setDisable(true);
 			try {
 				createServerConnection();
 				Thread.sleep(800);
@@ -207,6 +225,8 @@ public class RegistrationController {
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
+		clientProps.addConnectionDiedListener(new ConnectionRefusedListener(
+				Controller.getInstance()));
 		try {
 			serverCon = ServerConnection.createServerConnection(clientProps);
 		} catch (IOException e) {
@@ -241,9 +261,23 @@ public class RegistrationController {
 		});
 	}
 
+	@Override
+	public void init() {
+		// NOTHING TO DO HERE
+	}
+
+	@Override
+	public void enterPressed() {
+		register();
+	}
+
 	// GETTER AND SETTER
 	public void setLoginController(LoginController loginController) {
 		this.loginController = loginController;
 	}
 
+	@Override
+	public void messageArrived() {
+		registrationButton.setDisable(false);
+	}
 }

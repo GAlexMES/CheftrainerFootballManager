@@ -22,7 +22,14 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+
+/**
+ * This is the controller of the transfer-marked gui-component.
+ * @author Robin
+ *
+ */
 
 public class TransferMarketController {
 	// @FXML
@@ -40,24 +47,25 @@ public class TransferMarketController {
 	private ArrayList<Transaction> transactions;
 
 	public TransferMarketController() {
-		Community com = Controller
-				.getInstance()
-				.getSession()
-				.getCommunityMap()
-				.get(Controller.getInstance().getSession()
-						.getCurrentCommunity());
+		Session session = Controller.getInstance().getSession();
+		Community com = session.getCurrentCommunity();
 		data = FXCollections.observableArrayList();
 		players = (ArrayList<Player>) com.getMarket().getPlayers();
 		transactions = (ArrayList<Transaction>) com.getManagers()
-				.get(Controller.getInstance().getSession().getCurrentManager())
+				.get(Controller.getInstance().getSession().getCurrentManagerID())
 				.getTransactions();
 	}
-
+	/**
+	 * This method have to be called before all other methods.
+	 * Initialization of gui-components,
+	 */
 	public void init() {
 		addListener();
 		addAll();
 	}
-
+	/**
+	 * Adds all Players to table
+	 */
 	public void addAll() {
 		for (Player p : players) {
 			data.add(new MarketPlayer(p.getName(),
@@ -68,13 +76,20 @@ public class TransferMarketController {
 		werthCol.setCellValueFactory(data -> data.getValue().getWerth());
 		marketTable.setItems(data);
 	}
-
+	/**
+	 * Fills new players into table.
+	 * @param players new players
+	 */
 	public void reloadTable(ArrayList<Player> players) {
 		data.clear();
 		this.players = players;
 		addAll();
 	}
-
+	
+	/**
+	 * Adds a row into the table.
+	 * @param player Data for one Row.
+	 */
 	public void addRow(MarketPlayer player) {
 		data.add(player);
 		nameCol.setCellValueFactory(data -> data.getValue().getPlayerName());
@@ -83,6 +98,10 @@ public class TransferMarketController {
 		marketTable.setItems(data);
 	}
 
+	/**
+	 * Is called when the Button "add player" is clicked.
+	 * Opens a dialog for adding a player to transfer-marked.
+	 */
 	public void addPlayer() {
 		GridPane dialog = new GridPane();
 		Button but;
@@ -142,11 +161,13 @@ public class TransferMarketController {
 		dialogStage.showAndWait();
 	}
 
+	/**
+	 * Is called when the Button "show offers" is called.
+	 * Opens a dialog which shows all offers possibility's for every player.
+	 */
 	public void showOffers() {
 		
 		GridPane dialog = new GridPane();
-		
-
 		Button but;
 		int index = 1;
 		dialog.add(new Label("player"), 0, 0);
@@ -189,6 +210,9 @@ public class TransferMarketController {
 		dialogStage.showAndWait();
 	}
 
+	/**
+	 * Adds a listener to every Row.
+	 */
 	public void addListener() {
 		marketTable.setRowFactory(tv -> {
 			TableRow<MarketPlayer> row = new TableRow<>();
@@ -248,7 +272,7 @@ public class TransferMarketController {
 					dialog.add(field, 3, 1);
 					dialog.add(but, 4, 1);
 					dialogStage.setResizable(false);
-					dialogStage.setTitle("SPIELER");
+					dialogStage.setTitle("Players");
 					dialogStage.initModality(Modality.WINDOW_MODAL);
 					Scene scene = new Scene(dialog);
 

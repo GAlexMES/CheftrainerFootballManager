@@ -12,6 +12,11 @@ import org.apache.log4j.chainsaw.Main;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts.BarChartController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts.LineChartController;
 
+/**
+ * This is the controller for the different charts.
+ * @author Robin
+ *
+ */
 public class StatisticsController {
 
 	private BarChartController barController;
@@ -20,6 +25,10 @@ public class StatisticsController {
 	@FXML
 	private GridPane stats;
 
+	/**
+	 * This method have to be called before all other methods
+	 * Initialization of gui-components
+	 */
 	public void init() {
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(Main.class.getResource("stats/BarChart.fxml"));
@@ -41,10 +50,9 @@ public class StatisticsController {
 		lineController.init();
 	}
 
-	private void getData() {
-		// vom Controller Daten beziehen!
-	}
-
+	/**
+	 * Fills the LineChart with data
+	 */
 	public void setLineChart() {
 
 		// Muell Anfang
@@ -63,7 +71,9 @@ public class StatisticsController {
 		stats.getChildren().set(0, lineController.getChart());
 
 	}
-
+	/**
+	 * Fills the BarChart with data
+	 */
 	public void setBarChart() {
 		// Muell Anfang
 		HashMap<String, Integer> map = new HashMap<String, Integer>();

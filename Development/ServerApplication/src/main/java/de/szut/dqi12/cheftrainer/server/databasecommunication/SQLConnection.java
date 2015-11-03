@@ -11,7 +11,6 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
 
 /**
@@ -59,7 +58,7 @@ public class SQLConnection {
 	 *            to the db file
 	 */
 	private void loadDB(String path) {
-
+		LOGGER.info("Connecting to the database file!");
 		final String url = "jdbc:sqlite:" + path;
 
 		try {
@@ -84,7 +83,7 @@ public class SQLConnection {
 
 			statement.executeQuery("ATTACH '" + name + "' as "
 					+ name.substring(0, name.length() - 3));
-
+			LOGGER.info("Connecting to the database file was succesfull!");
 		} catch (SQLException e) {
 			handleSQLException(e);
 		}
@@ -119,12 +118,12 @@ public class SQLConnection {
 		if (sqle.getMessage().contains(SQLEXCEPTION_NORESULT)) {
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_ERROR)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
-			System.err.print(sqLiteError);
+			LOGGER.error(sqLiteError);
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_BUSY)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
-			System.err.print(sqLiteError);
+			LOGGER.error(sqLiteError);
 		} else {
-			sqle.printStackTrace();
+			LOGGER.error(sqle.getLocalizedMessage());
 		}
 	}
 

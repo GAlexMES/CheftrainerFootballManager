@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import de.szut.dqi12.cheftrainer.connectorlib.messages.HandshakeMapperCreator;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
@@ -23,15 +25,20 @@ public class ServerHandler implements Runnable {
 	private BufferedReader reader;
 	private PrintWriter writer;
 	private MessageController messageController;
+	private ConnectionDiedListener cdl;
+	
+	private final static Logger LOGGER = Logger.getLogger(ServerHandler.class);
 
 	/**
 	 * Constructor
 	 * 
 	 * @param socket
 	 */
-	public ServerHandler(Socket socket, ClientProperties clientProps)
+	public ServerHandler(Socket socket, ClientProperties clientProps, ConnectionDiedListener cdl)
 			throws Exception {
 
+		this.cdl = cdl;
+		
 		List<IDClass_Path_Mapper> idMappers = new ArrayList<IDClass_Path_Mapper>();
 		idMappers.addAll(clientProps.getIDMappers());
 		idMappers.add(HandshakeMapperCreator.getIDClassPathMapperForHandshake());
@@ -58,8 +65,13 @@ public class ServerHandler implements Runnable {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			LOGGER.error(ex.getStackTrace());
+		}
+		finally{
+			cdl.connectionDied();
 		}
 	}
+	
 
 	/**
 	 * This method will sent the given message, if the handshake was already

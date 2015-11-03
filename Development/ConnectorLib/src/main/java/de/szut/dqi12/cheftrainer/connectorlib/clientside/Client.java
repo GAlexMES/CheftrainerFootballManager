@@ -22,16 +22,18 @@ public class Client {
 	 */
 	public Client(ClientProperties clientProps) throws IOException{
 		this.clientProps = clientProps;
-		startConnection(clientProps.getServerIP(),clientProps.getPort());
+		startConnection(clientProps.getServerIP(),clientProps.getPort(),clientProps.getConnectionDiedListener());
 	}
+	
+	
 
 	/**
 	 * Builds a new Connection to a java server socket
 	 */
-	private void startConnection(String serverIP, int serverPort) throws IOException {
+	private void startConnection(String serverIP, int serverPort, ConnectionDiedListener cdl) throws IOException {
 		try {
 			socket = new Socket(serverIP,serverPort);
-			servHandler = new ServerHandler(socket,clientProps);
+			servHandler = new ServerHandler(socket,clientProps,cdl);
 			Thread readerThread = new Thread(servHandler);
 			readerThread.start();
 		} catch (IOException ex) {
@@ -62,4 +64,6 @@ public class Client {
 	public ServerHandler getServerHandler(){
 		return servHandler;
 	}
+	
+	
 }

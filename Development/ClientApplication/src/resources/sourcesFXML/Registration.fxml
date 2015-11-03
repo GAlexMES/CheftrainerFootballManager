@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="registrationPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="553.0" prefWidth="475.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.RegistrationController">
+<AnchorPane fx:id="registrationPane" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="553.0" prefWidth="475.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.RegistrationController">
 	<children>
 		<Text layoutX="24.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cheftrainer Football Manager" textAlignment="CENTER">
 			<font>
@@ -86,7 +86,7 @@
 			<ButtonBar buttonMinWidth="0.0" layoutX="2.0" prefHeight="41.0" prefWidth="465.0">
 				<buttons>
 					<Button mnemonicParsing="false" onAction="#cancle" prefHeight="41.0" prefWidth="174.0" text="Abbrechen" />
-					<Button mnemonicParsing="false" onAction="#register" prefHeight="41.0" prefWidth="171.0" text="Registrieren" />
+					<Button fx:id="registrationButton" mnemonicParsing="false" onAction="#register" prefHeight="41.0" prefWidth="171.0" text="Registrieren" />
 				</buttons>
 			</ButtonBar>
 		</AnchorPane>

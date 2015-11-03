@@ -59,7 +59,7 @@ public class PlayerManagement {
 		String sqlQuery = "INSERT INTO Spieler (Name,Verein_ID, Position, Punkte, Marktwert, Nummer) "
 						+ "VALUES ('"+p.getName()+ "','"
 						+ teamID +"','"
-						+ p.getPositionString() +"','"
+						+ p.getPosition() +"','"
 						+ "0','"
 						+ worth + "','"
 						+ p.getNumber() +"')";
@@ -95,5 +95,15 @@ public class PlayerManagement {
 	private void addLeague(String name, String country) {
 		String sqlString = "INSERT INTO Liga ('Name','Land') VALUES('"+name+"','"+country+"')";
 		sqlCon.sendQuery(sqlString);
+	}
+
+	public void setManagersFormation(int managerID, int defenders,
+			int middfielders, int offensives) {
+		String sqlQuery = "UPDATE Manager Set Anzahl_Abwehr = "+defenders
+				+", Anzahl_Mittelfeld="+middfielders
+				+", Anzahl_Stuermer="+offensives+
+				" Where ID = "+managerID;
+		sqlCon.sendQuery(sqlQuery);
+		
 	}
 }
