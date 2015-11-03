@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.listeners.EnterPressedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ConnectionRefusedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
@@ -38,7 +39,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.listeners.EnterPressedListener;
 
 /**
  * Controller class for the Login dialog, which is defined in the Login.fxml

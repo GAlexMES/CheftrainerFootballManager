@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.listeners;
+package de.szut.dqi12.cheftrainer.client.listeners;
 
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
 import javafx.event.EventHandler;

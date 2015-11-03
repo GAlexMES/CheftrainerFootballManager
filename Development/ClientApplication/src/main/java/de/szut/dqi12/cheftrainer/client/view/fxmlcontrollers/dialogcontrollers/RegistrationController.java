@@ -5,8 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import javax.management.InstanceAlreadyExistsException;
-
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -23,6 +21,7 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.listeners.EnterPressedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ConnectionRefusedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
@@ -36,7 +35,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.listeners.EnterPressedListener;
 
 /**
  * Controller for the registration dialog
