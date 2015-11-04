@@ -17,11 +17,11 @@ public class PlayerLabel extends Label {
 		this.position = position;
 	}
 
-	public int getLabelId() {
+	public int getPlayerId() {
 		return this.id;
 	}
 
-	public void setLabelId(int id) {
+	public void setPlayerId(int id) {
 		this.id = id;
 	}
 
