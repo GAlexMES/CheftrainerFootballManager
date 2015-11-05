@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -16,6 +19,17 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 /**
  * This is the controller of the different Formations
@@ -28,12 +42,28 @@ public class FormationController {
 
 	private ArrayList<Player> players;
 
+	public void generateImage(Player player){
+		String text = player.getName();
+		 Label label = new Label(text);
+		    label.setMinSize(125, 125);
+		    label.setMaxSize(125, 125);
+		    label.setPrefSize(125, 125);
+		    label.setStyle("-fx-background-color: white; -fx-text-fill:black;");
+		    label.setWrapText(true);
+		    Scene scene = new Scene(new Group(label));
+		    WritableImage img = new WritableImage(125, 125) ;
+		    scene.snapshot(img);
+		    player.getLabel().setImage(img);
+
+    
+	}
 	public void init() {
 		for (Player player : getAllPlayers()) {
 			PlayerLabel l = new PlayerLabel();
 			l.setPlayerId(player.getID());
 			l.setPosition(player.getPosition());
 			player.setLabel(l);
+			generateImage(player);
 		}
 		
 		
