@@ -48,11 +48,23 @@ public class FormationController {
 
 	}
 
+	public static WritableImage getImageOfString(String text) {
+		Label label = new Label(text);
+		label.setMinSize(125, 125);
+		label.setMaxSize(125, 125);
+		label.setPrefSize(125, 125);
+		label.setStyle("-fx-background-color: white; -fx-text-fill:black;");
+		label.setWrapText(true);
+		Scene scene = new Scene(new Group(label));
+		WritableImage img = new WritableImage(125, 125);
+		scene.snapshot(img);
+		return img;
+	}
+
 	public void init() {
 		// Initialisation of an not-playing-Players
 		// ArrayList
-		notPlayingPlayers = (ArrayList<Player>) getAllPlayers()
-				.clone();
+		notPlayingPlayers = (ArrayList<Player>) getAllPlayers().clone();
 
 		ArrayList<Player> bufferArray = (ArrayList<Player>) notPlayingPlayers
 				.clone();
@@ -102,14 +114,19 @@ public class FormationController {
 
 		int i = 0;
 		for (Node n : buffer) {
+			int row;
+			int col;
 			try {
-				formationFrame.add((Node) orderPlayers.get(i).getLabel(),
-						formationFrame.getColumnIndex(n),
-						formationFrame.getRowIndex(n));
+				col = formationFrame.getColumnIndex(n);
 			} catch (Exception e) {
-				formationFrame.add((Node) orderPlayers.get(i).getLabel(),
-						formationFrame.getColumnIndex(n), 0);
+				col = 0;
 			}
+			try {
+				row = formationFrame.getRowIndex(n);
+			} catch (NullPointerException e) {
+				row = 0;
+			}
+			formationFrame.add((Node) orderPlayers.get(i).getLabel(), col, row);
 			formationFrame.getChildren().remove(n);
 			i++;
 		}
@@ -183,26 +200,26 @@ public class FormationController {
 		}
 	}
 
-//	public void reDraw() {
-//		int i = 0;
-//		ArrayList<Node> copy = new ArrayList<Node>();
-//		for (Node n : formationFrame.getChildren()) {
-//			copy.add(n);
-//		}
-//		ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
-//		for (Node n : buffer) {
-//			try {
-//				formationFrame.add((Node) currentPlayers.get(i).getLabel(),
-//						formationFrame.getColumnIndex(n),
-//						formationFrame.getRowIndex(n));
-//			} catch (Exception e) {
-//				formationFrame.add((Node) currentPlayers.get(i).getLabel(),
-//						formationFrame.getColumnIndex(n), 0);
-//			}
-//			formationFrame.getChildren().remove(n);
-//			i++;
-//		}
-//	}
+	// public void reDraw() {
+	// int i = 0;
+	// ArrayList<Node> copy = new ArrayList<Node>();
+	// for (Node n : formationFrame.getChildren()) {
+	// copy.add(n);
+	// }
+	// ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
+	// for (Node n : buffer) {
+	// try {
+	// formationFrame.add((Node) currentPlayers.get(i).getLabel(),
+	// formationFrame.getColumnIndex(n),
+	// formationFrame.getRowIndex(n));
+	// } catch (Exception e) {
+	// formationFrame.add((Node) currentPlayers.get(i).getLabel(),
+	// formationFrame.getColumnIndex(n), 0);
+	// }
+	// formationFrame.getChildren().remove(n);
+	// i++;
+	// }
+	// }
 
 	/**
 	 * This method adds an listener for every Label, which opens an dialog to
@@ -259,22 +276,28 @@ public class FormationController {
 														if (((PlayerLabel) n)
 																.getPlayerId() == currentPlayer
 																.getID()) {
+
+															int row;
+															int col;
 															try {
-																formationFrame
-																		.add((Node) player
-																				.getLabel(),
-																				formationFrame
-																						.getColumnIndex(n),
-																				formationFrame
-																						.getRowIndex(n));
+																col = formationFrame
+																		.getColumnIndex(n);
 															} catch (Exception e) {
-																formationFrame
-																		.add((Node) player
-																				.getLabel(),
-																				formationFrame
-																						.getColumnIndex(n),
-																				0);
+																col = 0;
 															}
+															try {
+																row = formationFrame
+																		.getRowIndex(n);
+															} catch (NullPointerException e) {
+																row = 0;
+															}
+
+															formationFrame
+																	.add((Node) player
+																			.getLabel(),
+																			col,
+																			row);
+
 															formationFrame
 																	.getChildren()
 																	.remove(n);
