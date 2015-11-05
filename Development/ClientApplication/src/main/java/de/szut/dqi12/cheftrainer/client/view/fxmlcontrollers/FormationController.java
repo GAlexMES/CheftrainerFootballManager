@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -86,28 +87,7 @@ public class FormationController {
 		for (Node n : formationFrame.getChildren()) {
 			copy.add(n);
 		}
-		ArrayList<Player> orderPlayers = new ArrayList<Player>();
-		for (Player p : loadPlayingPlayers()) {
-			if (p.getPosition().equals(Position.KEEPER)) {
-				orderPlayers.add(p);
-				break;
-			}
-		}
-		for (Player p : loadPlayingPlayers()) {
-			if (p.getPosition().equals(Position.DEFENCE)) {
-				orderPlayers.add(p);
-			}
-		}
-		for (Player p : loadPlayingPlayers()) {
-			if (p.getPosition().equals(Position.MIDDLE)) {
-				orderPlayers.add(p);
-			}
-		}
-		for (Player p : loadPlayingPlayers()) {
-			if (p.getPosition().equals(Position.OFFENCE)) {
-				orderPlayers.add(p);
-			}
-		}
+		ArrayList<Player> orderPlayers = (ArrayList<Player>) loadPlayingPlayers().clone();
 		currentPlayers = (ArrayList<Player>) orderPlayers.clone();
 
 		ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
@@ -129,6 +109,72 @@ public class FormationController {
 			formationFrame.add((Node) orderPlayers.get(i).getLabel(), col, row);
 			formationFrame.getChildren().remove(n);
 			i++;
+		}
+		i = 0;
+		copy = new ArrayList<Node>();
+		for (Node n : formationFrame.getChildren()) {
+			copy.add(n);
+		}
+		buffer = (ArrayList<Node>) copy.clone();
+		for (Node n : buffer) {
+			int row;
+			try {
+				row = formationFrame.getRowIndex(n);
+			} catch (NullPointerException e) {
+				row = 0;
+			}
+			int col;
+			try {
+				col = formationFrame.getColumnIndex(n);
+			} catch (Exception e) {
+				col = 0;
+			}
+				for (Player p : getAllPlayers()) {
+					if (((PlayerLabel) n).getPlayerId() == p.getID()) {
+						String position = null;
+						switch (row) {
+						case 0:
+							if (p.getPosition() != Position.OFFENCE) {
+								position = Position.OFFENCE;
+							}
+							break;
+						case 1:
+							if (p.getPosition() != Position.MIDDLE) {
+								position = Position.MIDDLE;
+							}
+							break;
+
+						case 2:
+							if (p.getPosition() != Position.DEFENCE) {
+								position = Position.DEFENCE;
+							}
+							break;
+						case 3:
+							if (p.getPosition() != Position.KEEPER) {
+								position = Position.KEEPER;
+							}
+							break;
+						default:
+							break;
+						}
+						if (position != null) {
+							for (Player nP : notPlayingPlayers) {
+								if (nP.getPosition().equals(position)) {
+									notPlayingPlayers.set(
+											notPlayingPlayers.indexOf(nP),
+											orderPlayers.get(i));
+									formationFrame.add((Node) nP.getLabel(),
+											col, row);
+									currentPlayers.set(currentPlayers.indexOf(orderPlayers.get(i)), nP);
+									formationFrame.getChildren().remove(n);
+									break;
+								}
+							}
+						} 
+						i++;
+					}
+				}
+			
 		}
 	}
 
@@ -309,6 +355,8 @@ public class FormationController {
 															notPlayingPlayers
 																	.indexOf(player),
 															currentPlayer);
+//													currentPlayers.remove(currentPlayer);
+//													currentPlayers.add(player);
 													currentPlayers.set(
 															currentPlayers
 																	.indexOf(currentPlayer),
