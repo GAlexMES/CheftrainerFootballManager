@@ -171,7 +171,7 @@ public class LineUpController implements ControllerInterface {
 			ArrayList<Node> labelscopy = (ArrayList<Node>) labels.clone();
 			ArrayList<Player> players;
 			if (formation == currentManager.getFormation()) {
-				players = fController.loadPlayers();
+				players = fController.loadPlayingPlayers();
 			} else {
 				players = (ArrayList<Player>) currentManager.getPlayers();
 
@@ -197,7 +197,7 @@ public class LineUpController implements ControllerInterface {
 			for (Node n : labelscopy) {
 				if (n != null) {
 					Node l = labels.get(index);
-					((PlayerLabel) l).setText("kein Spieler");
+//					((PlayerLabel) l).setText("kein Spieler");
 				}
 				index++;
 			}
@@ -296,8 +296,7 @@ public class LineUpController implements ControllerInterface {
 		FormationFactory ff = new FormationFactory();
 		List<Formation> formations = ff.getFormations();
 		for (Formation formation : formations) {
-			l = new Label();
-			l.setText(formation.getName());
+			l = new Label(formation.getName());
 			dialog.add(l, 0, i);
 			i++;
 			l.setOnMouseClicked(new EventHandler<Event>() {
