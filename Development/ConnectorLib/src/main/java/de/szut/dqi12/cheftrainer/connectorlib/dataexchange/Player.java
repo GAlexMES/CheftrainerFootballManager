@@ -177,6 +177,16 @@ public class Player {
 		this.birthdate = birthdate;
 	}
 	
+	public String getBirthdateString(){
+		String retval="";
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(birthdate);
+		retval = retval + cal.get(Calendar.DAY_OF_MONTH) +".";
+		retval = retval + cal.get(Calendar.MONTH)+".";
+		retval = retval + cal.get(Calendar.YEAR);
+		return retval;
+	}
+	
 	public void setBirthdate(String birthday) {
 		String[] splittedBirthday = birthday.split("\\.");
 		Calendar cal = Calendar.getInstance();
@@ -197,6 +207,9 @@ public class Player {
 		retval.put("position", this.getPosition());
 		retval.put("team", this.getTeamName());
 		retval.put("plays", this.plays());
+		retval.put("pictureURL", this.getAbsolutePictureURL());
+		retval.put("sportalID", this.getSportalID());
+		retval.put("birthday", this.getBirthdateString());
 		return retval;
 	}
 	
@@ -209,5 +222,8 @@ public class Player {
 		this.setPosition(playerJSON.getString("position"));
 		this.setTeamName(playerJSON.getString("team"));
 		this.setPlays(playerJSON.getBoolean("plays"));
+		this.setAbsolutePictureURL(playerJSON.getString("pictureURL"));
+		this.setSportalID(playerJSON.getInt("sportalID"));
+		this.setBirthdate(playerJSON.getString("birthday"));
 	}
 }
