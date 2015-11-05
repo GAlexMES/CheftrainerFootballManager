@@ -35,7 +35,8 @@ public class FormationController {
 	private ArrayList<Player> notPlayingPlayers;
 
 	public void generateImage(Player player) {
-		String text = player.getName();
+		String text = player.getName() + "\n" + player.getPosition()
+				+ " Points: " + player.getPoints();
 		Label label = new Label(text);
 		label.setMinSize(125, 125);
 		label.setMaxSize(125, 125);
@@ -87,11 +88,13 @@ public class FormationController {
 		for (Node n : formationFrame.getChildren()) {
 			copy.add(n);
 		}
-		ArrayList<Player> orderPlayers = (ArrayList<Player>) loadPlayingPlayers().clone();
+		ArrayList<Player> orderPlayers = (ArrayList<Player>) loadPlayingPlayers()
+				.clone();
 		currentPlayers = (ArrayList<Player>) orderPlayers.clone();
 
 		ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
-
+		ArrayList<Player> playerArray = (ArrayList<Player>) loadPlayingPlayers()
+				.clone();
 		int i = 0;
 		for (Node n : buffer) {
 			int row;
@@ -106,76 +109,109 @@ public class FormationController {
 			} catch (NullPointerException e) {
 				row = 0;
 			}
-			formationFrame.add((Node) orderPlayers.get(i).getLabel(), col, row);
-			formationFrame.getChildren().remove(n);
-			i++;
-		}
-		i = 0;
-		copy = new ArrayList<Node>();
-		for (Node n : formationFrame.getChildren()) {
-			copy.add(n);
-		}
-		buffer = (ArrayList<Node>) copy.clone();
-		for (Node n : buffer) {
-			int row;
-			try {
-				row = formationFrame.getRowIndex(n);
-			} catch (NullPointerException e) {
-				row = 0;
-			}
-			int col;
-			try {
-				col = formationFrame.getColumnIndex(n);
-			} catch (Exception e) {
-				col = 0;
-			}
-				for (Player p : getAllPlayers()) {
-					if (((PlayerLabel) n).getPlayerId() == p.getID()) {
-						String position = null;
-						switch (row) {
-						case 0:
-							if (p.getPosition() != Position.OFFENCE) {
-								position = Position.OFFENCE;
-							}
-							break;
-						case 1:
-							if (p.getPosition() != Position.MIDDLE) {
-								position = Position.MIDDLE;
-							}
-							break;
+			String position = null;
 
-						case 2:
-							if (p.getPosition() != Position.DEFENCE) {
-								position = Position.DEFENCE;
+			switch (row) {
+			case 0:
+				position = Position.OFFENCE;
+				break;
+			case 1:
+				position = Position.MIDDLE;
+				break;
+
+			case 2:
+				position = Position.DEFENCE;
+				break;
+			case 3:
+				position = Position.KEEPER;
+				break;
+			default:
+				break;
+			}
+			i = 0;
+			if (loadPlayingPlayers().size() < 11) {
+				for (Player p : playerArray) {
+					if (p.getPosition().equals(position)) {
+
+						formationFrame.add(
+								(Node) playerArray.get(i).getLabel(), col, row);
+						formationFrame.getChildren().remove(n);
+						playerArray.remove(p);
+						break;
+					}
+					i++;
+					if (i == playerArray.size()){
+						for(Player pl : notPlayingPlayers){
+							if(pl.getPosition().equals(position)){
+								formationFrame.add((Node)pl.getLabel(), col, row);
+								pl.setPlays(true);
+								notPlayingPlayers.remove(pl);
+								break;
 							}
-							break;
-						case 3:
-							if (p.getPosition() != Position.KEEPER) {
-								position = Position.KEEPER;
-							}
-							break;
-						default:
-							break;
 						}
-						if (position != null) {
-							for (Player nP : notPlayingPlayers) {
-								if (nP.getPosition().equals(position)) {
-									notPlayingPlayers.set(
-											notPlayingPlayers.indexOf(nP),
-											orderPlayers.get(i));
-									formationFrame.add((Node) nP.getLabel(),
-											col, row);
-									currentPlayers.set(currentPlayers.indexOf(orderPlayers.get(i)), nP);
-									formationFrame.getChildren().remove(n);
-									break;
-								}
-							}
-						} 
-						i++;
 					}
 				}
-			
+			} else {
+				for (Player p : playerArray) {
+					if (p.getPosition().equals(position)) {
+
+						formationFrame.add(
+								(Node) playerArray.get(i).getLabel(), col, row);
+						formationFrame.getChildren().remove(n);
+						playerArray.remove(p);
+						break;
+					}
+					i++;
+				}
+			}
 		}
+
+		// i = 0;
+		// copy = new ArrayList<Node>();
+		// for (Node n : formationFrame.getChildren()) {
+		// copy.add(n);
+		// }
+		// buffer = (ArrayList<Node>) copy.clone();
+		// for (Node n : buffer) {
+		// int row;
+		// try {
+		// row = formationFrame.getRowIndex(n);
+		// } catch (NullPointerException e) {
+		// row = 0;
+		// }
+		// int col;
+		// try {
+		// col = formationFrame.getColumnIndex(n);
+		// } catch (Exception e) {
+		// col = 0;
+		// }
+		//
+		// if (((PlayerLabel) n).getPlayerId() == p.getID()) {
+		// String position = null;
+		//
+		// if (position != null) {
+		// for (Player nP : notPlayingPlayers) {
+		// if (nP.getPosition().equals(position)) {
+		// notPlayingPlayers.set(
+		// notPlayingPlayers.indexOf(nP),
+		// orderPlayers.get(i));
+		// currentPlayers.set(currentPlayers
+		// .indexOf(orderPlayers.get(i)), nP);
+		// System.out.println(position + row);
+		// formationFrame.add((Node) nP.getLabel(), col,
+		// row);
+		// formationFrame.getChildren().remove(n);
+		// break;
+		// }
+		// }
+		// } else {
+		// System.out.println("haaalo");
+		// }
+		// i++;
+		// }
+		// }
+
+		// }
 	}
 
 	public ArrayList<Player> getCurrentPlayers() {
@@ -355,8 +391,8 @@ public class FormationController {
 															notPlayingPlayers
 																	.indexOf(player),
 															currentPlayer);
-//													currentPlayers.remove(currentPlayer);
-//													currentPlayers.add(player);
+													// currentPlayers.remove(currentPlayer);
+													// currentPlayers.add(player);
 													currentPlayers.set(
 															currentPlayers
 																	.indexOf(currentPlayer),

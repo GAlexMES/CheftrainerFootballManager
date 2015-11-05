@@ -87,7 +87,6 @@ public class LineUpController implements ControllerInterface {
 		try {
 			Session session = Controller.getInstance().getSession();
 			Community community = session.getCurrentCommunity();
-
 			Formation formation = community.getManagers()
 					.get(session.getCurrentManagerID()).getFormation();
 
