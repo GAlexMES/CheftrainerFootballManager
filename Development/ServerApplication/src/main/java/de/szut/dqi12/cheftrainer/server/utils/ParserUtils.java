@@ -2,10 +2,8 @@ package de.szut.dqi12.cheftrainer.server.utils;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,22 +18,6 @@ import org.jdom2.input.SAXBuilder;
  *
  */
 public class ParserUtils {
-
-	/**
-	 * This method collects the HTML of the given URL
-	 * @return the content of the given url as string
-	 * @throws IOException
-	 */
-	public static String getPage(URL url) throws IOException {
-		String content = "";
-		try {
-			content = new Scanner(url.openStream(), "UTF-8")
-					.useDelimiter("\\A").next();
-		} catch (IOException e) {
-			throw e;
-		}
-		return content;
-	}
 
 	/**
 	 * Tries to find a HTML table in the given string.
