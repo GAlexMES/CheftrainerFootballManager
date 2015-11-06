@@ -42,6 +42,7 @@ public class Player {
 	}
 
 	public Player(){
+		sportalID = 0;
 	}
 	
 	public Player(JSONObject playerJSON){
@@ -55,17 +56,20 @@ public class Player {
 		goals = 0;
 		redCard = false;
 		yellowRedCard = false;
+		sportalID = 0;
 	}
 	
 	public Player(String name, String teamName, int points) {
 		this.name = name;
 		this.points = points;
 		this.teamName = teamName;
+		sportalID = 0;
 	}
 	
 	public Player(String name, int points) {
 		this.name = name;
 		this.points = points;
+		sportalID = 0;
 	}
 	
 	public String getTeamName() {

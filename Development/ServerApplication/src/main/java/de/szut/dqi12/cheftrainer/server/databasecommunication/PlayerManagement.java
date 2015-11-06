@@ -62,10 +62,10 @@ public class PlayerManagement {
 						+ p.getPosition() +"','"
 						+ "0','"
 						+ worth + "','"
-						+ p.getNumber() +
+						+ p.getNumber() + "','"
 						+ p.getSportalID() + "','"
 						+ p.getBirthdateString() + "','"
-						+ p.getAbsolutePictureURL() + "','"
+						+ p.getAbsolutePictureURL()
 						+"')";
 		sqlCon.sendQuery(sqlQuery);
 	}
