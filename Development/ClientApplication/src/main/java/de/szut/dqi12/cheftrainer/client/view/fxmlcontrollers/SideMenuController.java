@@ -23,7 +23,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -34,7 +33,6 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.ClientApplication;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
-import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 
 /**
  * Controller for the side menu
