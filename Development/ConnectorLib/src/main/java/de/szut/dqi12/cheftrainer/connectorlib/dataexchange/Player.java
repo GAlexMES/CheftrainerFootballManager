@@ -1,5 +1,8 @@
 package de.szut.dqi12.cheftrainer.connectorlib.dataexchange;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.json.JSONObject;
 
 
@@ -21,6 +24,9 @@ public class Player {
 	private String teamName;
 	private boolean plays;
 	private PlayerLabel label;
+	private String absolutePictureURL;
+	private int sportalID;
+	private Date birthdate;
 		
 	
 	public PlayerLabel getLabel() {
@@ -36,6 +42,7 @@ public class Player {
 	}
 
 	public Player(){
+		sportalID = 0;
 	}
 	
 	public Player(JSONObject playerJSON){
@@ -49,17 +56,20 @@ public class Player {
 		goals = 0;
 		redCard = false;
 		yellowRedCard = false;
+		sportalID = 0;
 	}
 	
 	public Player(String name, String teamName, int points) {
 		this.name = name;
 		this.points = points;
 		this.teamName = teamName;
+		sportalID = 0;
 	}
 	
 	public Player(String name, int points) {
 		this.name = name;
 		this.points = points;
+		sportalID = 0;
 	}
 	
 	public String getTeamName() {
@@ -146,6 +156,51 @@ public class Player {
 		this.position = position;
 	}
 	
+	public String getAbsolutePictureURL() {
+		return absolutePictureURL;
+	}
+
+	public void setAbsolutePictureURL(String absolutePictureURL) {
+		this.absolutePictureURL = absolutePictureURL;
+	}
+
+	public int getSportalID() {
+		return sportalID;
+	}
+
+	public void setSportalID(int sportalID) {
+		this.sportalID = sportalID;
+	}
+	
+	
+	public Date getBirthdate() {
+		return birthdate;
+	}
+
+	public void setBirthdate(Date birthdate) {
+		this.birthdate = birthdate;
+	}
+	
+	public String getBirthdateString(){
+		String retval="";
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(birthdate);
+		retval = retval + cal.get(Calendar.DAY_OF_MONTH) +".";
+		retval = retval + cal.get(Calendar.MONTH)+".";
+		retval = retval + cal.get(Calendar.YEAR);
+		return retval;
+	}
+	
+	public void setBirthdate(String birthday) {
+		String[] splittedBirthday = birthday.split("\\.");
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, Integer.valueOf(splittedBirthday[2]));
+		cal.set(Calendar.MONTH, Integer.valueOf(splittedBirthday[1]));
+		cal.set(Calendar.DAY_OF_MONTH, Integer.valueOf(splittedBirthday[0]));
+		this.birthdate = cal.getTime();
+	}
+
+
 	public JSONObject getJSONFromPlayer() {
 		JSONObject retval = new JSONObject();
 		retval.put("name", this.getName());
@@ -156,6 +211,9 @@ public class Player {
 		retval.put("position", this.getPosition());
 		retval.put("team", this.getTeamName());
 		retval.put("plays", this.plays());
+		retval.put("pictureURL", this.getAbsolutePictureURL());
+		retval.put("sportalID", this.getSportalID());
+		retval.put("birthday", this.getBirthdateString());
 		return retval;
 	}
 	
@@ -168,7 +226,8 @@ public class Player {
 		this.setPosition(playerJSON.getString("position"));
 		this.setTeamName(playerJSON.getString("team"));
 		this.setPlays(playerJSON.getBoolean("plays"));
+		this.setAbsolutePictureURL(playerJSON.getString("pictureURL"));
+		this.setSportalID(playerJSON.getInt("sportalID"));
+		this.setBirthdate(playerJSON.getString("birthday"));
 	}
-	
-
 }

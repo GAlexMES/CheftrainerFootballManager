@@ -21,11 +21,11 @@ import javafx.stage.Stage;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
 import de.szut.dqi12.cheftrainer.client.listeners.EnterPressedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ConnectionRefusedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerManager;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;

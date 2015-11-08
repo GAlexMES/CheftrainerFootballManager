@@ -8,8 +8,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.SideMenuController;
 
 /**
  * The GUIController controlles the GUIInitialator to replacement GUI

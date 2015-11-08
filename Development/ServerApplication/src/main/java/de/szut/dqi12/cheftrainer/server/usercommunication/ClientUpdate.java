@@ -14,7 +14,7 @@ public class ClientUpdate {
 
 	public static JSONObject createCommunityMessage(int communityID){
 		JSONObject retval = new JSONObject();
-		Community community =DatabaseRequests.getCummunityForID(communityID);
+		Community community = DatabaseRequests.getCummunityForID(communityID);
 		retval.put("ID", community.getCommunityID());
 		retval.put("Name", community.getName());
 		JSONArray managersJSON = new JSONArray();

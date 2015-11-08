@@ -1,6 +1,5 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

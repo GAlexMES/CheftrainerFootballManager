@@ -353,7 +353,10 @@ public class CommunityManagement {
 				p.setNumber(rs.getInt("Nummer"));
 				p.setWorth(rs.getInt("Marktwert"));
 				p.setPoints(rs.getInt("Punkte"));
-
+				p.setSportalID(rs.getInt("SportalID"));
+				p.setBirthdate(rs.getString("Birthday"));
+				p.setAbsolutePictureURL(rs.getString("PicturePath"));
+				
 				int play = rs.getInt("Aufgestellt");
 				if(play==1){
 					p.setPlays(true);
@@ -365,6 +368,7 @@ public class CommunityManagement {
 				playerList.add(p);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return playerList;
 	}

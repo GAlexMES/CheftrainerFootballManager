@@ -6,6 +6,7 @@ import java.util.List;
 public class RealTeam {
 	private String teamUrl;
 	private String teamName;
+	private String logoURL;
 	private List<Player> playerList = new ArrayList<Player>();
 	
 	public String getTeamUrl() {
@@ -26,4 +27,11 @@ public class RealTeam {
 	public void setPlayerList(List<Player> playerList) {
 		this.playerList = playerList;
 	}
+	public String getLogoURL() {
+		return logoURL;
+	}
+	public void setLogoURL(String logoURL) {
+		this.logoURL = logoURL;
+	}
+	
 }
