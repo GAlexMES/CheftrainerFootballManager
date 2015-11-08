@@ -357,7 +357,6 @@ public class CommunityManagement {
 				p.setBirthdate(rs.getString("Birthday"));
 				p.setAbsolutePictureURL(rs.getString("PicturePath"));
 				
-				
 				int play = rs.getInt("Aufgestellt");
 				if(play==1){
 					p.setPlays(true);
@@ -369,6 +368,7 @@ public class CommunityManagement {
 				playerList.add(p);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return playerList;
 	}

@@ -4,7 +4,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
@@ -27,10 +29,11 @@ public class CommunitiesController implements ControllerInterface{
 	@FXML
 	private TableColumn<Manager, String> rangColumn;
 	
+	private ImageController imageController;
+	
 	
 	@Override
 	public void init() {
-		
 	}
 	
 	public CommunitiesController() {
@@ -62,6 +65,7 @@ public class CommunitiesController implements ControllerInterface{
 		Session session = Controller.getInstance().getSession();
 		session.setCurrentManager(manager);
 		GUIController.getInstance().enableButtons();
+		imageController.getPicture(manager.getPlayers().get(0));
 	}
 
 	/**

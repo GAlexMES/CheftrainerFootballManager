@@ -1,6 +1,6 @@
 package de.szut.dqi12.cheftrainer.client.listeners;
 
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;

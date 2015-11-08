@@ -246,16 +246,16 @@ public class TeamGenerator {
 	 */
 	private void updatePlayerPerPosition(String position, int update) {
 		switch (position) {
-		case "Torwart":
+		case Position.KEEPER:
 			goalkeepers += update;
 			break;
-		case "Abwehr":
+		case Position.DEFENCE:
 			defenders += update;
 			break;
-		case "Mittelfeld":
+		case Position.MIDDLE:
 			middfielders += update;
 			break;
-		case "Sturm":
+		case Position.OFFENCE:
 			offensives += update;
 			break;
 		}
@@ -275,13 +275,13 @@ public class TeamGenerator {
 	 */
 	private boolean playerFitsInTeam(String position) {
 		switch (position) {
-		case "Torwart":
+		case Position.KEEPER:
 			return goalkeepers < NUMBER_OF_GOALKEEPER;
-		case "Abwehr":
+		case Position.DEFENCE:
 			return defenders < NUMBER_OF_DEFENDER;
-		case "Mittelfeld":
+		case Position.MIDDLE:
 			return middfielders < NUMBER_OF_MIDDFIELDER;
-		case "Sturm":
+		case Position.OFFENCE:
 			return offensives < NUMBER_OF_OFFENSIVE;
 		default:
 			return false;

@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
+package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 import java.util.HashMap;
 import java.util.Map;
