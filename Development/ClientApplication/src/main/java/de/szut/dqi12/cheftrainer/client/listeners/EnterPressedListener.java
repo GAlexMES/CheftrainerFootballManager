@@ -7,7 +7,7 @@ import javafx.scene.input.KeyEvent;
 
 public class EnterPressedListener implements EventHandler<KeyEvent> {
 	
-	private ControllerInterface controller;
+	private Controlle*-rInterface controller;
 	
 	public EnterPressedListener(ControllerInterface controller) {
 		this.controller = controller;
