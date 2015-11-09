@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.databasecommunication;
+﻿package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -386,6 +386,14 @@ public class CommunityManagement {
 			while (rs.next()) {
 				Player p = getPlayerFromResult(rs);
 				p.setTeamName(rs.getString("Vereinsname"));
+				p.setPosition(rs.getString("Position"));
+				p.setNumber(rs.getInt("Nummer"));
+				p.setWorth(rs.getInt("Marktwert"));
+				p.setPoints(rs.getInt("Punkte"));
+				p.setSportalID(rs.getInt("SportalID"));
+				p.setBirthdate(rs.getString("Birthday"));
+				p.setAbsolutePictureURL(rs.getString("PicturePath"));
+				
 				int play = rs.getInt("Aufgestellt");
 				if (play == 1) {
 					p.setPlays(true);
@@ -396,6 +404,7 @@ public class CommunityManagement {
 				playerList.add(p);
 			}
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return playerList;
 	}

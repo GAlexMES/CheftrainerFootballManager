@@ -70,18 +70,17 @@ public class PlayerManagement {
 	 */
 	private void addPlayer(Player p, int teamID) {
 		int worth = (int) (Math.random() * 5000000);
-		String sqlQuery = "INSERT INTO Spieler (Name,Verein_ID, Position, Punkte, Marktwert, Nummer) "
-				+ "VALUES ('"
-				+ p.getName()
-				+ "','"
-				+ teamID
-				+ "','"
-				+ p.getPosition()
-				+ "','"
-				+ "0','"
-				+ worth
-				+ "','"
-				+ p.getNumber() + "')";
+		String sqlQuery = "INSERT INTO Spieler (Name,Verein_ID, Position, Punkte, Marktwert, Nummer, SportalID, Birthday, PicturePath) "
+						+ "VALUES ('"+p.getName()+ "','"
+						+ teamID +"','"
+						+ p.getPosition() +"','"
+						+ "0','"
+						+ worth + "','"
+						+ p.getNumber() + "','"
+						+ p.getSportalID() + "','"
+						+ p.getBirthdateString() + "','"
+						+ p.getAbsolutePictureURL()
+						+"')";
 		sqlCon.sendQuery(sqlQuery);
 	}
 
@@ -97,8 +96,8 @@ public class PlayerManagement {
 	private void addTeam(RealTeam t, int leagueID) {
 		teamCounter++;
 		try {
-			String sqlQuery = "INSERT INTO Verein (Vereinsname, Liga_ID) Values ('"
-					+ t.getTeamName() + "','" + leagueID + "')";
+			String sqlQuery = "INSERT INTO Verein (Vereinsname, Liga_ID, LogoPath) Values ('"
+					+ t.getTeamName() + "','" + leagueID + "','"+t.getLogoURL()+"')";
 			sqlCon.sendQuery(sqlQuery);
 			String condition = "Vereinsname='" + t.getTeamName() + "'";
 			int teamID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID",

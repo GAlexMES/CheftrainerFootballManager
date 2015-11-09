@@ -27,12 +27,14 @@ public class Player {
 	private String absolutePictureURL;
 	private int sportalID;
 	private Date birthdate;
+	private MarketPlayer marketPlayer;
 		
 
-	private MarketPlayer marketPlayer;
+	
 
 	
 	public Player(){
+		sportalID = 0;
 	}
 	
 	public Player(JSONObject playerJSON){
@@ -50,19 +52,21 @@ public class Player {
 		goals = 0;
 		redCard = false;
 		yellowRedCard = false;
+		sportalID = 0;
 	}
 	
 	public Player(String name, String teamName, int points) {
 		this.name = name;
 		this.points = points;
 		this.teamName = teamName;
-		
+		sportalID = 0;
 		marketPlayer = new MarketPlayer(name, String.valueOf(points), "no information available",this);
 	}
 	
 	public Player(String name, int points) {
 		this.name = name;
 		this.points = points;
+		sportalID = 0;
 	}
 	
 	public String getTeamName() {
@@ -174,6 +178,16 @@ public class Player {
 		this.birthdate = birthdate;
 	}
 	
+	public String getBirthdateString(){
+		String retval="";
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(birthdate);
+		retval = retval + cal.get(Calendar.DAY_OF_MONTH) +".";
+		retval = retval + cal.get(Calendar.MONTH)+".";
+		retval = retval + cal.get(Calendar.YEAR);
+		return retval;
+	}
+	
 	public void setBirthdate(String birthday) {
 		String[] splittedBirthday = birthday.split("\\.");
 		Calendar cal = Calendar.getInstance();
@@ -194,6 +208,9 @@ public class Player {
 		retval.put("position", this.getPosition());
 		retval.put("team", this.getTeamName());
 		retval.put("plays", this.plays());
+		retval.put("pictureURL", this.getAbsolutePictureURL());
+		retval.put("sportalID", this.getSportalID());
+		retval.put("birthday", this.getBirthdateString());
 		return retval;
 	}
 	
@@ -206,13 +223,14 @@ public class Player {
 		this.setPosition(playerJSON.getString("position"));
 		this.setTeamName(playerJSON.getString("team"));
 		this.setPlays(playerJSON.getBoolean("plays"));
-		marketPlayer = new MarketPlayer(name, String.valueOf(points), "no information available",this);
+		this.setAbsolutePictureURL(playerJSON.getString("pictureURL"));
+		this.setSportalID(playerJSON.getInt("sportalID"));
+		this.setBirthdate(playerJSON.getString("birthday"));
+marketPlayer = new MarketPlayer(name, String.valueOf(points), "no information available",this);
 	}
-	
 	public PlayerLabel getLabel() {
 		return label;
 	}
-
 	public void setLabel(PlayerLabel label) {
 		this.label = label;
 	}
