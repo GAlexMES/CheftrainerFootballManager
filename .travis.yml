@@ -8,5 +8,4 @@ env:
 branches:
   only:
     - KaderFinalisierungsBranch
-    - master
 script: cd $TEST_DIR && mvn clean install
