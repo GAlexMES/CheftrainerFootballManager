@@ -1,7 +1,6 @@
 language: java
+jdk:
+- openjdk7
 branches:
   only:
     - KaderFinalisierungsBranch
-env:
-  - TEST_DIR=Development/ServerApplication
-script: cd $TEST_DIR && npm install
