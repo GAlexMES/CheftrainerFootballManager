@@ -1,7 +1,9 @@
 language: java
 jdk:
-- openjdk7
+- openjdk8
 branches:
   only:
     - KaderFinalisierungsBranch
     - master
+script:
+  -mvn clean install
