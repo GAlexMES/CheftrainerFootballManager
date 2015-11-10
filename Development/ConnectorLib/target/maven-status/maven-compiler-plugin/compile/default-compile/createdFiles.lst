@@ -2,7 +2,6 @@ de\szut\dqi12\cheftrainer\connectorlib\clientside\ConnectionDiedListener.class
 de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Manager.class
 de\szut\dqi12\cheftrainer\connectorlib\callables\CallableController.class
 de\szut\dqi12\cheftrainer\connectorlib\serverside\ClientHandler.class
-de\szut\dqi12\cheftrainer\connectorlib\dataexchange\ManagerTeam.class
 de\szut\dqi12\cheftrainer\connectorlib\serverside\Server.class
 de\szut\dqi12\cheftrainer\connectorlib\callables\CallableMappingException.class
 de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Community.class
@@ -19,6 +18,7 @@ de\szut\dqi12\cheftrainer\connectorlib\messageids\ClientToServer_MessageIDs.clas
 de\szut\dqi12\cheftrainer\connectorlib\dataexchange\Transaction.class
 de\szut\dqi12\cheftrainer\connectorlib\messages\MessageException.class
 de\szut\dqi12\cheftrainer\connectorlib\serverside\ServerProperties.class
+de\szut\dqi12\cheftrainer\connectorlib\dataexchange\PlayerLabel.class
 de\szut\dqi12\cheftrainer\connectorlib\messageids\ServerToClient_MessageIDs.class
 de\szut\dqi12\cheftrainer\connectorlib\messageids\MessageIDAbstract.class
 de\szut\dqi12\cheftrainer\connectorlib\dataexchange\User.class

@@ -12,6 +12,8 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
+import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesManagement;
+
 /**
  * This class provides some Database utils.
  * There is no Javadoc, because the functions just forwarde to functions in the according *Management (e.g UserManagement) class.
