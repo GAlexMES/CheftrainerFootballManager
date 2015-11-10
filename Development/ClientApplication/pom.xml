@@ -27,7 +27,7 @@
 			<groupId>de.szut.dqi12.cheftrainer</groupId>
 			<artifactId>ConnectorLib</artifactId>
 		</dependency>
-		
+
 		<!-- Public dependencies, Version Management in parent POM -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -46,7 +46,13 @@
 			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
 		</dependency>
-		
+		<dependency>
+			<groupId>com.zenjava</groupId>
+			<artifactId>javafx-maven-plugin</artifactId>
+			<version>8.1.5</version>
+		</dependency>
+
+
 		<!-- not in parent POM defined, because it is only used by the client 
 		<dependency>
 			<groupId>com.oracle</groupId>
