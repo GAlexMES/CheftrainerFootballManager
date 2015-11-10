@@ -3,6 +3,7 @@ jdk:
   - oraclejdk8
 env:
   - TEST_DIR=Development/ConnectorLib
+  - TEST_DIR=Development/ServerApplication
 branches:
   only:
     - KaderFinalisierungsBranch
