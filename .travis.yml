@@ -6,4 +6,4 @@ branches:
     - KaderFinalisierungsBranch
     - master
 script:
-  -mvn clean install
+  - mvn clean install
