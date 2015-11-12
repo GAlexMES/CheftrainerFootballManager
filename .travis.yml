@@ -2,9 +2,8 @@ language: java
 jdk:
   - oraclejdk8
 env:
-  - TEST_DIR=Development/ClientApplication
   - TEST_DIR=Development/ServerApplication
 branches:
   only:
-    - KaderFinalisierungsBranch
+    - master
 script: cd $TEST_DIR && mvn clean install
