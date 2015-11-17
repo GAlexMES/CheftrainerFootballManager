@@ -1,6 +1,8 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -35,7 +37,15 @@ public class FormationController implements ImageUpdate {
 	private ArrayList<Player> players;
 	private ArrayList<Player> currentPlayers;
 	private ArrayList<Player> notPlayingPlayers;
-
+	
+	private Map<Integer,Image> imageUpdateStack;
+	
+	private Boolean putImageToStack = false;
+	
+	public FormationController() {
+		players = new ArrayList<Player>();
+		imageUpdateStack = new HashMap<>();
+	}
 	public void generateImage(Player player) {
 		String text = player.getName() + "\n" + player.getPosition()
 				+ " Points: " + player.getPoints();
@@ -65,6 +75,7 @@ public class FormationController implements ImageUpdate {
 		return img;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void init() {
 		// Initialisation of an not-playing-Players
 		// ArrayList
@@ -78,6 +89,7 @@ public class FormationController implements ImageUpdate {
 			}
 		}
 		currentPlayers = new ArrayList<Player>();
+		putImageToStack = true;
 		for (Player player : getAllPlayers()) {
 			PlayerLabel l = new PlayerLabel();
 			l.setPlayerId(player.getID());
@@ -86,9 +98,9 @@ public class FormationController implements ImageUpdate {
 //			generateImage(player);
 			ImageController c = new ImageController(this);
 			player.getLabel().setImage(c.getPicture(player));
-			
-			
 		}
+		putImageToStack = false;
+		checkForImageUpdate();
 
 		ArrayList<Node> copy = new ArrayList<Node>();
 		for (Node n : formationFrame.getChildren()) {
@@ -224,9 +236,6 @@ public class FormationController implements ImageUpdate {
 		return currentPlayers;
 	}
 
-	public FormationController() {
-		players = new ArrayList<Player>();
-	}
 
 	public GridPane getFrame() {
 		return formationFrame;
@@ -432,12 +441,27 @@ public class FormationController implements ImageUpdate {
 
 	@Override
 	public void updateImage(Image image, int id) {
+		if(putImageToStack){
+			imageUpdateStack.put(id,image);
+		}
+		else{
+			setImageToPlayer(id, image);
+		}
+	}
+	
+	private void setImageToPlayer(int playerID, Image image){
 		for(Player player : getAllPlayers()){
-			if(player.getSportalID() == id){
+			if(player.getSportalID() == playerID){
 				player.getLabel().setImage(image);
 				break;
 			}
 		}
-		
+	}
+	
+	private void checkForImageUpdate() {
+		for(int i : imageUpdateStack.keySet()){
+			setImageToPlayer(i, imageUpdateStack.get(i));
+		}
+		imageUpdateStack=new HashMap<>();
 	}
 }
