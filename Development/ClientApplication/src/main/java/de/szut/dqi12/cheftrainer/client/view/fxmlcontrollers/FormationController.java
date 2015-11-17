@@ -9,12 +9,14 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.images.ImageController;
+import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
@@ -26,7 +28,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
  * 
  * @author Robin
  */
-public class FormationController {
+public class FormationController implements ImageUpdate {
 	@FXML
 	private GridPane formationFrame;
 
@@ -81,7 +83,11 @@ public class FormationController {
 			l.setPlayerId(player.getID());
 			l.setPosition(player.getPosition());
 			player.setLabel(l);
-			generateImage(player);
+//			generateImage(player);
+			ImageController c = new ImageController(this);
+			player.getLabel().setImage(c.getPicture(player));
+			
+			
 		}
 
 		ArrayList<Node> copy = new ArrayList<Node>();
@@ -422,5 +428,16 @@ public class FormationController {
 						}
 					});
 		}
+	}
+
+	@Override
+	public void updateImage(Image image, int id) {
+		for(Player player : getAllPlayers()){
+			if(player.getSportalID() == id){
+				player.getLabel().setImage(image);
+				break;
+			}
+		}
+		
 	}
 }
