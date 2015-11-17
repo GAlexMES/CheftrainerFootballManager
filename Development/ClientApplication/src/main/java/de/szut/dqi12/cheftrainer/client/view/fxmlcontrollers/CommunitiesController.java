@@ -65,7 +65,7 @@ public class CommunitiesController implements ControllerInterface{
 		Session session = Controller.getInstance().getSession();
 		session.setCurrentManager(manager);
 		GUIController.getInstance().enableButtons();
-		imageController.getPicture(manager.getPlayers().get(0));
+//		imageController.getPicture(manager.getPlayers().get(0));
 	}
 
 	/**
