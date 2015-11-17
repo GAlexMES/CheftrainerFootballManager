@@ -16,24 +16,12 @@
 	<name>ClientApplication</name>
 	<url>https://github.com/GAlexMES/CheftrainerFootballManager/tree/master/Development/ServerApplication</url>
 
-	<repositories>
-		<!-- Needed for the ConnectorLib dependency -->
-		<repository>
-			<id>GAlexMES-snapshots</id>
-			<url>https://github.com/GAlexMES/ConnectorLib/raw/mvn-repo/snapshots</url>
-		</repository>
-	</repositories>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
-
 	<dependencies>
 		<!-- ConnectorLib will be fetched from GitHub -->
 		<dependency>
 			<groupId>de.szut.dqi12.cheftrainer</groupId>
 			<artifactId>ConnectorLib</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 
 		<!-- Public dependencies, Version Management in parent POM -->
