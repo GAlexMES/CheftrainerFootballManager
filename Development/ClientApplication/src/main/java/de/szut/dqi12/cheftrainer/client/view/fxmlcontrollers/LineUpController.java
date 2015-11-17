@@ -26,6 +26,9 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
  * This is the controller for the gui-module LineUp
@@ -269,15 +272,21 @@ public class LineUpController implements ControllerInterface {
 	public void saveButtonClicked() {
 		Session s = Controller.getInstance().getSession();
 		int currentManagerID = s.getCurrentManagerID();
-		Manager m = s.getCurrentCommunity().getManager(currentManagerID);
-		if (currentFormation != m.getFormation()
-				|| fController.getCurrentPlayers() != m.getLineUp()) {
-			Controller.getInstance().save(fController.getCurrentPlayers(),
-					currentFormation);
+		Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
+		ArrayList<Player> guiLineUp = fController.getCurrentPlayers();
+		//boolean formationChanged = checkFormationChanges(fController.getCurrentPlayers(), m.getLineUp());
+		boolean formationChanged = guiLineUp.equals( manager.getLineUp());
+		if (currentFormation.getName().equals(manager.getFormation().getName()) || formationChanged) {
+			manager.setLineUp(guiLineUp);
+			manager.setFormation(currentFormation);
+			
+			Message updateMessage = new Message(ClientToServer_MessageIDs.NEW_FORMATION);
+			
 		} else {
 			// Nix zu speichern
 		}
 	}
+	
 
 	/**
 	 * Is called when the Button "change formation" is clicked. Opens a dialog

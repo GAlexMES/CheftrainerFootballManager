@@ -83,10 +83,6 @@ public class Controller {
 				.setSession(session);
 	}
 
-	// Dummy
-	public void save(ArrayList<Player> players, Formation formation) {
-
-	}
 
 	// Dummy
 	public void setPlayeronMarket(Player player, int price) {
