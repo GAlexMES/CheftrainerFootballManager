@@ -47,8 +47,7 @@ public class FormationController implements ImageUpdate {
 		imageUpdateStack = new HashMap<>();
 	}
 	public void generateImage(Player player) {
-		String text = player.getName() + "\n" + player.getPosition()
-				+ " Points: " + player.getPoints();
+		String text = player.getName() + "\n" + player.getPosition() + " Points: " + player.getPoints();
 		Label label = new Label(text);
 		label.setMinSize(125, 125);
 		label.setMaxSize(125, 125);
@@ -81,8 +80,7 @@ public class FormationController implements ImageUpdate {
 		// ArrayList
 		notPlayingPlayers = (ArrayList<Player>) getAllPlayers().clone();
 
-		ArrayList<Player> bufferArray = (ArrayList<Player>) notPlayingPlayers
-				.clone();
+		ArrayList<Player> bufferArray = (ArrayList<Player>) notPlayingPlayers.clone();
 		for (Player player : bufferArray) {
 			if (player.isPlays()) {
 				notPlayingPlayers.remove(player);
@@ -106,13 +104,11 @@ public class FormationController implements ImageUpdate {
 		for (Node n : formationFrame.getChildren()) {
 			copy.add(n);
 		}
-		ArrayList<Player> orderPlayers = (ArrayList<Player>) loadPlayingPlayers()
-				.clone();
+		ArrayList<Player> orderPlayers = (ArrayList<Player>) loadPlayingPlayers().clone();
 		currentPlayers = (ArrayList<Player>) orderPlayers.clone();
 
 		ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
-		ArrayList<Player> playerArray = (ArrayList<Player>) loadPlayingPlayers()
-				.clone();
+		ArrayList<Player> playerArray = (ArrayList<Player>) loadPlayingPlayers().clone();
 		int i = 0;
 		for (Node n : buffer) {
 			int row;
@@ -151,30 +147,29 @@ public class FormationController implements ImageUpdate {
 				for (Player p : playerArray) {
 					if (p.getPosition().equals(position)) {
 
-						formationFrame.add(
-								(Node) playerArray.get(i).getLabel(), col, row);
+						formationFrame.add((Node) playerArray.get(i).getLabel(), col, row);
 						formationFrame.getChildren().remove(n);
 						playerArray.remove(p);
 						break;
 					}
-					i++;
-					if (i == playerArray.size()){
-						for(Player pl : notPlayingPlayers){
-							if(pl.getPosition().equals(position)){
-								formationFrame.add((Node)pl.getLabel(), col, row);
+					if (i == playerArray.size()) {
+						for (Player pl : notPlayingPlayers) {
+							if (pl.getPosition().equals(position)) {
+								formationFrame.add((Node) pl.getLabel(), col, row);
 								pl.setPlays(true);
+								currentPlayers.add(pl);
 								notPlayingPlayers.remove(pl);
 								break;
 							}
 						}
 					}
 				}
+				i++;
 			} else {
 				for (Player p : playerArray) {
 					if (p.getPosition().equals(position)) {
 
-						formationFrame.add(
-								(Node) playerArray.get(i).getLabel(), col, row);
+						formationFrame.add((Node) playerArray.get(i).getLabel(), col, row);
 						formationFrame.getChildren().remove(n);
 						playerArray.remove(p);
 						break;
@@ -183,53 +178,6 @@ public class FormationController implements ImageUpdate {
 				}
 			}
 		}
-
-		// i = 0;
-		// copy = new ArrayList<Node>();
-		// for (Node n : formationFrame.getChildren()) {
-		// copy.add(n);
-		// }
-		// buffer = (ArrayList<Node>) copy.clone();
-		// for (Node n : buffer) {
-		// int row;
-		// try {
-		// row = formationFrame.getRowIndex(n);
-		// } catch (NullPointerException e) {
-		// row = 0;
-		// }
-		// int col;
-		// try {
-		// col = formationFrame.getColumnIndex(n);
-		// } catch (Exception e) {
-		// col = 0;
-		// }
-		//
-		// if (((PlayerLabel) n).getPlayerId() == p.getID()) {
-		// String position = null;
-		//
-		// if (position != null) {
-		// for (Player nP : notPlayingPlayers) {
-		// if (nP.getPosition().equals(position)) {
-		// notPlayingPlayers.set(
-		// notPlayingPlayers.indexOf(nP),
-		// orderPlayers.get(i));
-		// currentPlayers.set(currentPlayers
-		// .indexOf(orderPlayers.get(i)), nP);
-		// System.out.println(position + row);
-		// formationFrame.add((Node) nP.getLabel(), col,
-		// row);
-		// formationFrame.getChildren().remove(n);
-		// break;
-		// }
-		// }
-		// } else {
-		// System.out.println("haaalo");
-		// }
-		// i++;
-		// }
-		// }
-
-		// }
 	}
 
 	public ArrayList<Player> getCurrentPlayers() {
@@ -246,12 +194,9 @@ public class FormationController implements ImageUpdate {
 		Session session = Controller.getInstance().getSession();
 		Community currentCommunity = session.getCurrentCommunity();
 		int currentManagerID = session.getCurrentManagerID();
-		for (Player player : (ArrayList<Player>) currentCommunity.getManager(
-				currentManagerID).getPlayers()) {
+		for (Player player : (ArrayList<Player>) currentCommunity.getManager(currentManagerID).getPlayers()) {
 			players.add(player);
 		}
-		// players = (ArrayList<Player>)
-		// currentCommunity.getManager(currentManagerID).getLineUp();
 		return players;
 	}
 
@@ -259,16 +204,9 @@ public class FormationController implements ImageUpdate {
 	 * This method loads the players of the current Manager
 	 */
 	public ArrayList<Player> loadPlayingPlayers() {
-		players.clear();
-		Session session = Controller.getInstance().getSession();
-		Community currentCommunity = session.getCurrentCommunity();
-		int currentManagerID = session.getCurrentManagerID();
-		int i = 0;
-		for (Player player : (ArrayList<Player>) currentCommunity.getManager(
-				currentManagerID).getPlayers()) {
+		for (Player player : getAllPlayers()) {
 			if (player.plays()) {
-				players.add(player);
-				i++;
+				currentPlayers.add(player);
 			}
 			if (players.size() >= 11) {
 				break;
@@ -324,118 +262,95 @@ public class FormationController implements ImageUpdate {
 	 */
 	public void setClickedListener() {
 		for (Node currentNode : formationFrame.getChildren()) {
-			((PlayerLabel) currentNode)
-					.setOnMouseClicked(new EventHandler<Event>() {
-						Player currentPlayer;
+			((PlayerLabel) currentNode).setOnMouseClicked(new EventHandler<Event>() {
+				Player currentPlayer;
 
-						@Override
-						public void handle(Event event) {
-							int mId = Controller.getInstance().getSession()
-									.getCurrentManagerID();
+				@Override
+				public void handle(Event event) {
+					int mId = Controller.getInstance().getSession().getCurrentManagerID();
 
-							// Load CurrentPlayer
-							for (Player p : getAllPlayers()) {
-								if (p.getID() == ((PlayerLabel) currentNode)
-										.getPlayerId()) {
-									currentPlayer = p;
-									break;
-								}
-							}
-							if (notPlayingPlayers.contains(currentPlayer)) {
-								notPlayingPlayers.remove(currentPlayer);
-							}
-							if (notPlayingPlayers.size() != 0) {
-								GridPane dialog;
-								Stage dialogStage = new Stage();
-								try {
-									dialog = new GridPane();
-									PlayerLabel l;
-									int i = 0;
-									for (Player player : notPlayingPlayers) {
-										if (player.getPosition().equals(
-												currentPlayer.getPosition())) {
-											l = player.getLabel();
-											dialog.add(l, 0, i);
-											i++;
-											l.setOnMouseClicked(new EventHandler<Event>() {
-												@Override
-												public void handle(Event event) {
-													// /
-													int i = 0;
-													ArrayList<Node> copy = new ArrayList<Node>();
-													for (Node n : formationFrame
-															.getChildren()) {
-														copy.add(n);
-													}
-													ArrayList<Node> buffer = (ArrayList<Node>) copy
-															.clone();
-													for (Node n : buffer) {
-														if (((PlayerLabel) n)
-																.getPlayerId() == currentPlayer
-																.getID()) {
-
-															int row;
-															int col;
-															try {
-																col = formationFrame
-																		.getColumnIndex(n);
-															} catch (Exception e) {
-																col = 0;
-															}
-															try {
-																row = formationFrame
-																		.getRowIndex(n);
-															} catch (NullPointerException e) {
-																row = 0;
-															}
-
-															formationFrame
-																	.add((Node) player
-																			.getLabel(),
-																			col,
-																			row);
-
-															formationFrame
-																	.getChildren()
-																	.remove(n);
-															i++;
-														}
-													}
-													// /
-													notPlayingPlayers.set(
-															notPlayingPlayers
-																	.indexOf(player),
-															currentPlayer);
-													// currentPlayers.remove(currentPlayer);
-													// currentPlayers.add(player);
-													currentPlayers.set(
-															currentPlayers
-																	.indexOf(currentPlayer),
-															player);
-													dialogStage.close();
-													setClickedListener();
-
-												}
-											});
-										}
-									}
-									if (dialog.getChildren().size() > 0) {
-										dialogStage.setResizable(false);
-										dialogStage.setTitle("Player");
-										dialogStage
-												.initModality(Modality.WINDOW_MODAL);
-										Scene scene = new Scene(dialog);
-
-										dialogStage.setScene(scene);
-										dialogStage.showAndWait();
-									}
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
-							}
-
+					// Load CurrentPlayer
+					for (Player p : getAllPlayers()) {
+						if (p.getID() == ((PlayerLabel) currentNode).getPlayerId()) {
+							currentPlayer = p;
+							break;
 						}
-					});
+					}
+					if (notPlayingPlayers.contains(currentPlayer)) {
+						notPlayingPlayers.remove(currentPlayer);
+					}
+					if (notPlayingPlayers.size() != 0) {
+						GridPane dialog;
+						Stage dialogStage = new Stage();
+						try {
+							dialog = new GridPane();
+							PlayerLabel l;
+							int i = 0;
+							for (Player player : notPlayingPlayers) {
+								if (player.getPosition().equals(currentPlayer.getPosition())) {
+									l = player.getLabel();
+									dialog.add(l, 0, i);
+									i++;
+									l.setOnMouseClicked(new EventHandler<Event>() {
+										@Override
+										public void handle(Event event) {
+											// /
+											int i = 0;
+											ArrayList<Node> copy = new ArrayList<Node>();
+											for (Node n : formationFrame.getChildren()) {
+												copy.add(n);
+											}
+											ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
+											for (Node n : buffer) {
+												if (((PlayerLabel) n).getPlayerId() == currentPlayer.getID()) {
+
+													int row;
+													int col;
+													try {
+														col = formationFrame.getColumnIndex(n);
+													} catch (Exception e) {
+														col = 0;
+													}
+													try {
+														row = formationFrame.getRowIndex(n);
+													} catch (NullPointerException e) {
+														row = 0;
+													}
+
+													formationFrame.add((Node) player.getLabel(), col, row);
+
+													formationFrame.getChildren().remove(n);
+													i++;
+												}
+											}
+											// /
+											notPlayingPlayers.set(notPlayingPlayers.indexOf(player), currentPlayer);
+											// currentPlayers.remove(currentPlayer);
+											// currentPlayers.add(player);
+											currentPlayers.set(currentPlayers.indexOf(currentPlayer), player);
+											dialogStage.close();
+											setClickedListener();
+
+										}
+									});
+								}
+							}
+							if (dialog.getChildren().size() > 0) {
+								dialogStage.setResizable(false);
+								dialogStage.setTitle("Player");
+								dialogStage.initModality(Modality.WINDOW_MODAL);
+								Scene scene = new Scene(dialog);
+
+								dialogStage.setScene(scene);
+								dialogStage.showAndWait();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+
+				}
+			});
 		}
 	}
 
@@ -456,6 +371,7 @@ public class FormationController implements ImageUpdate {
 				break;
 			}
 		}
+
 	}
 	
 	private void checkForImageUpdate() {

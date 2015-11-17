@@ -42,6 +42,9 @@ public class LineUpController implements ControllerInterface {
 
 	private Formation currentFormation;
 	private FormationController fController;
+	private GridPane oldPane;
+
+	private int i = 0;
 
 	public GridPane getFrame() {
 		return lineUpFrame;
@@ -84,64 +87,19 @@ public class LineUpController implements ControllerInterface {
 	 */
 	@Override
 	public void init() {
-		// BUG: es muss geschaut werden ob die reihenfolge richtig ist, wie die
-		// spieler den PlayerLabels zugeordnet werden. Gegebenfalls wie in der
-		// anderen
-		// Funktion machen, wo auf PlayerLabelnamen geprueft wird
 		try {
 			Session session = Controller.getInstance().getSession();
 			Community community = session.getCurrentCommunity();
-			Formation formation = community.getManagers()
-					.get(session.getCurrentManagerID()).getFormation();
-
+			int managerID = session.getCurrentManagerID();
+			Formation formation = community.getManager(managerID).getFormation();
 			ClassLoader classLoader = getClass().getClassLoader();
 			FXMLLoader currentContentLoader = getLoader(formation);
 
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
-			fController = ((FormationController) currentContentLoader
-					.getController());
+			fController = ((FormationController) currentContentLoader.getController());
 			fController.setClickedListener();
 			changeFormation(formation);
-			// try {
-			// ArrayList<Player> players = fController.loadPlayers();
-			// ArrayList<Player> defence = new ArrayList<Player>();
-			// ArrayList<Player> middel = new ArrayList<Player>();
-			// ArrayList<Player> offence = new ArrayList<Player>();
-			// Player keeper = players.get(0);
-			// for (Player p : players) {
-			// switch (p.getPosition()) {
-			// case Position.DEFENCE:
-			// defence.add(p);
-			// break;
-			// case Position.MIDDLE:
-			// middel.add(p);
-			// break;
-			// case Position.OFFENCE:
-			// offence.add(p);
-			// case Position.KEEPER:
-			// keeper = p;
-			// break;
-			// default:
-			// break;
-			// }
-			// }
-			// players.clear();
-			// players.addAll(offence);
-			// players.addAll(middel);
-			// players.addAll(defence);
-			// players.add(keeper);
-			// int index = 0;
-			// for (Node node : newContentPane.getChildren()) {
-			// ((PlayerLabel) node).setText(players.get(index).getName()
-			// + "; " + players.get(index).getPoints());
-			// index++;
-			// }
-			// lineUpFrame.add(newContentPane, 0, 0);
-			// } catch (NullPointerException e) {
-			// e.printStackTrace();
-			// }
-
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -158,17 +116,14 @@ public class LineUpController implements ControllerInterface {
 		try {
 			Session session = Controller.getInstance().getSession();
 			Community currentCommunity = session.getCurrentCommunity();
-			Manager currentManager = currentCommunity.getManager(session
-					.getCurrentManagerID());
+			Manager currentManager = currentCommunity.getManager(session.getCurrentManagerID());
 			FXMLLoader currentContentLoader = getLoader(formation);
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
-			fController = ((FormationController) currentContentLoader
-					.getController());
+			fController = ((FormationController) currentContentLoader.getController());
 			fController.init();
 
-			
 			ArrayList<Node> labels = new ArrayList<Node>();
-			for(Node n : newContentPane.getChildren()){
+			for (Node n : newContentPane.getChildren()) {
 				labels.add(n);
 			}
 			ArrayList<Node> labelscopy = (ArrayList<Node>) labels.clone();
@@ -194,68 +149,25 @@ public class LineUpController implements ControllerInterface {
 					}
 				}
 			}
-			index = 0;
-			for (Node n : labelscopy) {
-				if (n != null) {
-					Node l = labels.get(index);
-//					((PlayerLabel) l).setText("kein Spieler");
-				}
-				index++;
-			}
-			// ArrayList<Player> defence = new ArrayList<Player>();
-			// ArrayList<Player> middel = new ArrayList<Player>();
-			// ArrayList<Player> offence = new ArrayList<Player>();
-			// Player keeper = players.get(0);
-			// for (Player p : players) {
-			// switch (p.getPosition()) {
-			// case String.DEFENCE:
-			// defence.add(p);
-			// break;
-			// case String.MIDDLE:
-			// middel.add(p);
-			// break;
-			// case String.OFFENCE:
-			// offence.add(p);
-			// break;
-			// case String.KEEPER:
-			// keeper = p;
-			// break;
-			// default:
-			// break;
+			// index = 0;
+			// for (Node n : labelscopy) {
+			// if (n != null) {
+			// Node l = labels.get(index);
+			// ((PlayerLabel) l).setText("kein Spieler");
 			// }
+			// index++;
 			// }
-			// int[] index = { 0, 0, 0 };
-			// PlayerLabel l;
-			// for (Node node : newContentPane.getChildren()) {
-			// l = (PlayerLabel) node;
-			// try {
-			// if (l.getText().contains("Verteifigung")) {
-			// l.setText(defence.get(index[0]).getName() + "; "
-			// + defence.get(index[0]).getPoints());
-			// index[0]++;
-			// } else if (l.getText().contains("Mittelfeld")) {
-			// l.setText(middel.get(index[1]).getName() + "; "
-			// + middel.get(index[1]).getPoints());
-			// index[1]++;
-			// } else if (l.getText().contains("Keeper")) {
-			// l.setText(keeper.getName() + "; " + keeper.getPoints());
-			// } else if (l.getText().contains("Sturm")) {
-			// l.setText(offence.get(index[2]).getName() + "; "
-			// + offence.get(index[2]).getPoints());
-			// index[2]++;
-			//
-			// }
-			//
-			// } catch (NullPointerException e) {
-			// e.printStackTrace();
-			// // DIALOG NICHT GENUG VETEDIGER ODERSO
-			// l.setText("kein Spieler");
-			//
-			// }
-			// }
-
 			fController.setClickedListener();
-			lineUpFrame.add(newContentPane, 0, 0);
+			if (i > 0) {
+
+				lineUpFrame.getChildren().remove(oldPane);
+				lineUpFrame.add(newContentPane, 0, 0);
+			} else {
+				i++;
+				lineUpFrame.add(newContentPane, 0, 0);
+
+			}
+			oldPane = newContentPane;
 			return true;
 
 		} catch (IOException e) {
@@ -311,6 +223,7 @@ public class LineUpController implements ControllerInterface {
 				@Override
 				public void handle(Event event) {
 					dialogStage.close();
+					// lineUpFrame.getChildren().clear();
 					changeFormation(formation);
 				}
 			});
@@ -329,13 +242,13 @@ public class LineUpController implements ControllerInterface {
 	@Override
 	public void enterPressed() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void messageArrived() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
