@@ -69,6 +69,7 @@ public class DatabaseUtils {
 			return -1;
 		}
 	}
+	
 
 	/**
 	 * This function creates a query and sends it to the database. The ResultSet will show the 
@@ -80,7 +81,8 @@ public class DatabaseUtils {
 	public int getManagerID(int userID,
 			String communityName) {
 			try {
-				int communityID = Integer.valueOf(DatabaseRequests.getUniqueValue("Spielrunde.ID", "Spielrunde", "Spielrunde.Name='"+ communityName+"'").toString());
+				String condition = "Spielrunde.Name='"+ communityName+"'";
+				int communityID = DatabaseRequests.getUniqueInt("Spielrunde.ID", "Spielrunde", condition);
 				return getManagerID(userID, communityID);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -108,6 +110,7 @@ public class DatabaseUtils {
 		return "";
 	}
 	
+		
 	/**
 	 * This method can be used to get exactly one value from the database.
 	 * @param coloumName the name of the coloum

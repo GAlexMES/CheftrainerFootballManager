@@ -17,8 +17,7 @@ import de.szut.dqi12.cheftrainer.server.parsing.PointsParser;
  *
  */
 public class PointManagement {
-	private final static Logger LOGGER = Logger
-			.getLogger(PointManagement.class);
+	private final static Logger LOGGER = Logger.getLogger(PointManagement.class);
 
 	private final String UPDATE_POINT_QUERY = "UPDATE Spieler SET Punkte=Punkte + %POINTS% ";
 	private final String WHERE_PLAYER_QUERY = "Name LIKE '%%PLAYERNAME%%' ";
@@ -51,11 +50,9 @@ public class PointManagement {
 			p.setPoints(p.getPoints() + pointsForGoal);
 			String sqlQuery = "";
 			if (p.getSportalID() > 0) {
-				sqlQuery = createUpdatePlayerPointsQuery(p.getPoints(),
-						p.getSportalID());
+				sqlQuery = createUpdatePlayerPointsQuery(p.getPoints(), p.getSportalID());
 			} else {
-				sqlQuery = createUpdatePlayerPointsQuery(p.getPoints(),
-						p.getName(), p.getTeamName());
+				sqlQuery = createUpdatePlayerPointsQuery(p.getPoints(), p.getName(), p.getTeamName());
 			}
 			sqlCon.sendQuery(sqlQuery);
 		}
@@ -79,24 +76,20 @@ public class PointManagement {
 				String condition = "";
 
 				if (p.getSportalID() > 0) {
-					condition = "SportalID = '" + p.getSportalID()+"'";
+					condition = "SportalID = '" + p.getSportalID() + "'";
 				} else {
 					condition = createWhereQuery(p.getName(), p.getTeamName());
 				}
-				
-				position = DatabaseRequests.getUniqueValue("Position",
-						"Spieler", condition).toString();
+
+				position = DatabaseRequests.getUniqueString("Position", "Spieler", condition);
 				return goals * getPointsForPosition(position);
 			} catch (IOException e) {
-				String conditionWithoutTeam = WHERE_PLAYER_QUERY.replace(
-						"%PLAYERNAME%", p.getName());
+				String conditionWithoutTeam = WHERE_PLAYER_QUERY.replace("%PLAYERNAME%", p.getName());
 				try {
-					position = DatabaseRequests.getUniqueValue("Position",
-							"Spieler", conditionWithoutTeam).toString();
+					position = DatabaseRequests.getUniqueString("Position", "Spieler", conditionWithoutTeam);
 					return goals * getPointsForPosition(position);
 				} catch (IOException e1) {
-					LOGGER.info(p.getName()
-							+ " does not longer play in the league. He will get no points for old goals.");
+					LOGGER.info(p.getName() + " does not longer play in the league. He will get no points for old goals.");
 				}
 			}
 		}
@@ -157,17 +150,14 @@ public class PointManagement {
 	 *            the name of the team, in which the player plays.
 	 * @return
 	 */
-	private String createUpdatePlayerPointsQuery(int points, String playerName,
-			String teamName) {
-		String filledQuery = UPDATE_POINT_QUERY + " WHERE "
-				+ createWhereQuery(playerName, teamName);
+	private String createUpdatePlayerPointsQuery(int points, String playerName, String teamName) {
+		String filledQuery = UPDATE_POINT_QUERY + " WHERE " + createWhereQuery(playerName, teamName);
 		filledQuery = filledQuery.replace("%POINTS%", String.valueOf(points));
 		return filledQuery + ";";
 	}
 
 	private String createUpdatePlayerPointsQuery(int points, int sportalID) {
-		String filledQuery = UPDATE_POINT_QUERY + "WHERE SportalID = "
-				+ sportalID;
+		String filledQuery = UPDATE_POINT_QUERY + "WHERE SportalID = " + sportalID;
 		filledQuery = filledQuery.replace("%POINTS%", String.valueOf(points));
 		return filledQuery;
 	}

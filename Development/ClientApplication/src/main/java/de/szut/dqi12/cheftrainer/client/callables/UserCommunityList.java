@@ -3,8 +3,6 @@ package de.szut.dqi12.cheftrainer.client.callables;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,9 +12,7 @@ import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesControll
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -28,8 +24,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  */
 public class UserCommunityList extends CallableAbstract {
 
-	private final static Logger LOGGER = Logger
-			.getLogger(UserCommunityList.class);
+	private final static Logger LOGGER = Logger.getLogger(UserCommunityList.class);
 
 	/**
 	 * This method is called, when a new message with the id "UserCommunityList"
@@ -50,8 +45,7 @@ public class UserCommunityList extends CallableAbstract {
 			addCommunityToList(jsonMessage);
 			break;
 		default:
-			LOGGER.error("Undefined message type ("
-					+ jsonMessage.getString("type") + ")");
+			LOGGER.error("Undefined message type (" + jsonMessage.getString("type") + ")");
 		}
 	}
 
@@ -69,10 +63,8 @@ public class UserCommunityList extends CallableAbstract {
 	 *            "community".
 	 */
 	private void addCommunityToList(JSONObject message) {
-		Community community = jsonToCommunity(message
-				.getJSONObject("community"));
-		community.findeUsersManager(mesController.getSession().getUser()
-				.getUserName());
+		Community community = jsonToCommunity(message.getJSONObject("community"));
+		community.findeUsersManager(mesController.getSession().getUser().getUserName());
 		Controller.getInstance().getSession().addCommunity(community);
 	}
 
@@ -89,8 +81,7 @@ public class UserCommunityList extends CallableAbstract {
 	private void newList(JSONObject message) {
 		String userName = mesController.getSession().getUser().getUserName();
 		JSONArray communityList = message.getJSONArray("information");
-		List<Community> communities = jsonArrayToCommnityList(communityList,
-				userName);
+		List<Community> communities = jsonArrayToCommnityList(communityList, userName);
 		Controller.getInstance().getSession().addCommunities(communities);
 	}
 
@@ -105,13 +96,11 @@ public class UserCommunityList extends CallableAbstract {
 	 * @return a List with all Communities, that could be created with the
 	 *         information in the JSONArray.
 	 */
-	private List<Community> jsonArrayToCommnityList(JSONArray communityList,
-			String userName) {
+	private List<Community> jsonArrayToCommnityList(JSONArray communityList, String userName) {
 		new ArrayList<>();
 		List<Community> retval = new ArrayList<>();
 		for (int i = 0; i < communityList.length(); i++) {
-			Community com = jsonToCommunity(new JSONObject(communityList.get(i)
-					.toString()));
+			Community com = jsonToCommunity(new JSONObject(communityList.get(i).toString()));
 			com.findeUsersManager(userName);
 			retval.add(com);
 		}
@@ -134,7 +123,7 @@ public class UserCommunityList extends CallableAbstract {
 		retval.setName(communityJSON.getString("Name"));
 		JSONArray managersJSON = communityJSON.getJSONArray("Managers");
 		retval.addManagers(createManagerList(managersJSON, retval.getName()));
-		
+
 		String userName = Controller.getInstance().getSession().getUser().getUserName();
 		retval.findeUsersManager(userName);
 		return retval;
@@ -152,27 +141,8 @@ public class UserCommunityList extends CallableAbstract {
 	private List<Manager> createManagerList(JSONArray managersJSON, String communityName) {
 		List<Manager> retval = new ArrayList<>();
 		for (int i = 0; i < managersJSON.length(); i++) {
-			JSONObject managerJSON = new JSONObject(managersJSON.get(i)
-					.toString());
-			String name = managerJSON.getString("Name");
-			int points = managerJSON.getInt("Points");
-			
-			JSONArray managersTeam = managerJSON.getJSONArray("Team");
-			
-			int teamWorth = 0;
-			List<Player> playerList = new ArrayList<>();
-			for (int m = 0; m < managersTeam.length(); m++) {
-				JSONObject playerJSON = managersTeam.getJSONObject(m);
-				Player tempPlayer = new Player(playerJSON);
-				playerList.add(tempPlayer);
-				teamWorth = teamWorth +tempPlayer.getWorth();
-			}
-			
-			Manager manager = new Manager(name, teamWorth, points,communityName);
-			JSONObject formationJSON = managerJSON.getJSONObject("Formation");
-			manager.setFormation(new Formation(formationJSON));
-			manager.setID(managerJSON.getInt("ID"));
-			manager.addPlayer(playerList);
+			JSONObject managerJSON = new JSONObject(managersJSON.get(i).toString());
+			Manager manager = new Manager(managerJSON,communityName);
 			retval.add(manager);
 		}
 		return retval;

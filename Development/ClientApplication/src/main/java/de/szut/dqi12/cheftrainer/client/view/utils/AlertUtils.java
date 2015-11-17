@@ -35,6 +35,8 @@ public static final String WRONG_INPUTS = "Please check ypur input for the follo
 	public static final String COMMUNITY_ENTER_WRONG_AUTHENTIFICATION = "Your combination of community name and password does not exist.";
 	public static final String COMMUNITY_ENTER_ALREADY_EXIST = "You already play in this community. You can only have one team per community.";
 	
+	public static final String FORMATION_SAVED = "The new formation was saved successful!";
+	public static final String FORMATION_NOT_SAVED = "The new formation was not saved! Something went wrong. Please try again.";
 	
 	/**
 	 * Shows a error alert with the given parameters. Can also be called from a

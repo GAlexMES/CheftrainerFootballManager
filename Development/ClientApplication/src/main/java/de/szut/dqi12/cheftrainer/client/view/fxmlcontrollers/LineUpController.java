@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -13,12 +12,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
+import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
@@ -27,7 +29,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
@@ -43,8 +44,17 @@ public class LineUpController implements ControllerInterface {
 	private Formation currentFormation;
 	private FormationController fController;
 	private GridPane oldPane;
+	
+	private Manager tempSendingManager;
+	
+	public static final String RESET_MANAGER = "Reset the managers.";
 
 	private int i = 0;
+	
+	public LineUpController(){
+		ControllerManager cm = ControllerManager.getInstance();
+		cm.registerController(this, RESET_MANAGER);
+	}
 
 	public GridPane getFrame() {
 		return lineUpFrame;
@@ -186,19 +196,23 @@ public class LineUpController implements ControllerInterface {
 		int currentManagerID = s.getCurrentManagerID();
 		Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
 		ArrayList<Player> guiLineUp = fController.getCurrentPlayers();
-		//boolean formationChanged = checkFormationChanges(fController.getCurrentPlayers(), m.getLineUp());
-		boolean formationChanged = guiLineUp.equals( manager.getLineUp());
-		if (currentFormation.getName().equals(manager.getFormation().getName()) || formationChanged) {
-			manager.setLineUp(guiLineUp);
-			manager.setFormation(currentFormation);
+		boolean formationChanged = guiLineUp.equals(manager.getLineUp());
+		if (!currentFormation.getName().equals(manager.getFormation().getName()) || !formationChanged) {
+			tempSendingManager = new Manager();
+			tempSendingManager.setID(manager.getID());
+			tempSendingManager.addPlayer(manager.getPlayers());
+			tempSendingManager.setLineUp(guiLineUp);
+			tempSendingManager.setFormation(currentFormation);
 			
 			Message updateMessage = new Message(ClientToServer_MessageIDs.NEW_FORMATION);
-			
+			updateMessage.setMessageContent(manager.toJSON());
+			Controller.getInstance().getSession().getClientSocket().sendMessage(updateMessage);
 		} else {
-			// Nix zu speichern
+			AlertUtils.createSimpleDialog("Nothing to save",
+					"There are no changes!",
+					"", AlertType.CONFIRMATION);
 		}
 	}
-	
 
 	/**
 	 * Is called when the Button "change formation" is clicked. Opens a dialog
@@ -246,9 +260,17 @@ public class LineUpController implements ControllerInterface {
 	}
 
 	@Override
-	public void messageArrived() {
-		// TODO Auto-generated method stub
-
+	public void messageArrived(Boolean flag) {
+		if(flag){
+			Session s = Controller.getInstance().getSession();
+			int currentManagerID = s.getCurrentManagerID();
+			Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
+			manager.setFormation(tempSendingManager.getFormation());
+			manager.setLineUp(tempSendingManager.getLineUp());
+		}
+		else{
+			tempSendingManager = null;
+		}
 	}
 
 }

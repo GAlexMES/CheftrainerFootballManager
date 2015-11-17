@@ -6,7 +6,6 @@ import javafx.scene.control.TableView;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
-import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
@@ -28,9 +27,6 @@ public class CommunitiesController implements ControllerInterface{
 	private TableColumn<Manager, String> worthColumn;
 	@FXML
 	private TableColumn<Manager, String> rangColumn;
-	
-	private ImageController imageController;
-	
 	
 	@Override
 	public void init() {
@@ -100,7 +96,7 @@ public class CommunitiesController implements ControllerInterface{
 	}
 
 	@Override
-	public void messageArrived() {
+	public void messageArrived(Boolean flag) {
 		// TODO Auto-generated method stub
 		
 	}

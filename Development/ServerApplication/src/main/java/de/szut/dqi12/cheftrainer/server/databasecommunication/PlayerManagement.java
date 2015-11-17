@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
 import de.szut.dqi12.cheftrainer.server.parsing.PlayerParser;
@@ -41,7 +43,7 @@ public class PlayerManagement {
 			List<RealTeam> teamList = TeamParser.getTeams();
 			LOGGER.info("Validating database: 10% Done");
 			String condition = "Name='"+leagueName+"'";
-			int leagueID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Liga",condition).toString());
+			int leagueID = DatabaseRequests.getUniqueInt("ID", "Liga",condition);
 			teamList.forEach(t -> addTeam(t, leagueID));
 		} catch (IOException e) {
 			throw e;
@@ -82,7 +84,7 @@ public class PlayerManagement {
 					+ t.getTeamName() + "','" + leagueID + "','"+t.getLogoURL()+"')";
 			sqlCon.sendQuery(sqlQuery);
 			String condition = "Vereinsname='"+t.getTeamName()+"'";
-			int teamID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Verein",condition ).toString());
+			int teamID = DatabaseRequests.getUniqueInt("ID", "Verein",condition );
 			List<Player> playerList = t.getPlayerList();
 			playerList.forEach(p -> addPlayer(p, teamID));
 		} catch (Exception e) {
@@ -109,5 +111,20 @@ public class PlayerManagement {
 				" Where ID = "+managerID;
 		sqlCon.sendQuery(sqlQuery);
 		
+	}
+
+	public void updateManager(Manager manager) {
+		Formation f = manager.getFormation();
+		setManagersFormation(manager.getID(), f.getDefenders(), f.getMiddfielders(), f.getOffensives());
+		
+		for(Player p : manager.getPlayers()){
+			int plays = p.isPlays() ? 1 : 0;
+			String updateQuery = "UPDATE Mannschaft "
+					+ "	SET Aufgestellt = " + plays
+					+ " WHERE Manager_ID = "+manager.getID()
+					+ " AND Spieler_ID = "+p.getID();
+			sqlCon.sendQuery(updateQuery);
+		}
+				
 	}
 }

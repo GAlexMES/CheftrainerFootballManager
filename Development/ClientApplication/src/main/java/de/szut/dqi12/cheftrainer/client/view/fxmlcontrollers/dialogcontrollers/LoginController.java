@@ -300,7 +300,7 @@ public class LoginController implements ControllerInterface {
 	}
 
 	@Override
-	public void messageArrived() {
+	public void messageArrived(Boolean flag) {
 		loginButton.setDisable(false);
 		System.out.println("button is now enabled");
 	}
