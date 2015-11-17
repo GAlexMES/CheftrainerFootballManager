@@ -11,10 +11,17 @@
 
 	<groupId>de.szut.dqi12.cheftrainer.server</groupId>
 	<artifactId>ServerApplication</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ServerApplication</name>
 	<url>https://github.com/GAlexMES/CheftrainerFootballManager/tree/master/Development/ServerApplication</url>
+
+	<repositories>
+		<!-- Needed for the ConnectorLib dependency -->
+		<repository>
+			<id>GAlexMES-snapshots</id>
+			<url>https://github.com/GAlexMES/ConnectorLib/raw/mvn-repo/snapshots</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
 		<!-- ConnectorLib will be fetched from GitHub -->
@@ -31,15 +38,15 @@
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>			
+			<artifactId>log4j</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>			
+			<artifactId>json</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>			
+			<artifactId>jdom</artifactId>
 		</dependency>
 
 		<!-- not in parent POM defined, because it is only used by the server -->
