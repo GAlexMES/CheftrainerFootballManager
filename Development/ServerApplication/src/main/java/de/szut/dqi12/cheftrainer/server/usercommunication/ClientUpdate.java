@@ -45,7 +45,7 @@ public class ClientUpdate {
 	private static JSONArray teamToJson(List<Player> playerList){
 		JSONArray teamJSON = new JSONArray();
 		for(Player p : playerList){
-			teamJSON.put(p.getJSONFromPlayer());
+			teamJSON.put(p.toJSON());
 		}
 		return teamJSON;
 	}

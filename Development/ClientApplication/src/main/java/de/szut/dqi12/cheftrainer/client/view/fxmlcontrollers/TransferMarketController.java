@@ -69,7 +69,7 @@ public class TransferMarketController {
 	public void addAll() {
 		for (Player p : players) {
 			data.add(new MarketPlayer(p.getName(),
-					String.valueOf(p.getPoints()), String.valueOf(p.getWorth())));
+					String.valueOf(p.getPoints()), String.valueOf(p.getWorth()),p));
 		}
 		nameCol.setCellValueFactory(data -> data.getValue().getPlayerName());
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
