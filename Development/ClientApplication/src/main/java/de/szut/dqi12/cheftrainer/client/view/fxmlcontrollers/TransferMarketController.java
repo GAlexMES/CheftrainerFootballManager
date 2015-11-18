@@ -2,8 +2,6 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.util.ArrayList;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -22,15 +19,15 @@ import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 
 /**
- * This is the controller of the transfer-marked gui-component.
+ * This is the controller of the transfer-market gui-component.
  * 
- * @author Robin
+ * @author Robin and Alexander
  *
  */
 
@@ -50,21 +47,18 @@ public class TransferMarketController implements ControllerInterface {
 	private ArrayList<Transaction> transactions;
 
 	private MarketPlayer selectedMarketPlayer;
+	
 
-	public TransferMarketController() {
-
-	}
-
-	/**
-	 * This method have to be called before all other methods. Initialization of
-	 * gui-components,
+	/** init() function, which comes from the {@link ControllerInterface}.
+	 * It is not used here.
 	 */
 	@Override
 	public void init() {
 	}
 
 	/**
-	 * Adds all Players to table
+	 * This function is the initialize funktion of FXML. It is called from FXML, when this view should be displayed.
+	 * This function fetches the players, which are on the {@link Market}, for the selected {@link Community}. After that, the {@link Player} will be added to the table.
 	 */
 	@FXML
 	public void initialize() {
@@ -90,6 +84,7 @@ public class TransferMarketController implements ControllerInterface {
 		});
 	}
 
+	
 	private void onDoubleClick() {
 		System.out.println(selectedMarketPlayer.getWerth().get());
 
