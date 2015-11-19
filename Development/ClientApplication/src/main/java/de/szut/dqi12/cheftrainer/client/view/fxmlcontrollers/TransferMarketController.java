@@ -8,16 +8,25 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.images.ImageController;
+import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
@@ -31,13 +40,13 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
  *
  */
 
-public class TransferMarketController implements ControllerInterface {
+public class TransferMarketController implements ControllerInterface, ImageUpdate {
 	// @FXML
 	// GridPane market;
 	@FXML
 	TableView<MarketPlayer> marketTable;
 	@FXML
-	private TableColumn<MarketPlayer, String> nameCol;
+	private TableColumn<MarketPlayer, Player> nameCol;
 	@FXML
 	private TableColumn<MarketPlayer, String> pointsCol;
 	@FXML
@@ -47,32 +56,32 @@ public class TransferMarketController implements ControllerInterface {
 	private ArrayList<Transaction> transactions;
 
 	private MarketPlayer selectedMarketPlayer;
-	
 
-	/** init() function, which comes from the {@link ControllerInterface}.
-	 * It is not used here.
+	private ImageController imageController;
+
+	/**
+	 * init() function, which comes from the {@link ControllerInterface}. It is
+	 * not used here.
 	 */
 	@Override
 	public void init() {
 	}
 
 	/**
-	 * This function is the initialize funktion of FXML. It is called from FXML, when this view should be displayed.
-	 * This function fetches the players, which are on the {@link Market}, for the selected {@link Community}. After that, the {@link Player} will be added to the table.
+	 * This function is the initialize funktion of FXML. It is called from FXML,
+	 * when this view should be displayed. This function fetches the players,
+	 * which are on the {@link Market}, for the selected {@link Community}.
+	 * After that, the {@link Player} will be added to the table.
 	 */
 	@FXML
 	public void initialize() {
-		marketTable.setItems(Controller.getInstance().getSession()
-				.getMarketPlayerObservable());
-		nameCol.setCellValueFactory(data -> data.getValue().getPlayerName());
+		imageController = new ImageController(this);
+		marketTable.setItems(Controller.getInstance().getSession().getMarketPlayerObservable());
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("Player"));
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
 		werthCol.setCellValueFactory(data -> data.getValue().getWerth());
 
-		marketTable
-				.getSelectionModel()
-				.selectedItemProperty()
-				.addListener(
-						(observable, oldValue, newValue) -> playerPressed(newValue));
+		marketTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> playerPressed(newValue));
 
 		marketTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
@@ -82,9 +91,42 @@ public class TransferMarketController implements ControllerInterface {
 				}
 			}
 		});
+
+		nameCol.setCellFactory(new Callback<TableColumn<MarketPlayer, Player>, TableCell<MarketPlayer, Player>>() {
+			@Override
+			public TableCell<MarketPlayer, Player> call(TableColumn<MarketPlayer, Player> param) {
+
+				TableCell<MarketPlayer, Player> cell = new TableCell<MarketPlayer, Player>() {
+					ImageView imageview = new ImageView();
+
+					@Override
+					public void updateItem(Player item, boolean empty) {
+						if (item != null) {
+							HBox box = new HBox();
+							box.setSpacing(10);
+							VBox vbox = new VBox();
+							vbox.getChildren().add(new Label(item.getName()));
+
+							imageview.setFitHeight(100);
+							imageview.setFitWidth(100);
+
+							
+							Image image = imageController.getPicture(item);
+							imageview.setImage(image);
+
+							box.getChildren().addAll(imageview, vbox);
+							// SETTING ALL THE GRAPHICS COMPONENT FOR CELL
+							setGraphic(box);
+						}
+					}
+				};
+
+				return cell;
+			}
+
+		});
 	}
 
-	
 	private void onDoubleClick() {
 		System.out.println(selectedMarketPlayer.getWerth().get());
 
@@ -115,14 +157,11 @@ public class TransferMarketController implements ControllerInterface {
 			public void handle(ActionEvent event) {
 				dialogStage.close();
 				Player currentPlayer;
-				if (Integer.valueOf(field.getText()) >= Integer.valueOf(selectedMarketPlayer
-						.getWerth().toString())) {
+				if (Integer.valueOf(field.getText()) >= Integer.valueOf(selectedMarketPlayer.getWerth().toString())) {
 					for (Player player : players) {
-						if (player.getName().equals(
-								selectedMarketPlayer.getPlayerName().toString())) {
+						if (player.getName().equals(selectedMarketPlayer.getPlayerName().toString())) {
 							currentPlayer = player;
-							Controller.getInstance().sendOffer(currentPlayer,
-									Integer.valueOf(field.getText()));
+							Controller.getInstance().sendOffer(currentPlayer, Integer.valueOf(field.getText()));
 							break;
 						}
 					}
@@ -166,16 +205,15 @@ public class TransferMarketController implements ControllerInterface {
 					GridPane dlog = new GridPane();
 					dlog.add(new Label(player.getName()), 1, 0);
 					TextField field = new TextField();
-					field.addEventFilter(KeyEvent.KEY_TYPED,
-							new EventHandler<KeyEvent>() {
-								public void handle(KeyEvent t) {
-									char ar[] = t.getCharacter().toCharArray();
-									char ch = ar[t.getCharacter().toCharArray().length - 1];
-									if (!(ch >= '0' && ch <= '9')) {
-										t.consume();
-									}
-								}
-							});
+					field.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+						public void handle(KeyEvent t) {
+							char ar[] = t.getCharacter().toCharArray();
+							char ch = ar[t.getCharacter().toCharArray().length - 1];
+							if (!(ch >= '0' && ch <= '9')) {
+								t.consume();
+							}
+						}
+					});
 					dlog.add(field, 2, 0);
 					Button butt = new Button("send");
 					butt.setOnAction(new EventHandler<ActionEvent>() {
@@ -183,8 +221,7 @@ public class TransferMarketController implements ControllerInterface {
 						@Override
 						public void handle(ActionEvent event) {
 
-							Controller.getInstance().setPlayeronMarket(player,
-									Integer.valueOf(field.getText()));
+							Controller.getInstance().setPlayeronMarket(player, Integer.valueOf(field.getText()));
 
 						}
 					});
@@ -269,6 +306,12 @@ public class TransferMarketController implements ControllerInterface {
 
 	@Override
 	public void messageArrived() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateImage(Image image, int id) {
 		// TODO Auto-generated method stub
 
 	}

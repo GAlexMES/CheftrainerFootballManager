@@ -42,8 +42,8 @@ public class ImageController {
 				imageFile.getParentFile().mkdirs();
 				Thread t = new Thread(new ImageLoader(url, picturePath, p.getSportalID()));
 				t.run();
-			} catch (IOException mue) {
-				mue.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return DUMMY_IMG;

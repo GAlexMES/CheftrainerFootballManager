@@ -123,6 +123,7 @@ public class CommunityManagement {
 			while (rs.next()) {
 				Player p = getPlayerFromResult(rs);
 				p.setTeamName(rs.getString("Vereinsname"));
+				p.setAbsolutePictureURL(rs.getString("PicturePath"));
 				retval.addPlayer(p);
 			}
 		} catch (SQLException e) {
