@@ -5,4 +5,5 @@ env:
 branches:
   only:
     - KaderFinalisierungsBranch
+    - TransfermarktBranch
 script: cd $TEST_DIR && mvn clean install
