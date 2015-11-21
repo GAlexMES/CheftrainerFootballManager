@@ -149,7 +149,7 @@ public class CommunityManagement {
 			while (rs.next()) {
 				try {
 					String managerName = rs.getString("Nutzername");
-					// TODO: benötigt?
+					// TODO: benoetigt?
 					// double money = rs.getDouble("Budget");
 					int points = rs.getInt("Punkte");
 					Manager manager = new Manager(managerName, null, points,
