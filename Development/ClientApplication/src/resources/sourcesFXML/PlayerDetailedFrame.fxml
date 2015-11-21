@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.VBox?>
+
+<GridPane fx:id="mainPane" gridLinesVisible="true" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.PlayerDetailedController">
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="160.0" prefWidth="160.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints fx:id="generalData" maxHeight="200.0" minHeight="200.0" prefHeight="200.0" vgrow="SOMETIMES" />
+    <RowConstraints fx:id="additionalData" fillHeight="false" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <ImageView fx:id="playerPicture" fitHeight="180.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" />
+      <VBox fx:id="offerBox" prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1">
+         <children>
+            <Text fx:id="playerNameText" strokeType="OUTSIDE" strokeWidth="0.0" text="Spielername" wrappingWidth="137.13671875">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="25.0" />
+               </VBox.margin>
+            </Text>
+            <Text fx:id="playerBirthdayText" strokeType="OUTSIDE" strokeWidth="0.0" text="Geburtstag" wrappingWidth="137.13671875">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Text>
+            <Text fx:id="playerPointsText" strokeType="OUTSIDE" strokeWidth="0.0" text="Punkte" wrappingWidth="137.13671875">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Text>
+            <Text fx:id="playerWorthText" strokeType="OUTSIDE" strokeWidth="0.0" text="Wert" wrappingWidth="137.13671875">
+               <VBox.margin>
+                  <Insets left="5.0" right="5.0" top="5.0" />
+               </VBox.margin>
+            </Text>
+         </children>
+      </VBox>
+      <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Your offer:" textAlignment="CENTER" wrappingWidth="77.38232421875" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Text>
+            <TextField />
+            <Button mnemonicParsing="false" prefHeight="25.0" prefWidth="165.0" text="offer" />
+         </children>
+      </VBox>
+   </children>
+</GridPane>

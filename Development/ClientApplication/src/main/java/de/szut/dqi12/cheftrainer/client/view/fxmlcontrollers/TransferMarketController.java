@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -22,7 +23,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
@@ -59,6 +59,8 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 
 	private ImageController imageController;
 
+	private boolean updateIsBlocked = false;
+
 	/**
 	 * init() function, which comes from the {@link ControllerInterface}. It is
 	 * not used here.
@@ -92,94 +94,120 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 			}
 		});
 
-		nameCol.setCellFactory(new Callback<TableColumn<MarketPlayer, Player>, TableCell<MarketPlayer, Player>>() {
-			@Override
-			public TableCell<MarketPlayer, Player> call(TableColumn<MarketPlayer, Player> param) {
+		updateIsBlocked = true;
 
-				TableCell<MarketPlayer, Player> cell = new TableCell<MarketPlayer, Player>() {
-					ImageView imageview = new ImageView();
+		// Sets the CellFactory to the image cells
+		nameCol.setCellFactory(params -> {
+			TableCell<MarketPlayer, Player> cell = new TableCell<MarketPlayer, Player>() {
+				ImageView imageview = new ImageView();
 
-					@Override
-					public void updateItem(Player item, boolean empty) {
-						if (item != null) {
-							HBox box = new HBox();
-							box.setSpacing(10);
-							VBox vbox = new VBox();
-							vbox.getChildren().add(new Label(item.getName()));
+				@Override
+				public void updateItem(Player item, boolean empty) {
+					if (item != null) {
+						HBox box = new HBox();
+						box.setSpacing(10);
+						VBox vbox = new VBox();
+						vbox.getChildren().add(new Label(item.getName()));
 
-							imageview.setFitHeight(100);
-							imageview.setFitWidth(100);
+						imageview.setFitHeight(100);
+						imageview.setFitWidth(100);
 
-							
-							Image image = imageController.getPicture(item);
-							imageview.setImage(image);
+						Image image = imageController.getPicture(item);
+						imageview.setImage(image);
 
-							box.getChildren().addAll(imageview, vbox);
-							// SETTING ALL THE GRAPHICS COMPONENT FOR CELL
-							setGraphic(box);
-						}
+						box.getChildren().addAll(imageview, vbox);
+
+						setGraphic(box);
 					}
-				};
-
-				return cell;
-			}
-
+				}
+			};
+			return cell;
 		});
+		updateIsBlocked = false;
+		updateTableView();
+	}
+
+	/**
+	 * Sets the visible of a element to false and back to true, because that
+	 * triggers the update Event of the TableView.
+	 */
+	private void updateTableView() {
+		TableColumn<MarketPlayer, ?> tc = marketTable.getColumns().get(0);
+		if (tc != null) {
+			tc.setVisible(false);
+			tc.setVisible(true);
+		}
 	}
 
 	private void onDoubleClick() {
-		System.out.println(selectedMarketPlayer.getWerth().get());
-
-		GridPane dialog = new GridPane();
-		Stage dialogStage = new Stage();
 
 		// INDEXE MUESSTEN MOEGLICHERWEISE UEBERARBEITET WERDEN
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("sourcesFXML/PlayerDetailedFrame.fxml"));
+			GridPane root = (GridPane) fxmlLoader.load();
+			Stage stage = new Stage();
+			stage.setTitle(selectedMarketPlayer.getPlayer().getName());
+			stage.setScene(new Scene(root));
+			PlayerDetailedController pdc = fxmlLoader.getController();
+			pdc.setPlayer(selectedMarketPlayer.getPlayer());
+			pdc.showOffer();
+			stage.setResizable(false);
+			stage.show();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		dialog.add(new Label("Name of the Player "), 0, 0);
-		dialog.add(new Label(selectedMarketPlayer.getPlayerName().get()), 0, 1);
-		dialog.add(new Label("Actual Points "), 1, 0);
-		dialog.add(new Label(selectedMarketPlayer.getPoints().get()), 1, 1);
-		dialog.add(new Label("Werth "), 2, 0);
-		dialog.add(new Label(selectedMarketPlayer.getWerth().get()), 2, 1);
-		TextField field = new TextField();
-		field.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-			public void handle(KeyEvent t) {
-				char ar[] = t.getCharacter().toCharArray();
-				char ch = ar[t.getCharacter().toCharArray().length - 1];
-				if (!(ch >= '0' && ch <= '9')) {
-					t.consume();
-				}
-			}
-		});
-		Button but = new Button("offer");
-		but.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				dialogStage.close();
-				Player currentPlayer;
-				if (Integer.valueOf(field.getText()) >= Integer.valueOf(selectedMarketPlayer.getWerth().toString())) {
-					for (Player player : players) {
-						if (player.getName().equals(selectedMarketPlayer.getPlayerName().toString())) {
-							currentPlayer = player;
-							Controller.getInstance().sendOffer(currentPlayer, Integer.valueOf(field.getText()));
-							break;
-						}
-					}
-				} else {
-					// Hinweis anzeigen: Falsches angebot
-				}
-				//
-			}
-		});
-		dialog.add(field, 3, 1);
-		dialog.add(but, 4, 1);
-		dialogStage.setResizable(false);
-		dialogStage.setTitle("Players");
-		dialogStage.initModality(Modality.WINDOW_MODAL);
-		Scene scene = new Scene(dialog);
-
-		dialogStage.setScene(scene);
-		dialogStage.showAndWait();
+		// dialog.add(new Label("Name of the Player "), 0, 0);
+		// dialog.add(new Label(selectedMarketPlayer.getPlayerName().get()), 0,
+		// 1);
+		// dialog.add(new Label("Actual Points "), 1, 0);
+		// dialog.add(new Label(selectedMarketPlayer.getPoints().get()), 1, 1);
+		// dialog.add(new Label("Worth "), 2, 0);
+		// dialog.add(new Label(selectedMarketPlayer.getWerth().get()), 2, 1);
+		// TextField field = new TextField();
+		// field.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>()
+		// {
+		// public void handle(KeyEvent t) {
+		// char ar[] = t.getCharacter().toCharArray();
+		// char ch = ar[t.getCharacter().toCharArray().length - 1];
+		// if (!(ch >= '0' && ch <= '9')) {
+		// t.consume();
+		// }
+		// }
+		// });
+		// Button but = new Button("offer");
+		// but.setOnAction(new EventHandler<ActionEvent>() {
+		// @Override
+		// public void handle(ActionEvent event) {
+		// dialogStage.close();
+		// Player currentPlayer;
+		// if (Integer.valueOf(field.getText()) >=
+		// Integer.valueOf(selectedMarketPlayer.getWerth().toString())) {
+		// for (Player player : players) {
+		// if
+		// (player.getName().equals(selectedMarketPlayer.getPlayerName().toString()))
+		// {
+		// currentPlayer = player;
+		// Controller.getInstance().sendOffer(currentPlayer,
+		// Integer.valueOf(field.getText()));
+		// break;
+		// }
+		// }
+		// } else {
+		// // Hinweis anzeigen: Falsches angebot
+		// }
+		// //
+		// }
+		// });
+		// dialog.add(field, 3, 1);
+		// dialog.add(but, 4, 1);
+		// dialogStage.setResizable(false);
+		// dialogStage.setTitle("Players");
+		// dialogStage.initModality(Modality.WINDOW_MODAL);
+		// Scene scene = new Scene(dialog);
+		//
+		// dialogStage.setScene(scene);
+		// dialogStage.showAndWait();
 	}
 
 	private void playerPressed(MarketPlayer marketPlayer) {
@@ -312,7 +340,8 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 
 	@Override
 	public void updateImage(Image image, int id) {
-		// TODO Auto-generated method stub
-
+		if (!updateIsBlocked) {
+			updateTableView();
+		}
 	}
 }
