@@ -140,7 +140,6 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	}
 
 	private void onDoubleClick() {
-
 		// INDEXE MUESSTEN MOEGLICHERWEISE UEBERARBEITET WERDEN
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("sourcesFXML/PlayerDetailedFrame.fxml"));
@@ -156,58 +155,6 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		// dialog.add(new Label("Name of the Player "), 0, 0);
-		// dialog.add(new Label(selectedMarketPlayer.getPlayerName().get()), 0,
-		// 1);
-		// dialog.add(new Label("Actual Points "), 1, 0);
-		// dialog.add(new Label(selectedMarketPlayer.getPoints().get()), 1, 1);
-		// dialog.add(new Label("Worth "), 2, 0);
-		// dialog.add(new Label(selectedMarketPlayer.getWerth().get()), 2, 1);
-		// TextField field = new TextField();
-		// field.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>()
-		// {
-		// public void handle(KeyEvent t) {
-		// char ar[] = t.getCharacter().toCharArray();
-		// char ch = ar[t.getCharacter().toCharArray().length - 1];
-		// if (!(ch >= '0' && ch <= '9')) {
-		// t.consume();
-		// }
-		// }
-		// });
-		// Button but = new Button("offer");
-		// but.setOnAction(new EventHandler<ActionEvent>() {
-		// @Override
-		// public void handle(ActionEvent event) {
-		// dialogStage.close();
-		// Player currentPlayer;
-		// if (Integer.valueOf(field.getText()) >=
-		// Integer.valueOf(selectedMarketPlayer.getWerth().toString())) {
-		// for (Player player : players) {
-		// if
-		// (player.getName().equals(selectedMarketPlayer.getPlayerName().toString()))
-		// {
-		// currentPlayer = player;
-		// Controller.getInstance().sendOffer(currentPlayer,
-		// Integer.valueOf(field.getText()));
-		// break;
-		// }
-		// }
-		// } else {
-		// // Hinweis anzeigen: Falsches angebot
-		// }
-		// //
-		// }
-		// });
-		// dialog.add(field, 3, 1);
-		// dialog.add(but, 4, 1);
-		// dialogStage.setResizable(false);
-		// dialogStage.setTitle("Players");
-		// dialogStage.initModality(Modality.WINDOW_MODAL);
-		// Scene scene = new Scene(dialog);
-		//
-		// dialogStage.setScene(scene);
-		// dialogStage.showAndWait();
 	}
 
 	private void playerPressed(MarketPlayer marketPlayer) {

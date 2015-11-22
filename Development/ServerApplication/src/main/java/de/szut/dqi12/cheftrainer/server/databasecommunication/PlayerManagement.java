@@ -149,7 +149,6 @@ public class PlayerManagement {
 					+ "')";
 			sqlCon.sendQuery(sqlQuery);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

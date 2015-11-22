@@ -93,11 +93,6 @@ public class Controller {
 
 	}
 
-	// Dummy
-	public void sendOffer(Player player, int offer) {
-
-	}
-
 	// Dummy answer = 1 = angenommen; answer = 0 = spieler vom markt nehmen(auch
 	// eigene Angebote)
 	public void answerOffer(Transaction offer, Boolean answer) {
