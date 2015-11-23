@@ -44,14 +44,16 @@ public class ExchangeMarketGenerator {
 
 	private static void deleteExistingMarket(SQLConnection sqlCon,
 			String communityName) {
-		String sqlQuery = "DELETE FROM Transfermarkt INNER JOIN Spielrunde WHERE "
-				+ "Name = "+communityName
-				+ "ID = Spielrunde_ID";
+		String sqlQuery =  "DELETE FROM Transfermarkt WHERE Spielrunde_ID in " 
+				+ "( SELECT Spielrunde_ID FROM Gebote INNER JOIN Spielrunde "
+				+ " WHERE Spielrunde.ID = Spielrunde_ID "
+				+ " AND  Name = '"+communityName+"')";
 		sqlCon.sendQuery(sqlQuery);
 
-		sqlQuery = "DELETE FROM Gebote INNER JOIN Spielrunde WHERE "
-				+ "Name = "+communityName
-				+ "ID = Spielrunde_ID";
+		sqlQuery 	= "DELETE FROM Gebote WHERE Spielrunde_ID in " 
+					+ "( SELECT Spielrunde_ID FROM Gebote INNER JOIN Spielrunde "
+					+ " WHERE Spielrunde.ID = Spielrunde_ID "
+					+ " AND Name = '"+communityName+"')";
 		sqlCon.sendQuery(sqlQuery);
 	}
 }

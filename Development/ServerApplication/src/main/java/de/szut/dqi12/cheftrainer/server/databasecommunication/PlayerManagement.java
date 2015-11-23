@@ -1,10 +1,15 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
 import de.szut.dqi12.cheftrainer.server.parsing.PlayerParser;
@@ -124,6 +129,37 @@ public class PlayerManagement {
 				+ "','" + country + "')";
 		sqlCon.sendQuery(sqlString);
 	}
+	
+	/**
+	 * This method creates a sqlQuery and sends it to the database. The query
+	 * will attache the {@link Player}, with the given ID, to the
+	 * {@link Manager}, with the given Id.
+	 * 
+	 * @param managerID
+	 *            the ID of the {@link Manager}, that should own the
+	 *            {@link Player};
+	 * @param playerID
+	 *            the ID of the {@link Player}, that should be owned by the
+	 *            {@link Manager};
+	 * @throws SQLException 
+	 */
+	public void addPlayerToManager(int managerID, int playerID, boolean plays){
+		int play = 0;
+		if (plays) {
+			play = 1;
+		}
+		String sqlQuery = "INSERT INTO Mannschaft ('Manager_ID','Spieler_ID','Aufgestellt') " + " VALUES (?,?,?)";
+		PreparedStatement pStatement;
+		try {
+			pStatement = sqlCon.prepareStatement(sqlQuery);
+			pStatement.setInt(1, managerID);
+			pStatement.setInt(2, playerID);
+			pStatement.setInt(3,play);
+			pStatement.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void setManagersFormation(int managerID, int defenders,
 			int middfielders, int offensives) {
@@ -134,23 +170,89 @@ public class PlayerManagement {
 
 	}
 
-	public void putPlayerOnExchangeMarket(Player p, String communityName) {
+	public static Player getPlayerFromResult(ResultSet rs) {
+		Player p = new Player();
+		String id = getDefault(getIntFromRS(rs, "ID"));
+		p.setID(Integer.valueOf(id));
+		String name = getDefault(getStringFromRS(rs, "Name"));
+		p.setName(name);
+		String position = getDefault(getStringFromRS(rs, "Position"));
+		p.setPosition(position);
+		String number = getDefault(getIntFromRS(rs, "Nummer"));
+		p.setNumber(Integer.valueOf(number));
+		String worth = getDefault(getIntFromRS(rs, "Marktwert"));
+		p.setWorth(Integer.valueOf(worth));
+		String points = getDefault(getIntFromRS(rs, "Punkte"));
+		p.setPoints(Integer.valueOf(points));
+		String temName = getDefault(getStringFromRS(rs, "Vereinsname"));
+		p.setTeamName(temName);
+		String sportalID = getDefault(getIntFromRS(rs, "SportalID"));
+		p.setSportalID(Integer.valueOf(sportalID));
+		String birthday = getDefault(getStringFromRS(rs, "Birthday"), "1.1.1900");
+		p.setBirthdate(birthday);
+		String picturePath = getDefault(getStringFromRS(rs, "PicturePath"));
+		p.setAbsolutePictureURL(picturePath);
 
-		try {
-			String condition = "Name='" + communityName + "'";
-			int communityID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID",
-					"Spielrunde", condition).toString());
-			String sqlQuery = "INSERT INTO Transfermarkt (Spielrunde_ID, Spieler_ID, Min_Preis) VALUES('"
-					+ communityID
-					+ "','"
-					+ p.getID()
-					+ "','"
-					+ p.getWorth()
-					+ "')";
-			sqlCon.sendQuery(sqlQuery);
-		} catch (IOException e) {
-			e.printStackTrace();
+		int play = Integer.valueOf(getDefault(getIntFromRS(rs, "Aufgestellt")));
+		if (play == 1) {
+			p.setPlays(true);
+		} else {
+			p.setPlays(false);
+
 		}
+		return p;
+	}
 
+	private static Integer getIntFromRS(ResultSet rs, String coloumName) {
+		try {
+			int retval = rs.getInt(coloumName);
+			return retval;
+		} catch (Exception e) {
+			return 0;
+		}
+	}
+
+	private static String getStringFromRS(ResultSet rs, String coloumName) {
+		try {
+			String retval = rs.getString(coloumName);
+			return retval;
+		} catch (Exception e) {
+			return "";
+		}
+	}
+
+	private static String getDefault(Object o) {
+		return getDefault(o, "0");
+	}
+
+	private static String getDefault(Object o, String defaultValue) {
+		if (o != null) {
+			return String.valueOf(o);
+		}
+		return defaultValue;
+	}
+	
+	public static List<Player> getPlayersFromResultSet(ResultSet rs) throws SQLException {
+		List<Player> retval = new ArrayList<>();
+		while (rs.next()) {
+			Player p = getPlayerFromResult(rs);
+			retval.add(p);
+		}
+		return retval;
+	}
+
+	/**
+	 * This method sends a query to the database to collect all information for
+	 * the {@link Player} with the given ID.
+	 * 
+	 * @param playerID
+	 *            the ID of a {@link Player}
+	 * @return the {@link Player} object for the given ID from the "Spieler"
+	 *         table of the database.
+	 */
+	public Player getPlayer(int playerID) {
+		String sqlQuery = "SELECT * FROM Spieler WHERE Spieler.ID = "+playerID;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		return getPlayerFromResult(rs);
 	}
 }

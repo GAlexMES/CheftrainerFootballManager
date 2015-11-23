@@ -68,7 +68,10 @@ public class CommunityManagement {
 	 * @return a List of Integer with IDs for {@link Community} inside.
 	 */
 	public List<Integer> getCommunityIDsForUser(int userID) {
-		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde INNER JOIN Manager WHERE Manager.Nutzer_ID =" + userID + " AND Manager.Spielrunde_ID=Spielrunde.ID";
+		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde ";
+		if (userID >= 0) {
+			sqlQuery += " INNER JOIN Manager WHERE Manager.Nutzer_ID =" + userID + " AND Manager.Spielrunde_ID=Spielrunde.ID";
+		}
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		List<Integer> retval = new ArrayList<>();
 		try {
@@ -111,13 +114,14 @@ public class CommunityManagement {
 	private Market getMarket(int communityID) {
 		Market retval = new Market();
 
-		String sqlQuery = "SELECT * FROM Transfermarkt " + "INNER JOIN Spieler INNER JOIN Verein" + " WHERE Spieler.ID = Spieler_ID" + " AND Verein_ID = Verein.ID" + " AND Spielrunde_ID = "
+		String sqlQuery = "SELECT * FROM Transfermarkt " + "INNER JOIN Spieler INNER JOIN Verein" + " WHERE Spieler.SportalID = Spieler_ID" + " AND Verein_ID = Verein.ID" + " AND Spielrunde_ID = "
 				+ communityID;
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
-			List<Player> playerList = getPlayersFromResultSet(rs);
+			List<Player> playerList = PlayerManagement.getPlayersFromResultSet(rs);
 			playerList.forEach(p -> retval.addPlayer(p));
 		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 
 		return retval;
@@ -334,85 +338,16 @@ public class CommunityManagement {
 	 */
 	public List<Player> getTeam(int managerID) {
 		List<Player> playerList = new ArrayList<>();
-		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein" + " WHERE Mannschaft.Manager_ID=" + managerID + " AND Spieler.Verein_ID = Verein.ID"
-				+ " AND Mannschaft.Spieler_ID=Spieler.ID";
+		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein" 
+						+ " WHERE Mannschaft.Manager_ID=" + managerID 
+						+ " AND Spieler.Verein_ID = Verein.ID"
+						+ " AND Mannschaft.Spieler_ID=Spieler.SportalID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
-			playerList.addAll(getPlayersFromResultSet(rs));
+			playerList.addAll(PlayerManagement.getPlayersFromResultSet(rs));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return playerList;
-	}
-
-	private List<Player> getPlayersFromResultSet(ResultSet rs) throws SQLException {
-		List<Player> retval = new ArrayList<>();
-		while (rs.next()) {
-			Player p = getPlayerFromResult(rs);
-			retval.add(p);
-		}
-		return retval;
-	}
-
-	private Player getPlayerFromResult(ResultSet rs) {
-		Player p = new Player();
-		String id = getDefault(getIntFromRS(rs, "ID"));
-		p.setID(Integer.valueOf(id));
-		String name = getDefault(getStringFromRS(rs, "Name"));
-		p.setName(name);
-		String position = getDefault(getStringFromRS(rs, "Position"));
-		p.setPosition(position);
-		String number = getDefault(getIntFromRS(rs, "Nummer"));
-		p.setNumber(Integer.valueOf(number));
-		String worth = getDefault(getIntFromRS(rs, "Marktwert"));
-		p.setWorth(Integer.valueOf(worth));
-		String points = getDefault(getIntFromRS(rs, "Punkte"));
-		p.setPoints(Integer.valueOf(points));
-		String temName = getDefault(getStringFromRS(rs, "Vereinsname"));
-		p.setTeamName(temName);
-		String sportalID = getDefault(getIntFromRS(rs, "SportalID"));
-		p.setSportalID(Integer.valueOf(sportalID));
-		String birthday = getDefault(getStringFromRS(rs, "Birthday"), "1.1.1900");
-		p.setBirthdate(birthday);
-		String picturePath = getDefault(getStringFromRS(rs, "PicturePath"));
-		p.setAbsolutePictureURL(picturePath);
-
-		int play = Integer.valueOf(getDefault(getIntFromRS(rs, "Aufgestellt")));
-		if (play == 1) {
-			p.setPlays(true);
-		} else {
-			p.setPlays(false);
-
-		}
-		return p;
-	}
-
-	private Integer getIntFromRS(ResultSet rs, String coloumName) {
-		try {
-			int retval = rs.getInt(coloumName);
-			return retval;
-		} catch (Exception e) {
-			return 0;
-		}
-	}
-
-	private String getStringFromRS(ResultSet rs, String coloumName) {
-		try {
-			String retval = rs.getString(coloumName);
-			return retval;
-		} catch (Exception e) {
-			return "";
-		}
-	}
-
-	private String getDefault(Object o) {
-		return getDefault(o, "0");
-	}
-
-	private String getDefault(Object o, String defaultValue) {
-		if (o != null) {
-			return String.valueOf(o);
-		}
-		return defaultValue;
 	}
 }

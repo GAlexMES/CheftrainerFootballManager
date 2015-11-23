@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 
 /**
@@ -32,6 +33,7 @@ public class DatabaseRequests {
 	private static ServerPropertiesManagement serverPropertiesManagement;
 	private static DatabaseUtils databaseUtils;
 	private static PointManagement pointManagement;
+	private static TransfermarketManagement transfermarktManagement;
 	
 	public static DatabaseRequests getInstance(){
 		if(INSTANCE==null){
@@ -49,6 +51,7 @@ public class DatabaseRequests {
 		serverPropertiesManagement = new ServerPropertiesManagement(sqlCon);
 		databaseUtils = new DatabaseUtils(sqlCon);
 		pointManagement = new PointManagement(sqlCon);
+		transfermarktManagement = new TransfermarketManagement(sqlCon);
 	}
 
 	
@@ -98,7 +101,7 @@ public class DatabaseRequests {
 	}
 	
 	public static Player getPlayer(int playerID){
-		return logicManagement.getPlayer(playerID);
+		return playerManagement.getPlayer(playerID);
 	}
 
 	public static boolean isPlayerOwened(int playerID, int communityID) {
@@ -106,8 +109,7 @@ public class DatabaseRequests {
 	}
 
 	public static void addPlayerToManager(int managerID, int playerID, boolean plays) {
-		logicManagement.addPlayerToManager(managerID, playerID, plays);
-		
+		playerManagement.addPlayerToManager(managerID, playerID, plays);
 	}
 
 	public static int getCurrentSeasonFromSportal() {
@@ -180,6 +182,10 @@ public class DatabaseRequests {
 	}
 
 	public static void putPlayerOnExchangeMarket(Player p, String communityName) {
-		playerManagement. putPlayerOnExchangeMarket(p,  communityName);
+		transfermarktManagement.putPlayerOnExchangeMarket(p,  communityName);
+	}
+
+	public static void addTransaction(Transaction transaction) {
+		transfermarktManagement.addTransaction(transaction);
 	}
 }

@@ -208,7 +208,7 @@ public class TeamGenerator {
 						currentPlayer.getWorth()) < 0;
 				boolean samePosition = newPlayer.getPosition().equals(
 						currentPlayer.getPosition());
-				boolean notInUse = !isPlayerInUse(newPlayer.getID())
+				boolean notInUse = !isPlayerInUse(newPlayer.getSportalID())
 						&& !currentPlayerIDs.contains(newPlayer.getID());
 
 				if (betterWorth && samePosition && notInUse) {
@@ -233,7 +233,7 @@ public class TeamGenerator {
 	 *            the player, that should be mapped to the manager
 	 */
 	public void updateDatabaseWithPlayers(Player p) {
-		DatabaseRequests.addPlayerToManager(managerID, p.getID(), p.plays());
+		DatabaseRequests.addPlayerToManager(managerID, p.getSportalID(), p.plays());
 	}
 
 	/**
