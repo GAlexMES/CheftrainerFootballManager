@@ -188,4 +188,12 @@ public class DatabaseRequests {
 	public static void addTransaction(Transaction transaction) {
 		transfermarktManagement.addTransaction(transaction);
 	}
+	
+	public static void doTransactions(){
+		transfermarktManagement.doTransactions();
+	}
+
+	public static void createNewManager(String communityName, int userID) {
+		communityManagement.createNewManager(communityName, userID);
+	}
 }

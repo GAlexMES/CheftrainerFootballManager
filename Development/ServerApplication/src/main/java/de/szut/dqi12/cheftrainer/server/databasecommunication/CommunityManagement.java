@@ -262,7 +262,7 @@ public class CommunityManagement {
 	 *            the ID of the user, that wants to join the community.
 	 * @return true = manager was created successful.
 	 */
-	private boolean createNewManager(String communityName, int userID) {
+	public boolean createNewManager(String communityName, int userID) {
 		try {
 			String condition = "Name='" + communityName + "'";
 			int communityID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Spielrunde", condition).toString());
