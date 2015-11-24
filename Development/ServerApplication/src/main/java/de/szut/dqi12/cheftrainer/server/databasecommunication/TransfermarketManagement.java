@@ -58,6 +58,7 @@ public class TransfermarketManagement {
 			e.printStackTrace();
 		}
 		System.out.println("test");
+		doTransactions();
 	}
 
 	public void doTransactions() {
@@ -80,7 +81,7 @@ public class TransfermarketManagement {
 			Transaction t = new Transaction();
 			t.setCommunityID(communityID);
 			t.setOfferedPrice(rs.getInt("Gebot"));
-			t.setUserID(rs.getInt("Manager_ID"));
+			t.setManagerID(rs.getInt("Manager_ID"));
 			int playerSportalID = rs.getInt("Spieler_ID");
 			t.setPlayerSportalID(playerSportalID);
 
