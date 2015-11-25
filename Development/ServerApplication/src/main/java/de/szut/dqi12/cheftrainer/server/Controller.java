@@ -1,19 +1,16 @@
 package de.szut.dqi12.cheftrainer.server;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.SQLConnection;
+import de.szut.dqi12.cheftrainer.server.timetasks.TimeTask;
 import de.szut.dqi12.cheftrainer.server.usercommunication.SocketController;
 
 public class Controller {
@@ -21,6 +18,9 @@ public class Controller {
 	private static Controller instance;
 	private SocketController socketController;
 	private SQLConnection sqlConnection;
+	
+	@SuppressWarnings("unused")
+	private TimeTask timerTask;
 
 	private final static Logger LOGGER = Logger.getLogger(Controller.class);
 
@@ -62,7 +62,16 @@ public class Controller {
 		return socketController;
 	}
 
-	public void startSpringTasks(String springConfig) {
-		ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
+	public void newTimerTask() {
+		Calendar cal =  Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 1);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		
+		Date newTimer = cal.getTime();
+		timerTask = new TimeTask(newTimer);
 	}
 }

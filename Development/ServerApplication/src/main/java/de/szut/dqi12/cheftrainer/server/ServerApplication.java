@@ -11,8 +11,6 @@ public class ServerApplication {
 	private final static String DB_NAME = "Database";
 	private final static String DB_PATH = "/Database";
 	
-	private final static String SPRING_CONFIG = "spring/time-task.xml";
-
 	private final static Logger LOGGER = Logger.getLogger(ServerApplication.class);
 
 	public static void main(String[] args) {
@@ -21,7 +19,7 @@ public class ServerApplication {
 			Controller controller = Controller.getInstance();
 			controller.creatDatabaseCommunication(DB_NAME, DB_PATH);
 			controller.startServerSocket(PACKAGE_PATH);
-			controller.startSpringTasks(SPRING_CONFIG);
+			controller.newTimerTask();
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error("A fatal error occured. Server will shut down!");
