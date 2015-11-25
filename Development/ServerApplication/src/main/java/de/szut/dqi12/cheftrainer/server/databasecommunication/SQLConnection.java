@@ -1,6 +1,7 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -45,7 +46,10 @@ public class SQLConnection {
 			throws IOException {
 		this.name = name;
 		DatabaseRequests.getInstance().setSQLConnection(this);
-		loadDB(sqlPath);
+		
+		URL url = this.getClass().getResource(sqlPath);
+		
+		loadDB(url.toString());
 		if (init) {
 			ServerInitialator.databaseInitalisation();
 		}
@@ -60,7 +64,7 @@ public class SQLConnection {
 	 */
 	private void loadDB(String path) {
 		LOGGER.info("Connecting to the database file!");
-		final String url = "jdbc:sqlite:" + path;
+		final String url = "jdbc:sqlite::resource:Database";
 
 		try {
 			Class.forName("org.sqlite.JDBC");

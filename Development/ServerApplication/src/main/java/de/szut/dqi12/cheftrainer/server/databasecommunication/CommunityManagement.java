@@ -1,4 +1,4 @@
-﻿package de.szut.dqi12.cheftrainer.server.databasecommunication;
+package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
 import java.sql.ResultSet;

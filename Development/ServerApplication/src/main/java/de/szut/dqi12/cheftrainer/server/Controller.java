@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
@@ -69,5 +71,9 @@ public class Controller {
 
 	public SocketController getSocketController() {
 		return socketController;
+	}
+
+	public void startSpringTasks(String springConfig) {
+		ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
 	}
 }
