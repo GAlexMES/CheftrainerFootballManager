@@ -181,8 +181,18 @@ public class FormationController implements ImageUpdate {
 	}
 
 	public ArrayList<Player> getCurrentPlayers() {
-		return currentPlayers;
-	}
+	    currentPlayers.clear();
+	    for(Node n : formationFrame.getChildren()){
+	      int id = ((PlayerLabel)n).getPlayerId();
+	      for(Player p : getAllPlayers()){
+	        if (p.getID() == id){
+	          currentPlayers.add(p);
+	          break;
+	        }
+	      }
+	    }
+	    return currentPlayers;
+	  }
 
 
 	public GridPane getFrame() {
