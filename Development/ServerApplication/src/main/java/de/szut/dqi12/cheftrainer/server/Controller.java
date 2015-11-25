@@ -23,7 +23,7 @@ public class Controller {
 	private SQLConnection sqlConnection;
 
 	private final static Logger LOGGER = Logger.getLogger(Controller.class);
-	
+
 	public static Controller getInstance() {
 		if (instance == null) {
 			instance = new Controller();
@@ -33,19 +33,9 @@ public class Controller {
 
 	public void startServerSocket(String packagePath) {
 		ServerProperties serverProps = new ServerProperties();
-		URL path = null;
-		try {
-			String pathAsString = ServerApplication.class.getResource(".").toURI().toString();
-			URI uriPath = new URI(pathAsString + "callables/");
-			path = uriPath.toURL();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		String pathAsString = "de/szut/dqi12/cheftrainer/server/callables/";
 		ClientToServer_MessageIDs cts = new ClientToServer_MessageIDs();
-		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, path,
-				packagePath);
+		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, pathAsString, packagePath);
 		serverProps.addClassPathMapper(idMapper);
 		serverProps.setPort(5000);
 		try {
@@ -56,10 +46,9 @@ public class Controller {
 	}
 
 	public void creatDatabaseCommunication(String sqlName, String sqlPath) throws IOException {
-		try{
-			sqlConnection = new SQLConnection(sqlName,sqlPath,true);
-		}
-		catch(IOException io){
+		try {
+			sqlConnection = new SQLConnection(sqlName, sqlPath, true);
+		} catch (IOException io) {
 			LOGGER.error("Creating access to database failed.");
 			throw io;
 		}
