@@ -122,7 +122,6 @@ public class LoginController implements ControllerInterface {
 	 */
 	@FXML
 	public void login() {
-		System.out.println("login presses");
 		if (!loginButton.isDisabled()){
 			System.out.println("button is not disabled");
 			TextField[] textFields = { loginField, passwordField, ipField,
@@ -177,7 +176,6 @@ public class LoginController implements ControllerInterface {
 			user.setUserName(loginField.getText());
 			newSession.setUser(user);
 			Controller.getInstance().setSession(newSession);
-			;
 		} catch (NoSuchAlgorithmException e) {
 			Alert alert = AlertUtils.createExceptionDialog(e);
 			alert.showAndWait();
@@ -302,6 +300,5 @@ public class LoginController implements ControllerInterface {
 	@Override
 	public void messageArrived() {
 		loginButton.setDisable(false);
-		System.out.println("button is now enabled");
 	}
 }
