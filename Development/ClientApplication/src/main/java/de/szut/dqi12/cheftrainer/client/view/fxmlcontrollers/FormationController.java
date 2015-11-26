@@ -37,15 +37,16 @@ public class FormationController implements ImageUpdate {
 	private ArrayList<Player> players;
 	private ArrayList<Player> currentPlayers;
 	private ArrayList<Player> notPlayingPlayers;
-	
-	private Map<Integer,Image> imageUpdateStack;
-	
+
+	private Map<Integer, Image> imageUpdateStack;
+
 	private Boolean putImageToStack = false;
-	
+
 	public FormationController() {
 		players = new ArrayList<Player>();
 		imageUpdateStack = new HashMap<>();
 	}
+
 	public void generateImage(Player player) {
 		String text = player.getName() + "\n" + player.getPosition() + " Points: " + player.getPoints();
 		Label label = new Label(text);
@@ -78,15 +79,19 @@ public class FormationController implements ImageUpdate {
 	public void init() {
 		// Initialisation of an not-playing-Players
 		// ArrayList
-		notPlayingPlayers = (ArrayList<Player>) getAllPlayers().clone();
+		notPlayingPlayers = new ArrayList<Player>();
 
-		ArrayList<Player> bufferArray = (ArrayList<Player>) notPlayingPlayers.clone();
-		for (Player player : bufferArray) {
+		currentPlayers = new ArrayList<Player>();
+		ArrayList<Player> playingPlayers = new ArrayList<Player>();
+		for (Player player : getAllPlayers()) {
 			if (player.isPlays()) {
-				notPlayingPlayers.remove(player);
+				playingPlayers.add(player);
+				currentPlayers.add(player);
+			} else {
+				notPlayingPlayers.add(player);
+				
 			}
 		}
-		currentPlayers = new ArrayList<Player>();
 		putImageToStack = true;
 		Image image;
 		for (Player player : getAllPlayers()) {
@@ -94,11 +99,11 @@ public class FormationController implements ImageUpdate {
 			l.setPlayerId(player.getID());
 			l.setPosition(player.getPosition());
 			player.setLabel(l);
-//			generateImage(player);
+			// generateImage(player);
 			ImageController c = new ImageController(this);
 			image = c.getPicture(player);
 			player.getLabel().setImage(image);
-			player.getLabel().setText(player.getName() + "\n" + player.getPoints());
+//			player.getLabel().setText(player.getName() + "\n" + "Points: " + player.getPoints());
 		}
 		putImageToStack = false;
 		checkForImageUpdate();
@@ -107,12 +112,11 @@ public class FormationController implements ImageUpdate {
 		for (Node n : formationFrame.getChildren()) {
 			copy.add(n);
 		}
-		ArrayList<Player> orderPlayers = (ArrayList<Player>) loadPlayingPlayers().clone();
-		currentPlayers = (ArrayList<Player>) orderPlayers.clone();
 
 		ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
-		ArrayList<Player> playerArray = (ArrayList<Player>) loadPlayingPlayers().clone();
+		boolean found;
 		int i = 0;
+		// Iteration durch alle Labels
 		for (Node n : buffer) {
 			int row;
 			int col;
@@ -145,64 +149,61 @@ public class FormationController implements ImageUpdate {
 			default:
 				break;
 			}
-			i = 0;
-			if (loadPlayingPlayers().size() < 11) {
-				for (Player p : playerArray) {
-					if (p.getPosition().equals(position)) {
+			// i = 0;
+			found = false;
+			for (Player p : playingPlayers) {
+				if (p.getPosition().equals(position)) {
+					formationFrame.add((Node) p.getLabel(), col, row);
+					formationFrame.getChildren().remove(n);
+					playingPlayers.remove(p);
+					found = true;
+					break;
 
-						formationFrame.add((Node) playerArray.get(i).getLabel(), col, row);
-						formationFrame.getChildren().remove(n);
-						playerArray.remove(p);
-						break;
-					}
-					if (i == playerArray.size()) {
-						for (Player pl : notPlayingPlayers) {
-							if (pl.getPosition().equals(position)) {
-								formationFrame.add((Node) pl.getLabel(), col, row);
-								pl.setPlays(true);
-								currentPlayers.add(pl);
-								notPlayingPlayers.remove(pl);
-								break;
-							}
+				}
+				if (!found) {
+					for (Player pl : notPlayingPlayers) {
+						
+						if (p.getPosition().equals(position)) {
+							formationFrame.add((Node) pl.getLabel(), col, row);
+							formationFrame.getChildren().remove(n);
+							p.setPlays(true);
+							notPlayingPlayers.remove(p);
+							currentPlayers.add(p);
+							found = true;
+							break;
+						}else{
+							System.out.println("unequal=" + pl.getPosition() + " und " +  position);
 						}
 					}
 				}
-				i++;
-			} else {
-				for (Player p : playerArray) {
-					if (p.getPosition().equals(position)) {
-
-						formationFrame.add((Node) playerArray.get(i).getLabel(), col, row);
-						formationFrame.getChildren().remove(n);
-						playerArray.remove(p);
-						break;
-					}
-					i++;
+				if (!found) {
+					//
 				}
 			}
 		}
 	}
 
 	public ArrayList<Player> getCurrentPlayers() {
-	    currentPlayers.clear();
-	    for(Node n : formationFrame.getChildren()){
-	      int id = ((PlayerLabel)n).getPlayerId();
-	      for(Player p : getAllPlayers()){
-	        if (p.getID() == id){
-	          currentPlayers.add(p);
-	          break;
-	        }
-	      }
-	    }
-	    return currentPlayers;
-	  }
-
+		currentPlayers = new ArrayList<Player>();
+		for (Node n : formationFrame.getChildren()) {
+			int id = ((PlayerLabel) n).getPlayerId();
+			for (Player p : getAllPlayers()) {
+				if (p.getID() == id) {
+					currentPlayers.add(p);
+					break;
+				}
+			}
+		}
+		return currentPlayers;
+	}
 
 	public GridPane getFrame() {
 		return formationFrame;
 	}
+
 	/**
 	 * Loads all existing Players of the current Manager in the current Leauge
+	 * 
 	 * @return List of all Players
 	 */
 	public ArrayList<Player> getAllPlayers() {
@@ -234,30 +235,15 @@ public class FormationController implements ImageUpdate {
 	}
 
 	/**
-	 * This method generates a Label for every player
-	 * 
-	 * @return ArrayList which contains all Labels for every player
-	 * @deprecated
-	 */
-	public ArrayList<Label> getPlayers() {
-		ArrayList<Label> players = new ArrayList<Label>();
-		try {
-			for (Node n : formationFrame.getChildren()) {
-				players.add(((Label) n));
-			}
-			return players;
-		} catch (NullPointerException n) {
-			return null;
-		}
-	}
-
-
-	/**
 	 * This method adds an listener for every Label, which opens an dialog to
 	 * change a player
 	 */
 	public void setClickedListener() {
+		getCurrentPlayers();
+		//Iteration durch alle Nodes
 		for (Node currentNode : formationFrame.getChildren()) {
+			
+			//Listener fuer geklickes Label
 			((PlayerLabel) currentNode).setOnMouseClicked(new EventHandler<Event>() {
 				Player currentPlayer;
 
@@ -273,6 +259,7 @@ public class FormationController implements ImageUpdate {
 					if (notPlayingPlayers.contains(currentPlayer)) {
 						notPlayingPlayers.remove(currentPlayer);
 					}
+					//Erstellung eines Dialogs zur Auswahl eines Spielers
 					if (notPlayingPlayers.size() != 0) {
 						GridPane dialog;
 						Stage dialogStage = new Stage();
@@ -280,11 +267,13 @@ public class FormationController implements ImageUpdate {
 							dialog = new GridPane();
 							PlayerLabel l;
 							int i = 0;
+							//Iteration durch alle nicht-spielenden Spieler
 							for (Player player : notPlayingPlayers) {
 								if (player.getPosition().equals(currentPlayer.getPosition())) {
 									l = player.getLabel();
 									dialog.add(l, 0, i);
 									i++;
+									//Listener fuer das klicken eines Labels im Dialog
 									l.setOnMouseClicked(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
@@ -336,8 +325,6 @@ public class FormationController implements ImageUpdate {
 								Scene scene = new Scene(dialog);
 
 								dialogStage.setScene(scene);
-								for(Player p : notPlayingPlayers){
-								}
 								dialogStage.showAndWait();
 							}
 						} catch (Exception e) {
@@ -352,28 +339,27 @@ public class FormationController implements ImageUpdate {
 
 	@Override
 	public void updateImage(Image image, int id) {
-		if(putImageToStack){
-			imageUpdateStack.put(id,image);
-		}
-		else{
+		if (putImageToStack) {
+			imageUpdateStack.put(id, image);
+		} else {
 			setImageToPlayer(id, image);
 		}
 	}
-	
-	private void setImageToPlayer(int playerID, Image image){
-		for(Player player : getAllPlayers()){
-			if(player.getSportalID() == playerID){
+
+	private void setImageToPlayer(int playerID, Image image) {
+		for (Player player : getAllPlayers()) {
+			if (player.getSportalID() == playerID) {
 				player.getLabel().setImage(image);
 				break;
 			}
 		}
 
 	}
-	
+
 	private void checkForImageUpdate() {
-		for(int i : imageUpdateStack.keySet()){
+		for (int i : imageUpdateStack.keySet()) {
 			setImageToPlayer(i, imageUpdateStack.get(i));
 		}
-		imageUpdateStack=new HashMap<>();
+		imageUpdateStack = new HashMap<>();
 	}
 }
