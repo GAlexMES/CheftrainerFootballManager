@@ -130,25 +130,8 @@ public class FormationController implements ImageUpdate {
 			} catch (NullPointerException e) {
 				row = 0;
 			}
-			String position = null;
+			String position = Position.getPositions().get(3-row);
 
-			switch (row) {
-			case 0:
-				position = Position.OFFENCE;
-				break;
-			case 1:
-				position = Position.MIDDLE;
-				break;
-
-			case 2:
-				position = Position.DEFENCE;
-				break;
-			case 3:
-				position = Position.KEEPER;
-				break;
-			default:
-				break;
-			}
 			// i = 0;
 			found = false;
 			for (Player p : playingPlayers) {
@@ -163,7 +146,7 @@ public class FormationController implements ImageUpdate {
 				if (!found) {
 					for (Player pl : notPlayingPlayers) {
 						
-						if (p.getPosition().equals(position)) {
+						if (pl.getPosition().equals(position)) {
 							formationFrame.add((Node) pl.getLabel(), col, row);
 							formationFrame.getChildren().remove(n);
 							p.setPlays(true);
