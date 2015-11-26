@@ -88,6 +88,7 @@ public class FormationController implements ImageUpdate {
 		}
 		currentPlayers = new ArrayList<Player>();
 		putImageToStack = true;
+		Image image;
 		for (Player player : getAllPlayers()) {
 			PlayerLabel l = new PlayerLabel();
 			l.setPlayerId(player.getID());
@@ -95,7 +96,9 @@ public class FormationController implements ImageUpdate {
 			player.setLabel(l);
 //			generateImage(player);
 			ImageController c = new ImageController(this);
-			player.getLabel().setImage(c.getPicture(player));
+			image = c.getPicture(player);
+			player.getLabel().setImage(image);
+			player.getLabel().setText(player.getName() + "\n" + player.getPoints());
 		}
 		putImageToStack = false;
 		checkForImageUpdate();
@@ -198,7 +201,10 @@ public class FormationController implements ImageUpdate {
 	public GridPane getFrame() {
 		return formationFrame;
 	}
-
+	/**
+	 * Loads all existing Players of the current Manager in the current Leauge
+	 * @return List of all Players
+	 */
 	public ArrayList<Player> getAllPlayers() {
 		players.clear();
 		Session session = Controller.getInstance().getSession();
@@ -245,26 +251,6 @@ public class FormationController implements ImageUpdate {
 		}
 	}
 
-	// public void reDraw() {
-	// int i = 0;
-	// ArrayList<Node> copy = new ArrayList<Node>();
-	// for (Node n : formationFrame.getChildren()) {
-	// copy.add(n);
-	// }
-	// ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
-	// for (Node n : buffer) {
-	// try {
-	// formationFrame.add((Node) currentPlayers.get(i).getLabel(),
-	// formationFrame.getColumnIndex(n),
-	// formationFrame.getRowIndex(n));
-	// } catch (Exception e) {
-	// formationFrame.add((Node) currentPlayers.get(i).getLabel(),
-	// formationFrame.getColumnIndex(n), 0);
-	// }
-	// formationFrame.getChildren().remove(n);
-	// i++;
-	// }
-	// }
 
 	/**
 	 * This method adds an listener for every Label, which opens an dialog to
@@ -277,8 +263,6 @@ public class FormationController implements ImageUpdate {
 
 				@Override
 				public void handle(Event event) {
-					int mId = Controller.getInstance().getSession().getCurrentManagerID();
-
 					// Load CurrentPlayer
 					for (Player p : getAllPlayers()) {
 						if (p.getID() == ((PlayerLabel) currentNode).getPlayerId()) {
@@ -352,6 +336,8 @@ public class FormationController implements ImageUpdate {
 								Scene scene = new Scene(dialog);
 
 								dialogStage.setScene(scene);
+								for(Player p : notPlayingPlayers){
+								}
 								dialogStage.showAndWait();
 							}
 						} catch (Exception e) {

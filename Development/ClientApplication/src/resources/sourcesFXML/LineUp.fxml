@@ -12,13 +12,15 @@
   <rowConstraints>
     <RowConstraints minHeight="10.0" prefHeight="352.0" vgrow="ALWAYS" />
       <RowConstraints fillHeight="false" maxHeight="60.0" minHeight="60.0" prefHeight="60.0" />
+      <RowConstraints fillHeight="false" maxHeight="60.0" minHeight="60.0" prefHeight="60.0" />
   </rowConstraints>
    <children>
-      <ButtonBar maxHeight="60.0" minHeight="60.0" minWidth="200.0" prefHeight="60.0" GridPane.rowIndex="1">
+      <ButtonBar maxHeight="60.0" minHeight="60.0" minWidth="200.0" prefHeight="60.0" GridPane.rowIndex="2">
          <buttons>
           <Button mnemonicParsing="false" onAction="#formationButtonClicked" text="Formation ändern" />
             <Button mnemonicParsing="false" onAction="#saveButtonClicked" text="Speichern" />
          </buttons>
       </ButtonBar>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1" />
    </children>
 </GridPane>
