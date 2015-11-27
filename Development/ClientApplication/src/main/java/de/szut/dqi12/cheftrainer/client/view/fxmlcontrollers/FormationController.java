@@ -89,7 +89,7 @@ public class FormationController implements ImageUpdate {
 				currentPlayers.add(player);
 			} else {
 				notPlayingPlayers.add(player);
-				
+
 			}
 		}
 		putImageToStack = true;
@@ -103,7 +103,8 @@ public class FormationController implements ImageUpdate {
 			ImageController c = new ImageController(this);
 			image = c.getPicture(player);
 			player.getLabel().setImage(image);
-//			player.getLabel().setText(player.getName() + "\n" + "Points: " + player.getPoints());
+			// player.getLabel().setText(player.getName() + "\n" + "Points: " +
+			// player.getPoints());
 		}
 		putImageToStack = false;
 		checkForImageUpdate();
@@ -115,7 +116,6 @@ public class FormationController implements ImageUpdate {
 
 		ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
 		boolean found;
-		int i = 0;
 		// Iteration durch alle Labels
 		for (Node n : buffer) {
 			int row;
@@ -130,7 +130,7 @@ public class FormationController implements ImageUpdate {
 			} catch (NullPointerException e) {
 				row = 0;
 			}
-			String position = Position.getPositions().get(3-row);
+			String position = Position.getPositions().get(3 - row);
 
 			// i = 0;
 			found = false;
@@ -145,17 +145,18 @@ public class FormationController implements ImageUpdate {
 				}
 				if (!found) {
 					for (Player pl : notPlayingPlayers) {
-						
+
 						if (pl.getPosition().equals(position)) {
 							formationFrame.add((Node) pl.getLabel(), col, row);
 							formationFrame.getChildren().remove(n);
-							p.setPlays(true);
-							notPlayingPlayers.remove(p);
-							currentPlayers.add(p);
+							pl.setPlays(true);
+							notPlayingPlayers.remove(pl);
+							currentPlayers.add(pl);
 							found = true;
 							break;
-						}else{
-							System.out.println("unequal=" + pl.getPosition() + " und " +  position);
+						} else {
+							// System.out.println("unequal=" + pl.getPosition()
+							// + " und " + position);
 						}
 					}
 				}
@@ -217,16 +218,36 @@ public class FormationController implements ImageUpdate {
 		return players;
 	}
 
+	public ArrayList<Player> getNotPlayingPlayers() {
+		boolean found;
+		getCurrentPlayers();
+		getAllPlayers();
+		notPlayingPlayers = new ArrayList<Player>();
+		for (Player p : players) {
+			found = false;
+			for (Player pl : currentPlayers) {
+				if (pl == p) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				notPlayingPlayers.add(p);
+			}
+		}
+		return notPlayingPlayers;
+	}
+
 	/**
 	 * This method adds an listener for every Label, which opens an dialog to
 	 * change a player
 	 */
 	public void setClickedListener() {
 		getCurrentPlayers();
-		//Iteration durch alle Nodes
+		// Iteration durch alle Nodes
 		for (Node currentNode : formationFrame.getChildren()) {
-			
-			//Listener fuer geklickes Label
+
+			// Listener fuer geklickes Label
 			((PlayerLabel) currentNode).setOnMouseClicked(new EventHandler<Event>() {
 				Player currentPlayer;
 
@@ -242,7 +263,7 @@ public class FormationController implements ImageUpdate {
 					if (notPlayingPlayers.contains(currentPlayer)) {
 						notPlayingPlayers.remove(currentPlayer);
 					}
-					//Erstellung eines Dialogs zur Auswahl eines Spielers
+					// Erstellung eines Dialogs zur Auswahl eines Spielers
 					if (notPlayingPlayers.size() != 0) {
 						GridPane dialog;
 						Stage dialogStage = new Stage();
@@ -250,13 +271,15 @@ public class FormationController implements ImageUpdate {
 							dialog = new GridPane();
 							PlayerLabel l;
 							int i = 0;
-							//Iteration durch alle nicht-spielenden Spieler
+							// Iteration durch alle nicht-spielenden Spieler
+							getNotPlayingPlayers();
 							for (Player player : notPlayingPlayers) {
 								if (player.getPosition().equals(currentPlayer.getPosition())) {
 									l = player.getLabel();
 									dialog.add(l, 0, i);
 									i++;
-									//Listener fuer das klicken eines Labels im Dialog
+									// Listener fuer das klicken eines Labels im
+									// Dialog
 									l.setOnMouseClicked(new EventHandler<Event>() {
 										@Override
 										public void handle(Event event) {
