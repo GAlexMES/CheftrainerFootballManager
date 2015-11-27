@@ -108,6 +108,8 @@ public class LineUpController implements ControllerInterface {
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 			fController = ((FormationController) currentContentLoader.getController());
 			fController.setClickedListener();
+			//Doppelter Aufruf benoetigt (Fehler noch nicht entdeckt!)
+			changeFormation(formation);
 			changeFormation(formation);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -139,7 +141,7 @@ public class LineUpController implements ControllerInterface {
 			ArrayList<Node> labelscopy = (ArrayList<Node>) labels.clone();
 			ArrayList<Player> players;
 			if (formation == currentManager.getFormation()) {
-				players = fController.loadPlayingPlayers();
+				players = fController.getCurrentPlayers();
 			} else {
 				players = (ArrayList<Player>) currentManager.getPlayers();
 
@@ -159,14 +161,6 @@ public class LineUpController implements ControllerInterface {
 					}
 				}
 			}
-			// index = 0;
-			// for (Node n : labelscopy) {
-			// if (n != null) {
-			// Node l = labels.get(index);
-			// ((PlayerLabel) l).setText("kein Spieler");
-			// }
-			// index++;
-			// }
 			fController.setClickedListener();
 			if (i > 0) {
 

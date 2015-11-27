@@ -132,7 +132,6 @@ public class FormationController implements ImageUpdate {
 			}
 			String position = Position.getPositions().get(3 - row);
 
-			// i = 0;
 			found = false;
 			for (Player p : playingPlayers) {
 				if (p.getPosition().equals(position)) {
@@ -154,14 +153,8 @@ public class FormationController implements ImageUpdate {
 							currentPlayers.add(pl);
 							found = true;
 							break;
-						} else {
-							// System.out.println("unequal=" + pl.getPosition()
-							// + " und " + position);
 						}
 					}
-				}
-				if (!found) {
-					//
 				}
 			}
 		}
@@ -201,22 +194,6 @@ public class FormationController implements ImageUpdate {
 		return players;
 	}
 
-	/**
-	 * This method loads the players of the current Manager
-	 */
-	public ArrayList<Player> loadPlayingPlayers() {
-		for (Player player : getAllPlayers()) {
-			if (player.plays()) {
-				currentPlayers.add(player);
-			}
-			if (players.size() >= 11) {
-				break;
-			}
-		}
-		// players = (ArrayList<Player>)
-		// currentCommunity.getManager(currentManagerID).getLineUp();
-		return players;
-	}
 
 	public ArrayList<Player> getNotPlayingPlayers() {
 		boolean found;
@@ -260,6 +237,7 @@ public class FormationController implements ImageUpdate {
 							break;
 						}
 					}
+					getNotPlayingPlayers();
 					if (notPlayingPlayers.contains(currentPlayer)) {
 						notPlayingPlayers.remove(currentPlayer);
 					}
@@ -272,7 +250,6 @@ public class FormationController implements ImageUpdate {
 							PlayerLabel l;
 							int i = 0;
 							// Iteration durch alle nicht-spielenden Spieler
-							getNotPlayingPlayers();
 							for (Player player : notPlayingPlayers) {
 								if (player.getPosition().equals(currentPlayer.getPosition())) {
 									l = player.getLabel();
