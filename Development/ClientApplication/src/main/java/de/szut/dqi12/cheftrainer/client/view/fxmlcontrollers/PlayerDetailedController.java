@@ -62,14 +62,11 @@ public class PlayerDetailedController implements ControllerInterface, ImageUpdat
 
 	@Override
 	public void enterPressed() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void messageArrived() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override

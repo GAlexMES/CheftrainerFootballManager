@@ -186,8 +186,8 @@ public class DatabaseRequests {
 		playerManagement.setManagersFormation(managerID, defenders, middfielders, offensives);
 	}
 
-	public static void putPlayerOnExchangeMarket(Player p, int communityID) {
-		transfermarktManagement.putPlayerOnExchangeMarket(p,  communityID);
+	public static void putPlayerOnExchangeMarket(Player p, int communityID, int ownerID) {
+		transfermarktManagement.putPlayerOnExchangeMarket(p,  communityID, ownerID);
 	}
 
 	public static void addTransaction(Transaction transaction) {

@@ -14,7 +14,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageI
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.logic.ExchangeMarketGenerator;
-import de.szut.dqi12.cheftrainer.server.usercommunication.ClientUpdate;
 import de.szut.dqi12.cheftrainer.server.utils.JSONUtils;
 
 /**
@@ -115,7 +114,8 @@ public class CommunityAuthentification extends CallableAbstract {
 
 		JSONObject updateJSON = new JSONObject();
 		updateJSON.put("type", "newCommunity");
-		updateJSON.put("community", ClientUpdate.createCommunityMessage(communityID));
+		Community community = DatabaseRequests.getCummunityForID(communityID);
+		updateJSON.put("community", community.toJSON());
 		communityListUpdate.setMessageContent(updateJSON);
 		
 		mesController.sendMessage(communityListUpdate);

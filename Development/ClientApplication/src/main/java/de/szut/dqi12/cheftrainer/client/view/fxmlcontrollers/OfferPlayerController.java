@@ -59,19 +59,16 @@ public class OfferPlayerController implements ControllerInterface {
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void enterPressed() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void messageArrived() {
-		// TODO Auto-generated method stub
 
 	}
 

@@ -1,6 +1,7 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -52,9 +53,6 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	@FXML
 	private TableColumn<MarketPlayer, String> werthCol;
 
-	private ArrayList<Player> players;
-	private ArrayList<Transaction> transactions;
-
 	private MarketPlayer selectedMarketPlayer;
 
 	private ImageController imageController;
@@ -77,6 +75,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	 */
 	@FXML
 	public void initialize() {
+		
 		imageController = new ImageController(this);
 		marketTable.setItems(Controller.getInstance().getSession().getMarketPlayerObservable());
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("Player"));
@@ -167,9 +166,11 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	 */
 	@FXML
 	public void addPlayer() {
+		//TODO: Player Liste bekommen
+		ArrayList<Player> players = null;
+		
 		GridPane dialog = new GridPane();
 		Button but;
-
 		int i = 0;
 		for (Player player : players) {
 			but = new Button("put on market");
@@ -229,7 +230,10 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	 */
 	@FXML
 	public void showOffers() {
-
+		
+		//TODO: transactions liste bekommen
+		Community con = Controller.getInstance().getSession().getCurrentCommunity();
+		List<Transaction> transactions = con.getMarket().getTransactions();
 		GridPane dialog = new GridPane();
 		Button but;
 		int index = 1;
@@ -275,13 +279,11 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 
 	@Override
 	public void enterPressed() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void messageArrived() {
-		// TODO Auto-generated method stub
 
 	}
 

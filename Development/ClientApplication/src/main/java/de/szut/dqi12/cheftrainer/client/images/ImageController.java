@@ -79,7 +79,6 @@ public class ImageController {
 	    		Image updateImage = new Image(imageFile.toURI().toString());
 				imageUpdate.updateImage(updateImage, id);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
 

@@ -15,6 +15,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
 
 /**
@@ -120,12 +121,30 @@ public class CommunityManagement {
 		try {
 			List<Player> playerList = PlayerManagement.getPlayersFromResultSet(rs);
 			playerList.forEach(p -> retval.addPlayer(p));
+			List<Transaction> transactionList = getTransactions(communityID);
+			retval.setTransactions(transactionList);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 		return retval;
 	}
+	
+	private List<Transaction> getTransactions(int communityID) throws SQLException{
+		List<Transaction> retval = new ArrayList<>();
+	
+		String transactionQuery = "Select * From Gebote Where Spielrunde_ID = "+communityID;
+		ResultSet rs = sqlCon.sendQuery(transactionQuery);
+		while(rs.next()){
+			Transaction t = new Transaction();
+			t.setManagerID(rs.getInt("Manager_ID"));
+			t.setPlayerSportalID(rs.getInt("Spieler_ID"));
+			t.setOfferedPrice(rs.getInt("Gebot"));
+			retval.add(t);
+		}
+		return retval;
+	}
+	
+	
 
 	/**
 	 * This method collects all managers, that play in the given community

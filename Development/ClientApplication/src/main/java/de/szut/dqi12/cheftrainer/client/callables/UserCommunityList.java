@@ -15,10 +15,6 @@ import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesControll
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -71,7 +67,7 @@ public class UserCommunityList extends CallableAbstract {
 	 *            "community".
 	 */
 	private void addCommunityToList(JSONObject message) {
-		Community community = jsonToCommunity(message
+		Community community = new Community(message
 				.getJSONObject("community"));
 		community.findeUsersManager(mesController.getSession().getUser()
 				.getUserName());
@@ -112,70 +108,10 @@ public class UserCommunityList extends CallableAbstract {
 		new ArrayList<>();
 		List<Community> retval = new ArrayList<>();
 		for (int i = 0; i < communityList.length(); i++) {
-			Community com = jsonToCommunity(new JSONObject(communityList.get(i)
-					.toString()));
+			JSONObject communityJSON = new JSONObject(communityList.get(i).toString());
+			Community com = new Community(communityJSON);
 			com.findeUsersManager(userName);
 			retval.add(com);
-		}
-		return retval;
-	}
-
-	/**
-	 * This method parses a {@link JSONObject} to a {@link Community} object.
-	 * Following keys must be available: <li>ID -> Int <li>Name -> String <li>
-	 * Managers -> {@link JSONArray}
-	 * 
-	 * @param communityJSON
-	 *            a {@link JSONObject}, that contains all of the keys above.
-	 * @return a {@link Community} object, created out of the data, given in the
-	 *         communityJSON.
-	 */
-	private Community jsonToCommunity(JSONObject communityJSON) {
-		Community retval = new Community();
-		retval.setCommunityID(communityJSON.getInt("ID"));
-		retval.setName(communityJSON.getString("Name"));
-		JSONArray managersJSON = communityJSON.getJSONArray("Managers");
-		retval.addManagers(createManagerList(managersJSON, retval.getName()));
-		retval.setMarket(new Market(communityJSON.getJSONArray("ExchangeMarket")));
-		String userName = Controller.getInstance().getSession().getUser().getUserName();
-		retval.findeUsersManager(userName);
-		return retval;
-	}
-
-	/**
-	 * This method creates a List>Manager< out of the given JSONArray.
-	 * 
-	 * @param managersJSON
-	 *            a JSONArray with all required information to create a Manager
-	 *            object out of it.
-	 * @return a List with all Managers in it, that could be created with the
-	 *         given JSONArray
-	 */
-	private List<Manager> createManagerList(JSONArray managersJSON, String communityName) {
-		List<Manager> retval = new ArrayList<>();
-		for (int i = 0; i < managersJSON.length(); i++) {
-			JSONObject managerJSON = new JSONObject(managersJSON.get(i)
-					.toString());
-			String name = managerJSON.getString("Name");
-			int points = managerJSON.getInt("Points");
-			
-			JSONArray managersTeam = managerJSON.getJSONArray("Team");
-			
-			int teamWorth = 0;
-			List<Player> playerList = new ArrayList<>();
-			for (int m = 0; m < managersTeam.length(); m++) {
-				JSONObject playerJSON = managersTeam.getJSONObject(m);
-				Player tempPlayer = new Player(playerJSON);
-				playerList.add(tempPlayer);
-				teamWorth = teamWorth +tempPlayer.getWorth();
-			}
-			
-			Manager manager = new Manager(name, teamWorth, points,communityName);
-			JSONObject formationJSON = managerJSON.getJSONObject("Formation");
-			manager.setFormation(new Formation(formationJSON));
-			manager.setID(managerJSON.getInt("ID"));
-			manager.addPlayer(playerList);
-			retval.add(manager);
 		}
 		return retval;
 	}

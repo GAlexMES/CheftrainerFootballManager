@@ -39,7 +39,7 @@ public class ExchangeMarketGenerator {
 	}
 
 	private static void updateDatabaseWithPlayers(Player p, int communityID) {
-		DatabaseRequests.putPlayerOnExchangeMarket(p, communityID);
+		DatabaseRequests.putPlayerOnExchangeMarket(p, communityID, -1);
 	}
 
 	private static List<Player> createRandomPlayerList(int playersOnMarket, int communityID) {

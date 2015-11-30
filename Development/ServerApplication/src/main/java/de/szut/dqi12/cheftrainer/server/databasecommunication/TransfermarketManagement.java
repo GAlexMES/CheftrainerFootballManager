@@ -30,13 +30,14 @@ public class TransfermarketManagement {
 		TransfermarketManagement.sqlCon = sqlCon;
 	}
 
-	public void putPlayerOnExchangeMarket(Player p, int communityID) {
+	public void putPlayerOnExchangeMarket(Player p, int communityID, int ownerID) {
 		try {
-			String sqlQuery = "INSERT INTO Transfermarkt (Spielrunde_ID, Spieler_ID, Min_Preis) VALUES(?,?,?)";
+			String sqlQuery = "INSERT INTO Transfermarkt (Spielrunde_ID, Spieler_ID, Min_Preis, Inhaber_ID) VALUES(?,?,?,?)";
 			PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
 			pStatement.setInt(1, communityID);
 			pStatement.setInt(2, p.getSportalID());
 			pStatement.setInt(3, p.getWorth());
+			pStatement.setInt(4, ownerID);
 			pStatement.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -322,13 +322,11 @@ public class LineUpController implements ControllerInterface {
 
 	@Override
 	public void enterPressed() {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void messageArrived() {
-		// TODO Auto-generated method stub
 		
 	}
 
