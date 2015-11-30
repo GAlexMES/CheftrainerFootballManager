@@ -1,6 +1,5 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,17 +30,15 @@ public class TransfermarketManagement {
 		TransfermarketManagement.sqlCon = sqlCon;
 	}
 
-	public void putPlayerOnExchangeMarket(Player p, String communityName) {
+	public void putPlayerOnExchangeMarket(Player p, int communityID) {
 		try {
-			String condition = "Name='" + communityName + "'";
-			int communityID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Spielrunde", condition).toString());
 			String sqlQuery = "INSERT INTO Transfermarkt (Spielrunde_ID, Spieler_ID, Min_Preis) VALUES(?,?,?)";
 			PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
 			pStatement.setInt(1, communityID);
 			pStatement.setInt(2, p.getSportalID());
 			pStatement.setInt(3, p.getWorth());
 			pStatement.executeUpdate();
-		} catch (IOException | SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 

@@ -1,6 +1,8 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
@@ -60,5 +62,24 @@ public class LogicManagement {
 				+ " AND Mannschaft.Manager_ID = Manager.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		return !DatabaseRequests.isResultSetEmpty(rs);
+	}
+
+	
+	/**
+	 * This function checks, if a {@link Player} with the given ID, is on the exchange market of the {@link Community}.
+	 * @param playerID the SportalID of the {@link Player}, that should be checked
+	 * @param communityID the ID of the {@link Community}, that should be checked
+	 * @return true = player is on market, false = player is not on market
+	 * @throws SQLException 
+	 */
+	public Boolean isPlayerOnExchangeMarket(int playerID, int communityID) throws SQLException {
+		String sqlQuery = "SELECT * FROM Transfermarkt WHERE Spielrunde_ID = ? AND Spieler_ID = ?";
+		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
+		pStatement.setInt(1, communityID);
+		pStatement.setInt(2, playerID);
+		ResultSet rs = pStatement.executeQuery();
+		
+		Boolean isEmpty = DatabaseRequests.isResultSetEmpty(rs);
+		return !isEmpty;
 	}
 }

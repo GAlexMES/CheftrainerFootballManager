@@ -33,8 +33,8 @@
 		<AnchorPane GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
 			<ButtonBar>
 				<buttons>
-					<Button mnemonicParsing="false" onAction="#enterCommunity" text="Community beitreten" />
-					<Button mnemonicParsing="false" onAction="#createCommunity" prefHeight="25.0" prefWidth="102.0" text="Community erstellen" />
+					<Button mnemonicParsing="false" onAction="#enterCommunity" prefHeight="25.0" text="enter community" />
+					<Button mnemonicParsing="false" onAction="#createCommunity" prefHeight="25.0" text="create community" />
 				</buttons>
 			</ButtonBar>
 		</AnchorPane>

@@ -2,6 +2,7 @@ package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,10 @@ public class DatabaseRequests {
 	public static boolean isPlayerOwened(int playerID, int communityID) {
 		return logicManagement.isPlayerOwened(playerID, communityID);
 	}
+	
+	public static Boolean isPlayerOnExchangeMarket(int playerID, int communityID) throws SQLException {
+		return logicManagement.isPlayerOnExchangeMarket(playerID, communityID);
+	}
 
 	public static void addPlayerToManager(int managerID, int playerID, boolean plays) {
 		playerManagement.addPlayerToManager(managerID, playerID, plays);
@@ -181,8 +186,8 @@ public class DatabaseRequests {
 		playerManagement.setManagersFormation(managerID, defenders, middfielders, offensives);
 	}
 
-	public static void putPlayerOnExchangeMarket(Player p, String communityName) {
-		transfermarktManagement.putPlayerOnExchangeMarket(p,  communityName);
+	public static void putPlayerOnExchangeMarket(Player p, int communityID) {
+		transfermarktManagement.putPlayerOnExchangeMarket(p,  communityID);
 	}
 
 	public static void addTransaction(Transaction transaction) {
