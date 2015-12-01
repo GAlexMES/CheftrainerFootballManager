@@ -31,7 +31,7 @@ public class LogicManagement {
 	public int getHeightsPlayerID() {
 		try {
 			String condition = "name='Spieler'";
-			return Integer.valueOf(DatabaseRequests.getUniqueValue("seq", "sqlite_sequence", condition).toString());
+			return DatabaseRequests.getUniqueInt("seq", "sqlite_sequence", condition);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -70,7 +70,8 @@ public class LogicManagement {
 	public boolean isPlayerOwened(int playerID, int communityID) {
 		String sqlQuery = "SELECT * FROM Mannschaft INNER JOIN Manager "
 						+ "WHERE Manager.Spielrunde_ID='"+communityID+"'"
-						+ " AND Mannschaft.Spieler_ID='"+playerID+"'";
+						+ " AND Mannschaft.Spieler_ID='"+playerID+"'"
+						+ " AND Mannschaft.Manager_ID = Manager.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
@@ -80,9 +81,13 @@ public class LogicManagement {
 	 * @param managerID the ID of the {@link Manager}, that should own the {@link Player};
 	 * @param playerID the ID of the {@link Player}, that should be owned by the {@link Manager};
 	 */
-	public void addPlayerToManager(int managerID, int playerID) {
+	public void addPlayerToManager(int managerID, int playerID, boolean plays) {
+		int play = 0;
+		if(plays){
+			play = 1;
+		}
 		String sqlQuery = "INSERT INTO Mannschaft ('Manager_ID','Spieler_ID','Aufgestellt') "
-						+	" VALUES ('"+managerID+"','"+playerID+"','false')";
+						+	" VALUES ('"+managerID+"','"+playerID+"','"+play+"')";
 		sqlCon.sendQuery(sqlQuery);
 	}
 

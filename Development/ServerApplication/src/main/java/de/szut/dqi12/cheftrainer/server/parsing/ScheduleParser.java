@@ -16,7 +16,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
-import de.szut.dqi12.cheftrainer.server.ServerApplication;
 
 /**
  * This class should be used to parse information, which are required for a matchday, a match or a season

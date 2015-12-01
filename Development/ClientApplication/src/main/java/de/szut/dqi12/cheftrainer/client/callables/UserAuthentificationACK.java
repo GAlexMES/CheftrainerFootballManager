@@ -5,8 +5,10 @@ import javafx.scene.control.Alert.AlertType;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.RegistrationController;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.LoginController;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.RegistrationController;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
@@ -60,6 +62,8 @@ public class UserAuthentificationACK extends CallableAbstract {
 					"Ther occured a problem during your login.",
 					AlertUtils.LOGIN_WRONG_PASSWORD, AlertType.ERROR);
 		}
+		
+		ControllerManager.getInstance().onAction(LoginController.ON_ACTION_KEY);
 	}
 
 	/**
@@ -96,5 +100,6 @@ public class UserAuthentificationACK extends CallableAbstract {
 					"Something went wrong during your registration",
 					errorMessage, AlertType.ERROR);
 		}
+		ControllerManager.getInstance().onAction(RegistrationController.ON_ACTION_KEY);
 	}
 }

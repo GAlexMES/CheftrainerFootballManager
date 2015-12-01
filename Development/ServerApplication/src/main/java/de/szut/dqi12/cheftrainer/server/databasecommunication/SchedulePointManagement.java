@@ -26,6 +26,7 @@ public class SchedulePointManagement {
 	
 	private final long WAIT_AFTER_GAME = 15000000;
 
+	@SuppressWarnings("unused")
 	private SQLConnection sqlCon;
 	private ScheduleParser scheduleParser;
 

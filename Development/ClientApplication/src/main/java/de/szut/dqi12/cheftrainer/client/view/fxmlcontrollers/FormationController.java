@@ -1,136 +1,353 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.images.ImageController;
+import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
 /**
- * This is the controller of the different Formations 
+ * This is the controller of the different Formations
+ * 
  * @author Robin
  */
-public class FormationController {
+public class FormationController implements ImageUpdate {
 	@FXML
 	private GridPane formationFrame;
 
 	private ArrayList<Player> players;
-	
-	public ArrayList<Player> getCurrentPlayers(){
-		return players;
-	}
+	private ArrayList<Player> currentPlayers;
+	private ArrayList<Player> notPlayingPlayers;
+
+	private Map<Integer, Image> imageUpdateStack;
+
+	private Boolean putImageToStack = false;
 
 	public FormationController() {
 		players = new ArrayList<Player>();
+		imageUpdateStack = new HashMap<>();
+	}
+
+	public void generateImage(Player player) {
+		String text = player.getName() + "\n" + player.getPosition() + " Points: " + player.getPoints();
+		Label label = new Label(text);
+		label.setMinSize(125, 125);
+		label.setMaxSize(125, 125);
+		label.setPrefSize(125, 125);
+		label.setStyle("-fx-background-color: white; -fx-text-fill:black;");
+		label.setWrapText(true);
+		Scene scene = new Scene(new Group(label));
+		WritableImage img = new WritableImage(125, 125);
+		scene.snapshot(img);
+		player.getLabel().setImage(img);
+
+	}
+
+	public static WritableImage getImageOfString(String text) {
+		Label label = new Label(text);
+		label.setMinSize(125, 125);
+		label.setMaxSize(125, 125);
+		label.setPrefSize(125, 125);
+		label.setStyle("-fx-background-color: white; -fx-text-fill:black;");
+		label.setWrapText(true);
+		Scene scene = new Scene(new Group(label));
+		WritableImage img = new WritableImage(125, 125);
+		scene.snapshot(img);
+		return img;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void init() {
+		// Initialisation of an not-playing-Players
+		// ArrayList
+		notPlayingPlayers = new ArrayList<Player>();
+
+		currentPlayers = new ArrayList<Player>();
+		ArrayList<Player> playingPlayers = new ArrayList<Player>();
+		for (Player player : getAllPlayers()) {
+			if (player.isPlays()) {
+				playingPlayers.add(player);
+				currentPlayers.add(player);
+			} else {
+				notPlayingPlayers.add(player);
+
+			}
+		}
+		putImageToStack = true;
+		Image image;
+		for (Player player : getAllPlayers()) {
+			PlayerLabel l = new PlayerLabel();
+			l.setPlayerId(player.getID());
+			l.setPosition(player.getPosition());
+			player.setLabel(l);
+			// generateImage(player);
+			ImageController c = new ImageController(this);
+			image = c.getPicture(player);
+			player.getLabel().setImage(image);
+			// player.getLabel().setText(player.getName() + "\n" + "Points: " +
+			// player.getPoints());
+		}
+		putImageToStack = false;
+		checkForImageUpdate();
+
+		ArrayList<Node> copy = new ArrayList<Node>();
+		for (Node n : formationFrame.getChildren()) {
+			copy.add(n);
+		}
+
+		ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
+		boolean found;
+		// Iteration durch alle Labels
+		for (Node n : buffer) {
+			int row;
+			int col;
+			try {
+				col = formationFrame.getColumnIndex(n);
+			} catch (Exception e) {
+				col = 0;
+			}
+			try {
+				row = formationFrame.getRowIndex(n);
+			} catch (NullPointerException e) {
+				row = 0;
+			}
+			String position = Position.getPositions().get(3 - row);
+
+			found = false;
+			for (Player p : playingPlayers) {
+				if (p.getPosition().equals(position)) {
+					formationFrame.add((Node) p.getLabel(), col, row);
+					formationFrame.getChildren().remove(n);
+					playingPlayers.remove(p);
+					found = true;
+					break;
+
+				}
+				if (!found) {
+					for (Player pl : notPlayingPlayers) {
+
+						if (pl.getPosition().equals(position)) {
+							formationFrame.add((Node) pl.getLabel(), col, row);
+							formationFrame.getChildren().remove(n);
+							pl.setPlays(true);
+							notPlayingPlayers.remove(pl);
+							currentPlayers.add(pl);
+							found = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public ArrayList<Player> getCurrentPlayers() {
+		currentPlayers = new ArrayList<Player>();
+		for (Node n : formationFrame.getChildren()) {
+			int id = ((PlayerLabel) n).getPlayerId();
+			for (Player p : getAllPlayers()) {
+				if (p.getID() == id) {
+					currentPlayers.add(p);
+					break;
+				}
+			}
+		}
+		return currentPlayers;
 	}
 
 	public GridPane getFrame() {
 		return formationFrame;
 	}
-	
+
 	/**
-	 * This method loads the players of the current Manager
+	 * Loads all existing Players of the current Manager in the current Leauge
+	 * 
+	 * @return List of all Players
 	 */
-	public void loadPlayers() {
+	public ArrayList<Player> getAllPlayers() {
+		players.clear();
 		Session session = Controller.getInstance().getSession();
-		players = (ArrayList<Player>) session.getCommunityMap()
-				.get(session.getCommunityMap())
-				.getManager(session.getCurrentManager()).getLineUp();
+		Community currentCommunity = session.getCurrentCommunity();
+		int currentManagerID = session.getCurrentManagerID();
+		for (Player player : (ArrayList<Player>) currentCommunity.getManager(currentManagerID).getPlayers()) {
+			players.add(player);
+		}
+		return players;
+	}
+
+
+	public ArrayList<Player> getNotPlayingPlayers() {
+		boolean found;
+		getCurrentPlayers();
+		getAllPlayers();
+		notPlayingPlayers = new ArrayList<Player>();
+		for (Player p : players) {
+			found = false;
+			for (Player pl : currentPlayers) {
+				if (pl == p) {
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				notPlayingPlayers.add(p);
+			}
+		}
+		return notPlayingPlayers;
 	}
 
 	/**
-	 * This method generates a Label for every player
-	 * @return ArrayList which contains all Labels for every player
-	 */
-	public ArrayList<Label> getPlayers() {
-		ArrayList<Label> players = new ArrayList<Label>();
-		try {
-			for (Node n : formationFrame.getChildren()) {
-				players.add(((Label) n));
-			}
-			return players;
-		} catch (NullPointerException n) {
-			return null;
-		}
-	}
-	
-	/**
-	 * This method adds an listener for every Label, which opens an dialog to change a player
+	 * This method adds an listener for every Label, which opens an dialog to
+	 * change a player
 	 */
 	public void setClickedListener() {
-		for (Node n : formationFrame.getChildren()) {
-			((Label) n).setOnMouseClicked(new EventHandler<Event>() {
-				Player currentPlayer = players.get(0);
+		getCurrentPlayers();
+		ScrollPane scrollPane = new ScrollPane();
+		VBox content = new VBox();
+		
+		// Iteration durch alle Nodes
+		for (Node currentNode : formationFrame.getChildren()) {
+
+			// Listener fuer geklickes Label
+			((PlayerLabel) currentNode).setOnMouseClicked(new EventHandler<Event>() {
+				Player currentPlayer;
 
 				@Override
 				public void handle(Event event) {
-
-					loadPlayers();
-
-					String playername = ((Label) n).getText().split(";")[0];
-					for (Player p : players) {
-						if (p.getName().equals(playername)) {
+					content.getChildren().clear();
+					// Load CurrentPlayer
+					for (Player p : getAllPlayers()) {
+						if (p.getID() == ((PlayerLabel) currentNode).getPlayerId()) {
 							currentPlayer = p;
 							break;
 						}
 					}
-
-					GridPane dialog;
-					Stage dialogStage = new Stage();
-					try {
-						dialog = new GridPane();
-						Label l;
-						int i = 0;
-						for (Player player : players) {
-							if (player.getPosition() == currentPlayer
-									.getPosition()) {
-								l = new Label();
-								dialog.add(l, 0, i);
-								i++;
-								l.setOnMouseClicked(new EventHandler<Event>() {
-									@Override
-									public void handle(Event event) {
-										players.remove(currentPlayer);
-										players.add(player);
-										dialogStage.close();
-
-									}
-								});
-							}
-						}
-
-						dialogStage.setResizable(false);
-						dialogStage.setTitle("SPIELER");
-						dialogStage.initModality(Modality.WINDOW_MODAL);
-						Scene scene = new Scene(dialog);
-
-						dialogStage.setScene(scene);
-						// GUIController.getInstance().setCurrentDialogStage(dialogStage);
-						dialogStage.showAndWait();
-						// GUIController.getInstance().setCurrentDialogStage(null);
-					} catch (Exception e) {
-						e.printStackTrace();
+					getNotPlayingPlayers();
+					if (notPlayingPlayers.contains(currentPlayer)) {
+						notPlayingPlayers.remove(currentPlayer);
 					}
+					// Erstellung eines Dialogs zur Auswahl eines Spielers
+					if (notPlayingPlayers.size() != 0) {
+						Stage dialogStage = new Stage();
+						try {
+							PlayerLabel l;
+							int i = 0;
+							// Iteration durch alle nicht-spielenden Spieler
+							for (Player player : notPlayingPlayers) {
+								if (player.getPosition().equals(currentPlayer.getPosition())) {
+									l = player.getLabel();
+									content.getChildren().add(l);
+									i++;
+									// Listener fuer das klicken eines Labels im
+									// Dialog
+									l.setOnMouseClicked(new EventHandler<Event>() {
+										@Override
+										public void handle(Event event) {
+											// /
+											int i = 0;
+											ArrayList<Node> copy = new ArrayList<Node>();
+											for (Node n : formationFrame.getChildren()) {
+												copy.add(n);
+											}
+											ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
+											for (Node n : buffer) {
+												if (((PlayerLabel) n).getPlayerId() == currentPlayer.getID()) {
 
-					//
-					// optionstage.setScene(new Scene(vBox, 100, 100));
-					// //stage.setScene(new Scene(new Group(new Text(50,50,
-					// "my second window"))));
-					//
-					// optionstage.initStyle(StageStyle.UNDECORATED);
-					// optionstage.showAndWait();;
+													int row;
+													int col;
+													try {
+														col = formationFrame.getColumnIndex(n);
+													} catch (Exception e) {
+														col = 0;
+													}
+													try {
+														row = formationFrame.getRowIndex(n);
+													} catch (NullPointerException e) {
+														row = 0;
+													}
+
+													formationFrame.add((Node) player.getLabel(), col, row);
+
+													formationFrame.getChildren().remove(n);
+													i++;
+												}
+											}
+											// /
+											notPlayingPlayers.set(notPlayingPlayers.indexOf(player), currentPlayer);
+											// currentPlayers.remove(currentPlayer);
+											// currentPlayers.add(player);
+											currentPlayers.set(currentPlayers.indexOf(currentPlayer), player);
+											dialogStage.close();
+											setClickedListener();
+
+										}
+									});
+								}
+							}
+							if (content.getChildren().size() > 0) {
+								scrollPane.setContent(content);
+//								dialogStage.setResizable(false);
+								dialogStage.setTitle("Player");
+								dialogStage.initModality(Modality.WINDOW_MODAL);
+								Scene scene = new Scene(scrollPane);
+
+								dialogStage.setScene(scene);
+								dialogStage.showAndWait();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 
 				}
 			});
 		}
+	}
+
+	@Override
+	public void updateImage(Image image, int id) {
+		if (putImageToStack) {
+			imageUpdateStack.put(id, image);
+		} else {
+			setImageToPlayer(id, image);
+		}
+	}
+
+	private void setImageToPlayer(int playerID, Image image) {
+		for (Player player : getAllPlayers()) {
+			if (player.getSportalID() == playerID) {
+				player.getLabel().setImage(image);
+				break;
+			}
+		}
+
+	}
+
+	private void checkForImageUpdate() {
+		for (int i : imageUpdateStack.keySet()) {
+			setImageToPlayer(i, imageUpdateStack.get(i));
+		}
+		imageUpdateStack = new HashMap<>();
 	}
 }

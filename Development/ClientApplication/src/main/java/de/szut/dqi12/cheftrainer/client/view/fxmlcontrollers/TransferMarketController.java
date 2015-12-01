@@ -22,6 +22,7 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 
 /**
@@ -46,16 +47,12 @@ public class TransferMarketController {
 	private ArrayList<Transaction> transactions;
 
 	public TransferMarketController() {
-		Community com = Controller
-				.getInstance()
-				.getSession()
-				.getCommunityMap()
-				.get(Controller.getInstance().getSession()
-						.getCurrentCommunity());
+		Session session = Controller.getInstance().getSession();
+		Community com = session.getCurrentCommunity();
 		data = FXCollections.observableArrayList();
 		players = (ArrayList<Player>) com.getMarket().getPlayers();
 		transactions = (ArrayList<Transaction>) com.getManagers()
-				.get(Controller.getInstance().getSession().getCurrentManager())
+				.get(Controller.getInstance().getSession().getCurrentManagerID())
 				.getTransactions();
 	}
 	/**
@@ -72,7 +69,7 @@ public class TransferMarketController {
 	public void addAll() {
 		for (Player p : players) {
 			data.add(new MarketPlayer(p.getName(),
-					String.valueOf(p.getPoints()), String.valueOf(p.getWorth())));
+					String.valueOf(p.getPoints()), String.valueOf(p.getWorth()),p));
 		}
 		nameCol.setCellValueFactory(data -> data.getValue().getPlayerName());
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
@@ -199,7 +196,7 @@ public class TransferMarketController {
 			}
 
 			dialog.add(new Label(tr.getPlayer().getName()), 0, index);
-			dialog.add(new Label(String.valueOf(tr.getPrice())), 1, index);
+			dialog.add(new Label(String.valueOf(tr.getOfferedPrice())), 1, index);
 			dialog.add(but, 2, index);
 			index++;
 		}

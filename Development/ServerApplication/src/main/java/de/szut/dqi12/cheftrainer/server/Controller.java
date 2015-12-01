@@ -1,10 +1,6 @@
 package de.szut.dqi12.cheftrainer.server;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 import org.apache.log4j.Logger;
 
@@ -31,18 +27,10 @@ public class Controller {
 
 	public void startServerSocket(String packagePath) {
 		ServerProperties serverProps = new ServerProperties();
-		URL path = null;
-		try {
-			String pathAsString = ServerApplication.class.getResource(".").toURI().toString();
-			URI uriPath = new URI(pathAsString + "callables/");
-			path = uriPath.toURL();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
+		
+		String pathAsString = "de/szut/dqi12/cheftrainer/server/callables/";
 		ClientToServer_MessageIDs cts = new ClientToServer_MessageIDs();
-		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, path,
+		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, pathAsString,
 				packagePath);
 		serverProps.addClassPathMapper(idMapper);
 		serverProps.setPort(5000);

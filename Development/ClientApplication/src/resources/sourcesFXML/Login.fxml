@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane fx:id="mainPane" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LoginController">
+<AnchorPane fx:id="mainPane" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.LoginController">
 	<children>
 		<Text layoutX="24.0" layoutY="128.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cheftrainer Football Manager" textAlignment="CENTER">
 			<font>
@@ -57,7 +57,7 @@
       
       		<ButtonBar layoutX="24.0" layoutY="32.0" prefHeight="27.0" prefWidth="149.0">
       			<buttons>
-      				<Button mnemonicParsing="false" onAction="#login" text="Login" />
+      				<Button fx:id="loginButton" mnemonicParsing="false" onAction="#login" text="Login" />
       				<Button mnemonicParsing="false" onAction="#endApplication" text="Beenden" />
       			</buttons>
       		</ButtonBar>

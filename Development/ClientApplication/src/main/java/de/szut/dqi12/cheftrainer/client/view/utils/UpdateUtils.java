@@ -7,23 +7,32 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageI
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
- * This class is used  to send update Messages to the server.
+ * This class is used to send update Messages to the server.
+ * 
  * @author Alexander Brennecke
  *
  */
 public class UpdateUtils {
 
+	private static boolean init_update = false;
+
 	/**
-	 * Requests the actual list of Communities
-	 * Server will send a UserCommunityList Message
+	 * Requests the actual list of Communities Server will send a
+	 * UserCommunityList Message
 	 */
 	public static void getCommunityUpdate() {
-		JSONObject messageContent = new JSONObject();
-		messageContent.put("update", "CommunityList");
-		Message updateMessage = new Message(
-				ClientToServer_MessageIDs.REQUEST_UPDATE);
-		updateMessage.setMessageContent(messageContent);
-		Controller.getInstance().getSession().getClientSocket()
-				.sendMessage(updateMessage);
+		if (!init_update) {
+			JSONObject messageContent = new JSONObject();
+			messageContent.put("update", "CommunityList");
+			Message updateMessage = new Message(
+					ClientToServer_MessageIDs.REQUEST_UPDATE);
+			updateMessage.setMessageContent(messageContent);
+			Controller.getInstance().getSession().getClientSocket()
+					.sendMessage(updateMessage);
+		}
+	}
+	
+	public static void initUpdateReceived(){
+		init_update = true;
 	}
 }

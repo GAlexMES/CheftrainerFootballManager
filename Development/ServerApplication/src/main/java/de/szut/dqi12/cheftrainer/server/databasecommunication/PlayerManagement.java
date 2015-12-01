@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
 import de.szut.dqi12.cheftrainer.server.parsing.PlayerParser;
@@ -41,7 +43,7 @@ public class PlayerManagement {
 			List<RealTeam> teamList = TeamParser.getTeams();
 			LOGGER.info("Validating database: 10% Done");
 			String condition = "Name='"+leagueName+"'";
-			int leagueID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Liga",condition).toString());
+			int leagueID = DatabaseRequests.getUniqueInt("ID", "Liga",condition);
 			teamList.forEach(t -> addTeam(t, leagueID));
 		} catch (IOException e) {
 			throw e;
@@ -56,13 +58,17 @@ public class PlayerManagement {
 	 */
 	private void addPlayer(Player p, int teamID){
 		int worth = (int) (Math.random() * 5000000);
-		String sqlQuery = "INSERT INTO Spieler (Name,Verein_ID, Position, Punkte, Marktwert, Nummer) "
+		String sqlQuery = "INSERT INTO Spieler (Name,Verein_ID, Position, Punkte, Marktwert, Nummer, SportalID, Birthday, PicturePath) "
 						+ "VALUES ('"+p.getName()+ "','"
 						+ teamID +"','"
 						+ p.getPosition() +"','"
 						+ "0','"
 						+ worth + "','"
-						+ p.getNumber() +"')";
+						+ p.getNumber() + "','"
+						+ p.getSportalID() + "','"
+						+ p.getBirthdateString() + "','"
+						+ p.getAbsolutePictureURL()
+						+"')";
 		sqlCon.sendQuery(sqlQuery);
 	}
 
@@ -74,11 +80,11 @@ public class PlayerManagement {
 	private void addTeam(RealTeam t, int leagueID) {
 		teamCounter++;
 		try {
-			String sqlQuery = "INSERT INTO Verein (Vereinsname, Liga_ID) Values ('"
-					+ t.getTeamName() + "','" + leagueID + "')";
+			String sqlQuery = "INSERT INTO Verein (Vereinsname, Liga_ID, LogoPath) Values ('"
+					+ t.getTeamName() + "','" + leagueID + "','"+t.getLogoURL()+"')";
 			sqlCon.sendQuery(sqlQuery);
 			String condition = "Vereinsname='"+t.getTeamName()+"'";
-			int teamID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Verein",condition ).toString());
+			int teamID = DatabaseRequests.getUniqueInt("ID", "Verein",condition );
 			List<Player> playerList = t.getPlayerList();
 			playerList.forEach(p -> addPlayer(p, teamID));
 		} catch (Exception e) {
@@ -95,5 +101,30 @@ public class PlayerManagement {
 	private void addLeague(String name, String country) {
 		String sqlString = "INSERT INTO Liga ('Name','Land') VALUES('"+name+"','"+country+"')";
 		sqlCon.sendQuery(sqlString);
+	}
+
+	public void setManagersFormation(int managerID, int defenders,
+			int middfielders, int offensives) {
+		String sqlQuery = "UPDATE Manager Set Anzahl_Abwehr = "+defenders
+				+", Anzahl_Mittelfeld="+middfielders
+				+", Anzahl_Stuermer="+offensives+
+				" Where ID = "+managerID;
+		sqlCon.sendQuery(sqlQuery);
+		
+	}
+
+	public void updateManager(Manager manager) {
+		Formation f = manager.getFormation();
+		setManagersFormation(manager.getID(), f.getDefenders(), f.getMiddfielders(), f.getOffensives());
+		
+		for(Player p : manager.getPlayers()){
+			int plays = p.isPlays() ? 1 : 0;
+			String updateQuery = "UPDATE Mannschaft "
+					+ "	SET Aufgestellt = " + plays
+					+ " WHERE Manager_ID = "+manager.getID()
+					+ " AND Spieler_ID = "+p.getID();
+			sqlCon.sendQuery(updateQuery);
+		}
+				
 	}
 }
