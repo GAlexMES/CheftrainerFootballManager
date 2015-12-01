@@ -101,7 +101,7 @@ public class TransfermarketManagement {
 		return retval;
 	}
 
-	private void transferPlayer(Transaction t) {
+	public void transferPlayer(Transaction t) {
 		String sqlQuery = "SELECT Manager_ID FROM Mannschaft INNER JOIN Manager " + " WHERE Mannschaft.Manager_ID = Manager.ID " + " AND Manager.Spielrunde_ID = ? " + " AND Mannschaft.Spieler_ID = ?";
 		PreparedStatement pStatement;
 		try {
@@ -154,12 +154,21 @@ public class TransfermarketManagement {
 		sqlCon.sendQuery(addMoney);
 	}
 	
-	private void deleteTransactions(int playerSportalID, int communityID) throws SQLException{
+	public void deleteTransactions(int playerSportalID, int communityID) throws SQLException{
 		String sqlQuery = "DELETE FROM Gebote WHERE Spieler_ID = ? AND Spielrunde_ID = ?";
 		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
 		pStatement.setInt(1, playerSportalID);
 		pStatement.setInt(2,communityID);
 		pStatement.executeUpdate();
-		
 	}
+
+	public void deleteTransaction(int playerSportalID, int communityID, int managerID) throws SQLException {
+		String sqlQuery = "DELETE FROM Gebote WHERE Spieler_ID = ? AND Spielrunde_ID = ? AND Manager_ID = ?";
+		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
+		pStatement.setInt(1, playerSportalID);
+		pStatement.setInt(2,communityID);
+		pStatement.setInt(3,managerID);
+		pStatement.executeUpdate();
+	}
+
 }

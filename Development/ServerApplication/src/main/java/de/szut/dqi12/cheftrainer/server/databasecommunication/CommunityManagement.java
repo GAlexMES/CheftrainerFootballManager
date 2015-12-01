@@ -139,6 +139,7 @@ public class CommunityManagement {
 			t.setManagerID(rs.getInt("Manager_ID"));
 			t.setPlayerSportalID(rs.getInt("Spieler_ID"));
 			t.setOfferedPrice(rs.getInt("Gebot"));
+			t.setCommunityID(communityID);
 			retval.add(t);
 		}
 		return retval;

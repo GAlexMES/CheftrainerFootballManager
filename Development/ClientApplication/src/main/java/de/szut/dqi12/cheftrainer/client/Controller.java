@@ -9,7 +9,7 @@ import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
  * This class is the Controller class for the whole application.
@@ -72,6 +72,10 @@ public class Controller {
 		});
 	}
 
+	public void sendMessageToServer(Message message) {
+		currentSession.getClientSocket().sendMessage(message);
+	}
+	
 	// GETTER AND SETTER
 	public Session getSession() {
 		return currentSession;
@@ -84,19 +88,15 @@ public class Controller {
 	}
 
 	// Dummy
-	public void save(ArrayList<Player> players, Formation formation) {
-
-	}
-
-	// Dummy
 	public void setPlayeronMarket(Player player, int price) {
 
 	}
 
-	// Dummy answer = 1 = angenommen; answer = 0 = spieler vom markt nehmen(auch
-	// eigene Angebote)
-	public void answerOffer(Transaction offer, Boolean answer) {
-
+	public void save(ArrayList<Player> currentPlayers, Formation currentFormation) {
+		// TODO Auto-generated method stub
+		
 	}
+
+
 
 }
