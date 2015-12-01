@@ -27,7 +27,6 @@ public class CommunitiesController implements ControllerInterface{
 	@FXML
 	private TableColumn<Manager, String> rangColumn;
 		
-	
 	@Override
 	public void init() {
 	}
