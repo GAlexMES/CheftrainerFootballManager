@@ -11,9 +11,11 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
@@ -221,6 +223,9 @@ public class FormationController implements ImageUpdate {
 	 */
 	public void setClickedListener() {
 		getCurrentPlayers();
+		ScrollPane scrollPane = new ScrollPane();
+		VBox content = new VBox();
+		
 		// Iteration durch alle Nodes
 		for (Node currentNode : formationFrame.getChildren()) {
 
@@ -230,6 +235,7 @@ public class FormationController implements ImageUpdate {
 
 				@Override
 				public void handle(Event event) {
+					content.getChildren().clear();
 					// Load CurrentPlayer
 					for (Player p : getAllPlayers()) {
 						if (p.getID() == ((PlayerLabel) currentNode).getPlayerId()) {
@@ -243,17 +249,15 @@ public class FormationController implements ImageUpdate {
 					}
 					// Erstellung eines Dialogs zur Auswahl eines Spielers
 					if (notPlayingPlayers.size() != 0) {
-						GridPane dialog;
 						Stage dialogStage = new Stage();
 						try {
-							dialog = new GridPane();
 							PlayerLabel l;
 							int i = 0;
 							// Iteration durch alle nicht-spielenden Spieler
 							for (Player player : notPlayingPlayers) {
 								if (player.getPosition().equals(currentPlayer.getPosition())) {
 									l = player.getLabel();
-									dialog.add(l, 0, i);
+									content.getChildren().add(l);
 									i++;
 									// Listener fuer das klicken eines Labels im
 									// Dialog
@@ -301,11 +305,12 @@ public class FormationController implements ImageUpdate {
 									});
 								}
 							}
-							if (dialog.getChildren().size() > 0) {
-								dialogStage.setResizable(false);
+							if (content.getChildren().size() > 0) {
+								scrollPane.setContent(content);
+//								dialogStage.setResizable(false);
 								dialogStage.setTitle("Player");
 								dialogStage.initModality(Modality.WINDOW_MODAL);
-								Scene scene = new Scene(dialog);
+								Scene scene = new Scene(scrollPane);
 
 								dialogStage.setScene(scene);
 								dialogStage.showAndWait();
