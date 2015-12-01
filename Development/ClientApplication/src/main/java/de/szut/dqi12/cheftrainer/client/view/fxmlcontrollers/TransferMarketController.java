@@ -3,6 +3,8 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -35,8 +37,11 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
  * This is the controller of the transfer-market gui-component.
@@ -241,9 +246,8 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	 */
 	@FXML
 	public void showOffers() {
-		
-		//TODO: transactions liste bekommen
-		Community con = Controller.getInstance().getSession().getCurrentCommunity();
+		Session session  = Controller.getInstance().getSession();
+		Community con = session.getCurrentCommunity();
 		List<Transaction> transactions = con.getMarket().getTransactions();
 		GridPane dialog = new GridPane();
 		Button but;
@@ -252,29 +256,41 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 		dialog.add(new Label("price"), 1, 0);
 		dialog.add(new Label("action"), 2, 0);
 		for (Transaction tr : transactions) {
+			tr.takeInformation(session);
 			if (tr.isOutgoing()) {
-				but = new Button("remove from market");
+				but = new Button("remove offer");
 				but.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
 
-						Controller.getInstance().answerOffer(tr, false);
+						sendAnswerOffer(tr, false,true);
 					}
 				});
 			} else {
-				but = new Button("accept");
+				but = new Button("accept offer");
 				but.setOnAction(new EventHandler<ActionEvent>() {
 
 					@Override
 					public void handle(ActionEvent event) {
 
-						Controller.getInstance().answerOffer(tr, true);
+						sendAnswerOffer(tr, true, true);
 					}
 				});
 			}
-
+				//TODO: gebot ablehnen können
+//				else if(tr.isOutgoing()) {
+//					but = new Button("denie offer");
+//					but.setOnAction(new EventHandler<ActionEvent>() {
+//
+//						@Override
+//						public void handle(ActionEvent event) {
+//
+//							//sendAnswerOffer(tr, true, true);
+//						}
+//					});
+//				}
 			dialog.add(new Label(tr.getPlayer().getName()), 0, index);
-			dialog.add(new Label(String.valueOf(tr.getPrice())), 1, index);
+			dialog.add(new Label(String.valueOf(tr.getOfferedPrice())), 1, index);
 			dialog.add(but, 2, index);
 			index++;
 		}
@@ -286,6 +302,22 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 		Scene scene = new Scene(dialog);
 		dialogStage.setScene(scene);
 		dialogStage.showAndWait();
+	}
+	
+	private void sendAnswerOffer(Transaction tr, boolean accept, boolean remove){
+		JSONObject transactionJSON = new JSONObject();
+		transactionJSON.put("Gebot", tr.toJSON());
+		transactionJSON.put("Annehmen", accept);
+		transactionJSON.put("Entfernen", remove);
+		
+		JSONObject messageContent = new JSONObject();
+		messageContent.put("type", "Transaction");
+		messageContent.put("information", transactionJSON);
+		
+		Message message = new Message(ClientToServer_MessageIDs.TRANSFER_MARKET);
+		message.setMessageContent(messageContent);
+		
+		Controller.getInstance().sendMessageToServer(message);
 	}
 
 	@Override

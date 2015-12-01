@@ -197,8 +197,22 @@ public class DatabaseRequests {
 	public static void doTransactions(){
 		transfermarktManagement.doTransactions();
 	}
+	
+	public static void transferPlayer(Transaction tr){
+		transfermarktManagement.transferPlayer(tr);
+	}
+	
+	public static void removeTransaction(Transaction tr) {
+		try {
+			transfermarktManagement.deleteTransaction(tr.getPlayerSportalID(), tr.getCommunityID(),tr.getManagerID());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static void createNewManager(String communityName, int userID) {
 		communityManagement.createNewManager(communityName, userID);
 	}
+
+
 }

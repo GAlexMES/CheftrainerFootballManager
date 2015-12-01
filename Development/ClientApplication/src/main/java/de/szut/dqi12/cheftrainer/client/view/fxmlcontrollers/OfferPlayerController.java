@@ -8,6 +8,7 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -38,11 +39,13 @@ public class OfferPlayerController implements ControllerInterface {
 		int communityID = s.getCurrentCommunityID();
 		int userID = s.getUserID();
 		
-		JSONObject offerInformation = new JSONObject();
-		offerInformation.put("playerSportalID", displayedPlayer.getSportalID());
-		offerInformation.put("price", offerPrice);
-		offerInformation.put("userID", userID);
-		offerInformation.put("communityID", communityID);
+		Transaction tr = new Transaction();
+		tr.setPlayerSportalID(displayedPlayer.getSportalID());
+		tr.setOfferedPrice(offerPrice);
+		tr.setUserID(userID);
+		tr.setCommunityID(communityID);
+		
+		JSONObject offerInformation = tr.toJSON();
 		
 		JSONObject messageContent = new JSONObject();
 		messageContent.put("type", "NewOffer");
@@ -51,6 +54,8 @@ public class OfferPlayerController implements ControllerInterface {
 		Message offerMessage = new Message(ClientToServer_MessageIDs.TRANSFER_MARKET);
 		offerMessage.setMessageContent(messageContent);
 		s.getClientSocket().sendMessage(offerMessage);
+		
+		s.getCurrentCommunity().getMarket().addTransaction(tr);
 	}
 
 	public void setPlayer(Player p) {

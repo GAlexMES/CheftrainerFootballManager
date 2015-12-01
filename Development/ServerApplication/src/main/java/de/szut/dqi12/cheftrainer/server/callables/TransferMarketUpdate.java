@@ -17,18 +17,31 @@ public class TransferMarketUpdate extends CallableAbstract {
 		case "NewOffer":
 			newOffer(messageContent);
 			break;
+		case "Transaction":
+			transaction(messageContent);
+			break;
 		}
 	}
 
 	private void newOffer(JSONObject messageContent) {
 		JSONObject information = messageContent.getJSONObject("information");
-		int playerID = information.getInt("playerSportalID");
-		int price = information.getInt("price");
-		int userID = information.getInt("userID");
-		int communityID = information.getInt("communityID");
-
-		Transaction transaction = new Transaction(price,playerID,communityID,userID);
-		
+		Transaction transaction = new Transaction(information);
 		DatabaseRequests.addTransaction(transaction);
+	}
+
+	private void transaction(JSONObject messageContent) {
+		JSONObject information = messageContent.getJSONObject("information");
+		boolean accept = information.getBoolean("Annehmen");
+		boolean remove = information.getBoolean("Entfernen");
+		Transaction tr = new Transaction(information.getJSONObject("Gebot"));
+
+		//Remove will be done in transferPlayer
+		if (accept) {
+			DatabaseRequests.transferPlayer(tr);
+		} else {
+			if (remove) {
+				DatabaseRequests.removeTransaction(tr);
+			}
+		}
 	}
 }
