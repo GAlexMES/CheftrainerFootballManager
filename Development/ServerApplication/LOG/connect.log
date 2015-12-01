@@ -180,3 +180,61 @@
 2015-12-01 12:31:45 INFO  TeamGenerator:77 - Team generation: 100% done - completed!
 2015-12-01 12:32:03 INFO  ClientHandler:159 - The client with the following IP disconnected from the server: 127.0.0.1
 2015-12-01 12:32:03 INFO  ClientHandler:159 - The client with the following IP disconnected from the server: 127.0.0.1
+2015-12-01 13:02:41 INFO  ServerApplication:18 - Server will start now!
+2015-12-01 13:02:41 INFO  SQLConnection:66 - Connecting to the database file!
+2015-12-01 13:02:42 INFO  ServerInitialator:33 - Start validating Database!
+2015-12-01 13:02:42 INFO  Server:45 - The server started just now!
+2015-12-01 13:02:54 INFO  Server:58 - A new client with the following IP connected to the server: 127.0.0.1
+2015-12-01 13:02:54 INFO  MessageController:148 - A new message with the following ID arrived: AESKey
+2015-12-01 13:02:54 INFO  MessageController:196 - The handshake was completed!
+2015-12-01 13:02:55 INFO  MessageController:148 - A new message with the following ID arrived: UserAuthentification
+2015-12-01 13:02:58 INFO  Server:58 - A new client with the following IP connected to the server: 127.0.0.1
+2015-12-01 13:02:58 INFO  MessageController:148 - A new message with the following ID arrived: AESKey
+2015-12-01 13:02:58 INFO  MessageController:196 - The handshake was completed!
+2015-12-01 13:02:59 INFO  MessageController:148 - A new message with the following ID arrived: UserAuthentification
+2015-12-01 13:02:59 INFO  MessageController:148 - A new message with the following ID arrived: UpdateRequest
+2015-12-01 13:03:06 INFO  MessageController:148 - A new message with the following ID arrived: CommunityAuthentification
+2015-12-01 13:03:06 INFO  TeamGenerator:66 - Generate team for manager with ID = 1 for community 1
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 6.5 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 13.0 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 19.5 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 26.0 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 32.5 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 39.0 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 45.5 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 52.0 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 58.5 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 65.0 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 71.5 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 78.0 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 84.5 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 91.0 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:113 - Team generation: 97.5 % done
+2015-12-01 13:03:06 INFO  TeamGenerator:77 - Team generation: 100% done - completed!
+2015-12-01 13:03:27 INFO  MessageController:148 - A new message with the following ID arrived: NewFormationUpdate
+2015-12-01 13:03:33 INFO  MessageController:148 - A new message with the following ID arrived: NewFormationUpdate
+2015-12-01 13:03:42 INFO  Server:58 - A new client with the following IP connected to the server: 127.0.0.1
+2015-12-01 13:03:43 INFO  MessageController:148 - A new message with the following ID arrived: AESKey
+2015-12-01 13:03:43 INFO  MessageController:196 - The handshake was completed!
+2015-12-01 13:03:44 INFO  MessageController:148 - A new message with the following ID arrived: UserAuthentification
+2015-12-01 13:03:44 INFO  MessageController:148 - A new message with the following ID arrived: UpdateRequest
+2015-12-01 13:03:53 INFO  MessageController:148 - A new message with the following ID arrived: NewFormationUpdate
+2015-12-01 13:03:57 INFO  ClientHandler:159 - The client with the following IP disconnected from the server: 127.0.0.1
+2015-12-01 13:03:59 INFO  ClientHandler:159 - The client with the following IP disconnected from the server: 127.0.0.1
+2015-12-01 13:03:59 INFO  ClientHandler:159 - The client with the following IP disconnected from the server: 127.0.0.1
+2015-12-01 13:04:04 INFO  Server:58 - A new client with the following IP connected to the server: 127.0.0.1
+2015-12-01 13:04:04 INFO  MessageController:148 - A new message with the following ID arrived: AESKey
+2015-12-01 13:04:04 INFO  MessageController:196 - The handshake was completed!
+2015-12-01 13:04:05 INFO  MessageController:148 - A new message with the following ID arrived: UserAuthentification
+2015-12-01 13:04:05 INFO  MessageController:148 - A new message with the following ID arrived: UpdateRequest
+2015-12-01 13:04:14 INFO  MessageController:148 - A new message with the following ID arrived: NewFormationUpdate
+2015-12-01 13:04:17 INFO  ClientHandler:159 - The client with the following IP disconnected from the server: 127.0.0.1
+2015-12-01 13:04:22 INFO  Server:58 - A new client with the following IP connected to the server: 127.0.0.1
+2015-12-01 13:04:22 INFO  MessageController:148 - A new message with the following ID arrived: AESKey
+2015-12-01 13:04:22 INFO  MessageController:196 - The handshake was completed!
+2015-12-01 13:04:24 INFO  MessageController:148 - A new message with the following ID arrived: UserAuthentification
+2015-12-01 13:04:26 INFO  Server:58 - A new client with the following IP connected to the server: 127.0.0.1
+2015-12-01 13:04:26 INFO  MessageController:148 - A new message with the following ID arrived: AESKey
+2015-12-01 13:04:26 INFO  MessageController:196 - The handshake was completed!
+2015-12-01 13:04:27 INFO  MessageController:148 - A new message with the following ID arrived: UserAuthentification
+2015-12-01 13:04:27 INFO  MessageController:148 - A new message with the following ID arrived: UpdateRequest
