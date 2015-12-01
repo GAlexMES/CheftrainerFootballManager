@@ -1,5 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.logic;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -25,18 +26,15 @@ public class TeamGenerator {
 	private final int NUMBER_OF_DEFENDER = 5;
 	private final int NUMBER_OF_MIDDFIELDER = 5;
 	private final int NUMBER_OF_OFFENSIVE = 3;
-	private final int NUMBER_OF_PLAYER = NUMBER_OF_DEFENDER
-			+ NUMBER_OF_GOALKEEPER + NUMBER_OF_MIDDFIELDER
-			+ NUMBER_OF_OFFENSIVE;
+	private final int NUMBER_OF_PLAYER = NUMBER_OF_DEFENDER + NUMBER_OF_GOALKEEPER + NUMBER_OF_MIDDFIELDER + NUMBER_OF_OFFENSIVE;
 	public static final int TEAM_WORTH = 20000000;
 	public static final double TEAM_WORTH_TOLERANZ = 0.25;
-	
+
 	private final int DEFAULT_NUMBER_KEEPERS = 1;
 	private final int DEFAULT_NUMBER_OFFENSIVES = 2;
 	private final int DEFAULT_NUMBER_MIDDFIELDERS = 4;
 	private final int DEFAULT_NUMBER_DEFENDERS = 4;
-	
-	
+
 	private Map<String, Integer> formation;
 
 	private int teamWorth = 0;
@@ -49,8 +47,6 @@ public class TeamGenerator {
 	private int heighestPlayerID;
 	private int communityID;
 	private int managerID;
-	
-
 
 	private boolean breakFlag = false;
 
@@ -67,31 +63,30 @@ public class TeamGenerator {
 	 * @return returns the worth of the created team
 	 */
 	public int generateTeamForUser(int managerID, int communityID) {
-		LOGGER.info("Generate team for manager with ID = " + managerID
-				+ " for community " + communityID);
+		LOGGER.info("Generate team for manager with ID = " + managerID + " for community " + communityID);
 
 		reset();
 		this.managerID = managerID;
 		this.communityID = communityID;
 		playerList = createRandomTeam();
-		
+
 		if (correctWorth()) {
-			playerList= matchPlayersInFormation(playerList);
+			playerList = matchPlayersInFormation(playerList);
 			playerList.forEach(p -> updateDatabaseWithPlayers(p));
-			DatabaseRequests.setManagersFormation(managerID, DEFAULT_NUMBER_DEFENDERS,DEFAULT_NUMBER_MIDDFIELDERS,DEFAULT_NUMBER_OFFENSIVES);
+			DatabaseRequests.setManagersFormation(managerID, DEFAULT_NUMBER_DEFENDERS, DEFAULT_NUMBER_MIDDFIELDERS, DEFAULT_NUMBER_OFFENSIVES);
 			LOGGER.info("Team generation: 100% done - completed!");
 		} else {
 			LOGGER.error("Team generation: failed, something went wrong!");
 		}
 		return teamWorth;
 	}
-	
-	public List<Player> matchPlayersInFormation(List<Player> playerList){
-		for(Player p : playerList){
+
+	public List<Player> matchPlayersInFormation(List<Player> playerList) {
+		for (Player p : playerList) {
 			String position = p.getPosition();
-			if (formation.get(position)>0){
+			if (formation.get(position) > 0) {
 				p.setPlays(true);
-				formation.put(position, formation.get(position) -1);
+				formation.put(position, formation.get(position) - 1);
 			}
 		}
 		return playerList;
@@ -107,18 +102,15 @@ public class TeamGenerator {
 		List<Integer> idList = new ArrayList<>();
 		List<Player> playerList = new ArrayList<>();
 
-		while (goalkeepers + defenders + middfielders + offensives < NUMBER_OF_PLAYER
-				&& idList.size() < heighestPlayerID - 1) {
-			Player p = getNewRandomPlayer();
-			if (p != null && !idList.contains(p.getID())) {
-				idList.add(p.getID());
-				if (!isPlayerInUse(p.getID())&& playerFitsInTeam(p.getPosition())) {
+		while (goalkeepers + defenders + middfielders + offensives < NUMBER_OF_PLAYER && idList.size() < heighestPlayerID - 1) {
+			Player p = getNewRandomPlayer(heighestPlayerID);
+			if (p != null && !idList.contains(p.getSportalID())) {
+				idList.add(p.getSportalID());
+				if (!isPlayerInUse(p.getSportalID(), communityID) && playerFitsInTeam(p.getPosition())) {
 					playerList.add(p);
 					updatePlayerPerPosition(p.getPosition(), 1);
 					teamWorth += p.getWorth();
-					LOGGER.info("Team generation: "
-							+ ((goalkeepers + defenders + middfielders + offensives) * 6.5)
-							+ " % done");
+					LOGGER.info("Team generation: " + ((goalkeepers + defenders + middfielders + offensives) * 6.5) + " % done");
 				}
 			}
 		}
@@ -143,10 +135,8 @@ public class TeamGenerator {
 	 * findBetterPlayer function to improve the team worth
 	 */
 	private boolean correctWorth() {
-		boolean smallerThanMax = teamWorth < TEAM_WORTH
-				* (1 + TEAM_WORTH_TOLERANZ);
-		boolean greaterThanMin = teamWorth > TEAM_WORTH
-				* (1 - TEAM_WORTH_TOLERANZ);
+		boolean smallerThanMax = teamWorth < TEAM_WORTH * (1 + TEAM_WORTH_TOLERANZ);
+		boolean greaterThanMin = teamWorth > TEAM_WORTH * (1 - TEAM_WORTH_TOLERANZ);
 		if (smallerThanMax && greaterThanMin) {
 			return true;
 		} else if (smallerThanMax) {
@@ -176,10 +166,9 @@ public class TeamGenerator {
 		List<Integer> currentPlayerIDs = new ArrayList<>();
 		for (int i = 0; i < playerList.size(); i++) {
 			Player p = playerList.get(i);
-			currentPlayerIDs.add(p.getID());
+			currentPlayerIDs.add(p.getSportalID());
 
-			if (currentPlayer == null
-					|| com.compare(currentPlayer.getWorth(), p.getWorth()) < 0) {
+			if (currentPlayer == null || com.compare(currentPlayer.getWorth(), p.getWorth()) < 0) {
 				currentPlayer = p;
 			}
 		}
@@ -188,32 +177,28 @@ public class TeamGenerator {
 		List<Integer> idList = new ArrayList<>();
 
 		while (!playerFound && idList.size() < heighestPlayerID - 1) {
-			Player newPlayer = getNewRandomPlayer();
+			Player newPlayer = getNewRandomPlayer(heighestPlayerID);
 
 			if (newPlayer == null) {
 				noPlayerFoundCounter++;
 				if (noPlayerFoundCounter >= 10) {
-					System.out
-							.println("Could not find a better player. Team worth is: "
-									+ teamWorth);
+					System.out.println("Could not find a better player. Team worth is: " + teamWorth);
 					breakFlag = true;
 					break;
 				}
 			}
 
-			if (newPlayer != null && !idList.contains(newPlayer.getID())) {
-				idList.add(newPlayer.getID());
+			if (newPlayer != null && !idList.contains(newPlayer.getSportalID())) {
+				idList.add(newPlayer.getSportalID());
 
-				boolean betterWorth = com.compare(newPlayer.getWorth(),
-						currentPlayer.getWorth()) < 0;
-				boolean samePosition = newPlayer.getPosition().equals(
-						currentPlayer.getPosition());
-				boolean notInUse = !isPlayerInUse(newPlayer.getID())
-						&& !currentPlayerIDs.contains(newPlayer.getID());
+				boolean betterWorth = com.compare(newPlayer.getWorth(), currentPlayer.getWorth()) < 0;
+				boolean samePosition = newPlayer.getPosition().equals(currentPlayer.getPosition());
+				
+				boolean notInList = !currentPlayerIDs.contains(newPlayer.getSportalID());
+				boolean notInUse = !isPlayerInUse(newPlayer.getSportalID(), communityID) && notInList;
 
 				if (betterWorth && samePosition && notInUse) {
-					if (newPlayer.getPosition().equals(
-							currentPlayer.getPosition())) {
+					if (newPlayer.getPosition().equals(currentPlayer.getPosition())) {
 						teamWorth -= currentPlayer.getWorth();
 						teamWorth += newPlayer.getWorth();
 						playerList.remove(currentPlayer);
@@ -232,8 +217,8 @@ public class TeamGenerator {
 	 * @param p
 	 *            the player, that should be mapped to the manager
 	 */
-	private void updateDatabaseWithPlayers(Player p) {
-		DatabaseRequests.addPlayerToManager(managerID, p.getID(), p.plays());
+	public void updateDatabaseWithPlayers(Player p) {
+		DatabaseRequests.addPlayerToManager(managerID, p.getSportalID(), p.plays());
 	}
 
 	/**
@@ -261,9 +246,18 @@ public class TeamGenerator {
 		}
 	}
 
-	// TODO: Überprüfung, ob Spieler auf dem Transfermarkt ist.
-	private boolean isPlayerInUse(int playerID) {
-		return DatabaseRequests.isPlayerOwened(playerID, communityID);
+	/*
+	 * This function checks, if a player with the given id is already owned by
+	 * another player or is on the exchange market.
+	 */
+	public static boolean isPlayerInUse(int playerID, int curCommunityID) {
+		try {
+			Boolean owned = DatabaseRequests.isPlayerOwened(playerID, curCommunityID);
+			Boolean onExchangeMarket = DatabaseRequests.isPlayerOnExchangeMarket(playerID, curCommunityID);
+			return owned || onExchangeMarket;
+		} catch (SQLException sqe) {
+			return true;
+		}
 	}
 
 	/**
@@ -294,7 +288,7 @@ public class TeamGenerator {
 	 * 
 	 * @return a new random Player object with values from the database
 	 */
-	private Player getNewRandomPlayer() {
+	public static Player getNewRandomPlayer(int heighestPlayerID) {
 		Random rn = new Random();
 		int playerID = 0 + rn.nextInt(heighestPlayerID - 1);
 

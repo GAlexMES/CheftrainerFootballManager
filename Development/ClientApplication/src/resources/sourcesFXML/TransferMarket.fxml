@@ -1,36 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.AnchorPane?>
 
-<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.transfer.TransferMarketController">
-  <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-      <RowConstraints />
-      <RowConstraints />
-  </rowConstraints>
-   <children>
-      <TableView fx:id="marketTable" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
+<GridPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.TransferMarketController">
+	<columnConstraints>
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+	</columnConstraints>
+	<rowConstraints>
+		<RowConstraints fillHeight="false" maxHeight="30.0" minHeight="10.0" percentHeight="0.0" vgrow="NEVER" />
+		<RowConstraints minHeight="10.0" vgrow="ALWAYS" />
+		<RowConstraints maxHeight="25.0" minHeight="25.0" prefHeight="25.0" />
+	</rowConstraints>
+	<children>
+		<Text strokeType="OUTSIDE" strokeWidth="0.0" text="Transfermarket" GridPane.hgrow="NEVER" GridPane.vgrow="NEVER">
+			<font>
+				<Font size="27.0" />
+			</font>
+		</Text>
+		<TableView fx:id="marketTable" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
 			<columns>
-				<TableColumn fx:id="nameCol" minWidth="254.0" prefWidth="-1.0" text="Player" />
-				<TableColumn fx:id="pointsCol" minWidth="129.0" prefWidth="-1.0" text="Points" />
-				<TableColumn fx:id="werthCol" minWidth="96.0" prefWidth="-1.0" text="Werth" />
+				<TableColumn fx:id="nameCol"  prefWidth="-1.0" text="Player" />
+				<TableColumn fx:id="pointsCol"  prefWidth="-1.0" text="Points" />
+				<TableColumn fx:id="werthCol"  prefWidth="-1.0" text="Worth" />
 			</columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
 		</TableView>
-		<ButtonBar GridPane.rowIndex="2">
-			<buttons>
-				<Button mnemonicParsing="false" onAction="#showOffers" text="show offers" />
-				<Button mnemonicParsing="false" onAction="#addPlayer" text="add player" />
-<!-- 					<Button mnemonicParsing="false" onAction="#createCommunity" prefHeight="25.0" prefWidth="102.0" text="Community erstellen" /> -->
-			</buttons>
-		</ButtonBar>
-   </children>
+		<AnchorPane GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+			<ButtonBar>
+				<buttons>
+					<Button mnemonicParsing="false" onAction="#showOffers" text="show offers" />
+					<Button mnemonicParsing="false" onAction="#addPlayer" prefHeight="25.0" prefWidth="102.0" text="add player" />
+				</buttons>
+			</ButtonBar>
+		</AnchorPane>
+	</children>
 </GridPane>

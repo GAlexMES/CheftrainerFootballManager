@@ -3,6 +3,7 @@ package de.szut.dqi12.cheftrainer.client.callables;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -100,50 +101,10 @@ public class UserCommunityList extends CallableAbstract {
 		new ArrayList<>();
 		List<Community> retval = new ArrayList<>();
 		for (int i = 0; i < communityList.length(); i++) {
-			Community com = jsonToCommunity(new JSONObject(communityList.get(i).toString()));
+			JSONObject communityJSON = new JSONObject(communityList.get(i).toString());
+			Community com = new Community(communityJSON);
 			com.findeUsersManager(userName);
 			retval.add(com);
-		}
-		return retval;
-	}
-
-	/**
-	 * This method parses a {@link JSONObject} to a {@link Community} object.
-	 * Following keys must be available: <li>ID -> Int <li>Name -> String <li>
-	 * Managers -> {@link JSONArray}
-	 * 
-	 * @param communityJSON
-	 *            a {@link JSONObject}, that contains all of the keys above.
-	 * @return a {@link Community} object, created out of the data, given in the
-	 *         communityJSON.
-	 */
-	private Community jsonToCommunity(JSONObject communityJSON) {
-		Community retval = new Community();
-		retval.setCommunityID(communityJSON.getInt("ID"));
-		retval.setName(communityJSON.getString("Name"));
-		JSONArray managersJSON = communityJSON.getJSONArray("Managers");
-		retval.addManagers(createManagerList(managersJSON, retval.getName()));
-
-		String userName = Controller.getInstance().getSession().getUser().getUserName();
-		retval.findeUsersManager(userName);
-		return retval;
-	}
-
-	/**
-	 * This method creates a List>Manager< out of the given JSONArray.
-	 * 
-	 * @param managersJSON
-	 *            a JSONArray with all required information to create a Manager
-	 *            object out of it.
-	 * @return a List with all Managers in it, that could be created with the
-	 *         given JSONArray
-	 */
-	private List<Manager> createManagerList(JSONArray managersJSON, String communityName) {
-		List<Manager> retval = new ArrayList<>();
-		for (int i = 0; i < managersJSON.length(); i++) {
-			JSONObject managerJSON = new JSONObject(managersJSON.get(i).toString());
-			Manager manager = new Manager(managerJSON,communityName);
-			retval.add(manager);
 		}
 		return retval;
 	}

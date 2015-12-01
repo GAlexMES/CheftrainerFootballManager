@@ -42,8 +42,8 @@ public class ImageController {
 				imageFile.getParentFile().mkdirs();
 				Thread t = new Thread(new ImageLoader(url, picturePath, p.getSportalID()));
 				t.run();
-			} catch (IOException mue) {
-				mue.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 		return DUMMY_IMG;
@@ -79,7 +79,6 @@ public class ImageController {
 	    		Image updateImage = new Image(imageFile.toURI().toString());
 				imageUpdate.updateImage(updateImage, id);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
 

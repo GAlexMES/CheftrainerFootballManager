@@ -13,7 +13,9 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
 
 /**
@@ -24,7 +26,7 @@ import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
  *
  */
 public class CommunityManagement {
-	
+
 	private final static Logger LOGGER = Logger.getLogger(CommunityManagement.class);
 
 	private SQLConnection sqlCon;
@@ -67,8 +69,10 @@ public class CommunityManagement {
 	 * @return a List of Integer with IDs for {@link Community} inside.
 	 */
 	public List<Integer> getCommunityIDsForUser(int userID) {
-		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde INNER JOIN Manager WHERE Manager.Nutzer_ID ="
-				+ userID + " AND Manager.Spielrunde_ID=Spielrunde.ID";
+		String sqlQuery = "SELECT Spielrunde.ID FROM Spielrunde ";
+		if (userID >= 0) {
+			sqlQuery += " INNER JOIN Manager WHERE Manager.Nutzer_ID =" + userID + " AND Manager.Spielrunde_ID=Spielrunde.ID";
+		}
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		List<Integer> retval = new ArrayList<>();
 		try {
@@ -103,9 +107,45 @@ public class CommunityManagement {
 			}
 		} catch (SQLException e) {
 		}
-		retval.addManagers(getManagers(communityID,retval.getName()));
+		retval.addManagers(getManagers(communityID, retval.getName()));
+		retval.setMarket(getMarket(communityID));
 		return retval;
 	}
+
+	private Market getMarket(int communityID) {
+		Market retval = new Market();
+
+		String sqlQuery = "SELECT * FROM Transfermarkt " + "INNER JOIN Spieler INNER JOIN Verein" + " WHERE Spieler.SportalID = Spieler_ID" + " AND Verein_ID = Verein.ID" + " AND Spielrunde_ID = "
+				+ communityID;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		try {
+			List<Player> playerList = PlayerManagement.getPlayersFromResultSet(rs);
+			playerList.forEach(p -> retval.addPlayer(p));
+			List<Transaction> transactionList = getTransactions(communityID);
+			retval.setTransactions(transactionList);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return retval;
+	}
+	
+	private List<Transaction> getTransactions(int communityID) throws SQLException{
+		List<Transaction> retval = new ArrayList<>();
+	
+		String transactionQuery = "Select * From Gebote Where Spielrunde_ID = "+communityID;
+		ResultSet rs = sqlCon.sendQuery(transactionQuery);
+		while(rs.next()){
+			Transaction t = new Transaction();
+			t.setManagerID(rs.getInt("Manager_ID"));
+			t.setPlayerSportalID(rs.getInt("Spieler_ID"));
+			t.setOfferedPrice(rs.getInt("Gebot"));
+			t.setCommunityID(communityID);
+			retval.add(t);
+		}
+		return retval;
+	}
+	
+	
 
 	/**
 	 * This method collects all managers, that play in the given community
@@ -116,36 +156,32 @@ public class CommunityManagement {
 	 */
 	public List<Manager> getManagers(int communityID, String communityName) {
 		List<Manager> retval = new ArrayList<>();
-		String sqlQuery = "SELECT Manager.*, Nutzer.Nutzername "
-				+ "FROM  Manager INNER JOIN Nutzer WHERE Spielrunde_ID="
-				+ communityID + " AND Manager.Nutzer_ID=Nutzer.ID";
+		String sqlQuery = "SELECT Manager.*, Nutzer.Nutzername " + "FROM  Manager INNER JOIN Nutzer WHERE Spielrunde_ID=" + communityID + " AND Manager.Nutzer_ID=Nutzer.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
 			while (rs.next()) {
 				try {
 					String managerName = rs.getString("Nutzername");
-					//TODO: benötigt?
-					//double money = rs.getDouble("Budget");
+					// TODO: benoetigt?
+					// double money = rs.getDouble("Budget");
 					int points = rs.getInt("Punkte");
-					Manager manager = new Manager(managerName, null, points,communityName);
+					Manager manager = new Manager(managerName, null, points, communityName);
 					int defenders = rs.getInt("Anzahl_Abwehr");
 					int middfielders = rs.getInt("Anzahl_Mittelfeld");
 					int offensives = rs.getInt("Anzahl_Stuermer");
-					Formation formation = formationFactory.getFormation(
-							defenders, middfielders, offensives);
+					Formation formation = formationFactory.getFormation(defenders, middfielders, offensives);
 					manager.setFormation(formation);
 					manager.setID(rs.getInt("ID"));
 					retval.add(manager);
 				} catch (IOException ioe) {
-					LOGGER.error("Invalid formation was read out of the database!   "+ioe.getStackTrace());
+					LOGGER.error("Invalid formation was read out of the database!   " + ioe.getStackTrace());
 				}
 			}
 		} catch (SQLException e) {
 		}
 		for (Manager m : retval) {
 			List<Player> playerList = getTeam(m.getID());
-			Player[] playerArray = playerList.toArray(new Player[playerList
-					.size()]);
+			Player[] playerArray = playerList.toArray(new Player[playerList.size()]);
 			m.addPlayer(playerArray);
 		}
 		return retval;
@@ -164,8 +200,7 @@ public class CommunityManagement {
 	 * @return true = commmuniy was created.
 	 */
 	public boolean createNewCommunity(String name, String password, int adminID) {
-		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name
-				+ "'";
+		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name + "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		if (DatabaseRequests.isResultSetEmpty(rs)) {
 			return createCommunity(name, password, adminID);
@@ -185,8 +220,7 @@ public class CommunityManagement {
 	 * @return true = commmuniy was created.
 	 */
 	private boolean createCommunity(String name, String password, int adminID) {
-		String sqlQuery = "INSERT INTO Spielrunde (Name, Administrator_ID, Passwort) VALUES ( '"
-				+ name + "', '" + adminID + "', '" + password + "')";
+		String sqlQuery = "INSERT INTO Spielrunde (Name, Administrator_ID, Passwort) VALUES ( '" + name + "', '" + adminID + "', '" + password + "')";
 		sqlCon.sendQuery(sqlQuery);
 		return true;
 	}
@@ -203,8 +237,7 @@ public class CommunityManagement {
 	 * @return a HashMap with booleans, that describes, if the entering was
 	 *         successful.
 	 */
-	public HashMap<String, Boolean> enterCommunity(String communityName,
-			String communityPassword, int userID) {
+	public HashMap<String, Boolean> enterCommunity(String communityName, String communityPassword, int userID) {
 		HashMap<String, Boolean> retval = new HashMap<String, Boolean>();
 		retval.put("userDoesNotExist", false);
 		retval.put("existCommunity", false);
@@ -233,8 +266,7 @@ public class CommunityManagement {
 	 * @return true = Community exists.
 	 */
 	private boolean existCommunity(String communityName) {
-		String sqlQueryExistCommunity = "SELECT * FROM Spielrunde WHERE Spielrunde.Name= '"
-				+ communityName + "'";
+		String sqlQueryExistCommunity = "SELECT * FROM Spielrunde WHERE Spielrunde.Name= '" + communityName + "'";
 
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistCommunity);
 		return !DatabaseRequests.isResultSetEmpty(rs);
@@ -250,15 +282,11 @@ public class CommunityManagement {
 	 *            the ID of the user, that wants to join the community.
 	 * @return true = manager was created successful.
 	 */
-	private boolean createNewManager(String communityName, int userID) {
-		ResultSet rs;
-		String sqlQueryCommunityID = "SELECT ID FROM Spielrunde WHERE Name='"
-				+ communityName + "'";
-		rs = sqlCon.sendQuery(sqlQueryCommunityID);
+	public boolean createNewManager(String communityName, int userID) {
 		try {
-			int communityID = rs.getInt("ID");
-			String sqlQuery = "INSERT INTO Manager (Nutzer_ID, Spielrunde_ID) VALUES ('"
-					+ userID + "','" + communityID + "')";
+			String condition = "Name='" + communityName + "'";
+			int communityID = Integer.valueOf(DatabaseRequests.getUniqueValue("ID", "Spielrunde", condition).toString());
+			String sqlQuery = "INSERT INTO Manager (Nutzer_ID, Spielrunde_ID) VALUES ('" + userID + "','" + communityID + "')";
 			sqlCon.sendQuery(sqlQuery);
 
 			int managerID = DatabaseRequests.getManagerID(userID, communityID);
@@ -275,12 +303,11 @@ public class CommunityManagement {
 				budget = BUDGET + (minTeamWorth - teamWorth);
 			}
 
-			sqlQuery = "UPDATE Manager SET Budget='" + budget + "'"
-					+ "WHERE ID=" + managerID;
+			sqlQuery = "UPDATE Manager SET Budget='" + budget + "'" + "WHERE ID=" + managerID;
 			sqlCon.sendQuery(sqlQuery);
 
 			return true;
-		} catch (SQLException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
@@ -297,8 +324,7 @@ public class CommunityManagement {
 	 * @return true = password and name match together.
 	 */
 	private boolean checkPassword(String password, String communityName) {
-		String sqlQuery = "SELECT Passwort FROM Spielrunde" + " WHERE Name='"
-				+ communityName + "'" + " AND Passwort='" + password + "'";
+		String sqlQuery = "SELECT Passwort FROM Spielrunde" + " WHERE Name='" + communityName + "'" + " AND Passwort='" + password + "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
@@ -314,12 +340,7 @@ public class CommunityManagement {
 	 * @return true = the user has a manager in the given community.
 	 */
 	private boolean existUserInCommunity(int userID, String communityName) {
-		String sqlQueryExistUser = "SELECT * FROM Manager INNER JOIN Spielrunde "
-				+ "WHERE Manager.Nutzer_ID="
-				+ userID
-				+ " And Spielrunde.Name='"
-				+ communityName
-				+ "'"
+		String sqlQueryExistUser = "SELECT * FROM Manager INNER JOIN Spielrunde " + "WHERE Manager.Nutzer_ID=" + userID + " And Spielrunde.Name='" + communityName + "'"
 				+ " AND Spielrunde.ID=Manager.Spielrunde_ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistUser);
 		return !DatabaseRequests.isResultSetEmpty(rs);
@@ -349,36 +370,13 @@ public class CommunityManagement {
 	 */
 	public List<Player> getTeam(int managerID) {
 		List<Player> playerList = new ArrayList<>();
-		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein"
-				+ " WHERE Mannschaft.Manager_ID="
-				+ managerID
-				+ " AND Spieler.Verein_ID = Verein.ID"
-				+ " AND Mannschaft.Spieler_ID=Spieler.ID";
+		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein" 
+						+ " WHERE Mannschaft.Manager_ID=" + managerID 
+						+ " AND Spieler.Verein_ID = Verein.ID"
+						+ " AND Mannschaft.Spieler_ID=Spieler.SportalID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
-			while (rs.next()) {
-				Player p = new Player();
-				p.setID(rs.getInt("ID"));
-				p.setName(rs.getString("Name"));
-				p.setTeamName(rs.getString("Vereinsname"));
-				p.setPosition(rs.getString("Position"));
-				p.setNumber(rs.getInt("Nummer"));
-				p.setWorth(rs.getInt("Marktwert"));
-				p.setPoints(rs.getInt("Punkte"));
-				p.setSportalID(rs.getInt("SportalID"));
-				p.setBirthdate(rs.getString("Birthday"));
-				p.setAbsolutePictureURL(rs.getString("PicturePath"));
-				
-				int play = rs.getInt("Aufgestellt");
-				if(play==1){
-					p.setPlays(true);
-				}
-				else{
-					p.setPlays(false);
-					
-				}
-				playerList.add(p);
-			}
+			playerList.addAll(PlayerManagement.getPlayersFromResultSet(rs));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

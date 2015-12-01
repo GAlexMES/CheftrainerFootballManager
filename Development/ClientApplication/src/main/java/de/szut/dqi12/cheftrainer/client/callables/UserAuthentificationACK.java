@@ -10,6 +10,7 @@ import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.LoginController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.RegistrationController;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
+import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -53,6 +54,7 @@ public class UserAuthentificationACK extends CallableAbstract {
 			Controller.getInstance().getSession()
 					.setUserID(authentificationAck.getInt("UserID"));
 			guiController.showMainApplication();
+			UpdateUtils.getCommunityUpdate();
 		} else if (!authentificationAck.getBoolean("userExist")) {
 			AlertUtils.createSimpleDialog("Login failed",
 					"Ther occured a problem during your login.",

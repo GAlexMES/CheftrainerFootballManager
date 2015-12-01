@@ -2,6 +2,7 @@ package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.NoSuchElementException;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesManagement;
 
@@ -34,9 +36,10 @@ public class DatabaseRequests {
 	private static ServerPropertiesManagement serverPropertiesManagement;
 	private static DatabaseUtils databaseUtils;
 	private static PointManagement pointManagement;
-
-	public static DatabaseRequests getInstance() {
-		if (INSTANCE == null) {
+	private static TransfermarketManagement transfermarktManagement;
+	
+	public static DatabaseRequests getInstance(){
+		if(INSTANCE==null){
 			INSTANCE = new DatabaseRequests();
 		}
 		return INSTANCE;
@@ -51,6 +54,7 @@ public class DatabaseRequests {
 		serverPropertiesManagement = new ServerPropertiesManagement(sqlCon);
 		databaseUtils = new DatabaseUtils(sqlCon);
 		pointManagement = new PointManagement(sqlCon);
+		transfermarktManagement = new TransfermarketManagement(sqlCon);
 	}
 
 	public static HashMap<String, Boolean> registerNewUser(User newUser) {
@@ -98,16 +102,19 @@ public class DatabaseRequests {
 	}
 
 	public static Player getPlayer(int playerID) {
-		return logicManagement.getPlayer(playerID);
+		return playerManagement.getPlayer(playerID);
 	}
 
 	public static boolean isPlayerOwened(int playerID, int communityID) {
 		return logicManagement.isPlayerOwened(playerID, communityID);
 	}
+	
+	public static Boolean isPlayerOnExchangeMarket(int playerID, int communityID) throws SQLException {
+		return logicManagement.isPlayerOnExchangeMarket(playerID, communityID);
+	}
 
 	public static void addPlayerToManager(int managerID, int playerID, boolean plays) {
-		logicManagement.addPlayerToManager(managerID, playerID, plays);
-
+		playerManagement.addPlayerToManager(managerID, playerID, plays);
 	}
 
 	public static int getCurrentSeasonFromSportal() {
@@ -188,6 +195,36 @@ public class DatabaseRequests {
 	public static void setManagersFormation(int managerID, int defenders, int middfielders, int offensives) {
 		playerManagement.setManagersFormation(managerID, defenders, middfielders, offensives);
 	}
+
+	public static void putPlayerOnExchangeMarket(Player p, int communityID, int ownerID) {
+		transfermarktManagement.putPlayerOnExchangeMarket(p,  communityID, ownerID);
+	}
+
+	public static void addTransaction(Transaction transaction) {
+		transfermarktManagement.addTransaction(transaction);
+	}
+	
+	public static void doTransactions(){
+		transfermarktManagement.doTransactions();
+	}
+	
+	public static void transferPlayer(Transaction tr){
+		transfermarktManagement.transferPlayer(tr);
+	}
+	
+	public static void removeTransaction(Transaction tr) {
+		try {
+			transfermarktManagement.deleteTransaction(tr.getPlayerSportalID(), tr.getCommunityID(),tr.getManagerID());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void createNewManager(String communityName, int userID) {
+		communityManagement.createNewManager(communityName, userID);
+	}
+
+
 
 	public static void updateManager(Manager manager) {
 		playerManagement.updateManager(manager);

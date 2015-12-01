@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+
+
+<VBox fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.OfferPlayerController" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40">
+	<children>
+		<Text strokeType="OUTSIDE" strokeWidth="0.0" text="Your offer:"	textAlignment="CENTER" wrappingWidth="77.38232421875" VBox.vgrow="ALWAYS">
+			<font>
+				<Font size="15.0" />
+			</font>
+		</Text>
+		<TextField fx:id="priceField"/>
+		<Button onAction="#offerButtonClicked" mnemonicParsing="false" prefHeight="25.0" prefWidth="165.0"
+			text="offer" />
+	</children>
+</VBox>
+

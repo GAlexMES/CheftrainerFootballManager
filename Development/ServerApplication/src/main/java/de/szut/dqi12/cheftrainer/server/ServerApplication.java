@@ -8,10 +8,10 @@ import org.apache.log4j.Logger;
  */
 public class ServerApplication {
 	private final static String PACKAGE_PATH = "de.szut.dqi12.cheftrainer.server.callables.test";
+	private final static String DIR_PATH = "de/szut/dqi12/cheftrainer/server/callables/";
 	private final static String DB_NAME = "Database";
-	private final static String DB_PATH = ServerApplication.class.getResource(
-			"../../../../../Database").toString();
-
+	private final static String DB_PATH = "/Database";
+	
 	private final static Logger LOGGER = Logger.getLogger(ServerApplication.class);
 
 	public static void main(String[] args) {
@@ -19,7 +19,8 @@ public class ServerApplication {
 		try {
 			Controller controller = Controller.getInstance();
 			controller.creatDatabaseCommunication(DB_NAME, DB_PATH);
-			controller.startServerSocket(PACKAGE_PATH);
+			controller.startServerSocket(PACKAGE_PATH,DIR_PATH);
+			controller.newTimerTask();
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error("A fatal error occured. Server will shut down!");
