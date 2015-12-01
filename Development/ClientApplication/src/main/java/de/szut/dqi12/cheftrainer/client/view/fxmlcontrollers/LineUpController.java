@@ -163,8 +163,9 @@ public class LineUpController implements ControllerInterface {
 			tempSendingManager.addPlayer(manager.getPlayers());
 			tempSendingManager.setLineUp(guiLineUp);
 			tempSendingManager.setFormation(currentFormation);
+			tempSendingManager.setName(manager.getName());
 			Message updateMessage = new Message(ClientToServer_MessageIDs.NEW_FORMATION);
-			updateMessage.setMessageContent(manager.toJSON());
+			updateMessage.setMessageContent(tempSendingManager.toJSON());
 			Controller.getInstance().getSession().getClientSocket().sendMessage(updateMessage);
 		} else {
 			AlertUtils.createSimpleDialog("Nothing to save", "There are no changes!", "", AlertType.CONFIRMATION);

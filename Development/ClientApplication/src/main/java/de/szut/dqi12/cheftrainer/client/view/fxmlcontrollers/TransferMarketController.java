@@ -196,7 +196,7 @@ public class TransferMarketController {
 			}
 
 			dialog.add(new Label(tr.getPlayer().getName()), 0, index);
-			dialog.add(new Label(String.valueOf(tr.getPrice())), 1, index);
+			dialog.add(new Label(String.valueOf(tr.getOfferedPrice())), 1, index);
 			dialog.add(but, 2, index);
 			index++;
 		}
