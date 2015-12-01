@@ -163,9 +163,6 @@ public class LineUpController implements ControllerInterface {
 			tempSendingManager.addPlayer(manager.getPlayers());
 			tempSendingManager.setLineUp(guiLineUp);
 			tempSendingManager.setFormation(currentFormation);
-			System.out.println(currentFormation.getName());
-			System.out.println(guiLineUp.size());
-
 			Message updateMessage = new Message(ClientToServer_MessageIDs.NEW_FORMATION);
 			updateMessage.setMessageContent(manager.toJSON());
 			Controller.getInstance().getSession().getClientSocket().sendMessage(updateMessage);
