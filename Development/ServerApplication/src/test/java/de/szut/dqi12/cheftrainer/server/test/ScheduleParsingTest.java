@@ -2,15 +2,11 @@ package de.szut.dqi12.cheftrainer.server.test;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.junit.Test;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
@@ -35,6 +31,7 @@ public class ScheduleParsingTest {
 			List<Match> matches = sp.createSchedule(7, 2015);
 			for (Match m : matches) {
 				m.setSportalMatchID(ScheduleParser.getSportalID(m.getDetailURL()));
+				@SuppressWarnings("static-access")
 				Map<String,Map<String,Player>> currentPlayerList = pp.getPlayerPoints(2015, 7, m.getSportalMatchID());
 				playerList.putAll(currentPlayerList);
 			}

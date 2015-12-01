@@ -22,9 +22,9 @@
 		</Text>
 		<TableView fx:id="communitiesTable" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
 			<columns>
-				<TableColumn fx:id="communityNameColumn" minWidth="254.0" prefWidth="-1.0" text="Community Name" />
-				<TableColumn fx:id="wertDesTeamsColumn" minWidth="129.0" prefWidth="-1.0" text="Wert deines Teams" />
-				<TableColumn fx:id="plazierungColumn" minWidth="96.0" prefWidth="-1.0" text="Platzierung" />
+				<TableColumn fx:id="nameColumn"  prefWidth="-1.0" text="Community Name" />
+				<TableColumn fx:id="worthColumn"  prefWidth="-1.0" text="Wert deines Teams" />
+				<TableColumn fx:id="rangColumn"  prefWidth="-1.0" text="Platzierung" />
 			</columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -33,8 +33,8 @@
 		<AnchorPane GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
 			<ButtonBar>
 				<buttons>
-					<Button mnemonicParsing="false" onAction="#enterCommunity" text="Community beitreten" />
-					<Button mnemonicParsing="false" onAction="#createCommunity" prefHeight="25.0" prefWidth="102.0" text="Community erstellen" />
+					<Button mnemonicParsing="false" onAction="#enterCommunity" prefHeight="25.0" text="enter community" />
+					<Button mnemonicParsing="false" onAction="#createCommunity" prefHeight="25.0" text="create community" />
 				</buttons>
 			</ButtonBar>
 		</AnchorPane>

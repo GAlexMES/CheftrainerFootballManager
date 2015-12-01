@@ -1,9 +1,11 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -11,7 +13,6 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
-import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
 
 /**
@@ -45,7 +46,10 @@ public class SQLConnection {
 			throws IOException {
 		this.name = name;
 		DatabaseRequests.getInstance().setSQLConnection(this);
-		loadDB(sqlPath);
+		
+		URL url = this.getClass().getResource(sqlPath);
+		
+		loadDB(url.toString());
 		if (init) {
 			ServerInitialator.databaseInitalisation();
 		}
@@ -59,8 +63,8 @@ public class SQLConnection {
 	 *            to the db file
 	 */
 	private void loadDB(String path) {
-
-		final String url = "jdbc:sqlite:" + path;
+		LOGGER.info("Connecting to the database file!");
+		final String url = "jdbc:sqlite::resource:Database";
 
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -84,7 +88,7 @@ public class SQLConnection {
 
 			statement.executeQuery("ATTACH '" + name + "' as "
 					+ name.substring(0, name.length() - 3));
-
+			LOGGER.info("Connecting to the database file was succesfull!");
 		} catch (SQLException e) {
 			handleSQLException(e);
 		}
@@ -119,13 +123,17 @@ public class SQLConnection {
 		if (sqle.getMessage().contains(SQLEXCEPTION_NORESULT)) {
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_ERROR)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
-			System.err.print(sqLiteError);
+			LOGGER.error(sqLiteError);
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_BUSY)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
-			System.err.print(sqLiteError);
+			LOGGER.error(sqLiteError);
 		} else {
-			sqle.printStackTrace();
+			LOGGER.error(sqle.getLocalizedMessage());
 		}
+	}
+	
+	public PreparedStatement prepareStatement(String sqlQuery) throws SQLException{
+		return con.prepareStatement(sqlQuery);
 	}
 
 	// GETTER&SETTER

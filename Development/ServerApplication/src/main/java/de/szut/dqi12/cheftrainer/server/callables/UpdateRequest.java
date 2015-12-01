@@ -6,11 +6,11 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
-import de.szut.dqi12.cheftrainer.server.usercommunication.ClientUpdate;
 
 /**
  * This class is used to handle "UpdateRequest" messages, which were send
@@ -49,7 +49,8 @@ public class UpdateRequest extends CallableAbstract {
 		int userID = s.getUserID();
 		List<Integer> communityIDs = DatabaseRequests.getCummunityIDsForUser(userID);
 		for(Integer c : communityIDs){
-			JSONObject communityJSON = ClientUpdate.createCommunityMessage(Integer.valueOf(c));
+			Community community = DatabaseRequests.getCummunityForID(c);
+			JSONObject communityJSON = community.toJSON();
 			communityListJSON.put(communityJSON);
 		}
 		

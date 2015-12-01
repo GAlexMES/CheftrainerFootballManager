@@ -13,7 +13,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
-import de.szut.dqi12.cheftrainer.server.usercommunication.ClientUpdate;
+import de.szut.dqi12.cheftrainer.server.logic.ExchangeMarketGenerator;
 import de.szut.dqi12.cheftrainer.server.utils.JSONUtils;
 
 /**
@@ -93,12 +93,12 @@ public class CommunityAuthentification extends CallableAbstract {
 	 * @return a List of Integers. Each Integer displays the ID of a {@link Community} , that is in the Database but not in the {@link Session}
 	 */
 	private List<Integer> getNewCommunityID(int userID) {
-		Set<Integer> knownIDs = mesController.getSession().getCommunityMap().keySet();
+		Set<Integer> knownIDs = mesController.getSession().getCommunityIDMap().keySet();
 		List<Integer> allIDs = DatabaseRequests.getCummunityIDsForUser(userID);
 
 		List<Integer> retval = new ArrayList<Integer>();
-		for (Integer i : knownIDs) {
-			if (allIDs.contains(i)) {
+		for (Integer i : allIDs) {
+			if (!knownIDs.contains(i)) {
 				retval.add(i);
 			}
 		}
@@ -114,7 +114,8 @@ public class CommunityAuthentification extends CallableAbstract {
 
 		JSONObject updateJSON = new JSONObject();
 		updateJSON.put("type", "newCommunity");
-		updateJSON.put("community", ClientUpdate.createCommunityMessage(communityID));
+		Community community = DatabaseRequests.getCummunityForID(communityID);
+		updateJSON.put("community", community.toJSON());
 		communityListUpdate.setMessageContent(updateJSON);
 		
 		mesController.sendMessage(communityListUpdate);
@@ -137,6 +138,7 @@ public class CommunityAuthentification extends CallableAbstract {
 		boolean communityCreated = DatabaseRequests.createNewCommunity(communityName, communityPassword, userID);
 
 		if (communityCreated) {
+			ExchangeMarketGenerator.createNewMarket(communityName);
 			DatabaseRequests.enterCommunity(communityName, communityPassword, userID);
 			updateSessionAndClient();
 		}

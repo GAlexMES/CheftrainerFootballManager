@@ -210,6 +210,10 @@ public class PointsParser {
 			Player p = new Player();
 			p.setName(e.select("a[class=spielfeld_spielinfo_pos_item_link]")
 					.text());
+			String[] splittedPath = e.select("img").attr("src").split("\\.");
+			String[] splittedID = splittedPath[splittedPath.length-2].split("-");
+			int id = Integer.valueOf(splittedID[splittedID.length-1]);
+			p.setSportalID(id);
 			String gradeAsString = e.select("div[class=note_zahl]").text();
 			if (gradeAsString.contains(",")) {
 				gradeAsString = gradeAsString.replace(",", ".");

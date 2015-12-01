@@ -3,46 +3,81 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
-import de.szut.dqi12.cheftrainer.client.Controller;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
+import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
-public class LineUpController {
+/**
+ * This is the controller for the gui-module LineUp
+ * 
+ * @author Robin
+ *
+ */
+public class LineUpController implements ControllerInterface {
 	@FXML
 	private GridPane lineUpFrame;
 
 	private Formation currentFormation;
 	private FormationController fController;
+	private GridPane oldPane;
+
+	private Manager tempSendingManager;
+
+	public static final String RESET_MANAGER = "Reset the managers.";
+
+	private int i = 0;
+
+	public LineUpController() {
+		ControllerManager cm = ControllerManager.getInstance();
+		cm.registerController(this, RESET_MANAGER);
+	}
 
 	public GridPane getFrame() {
 		return lineUpFrame;
 	}
 
-	public FXMLLoader getLoader(Formation formation) {
+	/**
+	 * Loads the matching FXMLLoader for the used Formation
+	 * 
+	 * @param formation
+	 *            used Formation
+	 * @return the matching FXMLLoader for the used Formation
+	 */
+	private FXMLLoader getLoader(Formation formation) {
 		currentFormation = formation;
 		ClassLoader classLoader = getClass().getClassLoader();
 		FXMLLoader currentContentLoader = new FXMLLoader();
 
+		String path = "formations/Formation";
 		URL fxmlFile;
-		switch (formation) {
-		case forfortwo:
-			fxmlFile = classLoader.getResource("sourcesFXML/442.fxml");
+		switch (formation.getName()) {
+		case FormationFactory.FOUR_FOUR_TWO:
+			fxmlFile = classLoader.getResource(path + "442.fxml");
 			break;
-		case vorfiveone:
-			fxmlFile = classLoader.getResource("sourcesFXML/451.fxml");
+		case FormationFactory.FOUR_FIVE_ONE:
+			fxmlFile = classLoader.getResource(path + "451.fxml");
 			break;
 		default:
 			return null;
@@ -52,146 +87,57 @@ public class LineUpController {
 
 	}
 
-	public boolean init() {
-		// BUG: es muss auf namen des Labels geprueft werden. Position muss
-		// stimmen.
-		// Aktuell werden spieler einfach nacheinander reingeschmissen
+	/**
+	 * This method have to be called before all other methods. It initializates
+	 * every gui-components
+	 * 
+	 * @return success or not
+	 */
+	@Override
+	public void init() {
 		try {
 			Session session = Controller.getInstance().getSession();
-			ClassLoader classLoader = getClass().getClassLoader();
-			FXMLLoader currentContentLoader = getLoader(session
-					.getCommunityMap().get(session.getCurrentCommunity())
-					.getManagers().get(session.getCurrentManager())
-					.getFormation());
-
-			GridPane newContentPane = (GridPane) currentContentLoader.load();
-			fController = ((FormationController) currentContentLoader
-					.getController());
-			fController.setClickedListener();
-			try {
-				ArrayList<Player> players = (ArrayList<Player>) session
-						.getCommunityMap().get(session.getCommunityMap())
-						.getManager(session.getCurrentManager()).getLineUp();
-				ArrayList<Player> defence = new ArrayList<Player>();
-				ArrayList<Player> middel = new ArrayList<Player>();
-				ArrayList<Player> offence = new ArrayList<Player>();
-				Player keeper = players.get(0);
-				for (Player p : players) {
-					switch (p.getPosition()) {
-					case Defence:
-						defence.add(p);
-						break;
-					case Middel:
-						middel.add(p);
-						break;
-					case Offence:
-						offence.add(p);
-						defence: break;
-					case Keeper:
-						keeper = p;
-						break;
-					default:
-						break;
-					}
-				}
-				players.clear();
-				players.addAll(offence);
-				players.addAll(middel);
-				players.addAll(defence);
-				players.add(keeper);
-				int index = 0;
-				for (Node node : newContentPane.getChildren()) {
-					((Label) node).setText(players.get(index).getName() + "; "
-							+ players.get(index).getPoints());
-					index++;
-				}
-				lineUpFrame.add(newContentPane, 0, 0);
-				return true;
-			} catch (NullPointerException e) {
-				e.printStackTrace();
-				return false;
-			}
-
-		} catch (IOException e) {
+			Community community = session.getCurrentCommunity();
+			int managerID = session.getCurrentManagerID();
+			Formation formation = community.getManager(managerID).getFormation();
+			// Doppelter Aufruf benoetigt (Fehler noch nicht entdeckt!)
+			changeFormation(formation);
+			changeFormation(formation);
+		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
 		}
 
 	}
 
+	/**
+	 * Changes the shown Formation
+	 * 
+	 * @param formation
+	 *            the new Formation
+	 * @return success or not
+	 */
 	public boolean changeFormation(Formation formation) {
-		// UMFERTIG LABELS NAMEN UEBERGEBEN
 		try {
-			Session session = Controller.getInstance().getSession();
-			ClassLoader classLoader = getClass().getClassLoader();
-			FXMLLoader currentContentLoader = getLoader(session
-					.getCommunityMap().get(session.getCurrentCommunity())
-					.getManagers().get(session.getCurrentManager())
-					.getFormation());
+			currentFormation = formation;
+			FXMLLoader currentContentLoader = getLoader(formation);
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
-
-			// ///////vieleicht falsche sachen, falsche player weil er aus
-			// controller holt
-			fController = ((FormationController) currentContentLoader
-					.getController());
+			fController = ((FormationController) currentContentLoader.getController());
+			fController.init();
 			fController.setClickedListener();
-			// /////////////////////
-			ArrayList<Player> players = (ArrayList<Player>) session
-					.getCommunityMap().get(session.getCommunityMap())
-					.getManager(session.getCurrentManager()).getPlayers();
-			ArrayList<Player> defence = new ArrayList<Player>();
-			ArrayList<Player> middel = new ArrayList<Player>();
-			ArrayList<Player> offence = new ArrayList<Player>();
-			Player keeper = players.get(0);
-			for (Player p : players) {
-				switch (p.getPosition()) {
-				case Defence:
-					defence.add(p);
-					break;
-				case Middel:
-					middel.add(p);
-					break;
-				case Offence:
-					offence.add(p);
-					defence: break;
-				case Keeper:
-					keeper = p;
-					break;
-				default:
-					break;
-				}
+
+			if (i > 0) {
+				lineUpFrame.getChildren().remove(oldPane);
+				lineUpFrame.add(newContentPane, 0, 0);
+			} else {
+				lineUpFrame.add(newContentPane, 0, 0);
+
 			}
-			int[] index = { 0, 0, 0 };
-			Label l;
-			for (Node node : newContentPane.getChildren()) {
-				l = (Label) node;
-				try {
-					if (l.getText().contains("Verteifigung")) {
-						l.setText(defence.get(index[0]).getName() + "; "
-								+ defence.get(index[0]).getPoints());
-						index[0]++;
-					} else if (l.getText().contains("Mittelfeld")) {
-						l.setText(middel.get(index[1]).getName() + "; "
-								+ middel.get(index[1]).getPoints());
-						index[1]++;
-					} else if (l.getText().contains("Keeper")) {
-						l.setText(keeper.getName() + "; " + keeper.getPoints());
-					} else if (l.getText().contains("Sturm")) {
-						l.setText(offence.get(index[2]).getName() + "; "
-								+ offence.get(index[2]).getPoints());
-						index[2]++;
-
-					}
-
-				} catch (NullPointerException e) {
-					e.printStackTrace();
-					// DIALOG NICHT GENUG VETEDIGER ODERSO
-					l.setText("");
-
-				}
+			i++;
+			oldPane = newContentPane;
+			
+			if((i % 2) != 0){
+				changeFormation(formation);
 			}
-
-			lineUpFrame.add(newContentPane, 0, 0);
 			return true;
 
 		} catch (IOException e) {
@@ -200,19 +146,37 @@ public class LineUpController {
 		}
 	}
 
+	/**
+	 * Is Called when the Button "save" is clicked. Saves the current Formation
+	 * and line-up.
+	 */
+	@FXML
 	public void saveButtonClicked() {
 		Session s = Controller.getInstance().getSession();
-		Manager m = s.getCommunityMap().get(s.getCurrentCommunity())
-				.getManagers().get(s.getCurrentManager());
-		if (currentFormation != m.getFormation()
-				|| fController.getCurrentPlayers() != m.getLineUp()) {
-			Controller.getInstance().save(fController.getCurrentPlayers(),
-					currentFormation);
+		int currentManagerID = s.getCurrentManagerID();
+		Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
+		ArrayList<Player> guiLineUp = fController.getCurrentPlayers();
+		boolean formationChanged = guiLineUp.equals(manager.getLineUp());
+		if (!currentFormation.getName().equals(manager.getFormation().getName()) || !formationChanged) {
+			tempSendingManager = new Manager();
+			tempSendingManager.setID(manager.getID());
+			tempSendingManager.addPlayer(manager.getPlayers());
+			tempSendingManager.setLineUp(guiLineUp);
+			tempSendingManager.setFormation(currentFormation);
+			tempSendingManager.setName(manager.getName());
+			Message updateMessage = new Message(ClientToServer_MessageIDs.NEW_FORMATION);
+			updateMessage.setMessageContent(tempSendingManager.toJSON());
+			Controller.getInstance().getSession().getClientSocket().sendMessage(updateMessage);
 		} else {
-			// Nix zu speichern
+			AlertUtils.createSimpleDialog("Nothing to save", "There are no changes!", "", AlertType.CONFIRMATION);
 		}
 	}
 
+	/**
+	 * Is called when the Button "change formation" is clicked. Opens a dialog
+	 * to choose a new Formation.
+	 */
+	@FXML
 	public void formationButtonClicked() {
 		GridPane dialog;
 		Stage dialogStage = new Stage();
@@ -220,15 +184,18 @@ public class LineUpController {
 		dialog = new GridPane();
 		Label l;
 		int i = 0;
-		for (Formation formation : Formation.values()) {
-
-			l = new Label(formation.name());
+		FormationFactory ff = new FormationFactory();
+		List<Formation> formations = ff.getFormations();
+		for (Formation formation : formations) {
+			l = new Label();
+			l.setGraphic(new ImageView(FormationController.getImageOfString(formation.getName())));
 			dialog.add(l, 0, i);
 			i++;
 			l.setOnMouseClicked(new EventHandler<Event>() {
 				@Override
 				public void handle(Event event) {
 					dialogStage.close();
+					// lineUpFrame.getChildren().clear();
 					changeFormation(formation);
 				}
 			});
@@ -242,6 +209,25 @@ public class LineUpController {
 		dialogStage.setScene(scene);
 		dialogStage.showAndWait();
 
+	}
+
+	@Override
+	public void enterPressed() {
+		this.saveButtonClicked();
+
+	}
+
+	@Override
+	public void messageArrived(Boolean flag) {
+		if (flag) {
+			Session s = Controller.getInstance().getSession();
+			int currentManagerID = s.getCurrentManagerID();
+			Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
+			manager.setFormation(tempSendingManager.getFormation());
+			manager.setLineUp(tempSendingManager.getLineUp());
+		} else {
+			tempSendingManager = null;
+		}
 	}
 
 }
