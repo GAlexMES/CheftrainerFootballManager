@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
-
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,6 +13,7 @@ import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesControll
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -26,8 +25,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  */
 public class UserCommunityList extends CallableAbstract {
 
-	private final static Logger LOGGER = Logger
-			.getLogger(UserCommunityList.class);
+	private final static Logger LOGGER = Logger.getLogger(UserCommunityList.class);
 
 	/**
 	 * This method is called, when a new message with the id "UserCommunityList"
@@ -48,8 +46,7 @@ public class UserCommunityList extends CallableAbstract {
 			addCommunityToList(jsonMessage);
 			break;
 		default:
-			LOGGER.error("Undefined message type ("
-					+ jsonMessage.getString("type") + ")");
+			LOGGER.error("Undefined message type (" + jsonMessage.getString("type") + ")");
 		}
 	}
 
@@ -67,10 +64,8 @@ public class UserCommunityList extends CallableAbstract {
 	 *            "community".
 	 */
 	private void addCommunityToList(JSONObject message) {
-		Community community = new Community(message
-				.getJSONObject("community"));
-		community.findeUsersManager(mesController.getSession().getUser()
-				.getUserName());
+		Community community = jsonToCommunity(message.getJSONObject("community"));
+		community.findeUsersManager(mesController.getSession().getUser().getUserName());
 		Controller.getInstance().getSession().addCommunity(community);
 	}
 
@@ -87,8 +82,7 @@ public class UserCommunityList extends CallableAbstract {
 	private void newList(JSONObject message) {
 		String userName = mesController.getSession().getUser().getUserName();
 		JSONArray communityList = message.getJSONArray("information");
-		List<Community> communities = jsonArrayToCommnityList(communityList,
-				userName);
+		List<Community> communities = jsonArrayToCommnityList(communityList, userName);
 		Controller.getInstance().getSession().addCommunities(communities);
 	}
 
@@ -103,8 +97,7 @@ public class UserCommunityList extends CallableAbstract {
 	 * @return a List with all Communities, that could be created with the
 	 *         information in the JSONArray.
 	 */
-	private List<Community> jsonArrayToCommnityList(JSONArray communityList,
-			String userName) {
+	private List<Community> jsonArrayToCommnityList(JSONArray communityList, String userName) {
 		new ArrayList<>();
 		List<Community> retval = new ArrayList<>();
 		for (int i = 0; i < communityList.length(); i++) {

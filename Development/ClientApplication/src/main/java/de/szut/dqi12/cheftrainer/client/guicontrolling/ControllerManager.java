@@ -38,6 +38,10 @@ public class ControllerManager {
 	}
 	
 	public void onAction(String key){
-		actionList.get(key).messageArrived();
+		onAction(key,true);
+	}
+	
+	public void onAction(String key, Boolean flag){
+		actionList.get(key).messageArrived(flag);
 	}
 }

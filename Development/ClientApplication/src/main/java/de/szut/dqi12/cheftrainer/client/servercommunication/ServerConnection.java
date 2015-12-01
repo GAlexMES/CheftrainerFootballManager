@@ -8,8 +8,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 
 
 public class ServerConnection {
-	
-	
 	private final static String PACKAGE_PATH = "de.szut.dqi12.cheftrainer.client.callables.CLASS";
 	private final static String DIR_PATH = "de/szut/dqi12/cheftrainer/client/callables/";
 	

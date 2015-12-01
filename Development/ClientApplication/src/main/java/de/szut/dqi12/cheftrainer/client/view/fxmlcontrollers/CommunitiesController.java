@@ -94,7 +94,7 @@ public class CommunitiesController implements ControllerInterface{
 	}
 
 	@Override
-	public void messageArrived() {
+	public void messageArrived(Boolean flag) {
 		
 	}
 }

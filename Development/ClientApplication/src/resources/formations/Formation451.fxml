@@ -33,6 +33,6 @@
       <PlayerLabel text="Mittelfeld" GridPane.columnIndex="3" GridPane.rowIndex="1" />
       <PlayerLabel text="Mittelfeld" GridPane.columnIndex="5" GridPane.rowIndex="1" />
       <PlayerLabel text="Mittelfeld" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-      <PlaerLabel text="Sturm" GridPane.columnIndex="3" />
+      <PlayerLabel text="Sturm" GridPane.columnIndex="3" />
    </children>
 </GridPane>

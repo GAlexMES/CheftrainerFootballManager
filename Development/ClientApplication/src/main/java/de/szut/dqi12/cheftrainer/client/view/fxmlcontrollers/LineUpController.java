@@ -9,21 +9,25 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
+import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
  * This is the controller for the gui-module LineUp
@@ -37,6 +41,18 @@ public class LineUpController implements ControllerInterface {
 
 	private Formation currentFormation;
 	private FormationController fController;
+	private GridPane oldPane;
+
+	private Manager tempSendingManager;
+
+	public static final String RESET_MANAGER = "Reset the managers.";
+
+	private int i = 0;
+
+	public LineUpController() {
+		ControllerManager cm = ControllerManager.getInstance();
+		cm.registerController(this, RESET_MANAGER);
+	}
 
 	public GridPane getFrame() {
 		return lineUpFrame;
@@ -79,65 +95,15 @@ public class LineUpController implements ControllerInterface {
 	 */
 	@Override
 	public void init() {
-		// BUG: es muss geschaut werden ob die reihenfolge richtig ist, wie die
-		// spieler den PlayerLabels zugeordnet werden. Gegebenfalls wie in der
-		// anderen
-		// Funktion machen, wo auf PlayerLabelnamen geprueft wird
 		try {
 			Session session = Controller.getInstance().getSession();
 			Community community = session.getCurrentCommunity();
-
-			Formation formation = community.getManagers()
-					.get(session.getCurrentManagerID()).getFormation();
-
-			ClassLoader classLoader = getClass().getClassLoader();
-			FXMLLoader currentContentLoader = getLoader(formation);
-
-			GridPane newContentPane = (GridPane) currentContentLoader.load();
-			fController = ((FormationController) currentContentLoader
-					.getController());
-			fController.setClickedListener();
+			int managerID = session.getCurrentManagerID();
+			Formation formation = community.getManager(managerID).getFormation();
+			// Doppelter Aufruf benoetigt (Fehler noch nicht entdeckt!)
 			changeFormation(formation);
-			// try {
-			// ArrayList<Player> players = fController.loadPlayers();
-			// ArrayList<Player> defence = new ArrayList<Player>();
-			// ArrayList<Player> middel = new ArrayList<Player>();
-			// ArrayList<Player> offence = new ArrayList<Player>();
-			// Player keeper = players.get(0);
-			// for (Player p : players) {
-			// switch (p.getPosition()) {
-			// case Position.DEFENCE:
-			// defence.add(p);
-			// break;
-			// case Position.MIDDLE:
-			// middel.add(p);
-			// break;
-			// case Position.OFFENCE:
-			// offence.add(p);
-			// case Position.KEEPER:
-			// keeper = p;
-			// break;
-			// default:
-			// break;
-			// }
-			// }
-			// players.clear();
-			// players.addAll(offence);
-			// players.addAll(middel);
-			// players.addAll(defence);
-			// players.add(keeper);
-			// int index = 0;
-			// for (Node node : newContentPane.getChildren()) {
-			// ((PlayerLabel) node).setText(players.get(index).getName()
-			// + "; " + players.get(index).getPoints());
-			// index++;
-			// }
-			// lineUpFrame.add(newContentPane, 0, 0);
-			// } catch (NullPointerException e) {
-			// e.printStackTrace();
-			// }
-
-		} catch (IOException e) {
+			changeFormation(formation);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -152,109 +118,26 @@ public class LineUpController implements ControllerInterface {
 	 */
 	public boolean changeFormation(Formation formation) {
 		try {
-			Session session = Controller.getInstance().getSession();
-			Community currentCommunity = session.getCurrentCommunity();
-			Manager currentManager = currentCommunity.getManager(session
-					.getCurrentManagerID());
-			FXMLLoader currentContentLoader = getLoader(currentManager
-					.getFormation());
+			currentFormation = formation;
+			FXMLLoader currentContentLoader = getLoader(formation);
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
-			fController = ((FormationController) currentContentLoader
-					.getController());
+			fController = ((FormationController) currentContentLoader.getController());
 			fController.init();
-
-			
-			ArrayList<Node> labels = new ArrayList<Node>();
-			for(Node n : newContentPane.getChildren()){
-				labels.add(n);
-			}
-			ArrayList<Node> labelscopy = (ArrayList<Node>) labels.clone();
-			ArrayList<Player> players;
-			if (formation == currentManager.getFormation()) {
-				players = fController.loadPlayers();
-			} else {
-				players = (ArrayList<Player>) currentManager.getPlayers();
-
-			}
-			int index;
-			for (Player player : players) {
-				index = 0;
-				for (Node node : labels) {
-					try {
-						PlayerLabel label = ((PlayerLabel) node);
-						Node cNode = labelscopy.get(index);
-						cNode = null;
-						if (label.getPosition().equals(player.getPosition())) {
-							label = player.getLabel();
-							break;
-						}
-						index++;
-					} catch (NullPointerException e) {
-					}
-				}
-			}
-			index = 0;
-			for (Node n : labelscopy) {
-				if (n != null) {
-					Node l = labels.get(index);
-					((PlayerLabel) l).setText("kein Spieler");
-				}
-				index++;
-			}
-			// ArrayList<Player> defence = new ArrayList<Player>();
-			// ArrayList<Player> middel = new ArrayList<Player>();
-			// ArrayList<Player> offence = new ArrayList<Player>();
-			// Player keeper = players.get(0);
-			// for (Player p : players) {
-			// switch (p.getPosition()) {
-			// case String.DEFENCE:
-			// defence.add(p);
-			// break;
-			// case String.MIDDLE:
-			// middel.add(p);
-			// break;
-			// case String.OFFENCE:
-			// offence.add(p);
-			// break;
-			// case String.KEEPER:
-			// keeper = p;
-			// break;
-			// default:
-			// break;
-			// }
-			// }
-			// int[] index = { 0, 0, 0 };
-			// PlayerLabel l;
-			// for (Node node : newContentPane.getChildren()) {
-			// l = (PlayerLabel) node;
-			// try {
-			// if (l.getText().contains("Verteifigung")) {
-			// l.setText(defence.get(index[0]).getName() + "; "
-			// + defence.get(index[0]).getPoints());
-			// index[0]++;
-			// } else if (l.getText().contains("Mittelfeld")) {
-			// l.setText(middel.get(index[1]).getName() + "; "
-			// + middel.get(index[1]).getPoints());
-			// index[1]++;
-			// } else if (l.getText().contains("Keeper")) {
-			// l.setText(keeper.getName() + "; " + keeper.getPoints());
-			// } else if (l.getText().contains("Sturm")) {
-			// l.setText(offence.get(index[2]).getName() + "; "
-			// + offence.get(index[2]).getPoints());
-			// index[2]++;
-			//
-			// }
-			//
-			// } catch (NullPointerException e) {
-			// e.printStackTrace();
-			// // DIALOG NICHT GENUG VETEDIGER ODERSO
-			// l.setText("kein Spieler");
-			//
-			// }
-			// }
-
 			fController.setClickedListener();
-			lineUpFrame.add(newContentPane, 0, 0);
+
+			if (i > 0) {
+				lineUpFrame.getChildren().remove(oldPane);
+				lineUpFrame.add(newContentPane, 0, 0);
+			} else {
+				lineUpFrame.add(newContentPane, 0, 0);
+
+			}
+			i++;
+			oldPane = newContentPane;
+			
+			if((i % 2) != 0){
+				changeFormation(formation);
+			}
 			return true;
 
 		} catch (IOException e) {
@@ -271,13 +154,21 @@ public class LineUpController implements ControllerInterface {
 	public void saveButtonClicked() {
 		Session s = Controller.getInstance().getSession();
 		int currentManagerID = s.getCurrentManagerID();
-		Manager m = s.getCurrentCommunity().getManager(currentManagerID);
-		if (currentFormation != m.getFormation()
-				|| fController.getCurrentPlayers() != m.getLineUp()) {
-			Controller.getInstance().save(fController.getCurrentPlayers(),
-					currentFormation);
+		Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
+		ArrayList<Player> guiLineUp = fController.getCurrentPlayers();
+		boolean formationChanged = guiLineUp.equals(manager.getLineUp());
+		if (!currentFormation.getName().equals(manager.getFormation().getName()) || !formationChanged) {
+			tempSendingManager = new Manager();
+			tempSendingManager.setID(manager.getID());
+			tempSendingManager.addPlayer(manager.getPlayers());
+			tempSendingManager.setLineUp(guiLineUp);
+			tempSendingManager.setFormation(currentFormation);
+			tempSendingManager.setName(manager.getName());
+			Message updateMessage = new Message(ClientToServer_MessageIDs.NEW_FORMATION);
+			updateMessage.setMessageContent(tempSendingManager.toJSON());
+			Controller.getInstance().getSession().getClientSocket().sendMessage(updateMessage);
 		} else {
-			// Nix zu speichern
+			AlertUtils.createSimpleDialog("Nothing to save", "There are no changes!", "", AlertType.CONFIRMATION);
 		}
 	}
 
@@ -297,13 +188,14 @@ public class LineUpController implements ControllerInterface {
 		List<Formation> formations = ff.getFormations();
 		for (Formation formation : formations) {
 			l = new Label();
-			l.setText(formation.getName());
+			l.setGraphic(new ImageView(FormationController.getImageOfString(formation.getName())));
 			dialog.add(l, 0, i);
 			i++;
 			l.setOnMouseClicked(new EventHandler<Event>() {
 				@Override
 				public void handle(Event event) {
 					dialogStage.close();
+					// lineUpFrame.getChildren().clear();
 					changeFormation(formation);
 				}
 			});
@@ -321,12 +213,21 @@ public class LineUpController implements ControllerInterface {
 
 	@Override
 	public void enterPressed() {
-		
+		this.saveButtonClicked();
+
 	}
 
 	@Override
-	public void messageArrived() {
-		
+	public void messageArrived(Boolean flag) {
+		if (flag) {
+			Session s = Controller.getInstance().getSession();
+			int currentManagerID = s.getCurrentManagerID();
+			Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
+			manager.setFormation(tempSendingManager.getFormation());
+			manager.setLineUp(tempSendingManager.getLineUp());
+		} else {
+			tempSendingManager = null;
+		}
 	}
 
 }

@@ -305,9 +305,9 @@ public class TeamGenerator {
 		middfielders = 0;
 		offensives = 0;
 		formation = new HashMap<>();
-		formation.put(Position.KEEPER, DEFAULT_NUMBER_KEEPERS);
-		formation.put(Position.DEFENCE, DEFAULT_NUMBER_DEFENDERS);
-		formation.put(Position.MIDDLE, DEFAULT_NUMBER_MIDDFIELDERS);
-		formation.put(Position.OFFENCE, DEFAULT_NUMBER_MIDDFIELDERS);
+		formation.put(Position.KEEPER,DEFAULT_NUMBER_KEEPERS);
+		formation.put(Position.DEFENCE,DEFAULT_NUMBER_DEFENDERS);
+		formation.put(Position.MIDDLE,DEFAULT_NUMBER_MIDDFIELDERS);
+		formation.put(Position.OFFENCE,DEFAULT_NUMBER_OFFENSIVES);
 	}
 }

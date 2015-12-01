@@ -51,8 +51,11 @@ public class Controller {
 	 */
 	public void startServerSocket(String packagePath, String callableDir) {
 		ServerProperties serverProps = new ServerProperties();
+		
+		String pathAsString = "de/szut/dqi12/cheftrainer/server/callables/";
 		ClientToServer_MessageIDs cts = new ClientToServer_MessageIDs();
-		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, callableDir, packagePath);
+		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, pathAsString,
+				packagePath);
 		serverProps.addClassPathMapper(idMapper);
 		serverProps.setPort(5000);
 		try {

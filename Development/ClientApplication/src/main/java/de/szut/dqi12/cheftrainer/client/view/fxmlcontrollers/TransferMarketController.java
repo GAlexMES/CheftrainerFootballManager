@@ -280,7 +280,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 					}
 				});
 			}
-			// TODO: gebot ablehnen kÃ¶nnen
+			// TODO: gebot ablehnen können
 			// else if(tr.isOutgoing()) {
 			// but = new Button("denie offer");
 			// but.setOnAction(new EventHandler<ActionEvent>() {

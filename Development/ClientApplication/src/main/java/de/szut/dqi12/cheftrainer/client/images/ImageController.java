@@ -83,9 +83,6 @@ public class ImageController {
 			} finally {
 
 			}
-
 		}
-
 	}
-
 }

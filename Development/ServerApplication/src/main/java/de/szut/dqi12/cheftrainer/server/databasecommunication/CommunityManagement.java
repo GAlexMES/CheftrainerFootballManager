@@ -345,6 +345,18 @@ public class CommunityManagement {
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistUser);
 		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
+	
+	public List<Player> getTeam(String managerName) {
+		String condition =  "Manager.Nutzer_ID = Nutzer.ID AND Nutzer.Nutzername = '"+managerName+"'";
+		int managerID;
+		try {
+			managerID = DatabaseRequests.getUniqueInt("Manager.ID", "Manager INNER JOIN Nutzer", condition);
+			return getTeam(managerID);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	/**
 	 * This method creates a List of {@link Player} for the given
