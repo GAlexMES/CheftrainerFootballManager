@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Orientation;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -32,6 +35,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 
 /**
@@ -166,17 +170,26 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	 */
 	@FXML
 	public void addPlayer() {
-		//TODO: Player Liste bekommen
-		ArrayList<Player> players = null;
+		ArrayList<Player> players = (ArrayList<Player>) Controller.getInstance().getSession().getCurrentManager().getPlayers();
 		
-		GridPane dialog = new GridPane();
-		Button but;
-		int i = 0;
+		ScrollPane sp = new ScrollPane();
+		VBox content = new VBox();
+		sp.setContent(content);
+		
+		ImageController iController = new ImageController(this);			
 		for (Player player : players) {
-			but = new Button("put on market");
-			but.setOnAction(new EventHandler<ActionEvent>() {
+			
+			PlayerLabel l = new PlayerLabel();
+			l.setPlayerId(player.getID());
+			l.setPosition(player.getPosition());
+			l.setImage(iController.getPicture(player));
+			player.setLabel(l);
+			content.getChildren().add(l);
+			
+			l.setOnMouseClicked(new EventHandler<Event>() {
+
 				@Override
-				public void handle(ActionEvent event) {
+				public void handle(Event event) {
 
 					GridPane dlog = new GridPane();
 					dlog.add(new Label(player.getName()), 1, 0);
@@ -202,24 +215,22 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 						}
 					});
 					Stage stage = new Stage();
-					stage.setResizable(false);
 					stage.setTitle("offer");
 					stage.initModality(Modality.WINDOW_MODAL);
-					Scene dialogScene = new Scene(dialog);
-					stage.setScene(dialogScene);
 					stage.showAndWait();
 
 				}
 			});
-			dialog.add(new Label(player.getName()), i, 0);
 
 		}
-
+		
+		
+//		sPane.setOrientation(Orientation.VERTICAL);
 		Stage dialogStage = new Stage();
-		dialogStage.setResizable(false);
+//		dialogStage.setResizable(false);
 		dialogStage.setTitle("your players");
 		dialogStage.initModality(Modality.WINDOW_MODAL);
-		Scene scene = new Scene(dialog);
+		Scene scene = new Scene(sp);
 		dialogStage.setScene(scene);
 		dialogStage.showAndWait();
 	}
