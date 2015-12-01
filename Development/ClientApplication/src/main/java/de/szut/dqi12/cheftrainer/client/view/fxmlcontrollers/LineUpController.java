@@ -9,10 +9,9 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
@@ -26,7 +25,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
@@ -44,14 +42,14 @@ public class LineUpController implements ControllerInterface {
 	private Formation currentFormation;
 	private FormationController fController;
 	private GridPane oldPane;
-	
+
 	private Manager tempSendingManager;
-	
+
 	public static final String RESET_MANAGER = "Reset the managers.";
 
 	private int i = 0;
-	
-	public LineUpController(){
+
+	public LineUpController() {
 		ControllerManager cm = ControllerManager.getInstance();
 		cm.registerController(this, RESET_MANAGER);
 	}
@@ -102,13 +100,7 @@ public class LineUpController implements ControllerInterface {
 			Community community = session.getCurrentCommunity();
 			int managerID = session.getCurrentManagerID();
 			Formation formation = community.getManager(managerID).getFormation();
-			ClassLoader classLoader = getClass().getClassLoader();
-			FXMLLoader currentContentLoader = getLoader(formation);
-
-			GridPane newContentPane = (GridPane) currentContentLoader.load();
-			fController = ((FormationController) currentContentLoader.getController());
-			fController.setClickedListener();
-			//Doppelter Aufruf benoetigt (Fehler noch nicht entdeckt!)
+			// Doppelter Aufruf benoetigt (Fehler noch nicht entdeckt!)
 			changeFormation(formation);
 			changeFormation(formation);
 		} catch (Exception e) {
@@ -126,52 +118,26 @@ public class LineUpController implements ControllerInterface {
 	 */
 	public boolean changeFormation(Formation formation) {
 		try {
-			Session session = Controller.getInstance().getSession();
-			Community currentCommunity = session.getCurrentCommunity();
-			Manager currentManager = currentCommunity.getManager(session.getCurrentManagerID());
+			currentFormation = formation;
 			FXMLLoader currentContentLoader = getLoader(formation);
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 			fController = ((FormationController) currentContentLoader.getController());
 			fController.init();
-
-			ArrayList<Node> labels = new ArrayList<Node>();
-			for (Node n : newContentPane.getChildren()) {
-				labels.add(n);
-			}
-			ArrayList<Node> labelscopy = (ArrayList<Node>) labels.clone();
-			ArrayList<Player> players;
-			if (formation == currentManager.getFormation()) {
-				players = fController.getCurrentPlayers();
-			} else {
-				players = (ArrayList<Player>) currentManager.getPlayers();
-
-			}
-			int index;
-			for (Player player : players) {
-				index = 0;
-				for (Node node : labels) {
-					try {
-						PlayerLabel label = ((PlayerLabel) node);
-						if (label.getPosition().equals(player.getPosition())) {
-							label = player.getLabel();
-							break;
-						}
-						index++;
-					} catch (NullPointerException e) {
-					}
-				}
-			}
 			fController.setClickedListener();
-			if (i > 0) {
 
+			if (i > 0) {
 				lineUpFrame.getChildren().remove(oldPane);
 				lineUpFrame.add(newContentPane, 0, 0);
 			} else {
-				i++;
 				lineUpFrame.add(newContentPane, 0, 0);
 
 			}
+			i++;
 			oldPane = newContentPane;
+			
+			if((i % 2) != 0){
+				changeFormation(formation);
+			}
 			return true;
 
 		} catch (IOException e) {
@@ -197,14 +163,14 @@ public class LineUpController implements ControllerInterface {
 			tempSendingManager.addPlayer(manager.getPlayers());
 			tempSendingManager.setLineUp(guiLineUp);
 			tempSendingManager.setFormation(currentFormation);
-			
+			System.out.println(currentFormation.getName());
+			System.out.println(guiLineUp.size());
+
 			Message updateMessage = new Message(ClientToServer_MessageIDs.NEW_FORMATION);
 			updateMessage.setMessageContent(manager.toJSON());
 			Controller.getInstance().getSession().getClientSocket().sendMessage(updateMessage);
 		} else {
-			AlertUtils.createSimpleDialog("Nothing to save",
-					"There are no changes!",
-					"", AlertType.CONFIRMATION);
+			AlertUtils.createSimpleDialog("Nothing to save", "There are no changes!", "", AlertType.CONFIRMATION);
 		}
 	}
 
@@ -249,20 +215,19 @@ public class LineUpController implements ControllerInterface {
 
 	@Override
 	public void enterPressed() {
-		// TODO Auto-generated method stub
+		this.saveButtonClicked();
 
 	}
 
 	@Override
 	public void messageArrived(Boolean flag) {
-		if(flag){
+		if (flag) {
 			Session s = Controller.getInstance().getSession();
 			int currentManagerID = s.getCurrentManagerID();
 			Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
 			manager.setFormation(tempSendingManager.getFormation());
 			manager.setLineUp(tempSendingManager.getLineUp());
-		}
-		else{
+		} else {
 			tempSendingManager = null;
 		}
 	}
