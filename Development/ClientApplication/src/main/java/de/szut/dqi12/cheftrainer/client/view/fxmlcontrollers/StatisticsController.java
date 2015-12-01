@@ -58,34 +58,34 @@ public class StatisticsController {
 	 * Fills the LineChart with data
 	 */
 	public void setLineChart() {
-		//HIER SOLLTEN NICHT DIE AKTUELLEN PUNKTE DER MANAGER STEHEN SONDERN DER VERLAUF DER PUNKTE
-		Session s = Controller.getInstance().getSession();
-		ArrayList<Manager> managers = (ArrayList<Manager>) s.getCommunities().get(s.getCurrentCommunity()).getManagers();
-		//FALSCHE DATEN
-		HashMap<String, Integer> data = new HashMap<String, Integer>();
-		for(Manager m : managers){
-			data.put(m.getName(), m.getPoints());
-		}
-		//FALSCHE DATEN ENDE
-		
-		lineController.setData(data);
-		stats.getChildren().set(0, lineController.getChart());
+//		//HIER SOLLTEN NICHT DIE AKTUELLEN PUNKTE DER MANAGER STEHEN SONDERN DER VERLAUF DER PUNKTE
+//		Session s = Controller.getInstance().getSession();
+//		ArrayList<Manager> managers = (ArrayList<Manager>) s.getCommunities().get(s.getCurrentCommunity()).getManagers();
+//		//FALSCHE DATEN
+//		HashMap<String, Integer> data = new HashMap<String, Integer>();
+//		for(Manager m : managers){
+//			data.put(m.getName(), m.getPoints());
+//		}
+//		//FALSCHE DATEN ENDE
+//		
+//		lineController.setData(data);
+//		stats.getChildren().set(0, lineController.getChart());
 
 	}
 	/**
 	 * Fills the BarChart with data
 	 */
 	public void setBarChart() {
-		Session s = Controller.getInstance().getSession();
-		ArrayList<Manager> managers = (ArrayList<Manager>) s.getCommunities().get(s.getCurrentCommunity()).getManagers();
-		
-		HashMap<String, Integer> data = new HashMap<String, Integer>();
-		for(Manager m : managers){
-			data.put(m.getName(), m.getPoints());
-		}
-	
-		stats.getChildren().set(0, barController.getChart());
-		barController.setData(data);
+//		Session s = Controller.getInstance().getSession();
+//		ArrayList<Manager> managers = (ArrayList<Manager>) s.getCommunities().get(s.getCurrentCommunity()).getManagers();
+//		
+//		HashMap<String, Integer> data = new HashMap<String, Integer>();
+//		for(Manager m : managers){
+//			data.put(m.getName(), m.getPoints());
+//		}
+//	
+//		stats.getChildren().set(0, barController.getChart());
+//		barController.setData(data);
 
 	}
 

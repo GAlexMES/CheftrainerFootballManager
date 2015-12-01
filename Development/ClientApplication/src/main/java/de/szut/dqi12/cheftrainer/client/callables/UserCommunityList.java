@@ -64,7 +64,7 @@ public class UserCommunityList extends CallableAbstract {
 	 *            "community".
 	 */
 	private void addCommunityToList(JSONObject message) {
-		Community community = jsonToCommunity(message.getJSONObject("community"));
+		Community community = new Community(message.getJSONObject("community"));
 		community.findeUsersManager(mesController.getSession().getUser().getUserName());
 		Controller.getInstance().getSession().addCommunity(community);
 	}

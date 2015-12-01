@@ -73,8 +73,9 @@ public class OfferPlayerController implements ControllerInterface {
 	}
 
 	@Override
-	public void messageArrived() {
-
+	public void messageArrived(Boolean flag) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

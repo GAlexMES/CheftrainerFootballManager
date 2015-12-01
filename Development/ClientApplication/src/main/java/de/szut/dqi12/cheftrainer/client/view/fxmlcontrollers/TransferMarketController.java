@@ -280,7 +280,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 					}
 				});
 			}
-			// TODO: gebot ablehnen können
+			// TODO: gebot ablehnen kï¿½nnen
 			// else if(tr.isOutgoing()) {
 			// but = new Button("denie offer");
 			// but.setOnAction(new EventHandler<ActionEvent>() {
@@ -329,14 +329,15 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	}
 
 	@Override
-	public void messageArrived() {
-
-	}
-
-	@Override
 	public void updateImage(Image image, int id) {
 		if (!updateIsBlocked) {
 			updateTableView();
 		}
+	}
+
+	@Override
+	public void messageArrived(Boolean flag) {
+		// TODO Auto-generated method stub
+		
 	}
 }

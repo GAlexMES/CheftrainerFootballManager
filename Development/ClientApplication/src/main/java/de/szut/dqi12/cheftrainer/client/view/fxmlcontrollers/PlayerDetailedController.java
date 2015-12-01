@@ -66,12 +66,14 @@ public class PlayerDetailedController implements ControllerInterface, ImageUpdat
 	}
 
 	@Override
-	public void messageArrived() {
+	public void updateImage(Image image, int id) {
+		playerPicture.setImage(image);
 	}
 
 	@Override
-	public void updateImage(Image image, int id) {
-		playerPicture.setImage(image);
+	public void messageArrived(Boolean flag) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

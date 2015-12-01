@@ -81,3 +81,14 @@
 2015-12-01 10:56:33 INFO  MessageController:148 - A new message with the following ID arrived: SaveFormationAck
 2015-12-01 10:56:40 INFO  MessageController:148 - A new message with the following ID arrived: SaveFormationAck
 2015-12-01 10:56:44 INFO  MessageController:148 - A new message with the following ID arrived: SaveFormationAck
+2015-12-01 12:31:33 INFO  MessageController:148 - A new message with the following ID arrived: RSAPublicKey
+2015-12-01 12:31:34 INFO  MessageController:148 - A new message with the following ID arrived: HandshakeAck
+2015-12-01 12:31:34 INFO  MessageController:196 - The handshake was completed!
+2015-12-01 12:31:34 INFO  MessageController:148 - A new message with the following ID arrived: UserAuthentificationACK
+2015-12-01 12:31:37 INFO  MessageController:148 - A new message with the following ID arrived: RSAPublicKey
+2015-12-01 12:31:37 INFO  MessageController:148 - A new message with the following ID arrived: HandshakeAck
+2015-12-01 12:31:37 INFO  MessageController:196 - The handshake was completed!
+2015-12-01 12:31:38 INFO  MessageController:148 - A new message with the following ID arrived: UserAuthentificationACK
+2015-12-01 12:31:38 INFO  MessageController:148 - A new message with the following ID arrived: UserCommunityList
+2015-12-01 12:31:45 INFO  MessageController:148 - A new message with the following ID arrived: UserCommunityList
+2015-12-01 12:31:45 INFO  MessageController:148 - A new message with the following ID arrived: CommunityAuthentificationAck

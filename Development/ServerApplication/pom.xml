@@ -12,6 +12,7 @@
 	<groupId>de.szut.dqi12.cheftrainer.server</groupId>
 	<artifactId>ServerApplication</artifactId>
 	<packaging>jar</packaging>
+	
 	<name>ServerApplication</name>
 	<url>https://github.com/GAlexMES/CheftrainerFootballManager/tree/master/Development/ServerApplication</url>
 
@@ -42,11 +43,6 @@
 			<artifactId>jdom</artifactId>
 		</dependency>
 
-		<!-- not in parent POM defined, because it is only used by the server -->
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-all</artifactId>
-		</dependency>
 		<!-- not in parent POM defined, because it is only used by the server -->
 		<dependency>
 			<groupId>org.xerial</groupId>
