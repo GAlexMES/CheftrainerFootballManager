@@ -12,7 +12,7 @@
 	<groupId>de.szut.dqi12.cheftrainer.server</groupId>
 	<artifactId>ServerApplication</artifactId>
 	<packaging>jar</packaging>
-	
+
 	<name>ServerApplication</name>
 	<url>https://github.com/GAlexMES/CheftrainerFootballManager/tree/master/Development/ServerApplication</url>
 
@@ -98,4 +98,23 @@
 			</resource>
 		</resources>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<tags>
+						<tag>
+							<name>pos</name>
+							<placement>a</placement>
+							<head>Belongs to position:</head>
+						</tag>
+					</tags>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>
