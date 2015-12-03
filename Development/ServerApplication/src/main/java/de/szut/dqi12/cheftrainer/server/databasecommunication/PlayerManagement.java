@@ -21,7 +21,6 @@ import de.szut.dqi12.cheftrainer.server.parsing.TeamParser;
  * first time.
  * 
  * @author Alexander Brennecke
- *
  */
 public class PlayerManagement {
 
@@ -78,7 +77,7 @@ public class PlayerManagement {
 		String sqlQuery = "INSERT INTO Spieler (Name,Verein_ID, Position, Punkte, Marktwert, Nummer, SportalID, Birthday, PicturePath) "
 						+ "VALUES ('"+p.getName()+ "','"
 						+ teamID +"','"
-						+ p.getPositionString() +"','"
+						+ p.getPosition() +"','"
 						+ "0','"
 						+ worth + "','"
 						+ p.getNumber() + "','"
