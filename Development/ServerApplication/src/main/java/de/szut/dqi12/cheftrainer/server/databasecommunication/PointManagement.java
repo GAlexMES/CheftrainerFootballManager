@@ -40,8 +40,8 @@ public class PointManagement {
 	 * points stored in the database.
 	 * 
 	 * @param playerList
-	 *            a Map of String <-> {@link Player} objects. The Keys are not
-	 *            relevant. The {@link Player}
+	 *            a Map, where the key is a String and the value is a {@link Player} object. The Keys are not
+	 *            relevant.
 	 */
 	public void updatePointsOfPlayers(Map<String, Player> playerList) {
 		for (String s : playerList.keySet()) {

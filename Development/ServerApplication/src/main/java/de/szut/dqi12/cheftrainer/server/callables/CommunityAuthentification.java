@@ -20,7 +20,7 @@ import de.szut.dqi12.cheftrainer.server.utils.JSONUtils;
  * This class handles messaged with the id "CommunityAuthentification".
  * 
  * @author Alexander Brennecke
- *
+ * @custom.position /F0012/ </br> /F0040/
  */
 public class CommunityAuthentification extends CallableAbstract {
 
@@ -49,6 +49,7 @@ public class CommunityAuthentification extends CallableAbstract {
 	 * @param communityJSON
 	 *            a JSONObject with all required information to enter a
 	 *            community.
+	 * @custom.position /F0040/
 	 */
 	private void enterCommunity(JSONObject communityJSON) {
 		String communityName = communityJSON.getString("communityName");
@@ -130,6 +131,7 @@ public class CommunityAuthentification extends CallableAbstract {
 	 * @param communityJSON
 	 *            a JSONObject with all required information to create a new
 	 *            community.
+	 * @custom.position /F0012/
 	 */
 	private void createNewCommunity(JSONObject communityJSON) {
 		String communityName = communityJSON.getString("communityName");

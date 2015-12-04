@@ -180,3 +180,46 @@
 2015-12-01 12:31:45 INFO  TeamGenerator:77 - Team generation: 100% done - completed!
 2015-12-01 12:32:03 INFO  ClientHandler:159 - The client with the following IP disconnected from the server: 127.0.0.1
 2015-12-01 12:32:03 INFO  ClientHandler:159 - The client with the following IP disconnected from the server: 127.0.0.1
+2015-12-03 23:57:14 INFO  ServerApplication:18 - Server will start now!
+2015-12-03 23:57:14 INFO  SQLConnection:66 - Connecting to the database file!
+2015-12-03 23:57:15 INFO  ServerInitialator:33 - Start validating Database!
+2015-12-03 23:57:15 INFO  PlayerManagement:54 - Validating database: 0% Done
+2015-12-03 23:57:17 INFO  PlayerManagement:56 - Validating database: 10% Done
+2015-12-03 23:57:18 INFO  PlayerManagement:113 - Validating database: 15% Done
+2015-12-03 23:57:18 INFO  PlayerManagement:113 - Validating database: 20% Done
+2015-12-03 23:57:18 INFO  PlayerManagement:113 - Validating database: 25% Done
+2015-12-03 23:57:18 INFO  PlayerManagement:113 - Validating database: 30% Done
+2015-12-03 23:57:19 INFO  PlayerManagement:113 - Validating database: 35% Done
+2015-12-03 23:57:19 INFO  PlayerManagement:113 - Validating database: 40% Done
+2015-12-03 23:57:19 INFO  PlayerManagement:113 - Validating database: 45% Done
+2015-12-03 23:57:19 INFO  PlayerManagement:113 - Validating database: 50% Done
+2015-12-03 23:57:20 INFO  PlayerManagement:113 - Validating database: 55% Done
+2015-12-03 23:57:20 INFO  PlayerManagement:113 - Validating database: 60% Done
+2015-12-03 23:57:20 INFO  PlayerManagement:113 - Validating database: 65% Done
+2015-12-03 23:57:20 INFO  PlayerManagement:113 - Validating database: 70% Done
+2015-12-03 23:57:20 INFO  PlayerManagement:113 - Validating database: 75% Done
+2015-12-03 23:57:21 INFO  PlayerManagement:113 - Validating database: 80% Done
+2015-12-03 23:57:21 INFO  PlayerManagement:113 - Validating database: 85% Done
+2015-12-03 23:57:21 INFO  PlayerManagement:113 - Validating database: 90% Done
+2015-12-03 23:57:21 INFO  PlayerManagement:113 - Validating database: 95% Done
+2015-12-03 23:57:21 INFO  PlayerManagement:113 - Validating database: 100% Done
+2015-12-03 23:57:21 INFO  ServerInitialator:40 - Validating database: 100% done
+2015-12-03 23:57:22 INFO  ServerInitialator:67 - Start collecting points for current season (2015-2016
+2015-12-03 23:57:22 INFO  SchedulePointManagement:65 - Adding points for players for matchday 1
+2015-12-03 23:57:27 INFO  PointManagement:92 - Perisic does not longer play in the league. He will get no points for old goals.
+2015-12-03 23:57:27 INFO  SchedulePointManagement:65 - Adding points for players for matchday 2
+2015-12-03 23:57:31 INFO  SchedulePointManagement:65 - Adding points for players for matchday 3
+2015-12-03 23:57:36 INFO  SchedulePointManagement:65 - Adding points for players for matchday 4
+2015-12-03 23:57:38 ERROR ScheduleParser:130 - The page of the given game URL  was invalid! It was: /dummy-leverkusen-darmstadt-1-2015091254088500000
+2015-12-03 23:57:40 INFO  SchedulePointManagement:65 - Adding points for players for matchday 5
+2015-12-03 23:57:43 ERROR ScheduleParser:130 - The page of the given game URL  was invalid! It was: /bvb-siegt-und-siegt-3-0-gegen-angstgegner-bayer-leverkusen-1-2015092054395300000
+2015-12-03 23:57:44 INFO  SchedulePointManagement:65 - Adding points for players for matchday 6
+2015-12-03 23:57:48 INFO  SchedulePointManagement:65 - Adding points for players for matchday 7
+2015-12-03 23:57:52 INFO  SchedulePointManagement:65 - Adding points for players for matchday 8
+2015-12-03 23:57:56 INFO  SchedulePointManagement:65 - Adding points for players for matchday 9
+2015-12-03 23:58:00 INFO  SchedulePointManagement:65 - Adding points for players for matchday 10
+2015-12-03 23:58:04 INFO  SchedulePointManagement:65 - Adding points for players for matchday 11
+2015-12-03 23:58:08 INFO  SchedulePointManagement:65 - Adding points for players for matchday 12
+2015-12-03 23:58:12 INFO  SchedulePointManagement:65 - Adding points for players for matchday 13
+2015-12-03 23:58:17 INFO  SchedulePointManagement:65 - Adding points for players for matchday 14
+2015-12-03 23:58:21 INFO  Server:45 - The server started just now!

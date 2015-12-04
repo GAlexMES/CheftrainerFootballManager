@@ -66,6 +66,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.3</version>
 				<configuration>
+					<excludePackageNames>de.szut.dqi12.cheftrainer.connectorlib.*</excludePackageNames>
 					<show>public</show>
 					<nohelp>true</nohelp>
 					<tags>
@@ -76,6 +77,7 @@
 						</tag>
 					</tags>
 				</configuration>
+
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

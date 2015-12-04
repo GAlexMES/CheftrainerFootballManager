@@ -17,6 +17,11 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageI
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
 
+/**
+ * This callable handles everything according to the formation and Line-Up of a {@link Manager}.
+ * @author Alexander Brennecke
+ * @custom.position /F0110/ </br> /F0120/ </br> /F0130/ </br> /F0140/
+ */
 public class NewFormationUpdate extends CallableAbstract {
 
 	Map<String, Integer> positionList;
@@ -44,6 +49,10 @@ public class NewFormationUpdate extends CallableAbstract {
 		updateClient(successful);
 	}
 	
+	/**
+	 * This function sends the acknowledge to the client. 
+	 * @param successful true = sent formation was valid and saved, false = otherwise
+	 */
 	private void updateClient(Boolean successful){
 		Message message = new Message(ServerToClient_MessageIDs.SAVE_FORMATION_ACK);
 		JSONObject content = new JSONObject();
@@ -52,6 +61,11 @@ public class NewFormationUpdate extends CallableAbstract {
 		mesController.sendMessage(message);
 	}
 
+	/**
+	 * This function catches all SportalIDs, from each {@link Player} in the playerList.
+	 * @param playerList a List of {@link Player}s, which SportalIDs should be returned.
+	 * @return a List of SportalIDs according to the playerList.
+	 */
 	private ArrayList<Integer> getSportalIDs(List<Player> playerList) {
 		ArrayList<Integer> retval = new ArrayList<Integer>();
 		for (Player p : playerList) {
@@ -64,6 +78,12 @@ public class NewFormationUpdate extends CallableAbstract {
 		return retval;
 	}
 
+	/**
+	 * This function checks, if the {@link Position} of the {@link Player}s, 
+	 * matches to the given {@link Formation}. 
+	 * @param playerList the List of {@link Player}s, that should match to the {@link Formation}, saved in the positionList.
+	 * @return true = for each {@link Position} in the positionList, are enough {@link Player}s in the given playerList.
+	 */
 	private boolean correctAllocation(List<Player> playerList) {
 		for (Player p : playerList) {
 			if (p.isPlays()) {
@@ -80,6 +100,12 @@ public class NewFormationUpdate extends CallableAbstract {
 		return true;
 	}
 
+	/**
+	 * This function compares the to given {@link Player} lists, and checks, if they contain the same SportalIDs.
+	 * @param dbTeam the team, which is stored in the database
+	 * @param sendedTeam the team, which was sent by the client.
+	 * @return true = same SportalIDs in both lists, false = otherwise
+	 */
 	private boolean noNewPlayers(List<Player> dbTeam, List<Player> sendedTeam) {
 		if (dbTeam.size() != sendedTeam.size()) {
 			return false;
@@ -94,6 +120,11 @@ public class NewFormationUpdate extends CallableAbstract {
 		return false;
 	}
 
+	/**
+	 * This function checks, if the given Formation is valid.
+	 * @param formation the {@link Formation}, that should be checked.
+	 * @return true = {@link Formation} is valid, false = otherwise
+	 */
 	private boolean checkFormation(Formation formation) {
 		positionList.put(Position.DEFENCE, formation.getDefenders());
 		positionList.put(Position.MIDDLE, formation.getMiddfielders());
@@ -105,6 +136,9 @@ public class NewFormationUpdate extends CallableAbstract {
 		return sum == 11;
 	}
 
+	/**
+	 * This function initializes the positionList for further instructions.
+	 */
 	private void initMap() {
 		positionList = new HashMap<String, Integer>();
 		positionList.put(Position.DEFENCE, 0);

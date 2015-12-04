@@ -37,7 +37,7 @@ public class CommunityManagement {
 	/**
 	 * Constructor.
 	 * 
-	 * @param sqlCon
+	 * @param sqlCon the current {@link SQLConnection}
 	 */
 	public CommunityManagement(SQLConnection sqlCon) {
 		this.sqlCon = sqlCon;
@@ -148,12 +148,15 @@ public class CommunityManagement {
 	
 
 	/**
-	 * This method collects all managers, that play in the given community
+	 * This method collects all managers, that play in the given {@link Community}.
 	 * 
 	 * @param communityID
-	 *            the ID of the community
-	 * @return a List of Manager Objects.
+	 *            the ID of the {@link Community}
+	 * @param communityName
+	 * 			  the Name of the {@link Community}.
+	 * @return a List of {@link Manager} Objects.
 	 */
+	
 	public List<Manager> getManagers(int communityID, String communityName) {
 		List<Manager> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Manager.*, Nutzer.Nutzername " + "FROM  Manager INNER JOIN Nutzer WHERE Spielrunde_ID=" + communityID + " AND Manager.Nutzer_ID=Nutzer.ID";
