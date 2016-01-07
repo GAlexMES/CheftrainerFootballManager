@@ -17,7 +17,7 @@ import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
  * by a client.
  * 
  * @author Alexander Brennecke
- *
+ * @custom.position /F0011/ </br> /F0020/
  */
 public class UserAuthentification extends CallableAbstract {
 
@@ -52,6 +52,7 @@ public class UserAuthentification extends CallableAbstract {
 	 * 
 	 * @param registrationInfo
 	 *            JSONObject, including the user data
+	 * @custom.position /F0011/
 	 */
 	private void register(JSONObject registrationInfo) {
 		initialize();
@@ -65,8 +66,9 @@ public class UserAuthentification extends CallableAbstract {
 	/**
 	 * Is called, when the message was a "login" message
 	 * 
-	 * @param registrationInfo
+	 * @param loginInfo
 	 *            JSONObject, including the user data
+	 * @custom.position /F0020/
 	 */
 	public void login(JSONObject loginInfo) {
 		initialize();
@@ -101,6 +103,7 @@ public class UserAuthentification extends CallableAbstract {
 	 *            true = password was correct
 	 * @param existUser
 	 *            true= user exists
+	 * @custom.position /F0020/
 	 */
 	private void createLoginAnswer(boolean correctPassword, boolean existUser) {
 		Message authentificationMessage = new Message(
@@ -127,6 +130,7 @@ public class UserAuthentification extends CallableAbstract {
 	 *            true = user exists
 	 * @param registrationCompleted
 	 *            true = registration completed
+	 * @custom.position /F0011/
 	 */
 	private void createRegistrationAnswer(boolean existEMail,
 			boolean existUser, boolean registrationCompleted) {
