@@ -15,10 +15,10 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
 
 /**
- * <b>//F0040<b> Generates a new random team for a user.
+ *  Generates a new random team for a user.
  * 
  * @author Alexander Brennecke
- *
+ * @custom.position /F0040/
  */
 public class TeamGenerator {
 

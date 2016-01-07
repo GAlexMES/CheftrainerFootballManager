@@ -12,7 +12,7 @@
 	<groupId>de.szut.dqi12.cheftrainer.server</groupId>
 	<artifactId>ServerApplication</artifactId>
 	<packaging>jar</packaging>
-	
+
 	<name>ServerApplication</name>
 	<url>https://github.com/GAlexMES/CheftrainerFootballManager/tree/master/Development/ServerApplication</url>
 
@@ -63,6 +63,24 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<excludePackageNames>de.szut.dqi12.cheftrainer.connectorlib.*</excludePackageNames>
+					<show>public</show>
+					<nohelp>true</nohelp>
+					<tags>
+						<tag>
+							<name>custom.position</name>
+							<placement>a</placement>
+							<head>Belongs to position:</head>
+						</tag>
+					</tags>
+				</configuration>
+
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
@@ -98,4 +116,25 @@
 			</resource>
 		</resources>
 	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.3</version>
+				<configuration>
+					<show>public</show>
+					<nohelp>true</nohelp>
+					<tags>
+						<tag>
+							<name>custom.position</name>
+							<placement>a</placement>
+							<head>Belongs to position:</head>
+						</tag>
+					</tags>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

@@ -21,7 +21,6 @@ import de.szut.dqi12.cheftrainer.server.parsing.TeamParser;
  * first time.
  * 
  * @author Alexander Brennecke
- *
  */
 public class PlayerManagement {
 
@@ -140,7 +139,6 @@ public class PlayerManagement {
 	 * @param playerID
 	 *            the ID of the {@link Player}, that should be owned by the
 	 *            {@link Manager};
-	 * @throws SQLException 
 	 */
 	public void addPlayerToManager(int managerID, int playerID, boolean plays){
 		int play = 0;

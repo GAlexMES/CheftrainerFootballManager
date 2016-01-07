@@ -22,7 +22,7 @@ public class PlayerParser {
 	/**
 	 * Creates a List of Players out of the given URL
 	 * @param teamURL the ran.de URL for the Real team, that should be parsed
-	 * @return a List&ltPlayer&gt with all Players for the given team
+	 * @return a List with all {@link Player} for the given team
 	 * @throws IOException
 	 */
 
