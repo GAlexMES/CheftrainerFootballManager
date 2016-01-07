@@ -223,8 +223,10 @@ public class DatabaseRequests {
 	public static void createNewManager(String communityName, int userID) {
 		communityManagement.createNewManager(communityName, userID);
 	}
-
-
+	
+	public static String getUserName(int managerID){
+		return userManagement.getUserName(managerID);
+	}
 
 	public static void updateManager(Manager manager) {
 		playerManagement.updateManager(manager);

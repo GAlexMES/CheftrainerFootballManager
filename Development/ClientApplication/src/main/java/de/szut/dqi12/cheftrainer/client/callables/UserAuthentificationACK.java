@@ -12,6 +12,7 @@ import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.R
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.AdditionalMessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
@@ -32,11 +33,12 @@ public class UserAuthentificationACK extends CallableAbstract {
 				message.getMessageContent());
 
 		// Checks, if the message is a ACK for the registration or the login.
-		switch (authentificationAck.getString("mode")) {
-		case "registration":
+		String mode = authentificationAck.getString(AdditionalMessageIDs.MODE);
+		switch (mode) {
+		case AdditionalMessageIDs.REGISTRATION:
 			register(authentificationAck);
 			break;
-		case "login":
+		case AdditionalMessageIDs.LOGIN:
 			login(authentificationAck);
 			break;
 		}

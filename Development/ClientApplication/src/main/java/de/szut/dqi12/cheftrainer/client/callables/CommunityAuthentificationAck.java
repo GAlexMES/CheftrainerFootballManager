@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.AdditionalMessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
@@ -24,10 +25,10 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 		JSONObject authentificationACK = new JSONObject(
 				message.getMessageContent());
 		switch (authentificationACK.getString("type")) {
-		case "creation":
+		case AdditionalMessageIDs.CREATION :
 			handleCreation(authentificationACK);
 			break;
-		case "enter":
+		case AdditionalMessageIDs.ENTER:
 			handleEnter(authentificationACK);
 			break;
 		}

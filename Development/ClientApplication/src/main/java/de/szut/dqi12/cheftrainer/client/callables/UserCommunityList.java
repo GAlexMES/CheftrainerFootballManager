@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -13,8 +15,9 @@ import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.CommunitiesControll
 import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.AdditionalMessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
@@ -34,15 +37,16 @@ public class UserCommunityList extends CallableAbstract {
 	@Override
 	public void messageArrived(Message message) {
 		JSONObject jsonMessage = new JSONObject(message.getMessageContent());
-		switch (jsonMessage.getString("type")) {
-		case "init":
+		String mode = jsonMessage.getString(AdditionalMessageIDs.TYPE); 
+		switch (mode) {
+		case AdditionalMessageIDs.INIT:
 			newList(jsonMessage);
 			UpdateUtils.initUpdateReceived();
 			break;
-		case "updateCommunity":
+		case AdditionalMessageIDs.UPDATE_COMMUNITY:
 			updateList(jsonMessage);
 			break;
-		case "newCommunity":
+		case AdditionalMessageIDs.NEW_COMMUNITY:
 			addCommunityToList(jsonMessage);
 			break;
 		default:
@@ -51,8 +55,29 @@ public class UserCommunityList extends CallableAbstract {
 	}
 
 	private void updateList(JSONObject message) {
-		// TODO implement!
-		System.out.println("Not implemented yet");
+		String updateType = message.getString(AdditionalMessageIDs.UPDATE_TYPE);
+		
+		switch(updateType){
+		case AdditionalMessageIDs.TRANSACTIONS:
+			updateTransactions(message);
+			break;
+		default:
+			LOGGER.error("invalid update type: "+updateType);
+		}
+	}
+	
+	private void updateTransactions(JSONObject json){
+		JSONObject updateMessage = json.getJSONObject(AdditionalMessageIDs.UPDATE_MESSAGE);
+		int communityID = updateMessage.getInt(AdditionalMessageIDs.COMMUNITY_ID);
+		Community community = mesController.getSession().getCommunity(communityID);
+		
+		JSONArray transactionJSON =updateMessage.getJSONArray(AdditionalMessageIDs.TRANSACTIONS);
+		List<Transaction> transactions = new ArrayList<>();
+		for(int i = 0; i<transactionJSON.length();i++){
+			Transaction t = new Transaction(transactionJSON.getJSONObject(i));
+			transactions.add(t);
+		}
+		community.getMarket().setTransactions(transactions);
 	}
 
 	/**

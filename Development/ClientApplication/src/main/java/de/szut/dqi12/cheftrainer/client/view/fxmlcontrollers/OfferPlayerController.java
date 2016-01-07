@@ -21,7 +21,7 @@ public class OfferPlayerController implements ControllerInterface {
 
 	@FXML
 	public void offerButtonClicked() {
-		int offerPrice = Integer.valueOf(priceField.getText());
+		long offerPrice = Long.parseLong(priceField.getText(),10);
 		if (offerPrice >= displayedPlayer.getWorth()) {
 			sendOffer(offerPrice);
 		} else {
@@ -34,7 +34,7 @@ public class OfferPlayerController implements ControllerInterface {
 		
 	}
 
-	private void sendOffer(int offerPrice) {
+	private void sendOffer(long offerPrice) {
 		Session s = Controller.getInstance().getSession();
 		int communityID = s.getCurrentCommunityID();
 		int userID = s.getUserID();

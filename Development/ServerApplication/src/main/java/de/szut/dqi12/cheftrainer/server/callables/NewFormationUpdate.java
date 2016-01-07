@@ -13,6 +13,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.AdditionalMessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
@@ -56,7 +57,7 @@ public class NewFormationUpdate extends CallableAbstract {
 	private void updateClient(Boolean successful){
 		Message message = new Message(ServerToClient_MessageIDs.SAVE_FORMATION_ACK);
 		JSONObject content = new JSONObject();
-		content.put("successful", successful);
+		content.put(AdditionalMessageIDs.SUCCESFULL, successful);
 		message.setMessageContent(content);
 		mesController.sendMessage(message);
 	}
