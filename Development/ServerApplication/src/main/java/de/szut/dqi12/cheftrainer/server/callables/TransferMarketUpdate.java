@@ -54,9 +54,9 @@ public class TransferMarketUpdate extends CallableAbstract {
 	 */
 	private void transaction(JSONObject messageContent) {
 		JSONObject information = messageContent.getJSONObject(AdditionalMessageIDs.INFORMATION);
-		boolean accept = information.getBoolean("Annehmen");
-		boolean remove = information.getBoolean("Entfernen");
-		Transaction tr = new Transaction(information.getJSONObject("Gebot"));
+		boolean accept = information.getBoolean(AdditionalMessageIDs.ACCEPT);
+		boolean remove = information.getBoolean(AdditionalMessageIDs.REMOVE);
+		Transaction tr = new Transaction(information.getJSONObject(AdditionalMessageIDs.TRANSACTION));
 
 		//Remove will be done in transferPlayer
 		if (accept) {

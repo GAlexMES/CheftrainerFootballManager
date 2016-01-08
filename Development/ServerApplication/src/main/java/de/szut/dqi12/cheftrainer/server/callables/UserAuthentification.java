@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.AdditionalMessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.Controller;
@@ -30,11 +31,11 @@ public class UserAuthentification extends CallableAbstract {
 		JSONObject authentification = new JSONObject(
 				message.getMessageContent());
 		// switches the type of the authentification to "login" or "register".
-		switch (authentification.getString("authentificationType")) {
-		case "register":
+		switch (authentification.getString(AdditionalMessageIDs.AUTHENTIFICATION_TYPE)) {
+		case AdditionalMessageIDs.REGISTRATION:
 			register(authentification);
 			break;
-		case "login":
+		case AdditionalMessageIDs.LOGIN:
 			login(authentification);
 			break;
 		}
@@ -109,8 +110,8 @@ public class UserAuthentification extends CallableAbstract {
 		Message authentificationMessage = new Message(
 				ServerToClient_MessageIDs.USER_AUTHENTIFICATION_ACK);
 		JSONObject authentificationInfo = new JSONObject();
-		authentificationInfo.put("mode", "login");
-		authentificationInfo.put("password", correctPassword);
+		authentificationInfo.put(AdditionalMessageIDs.MODE, AdditionalMessageIDs.LOGIN);
+		authentificationInfo.put(AdditionalMessageIDs.PASSWORD, correctPassword);
 		authentificationInfo.put("userExist", existUser);
 		if (correctPassword && existUser) {
 			authentificationInfo.put("UserID", mesController.getSession()
@@ -137,8 +138,8 @@ public class UserAuthentification extends CallableAbstract {
 		Message answerMessage = new Message(
 				ServerToClient_MessageIDs.USER_AUTHENTIFICATION_ACK);
 		JSONObject authentification = new JSONObject();
-		authentification.put("mode", "registration");
-		authentification.put("authentificate", registrationCompleted);
+		authentification.put(AdditionalMessageIDs.MODE, AdditionalMessageIDs.REGISTRATION);
+		authentification.put(AdditionalMessageIDs.AUTHENTIFICATE, registrationCompleted);
 		authentification.put("existUser", existUser);
 		authentification.put("existEMail", existEMail);
 		answerMessage.setMessageContent(authentification);

@@ -40,6 +40,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.AdditionalMessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -309,13 +310,13 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 
 	private void sendAnswerOffer(Transaction tr, boolean accept, boolean remove) {
 		JSONObject transactionJSON = new JSONObject();
-		transactionJSON.put("Gebot", tr.toJSON());
-		transactionJSON.put("Annehmen", accept);
-		transactionJSON.put("Entfernen", remove);
+		transactionJSON.put(AdditionalMessageIDs.TRANSACTION, tr.toJSON());
+		transactionJSON.put(AdditionalMessageIDs.ACCEPT, accept);
+		transactionJSON.put(AdditionalMessageIDs.REMOVE, remove);
 
 		JSONObject messageContent = new JSONObject();
-		messageContent.put("type", "Transaction");
-		messageContent.put("information", transactionJSON);
+		messageContent.put(AdditionalMessageIDs.TYPE, AdditionalMessageIDs.TRANSACTION);
+		messageContent.put(AdditionalMessageIDs.INFORMATION, transactionJSON);
 
 		Message message = new Message(ClientToServer_MessageIDs.TRANSFER_MARKET);
 		message.setMessageContent(messageContent);
