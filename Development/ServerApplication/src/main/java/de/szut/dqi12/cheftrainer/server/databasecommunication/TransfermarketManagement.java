@@ -15,7 +15,7 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.AdditionalMessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.Controller;
@@ -65,7 +65,7 @@ public class TransfermarketManagement {
 				pStatement.setLong(3, tr.getOfferedPrice());
 				pStatement.setInt(4, tr.getCommunityID());
 				pStatement.executeUpdate();
-				LOGGER.info(manager_ID + " offered " + tr.getOfferedPrice() + "€ for player " + tr.getPlayerSportalID());
+				LOGGER.info(manager_ID + " offered " + tr.getOfferedPrice() + "ï¿½ for player " + tr.getPlayerSportalID());
 				sendTransactionsUpdate(tr.getCommunityID(), manager_ID);
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -81,13 +81,13 @@ public class TransfermarketManagement {
 		}
 		
 		JSONObject updateMessage = new JSONObject();
-		updateMessage.put(AdditionalMessageIDs.TRANSACTIONS, transactionsJSON);
-		updateMessage.put(AdditionalMessageIDs.COMMUNITY_ID, communityID);
+		updateMessage.put(MIDs.TRANSACTIONS, transactionsJSON);
+		updateMessage.put(MIDs.COMMUNITY_ID, communityID);
 		
 		JSONObject messageContent = new JSONObject();
-		messageContent.put(AdditionalMessageIDs.TYPE,AdditionalMessageIDs.UPDATE_COMMUNITY);
-		messageContent.put(AdditionalMessageIDs.UPDATE_TYPE,AdditionalMessageIDs.TRANSACTIONS);
-		messageContent.put(AdditionalMessageIDs.UPDATE_MESSAGE, updateMessage);
+		messageContent.put(MIDs.TYPE,MIDs.UPDATE_COMMUNITY);
+		messageContent.put(MIDs.UPDATE_TYPE,MIDs.TRANSACTIONS);
+		messageContent.put(MIDs.UPDATE_MESSAGE, updateMessage);
 		
 		
 		Message message = new Message(ServerToClient_MessageIDs.USER_COMMUNITY_LIST);

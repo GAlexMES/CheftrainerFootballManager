@@ -198,7 +198,7 @@ public class RegistrationController implements ControllerInterface {
 			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
 			user.setPassword(passwordMD5);
 			JSONObject registrationInfo = user.toJSON();
-			registrationInfo.put(AdditionalMessageIDs.AUTHENTIFICATION_TYPE, AdditionalMessageIDs.REGISTRATION);
+			registrationInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.REGISTRATION);
 			registrationMessage.setMessageContent(registrationInfo);
 			serverCon.sendMessage(registrationMessage);
 		} catch (NoSuchAlgorithmException e) {

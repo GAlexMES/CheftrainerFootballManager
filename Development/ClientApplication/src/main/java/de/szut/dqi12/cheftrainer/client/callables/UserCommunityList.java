@@ -17,7 +17,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.AdditionalMessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
@@ -37,16 +37,16 @@ public class UserCommunityList extends CallableAbstract {
 	@Override
 	public void messageArrived(Message message) {
 		JSONObject jsonMessage = new JSONObject(message.getMessageContent());
-		String mode = jsonMessage.getString(AdditionalMessageIDs.TYPE); 
+		String mode = jsonMessage.getString(MIDs.TYPE); 
 		switch (mode) {
-		case AdditionalMessageIDs.INIT:
+		case MIDs.INIT:
 			newList(jsonMessage);
 			UpdateUtils.initUpdateReceived();
 			break;
-		case AdditionalMessageIDs.UPDATE_COMMUNITY:
+		case MIDs.UPDATE_COMMUNITY:
 			updateList(jsonMessage);
 			break;
-		case AdditionalMessageIDs.NEW_COMMUNITY:
+		case MIDs.NEW_COMMUNITY:
 			addCommunityToList(jsonMessage);
 			break;
 		default:
@@ -55,10 +55,10 @@ public class UserCommunityList extends CallableAbstract {
 	}
 
 	private void updateList(JSONObject message) {
-		String updateType = message.getString(AdditionalMessageIDs.UPDATE_TYPE);
+		String updateType = message.getString(MIDs.UPDATE_TYPE);
 		
 		switch(updateType){
-		case AdditionalMessageIDs.TRANSACTIONS:
+		case MIDs.TRANSACTIONS:
 			updateTransactions(message);
 			break;
 		default:
@@ -67,11 +67,11 @@ public class UserCommunityList extends CallableAbstract {
 	}
 	
 	private void updateTransactions(JSONObject json){
-		JSONObject updateMessage = json.getJSONObject(AdditionalMessageIDs.UPDATE_MESSAGE);
-		int communityID = updateMessage.getInt(AdditionalMessageIDs.COMMUNITY_ID);
+		JSONObject updateMessage = json.getJSONObject(MIDs.UPDATE_MESSAGE);
+		int communityID = updateMessage.getInt(MIDs.COMMUNITY_ID);
 		Community community = mesController.getSession().getCommunity(communityID);
 		
-		JSONArray transactionJSON =updateMessage.getJSONArray(AdditionalMessageIDs.TRANSACTIONS);
+		JSONArray transactionJSON =updateMessage.getJSONArray(MIDs.TRANSACTIONS);
 		List<Transaction> transactions = new ArrayList<>();
 		for(int i = 0; i<transactionJSON.length();i++){
 			Transaction t = new Transaction(transactionJSON.getJSONObject(i));

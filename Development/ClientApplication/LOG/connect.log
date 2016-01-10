@@ -259,3 +259,18 @@
 2016-01-07 23:40:42 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
 2016-01-07 23:40:55 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
 2016-01-07 23:40:55 ERROR UserCommunityList:74 - invalid update type: transactions
+2016-01-11 00:40:33 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-11 00:40:33 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-11 00:40:33 INFO  MessageController:211 - The handshake was completed!
+2016-01-11 00:41:22 ERROR ServerHandler:67 - [Ljava.lang.StackTraceElement;@1de351d9
+2016-01-11 00:41:37 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-11 00:41:37 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-11 00:41:37 INFO  MessageController:211 - The handshake was completed!
+2016-01-11 00:41:38 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-11 00:41:43 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-11 00:41:43 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-11 00:41:43 INFO  MessageController:211 - The handshake was completed!
+2016-01-11 00:41:44 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-11 00:41:44 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-11 00:41:59 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-11 00:41:59 INFO  MessageController:149 - Server: A new message with the following ID arrived: CommunityAuthentificationAck

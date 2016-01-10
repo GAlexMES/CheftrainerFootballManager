@@ -10,7 +10,7 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.AdditionalMessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
@@ -32,12 +32,12 @@ public class CommunityAuthentification extends CallableAbstract {
 	@Override
 	public void messageArrived(Message message) {
 		JSONObject communityJSON = new JSONObject(message.getMessageContent());
-		String type = communityJSON.getString(AdditionalMessageIDs.TYPE); 
+		String type = communityJSON.getString(MIDs.TYPE); 
 		switch (type) {
-		case AdditionalMessageIDs.CREATION:
+		case MIDs.CREATION:
 			createNewCommunity(communityJSON);
 			break;
-		case AdditionalMessageIDs.ENTER:
+		case MIDs.ENTER:
 			enterCommunity(communityJSON);
 			break;
 		}
@@ -54,8 +54,8 @@ public class CommunityAuthentification extends CallableAbstract {
 	 * @custom.position /F0040/
 	 */
 	private void enterCommunity(JSONObject communityJSON) {
-		String communityName = communityJSON.getString(AdditionalMessageIDs.COMMUNITY_NAME);
-		String communityPassword = communityJSON.getString(AdditionalMessageIDs.PASSWORD);
+		String communityName = communityJSON.getString(MIDs.COMMUNITY_NAME);
+		String communityPassword = communityJSON.getString(MIDs.PASSWORD);
 		int userID = mesController.getSession().getUserID();
 		HashMap<String, Boolean> enterFeedback = DatabaseRequests.enterCommunity(communityName, communityPassword,
 				userID);
@@ -64,7 +64,7 @@ public class CommunityAuthentification extends CallableAbstract {
 
 		updateSessionAndClient();
 
-		enterACKJSON.put(AdditionalMessageIDs.TYPE, AdditionalMessageIDs.ENTER);
+		enterACKJSON.put(MIDs.TYPE, MIDs.ENTER);
 		enterACK.setMessageContent(enterACKJSON);
 		mesController.sendMessage(enterACK);
 	}
@@ -116,9 +116,9 @@ public class CommunityAuthentification extends CallableAbstract {
 		Message communityListUpdate = new Message(ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
 
 		JSONObject updateJSON = new JSONObject();
-		updateJSON.put(AdditionalMessageIDs.TYPE, AdditionalMessageIDs.NEW_COMMUNITY);
+		updateJSON.put(MIDs.TYPE, MIDs.NEW_COMMUNITY);
 		Community community = DatabaseRequests.getCummunityForID(communityID);
-		updateJSON.put(AdditionalMessageIDs.COMMUNITY, community.toJSON());
+		updateJSON.put(MIDs.COMMUNITY, community.toJSON());
 		communityListUpdate.setMessageContent(updateJSON);
 		
 		mesController.sendMessage(communityListUpdate);
