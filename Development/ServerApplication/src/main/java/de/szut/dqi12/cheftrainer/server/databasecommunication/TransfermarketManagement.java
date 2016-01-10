@@ -65,7 +65,7 @@ public class TransfermarketManagement {
 				pStatement.setLong(3, tr.getOfferedPrice());
 				pStatement.setInt(4, tr.getCommunityID());
 				pStatement.executeUpdate();
-				LOGGER.info(manager_ID + " offered " + tr.getOfferedPrice() + "â‚¬ for player " + tr.getPlayerSportalID());
+				LOGGER.info(manager_ID + " offered " + tr.getOfferedPrice() + "€ for player " + tr.getPlayerSportalID());
 				sendTransactionsUpdate(tr.getCommunityID(), manager_ID);
 			} catch (SQLException e) {
 				e.printStackTrace();

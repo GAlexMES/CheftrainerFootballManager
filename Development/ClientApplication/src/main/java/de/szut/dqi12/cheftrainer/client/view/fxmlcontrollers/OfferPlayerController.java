@@ -10,6 +10,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 public class OfferPlayerController implements ControllerInterface {
@@ -48,8 +49,8 @@ public class OfferPlayerController implements ControllerInterface {
 		JSONObject offerInformation = tr.toJSON();
 		
 		JSONObject messageContent = new JSONObject();
-		messageContent.put("type", "NewOffer");
-		messageContent.put("information", offerInformation);
+		messageContent.put(MIDs.TYPE, MIDs.NEW_OFFER);
+		messageContent.put(MIDs.INFORMATION, offerInformation);
 		
 		Message offerMessage = new Message(ClientToServer_MessageIDs.TRANSFER_MARKET);
 		offerMessage.setMessageContent(messageContent);
