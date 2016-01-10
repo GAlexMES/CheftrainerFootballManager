@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 
 
 /**
@@ -33,10 +34,10 @@ public class UserManagement {
 
 	public HashMap<String, Boolean> register(User newUser) {
 		HashMap<String, Boolean> retval = existUser(newUser);
-		retval.put("authentificate", false);
-		if ((!retval.get("existUser")) && (!retval.get("existEMail"))) {
+		retval.put(MIDs.AUTHENTIFICATE, false);
+		if ((!retval.get(MIDs.USER_EXISTS)) && (!retval.get(MIDs.EMAIL_EXISTS))) {
 			addNewUserToDatabase(newUser);
-			retval.put("authentificate", true);
+			retval.put(MIDs.AUTHENTIFICATE, true);
 		}
 		return retval;
 	}
@@ -48,19 +49,19 @@ public class UserManagement {
 	 */
 	private HashMap<String, Boolean> existUser(User newUser) {
 		HashMap<String, Boolean> retval = new HashMap<String, Boolean>();
-		retval.put("existUser", false);
-		retval.put("existEMail", false);
+		retval.put(MIDs.USER_EXISTS, false);
+		retval.put(MIDs.EMAIL_EXISTS, false);
 		String sqlQuery = "SELECT * FROM Nutzer;";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
 			while (rs.next()) {
 				if (rs.getString(4) != null
 						&& rs.getString(4).equals(newUser.getUserName())) {
-					retval.put("existUser", true);
+					retval.put(MIDs.USER_EXISTS, true);
 				}
 				if (rs.getString(5) != null
 						&& rs.getString(5).equals(newUser.geteMail())) {
-					retval.put("existEMail", true);
+					retval.put(MIDs.EMAIL_EXISTS, true);
 				}
 			}
 		} catch (SQLException e) {
@@ -96,14 +97,14 @@ public class UserManagement {
 			while (rs.next()) {
 				counter ++;
 				if (rs.getString(1).equals(user.getPassword())) {
-					retval.put("password", true);
+					retval.put(MIDs.PASSWORD, true);
 				}
 			}
 		} catch (SQLException e) {
 
 		}
 		if(counter == 1){
-			retval.put("userExist", true);
+			retval.put(MIDs.USER_EXISTS, true);
 		}
 		return retval;
 	}

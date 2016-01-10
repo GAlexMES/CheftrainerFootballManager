@@ -33,6 +33,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -199,15 +200,15 @@ public class RegistrationController implements ControllerInterface {
 				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
 
 		JSONObject registrationInfo = new JSONObject();
-		registrationInfo.put("authentificationType", "register");
-		registrationInfo.put("vorname", vornameField.getText());
-		registrationInfo.put("nachname", nachnameField.getText());
-		registrationInfo.put("mail", mailField.getText());
-		registrationInfo.put("login", loginField.getText());
+		registrationInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.REGISTRATION);
+		registrationInfo.put(User.FIRST_NAME, vornameField.getText());
+		registrationInfo.put(User.LAST_NAME, nachnameField.getText());
+		registrationInfo.put(User.E_MAIL, mailField.getText());
+		registrationInfo.put(MIDs.LOGIN, loginField.getText());
 
 		try {
 			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
-			registrationInfo.put("password", passwordMD5);
+			registrationInfo.put(MIDs.PASSWORD, passwordMD5);
 			registrationMessage.setMessageContent(registrationInfo);
 			serverCon.sendMessage(registrationMessage);
 		} catch (NoSuchAlgorithmException e) {

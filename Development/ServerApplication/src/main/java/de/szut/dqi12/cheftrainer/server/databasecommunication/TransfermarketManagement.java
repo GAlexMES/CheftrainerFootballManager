@@ -52,7 +52,7 @@ public class TransfermarketManagement {
 			PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
 			pStatement.setInt(1, manager_ID);
 			pStatement.setInt(2, transaction.getPlayerSportalID());
-			pStatement.setInt(3, transaction.getOfferedPrice());
+			pStatement.setLong(3, transaction.getOfferedPrice());
 			pStatement.setInt(4, transaction.getCommunityID());
 			pStatement.executeUpdate();
 		} catch (SQLException e) {
@@ -85,7 +85,7 @@ public class TransfermarketManagement {
 			t.setPlayerSportalID(playerSportalID);
 
 			if (transactionList.containsKey(playerSportalID)) {
-				int currentPrice = transactionList.get(playerSportalID).getOfferedPrice();
+				long currentPrice = transactionList.get(playerSportalID).getOfferedPrice();
 				if (currentPrice < t.getOfferedPrice()) {
 					transactionList.put(playerSportalID, t);
 				}
@@ -107,7 +107,7 @@ public class TransfermarketManagement {
 		try {
 			int communityID = t.getCommunityID();
 			int playerSportalID = t.getPlayerSportalID();
-			int price = t.getOfferedPrice();
+			long price = t.getOfferedPrice();
 			
 			pStatement = sqlCon.prepareStatement(sqlQuery);
 			pStatement.setInt(1, communityID);
@@ -149,7 +149,7 @@ public class TransfermarketManagement {
 		deleteStatement.executeUpdate();
 	}
 
-	private void updateManagerMoney(int managerID, int money) {
+	private void updateManagerMoney(int managerID, long money) {
 		String addMoney = "UPDATE Manager" + " SET Budget = Budget + " + money + " WHERE ID = " + managerID;
 		sqlCon.sendQuery(addMoney);
 	}
