@@ -274,3 +274,21 @@
 2016-01-11 00:41:44 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
 2016-01-11 00:41:59 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
 2016-01-11 00:41:59 INFO  MessageController:149 - Server: A new message with the following ID arrived: CommunityAuthentificationAck
+2016-01-11 18:39:57 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-11 18:39:57 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-11 18:39:57 INFO  MessageController:211 - The handshake was completed!
+2016-01-11 18:39:58 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-11 18:39:58 ERROR ServerHandler:67 - [Ljava.lang.StackTraceElement;@76768ea4
+2016-01-11 18:51:49 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-11 18:51:50 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-11 18:51:50 INFO  MessageController:211 - The handshake was completed!
+2016-01-11 18:51:51 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-11 18:51:51 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-11 18:52:45 ERROR ServerHandler:67 - [Ljava.lang.StackTraceElement;@6e69b12
+2016-01-11 18:52:53 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-11 18:52:53 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-11 18:52:53 INFO  MessageController:211 - The handshake was completed!
+2016-01-11 18:52:54 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-11 18:52:54 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-11 18:53:04 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-11 18:53:04 INFO  MessageController:149 - Server: A new message with the following ID arrived: CommunityAuthentificationAck

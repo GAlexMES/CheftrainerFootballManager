@@ -81,7 +81,7 @@ public class CreateCommunityController {
 	private void createNewCommunityMessage(){
 		Message communityMessage = new Message(ClientToServer_MessageIDs.COMMUNITY_AUTHENTIFICATION);
 		JSONObject communitJSON = new JSONObject();
-		communitJSON.put(MIDs.LOGIN, MIDs.CREATION);
+		communitJSON.put(MIDs.TYPE, MIDs.CREATION);
 		String passwordMD5;
 		try {
 			passwordMD5 = CipherFactory.getMD5(passwordField.getText());
