@@ -31,11 +31,11 @@ public class UserAuthentification extends CallableAbstract {
 		JSONObject authentification = new JSONObject(
 				message.getMessageContent());
 		// switches the type of the authentification to "login" or "register".
-		switch (authentification.getString("authentificationType")) {
-		case "register":
+		switch (authentification.getString(MIDs.AUTHENTIFICATION_TYPE)) {
+		case MIDs.REGISTRATION:
 			register(authentification);
 			break;
-		case "login":
+		case MIDs.LOGIN:
 			login(authentification);
 			break;
 		}
@@ -60,8 +60,8 @@ public class UserAuthentification extends CallableAbstract {
 		User newUser = new User();
 		newUser.setWithJSON(registrationInfo);
 		HashMap<String, Boolean> dbInfo = DatabaseRequests.registerNewUser(newUser);
-		createRegistrationAnswer(dbInfo.get("existEMail"),
-				dbInfo.get("existUser"), dbInfo.get("authentificate"));
+		createRegistrationAnswer(dbInfo.get(MIDs.EMAIL_EXISTS),
+				dbInfo.get(MIDs.USER_EXISTS), dbInfo.get(MIDs.AUTHENTIFICATE));
 	}
 
 	/**

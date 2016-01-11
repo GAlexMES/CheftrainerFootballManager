@@ -97,11 +97,9 @@ public class RegistrationController implements ControllerInterface {
 		severDetailsPane_Height = serverDetailsPane.getPrefHeight();
 
 		buttonPane.layoutYProperty().set(serverDetailsPane_YLayout);
-		registrationPane.setPrefHeight(mainPaneMaxSize
-				- severDetailsPane_Height);
+		registrationPane.setPrefHeight(mainPaneMaxSize - severDetailsPane_Height);
 
-		serverDetailsPane.visibleProperty().bind(
-				showDetailsCheck.selectedProperty());
+		serverDetailsPane.visibleProperty().bind(showDetailsCheck.selectedProperty());
 
 		ObservableList<Node> childs = registrationPane.getChildren();
 		DialogUtils.addOnClickListener(childs, new EnterPressedListener(this));
@@ -125,8 +123,7 @@ public class RegistrationController implements ControllerInterface {
 
 		} else {
 			buttonPane.layoutYProperty().set(serverDetailsPane_YLayout);
-			registrationPane.setPrefHeight(mainPaneMaxSize
-					- severDetailsPane_Height);
+			registrationPane.setPrefHeight(mainPaneMaxSize - severDetailsPane_Height);
 			dialogStage.setMaxHeight(serverDetailsPane_YLayout + 100);
 		}
 		dialogStage.sizeToScene();
@@ -149,9 +146,7 @@ public class RegistrationController implements ControllerInterface {
 				Thread.sleep(800);
 				sendRegistrationMessage();
 			} catch (IOException e1) {
-				AlertUtils.createSimpleDialog("Registration failed",
-						"Something went wrong during your registration",
-						"Please check your server details!", AlertType.ERROR);
+				AlertUtils.createSimpleDialog("Registration failed", "Something went wrong during your registration", "Please check your server details!", AlertType.ERROR);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -160,9 +155,7 @@ public class RegistrationController implements ControllerInterface {
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			AlertUtils.createSimpleDialog("Registration failed",
-					"Something went wrong during your registration",
-					errorMessage, AlertType.ERROR);
+			AlertUtils.createSimpleDialog("Registration failed", "Something went wrong during your registration", errorMessage, AlertType.ERROR);
 		}
 	}
 
@@ -173,14 +166,11 @@ public class RegistrationController implements ControllerInterface {
 	 * @return
 	 */
 	private List<String> checkInputs() {
-		TextField[] inputFields = { vornameField, nachnameField, mailField,
-				loginField, portField, ipField, passwordField,
-				passwordConfirmationField };
+		TextField[] inputFields = { vornameField, nachnameField, mailField, loginField, portField, ipField, passwordField, passwordConfirmationField };
 
 		List<String> retval = DialogUtils.checkInputs(inputFields);
 
-		if (!(passwordField.getText().equals(passwordConfirmationField
-				.getText()))) {
+		if (!(passwordField.getText().equals(passwordConfirmationField.getText()))) {
 			passwordField.setText("");
 			passwordConfirmationField.setText("");
 			passwordField.setStyle("-fx-text-box-border: red;");
@@ -196,25 +186,26 @@ public class RegistrationController implements ControllerInterface {
 	 * @throws UnsupportedEncodingException
 	 */
 	private void sendRegistrationMessage() throws UnsupportedEncodingException {
-		Message registrationMessage = new Message(
-				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
+		Message registrationMessage = new Message(ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
 
-		JSONObject registrationInfo = new JSONObject();
-		registrationInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.REGISTRATION);
-		registrationInfo.put(User.FIRST_NAME, vornameField.getText());
-		registrationInfo.put(User.LAST_NAME, nachnameField.getText());
-		registrationInfo.put(User.E_MAIL, mailField.getText());
-		registrationInfo.put(MIDs.LOGIN, loginField.getText());
+		User user = new User();
+		user.seteMail(mailField.getText());
+		user.setFirstName(vornameField.getText());
+		user.setLastName(nachnameField.getText());
+		user.setUserName(loginField.getText());
 
 		try {
 			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
-			registrationInfo.put(MIDs.PASSWORD, passwordMD5);
+			user.setPassword(passwordMD5);
+			JSONObject registrationInfo = user.toJSON();
+			registrationInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.REGISTRATION);
 			registrationMessage.setMessageContent(registrationInfo);
 			serverCon.sendMessage(registrationMessage);
 		} catch (NoSuchAlgorithmException e) {
 			Alert alert = AlertUtils.createExceptionDialog(e);
 			alert.showAndWait();
 		}
+		
 
 	}
 
@@ -226,8 +217,7 @@ public class RegistrationController implements ControllerInterface {
 		ClientProperties clientProps = new ClientProperties();
 		clientProps.setPort(Integer.valueOf(portField.getText()));
 		clientProps.setServerIP(ipField.getText());
-		clientProps.addConnectionDiedListener(new ConnectionRefusedListener(
-				Controller.getInstance()));
+		clientProps.addConnectionDiedListener(new ConnectionRefusedListener(Controller.getInstance()));
 		try {
 			serverCon = ServerConnection.createServerConnection(clientProps);
 		} catch (IOException e) {

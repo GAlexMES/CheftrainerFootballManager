@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
@@ -23,11 +24,12 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 	public void messageArrived(Message message) {
 		JSONObject authentificationACK = new JSONObject(
 				message.getMessageContent());
-		switch (authentificationACK.getString("type")) {
-		case "creation":
+		String type = authentificationACK.getString(MIDs.TYPE);  
+		switch (type){
+		case MIDs.CREATION :
 			handleCreation(authentificationACK);
 			break;
-		case "enter":
+		case MIDs.ENTER:
 			handleEnter(authentificationACK);
 			break;
 		}
@@ -39,13 +41,15 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 	 * @param authentificationACK the JSONObject with the required information to display one of the Alerts.
 	 */
 	private void handleEnter(JSONObject authentificationACK) {
-		if (!authentificationACK.getBoolean("existCommunity")
-				|| !authentificationACK.getBoolean("correctPassword")) {
+		boolean communityExists = authentificationACK.getBoolean(MIDs.COMMUNITY_EXISTS);
+		boolean correctPassword = authentificationACK.getBoolean(MIDs.CORRECT_PASSWORD);
+		if (!communityExists
+				|| !correctPassword) {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_ENTER_TITLE,
 					AlertUtils.COMMUNITY_ENTER_WORKED_NOT_HEAD,
 					AlertUtils.COMMUNITY_ENTER_WRONG_AUTHENTIFICATION,
 					AlertType.ERROR);
-		} else if (!authentificationACK.getBoolean("userDoesNotExist")) {
+		} else if (!authentificationACK.getBoolean(MIDs.USER_EXISTS)) {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_ENTER_TITLE,
 					AlertUtils.COMMUNITY_ENTER_WORKED_NOT_HEAD,
 					AlertUtils.COMMUNITY_ENTER_ALREADY_EXIST, AlertType.ERROR);
@@ -65,7 +69,7 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 	 * @param creationJSON the JSONObject with the required information to display one of the Alerts.
 	 */
 	private void handleCreation(JSONObject creationJSON) {
-		if (creationJSON.getBoolean("created")) {
+		if (creationJSON.getBoolean(MIDs.CREATED)) {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_CREATION_TITLE,
 					AlertUtils.COMMUNITY_CREATION_WORKED_HEAD,
 					AlertUtils.COMMUNITY_CREATION_WORKED_MESSAGE,
