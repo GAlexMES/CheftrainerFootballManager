@@ -149,7 +149,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	}
 
 	private void onDoubleClick() {
-		// INDEXE MUESSTEN MOEGLICHERWEISE UEBERARBEITET WERDEN
+		// TODO: INDEXE MUESSTEN MOEGLICHERWEISE UEBERARBEITET WERDEN
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("sourcesFXML/PlayerDetailedFrame.fxml"));
 			GridPane root = (GridPane) fxmlLoader.load();
@@ -266,8 +266,10 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 				but.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
-
 						sendAnswerOffer(tr, false, true);
+						Button source = ((Button)event.getSource());
+						((Stage)source.getScene().getWindow()).close();
+						showOffers();
 					}
 				});
 			} else {
@@ -320,8 +322,11 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 
 		Message message = new Message(ClientToServer_MessageIDs.TRANSFER_MARKET);
 		message.setMessageContent(messageContent);
-
-		Controller.getInstance().sendMessageToServer(message);
+		
+		Controller controller = Controller.getInstance();
+		controller.sendMessageToServer(message);
+		Market market = controller.getSession().getCurrentCommunity().getMarket();
+		market.removeTransactions(tr);
 	}
 
 	@Override
