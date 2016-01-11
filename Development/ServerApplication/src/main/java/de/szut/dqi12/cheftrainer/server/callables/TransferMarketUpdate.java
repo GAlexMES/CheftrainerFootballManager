@@ -6,6 +6,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
 
@@ -22,12 +23,12 @@ public class TransferMarketUpdate extends CallableAbstract {
 	@Override
 	public void messageArrived(Message message) {
 		JSONObject messageContent = new JSONObject(message.getMessageContent());
-		String type = messageContent.getString("type");
+		String type = messageContent.getString(MIDs.TYPE);
 		switch (type) {
-		case "NewOffer":
+		case MIDs.NEW_OFFER:
 			newOffer(messageContent);
 			break;
-		case "Transaction":
+		case MIDs.TRANSACTION:
 			transaction(messageContent);
 			break;
 		}
@@ -39,7 +40,7 @@ public class TransferMarketUpdate extends CallableAbstract {
 	 * @custom.position /F0230/
 	 */
 	private void newOffer(JSONObject messageContent) {
-		JSONObject information = messageContent.getJSONObject("information");
+		JSONObject information = messageContent.getJSONObject(MIDs.INFORMATION);
 		Transaction transaction = new Transaction(information);
 		DatabaseRequests.addTransaction(transaction);
 	}
@@ -52,10 +53,10 @@ public class TransferMarketUpdate extends CallableAbstract {
 	 * @custom.position /F0260/
 	 */
 	private void transaction(JSONObject messageContent) {
-		JSONObject information = messageContent.getJSONObject("information");
-		boolean accept = information.getBoolean("Annehmen");
-		boolean remove = information.getBoolean("Entfernen");
-		Transaction tr = new Transaction(information.getJSONObject("Gebot"));
+		JSONObject information = messageContent.getJSONObject(MIDs.INFORMATION);
+		boolean accept = information.getBoolean(MIDs.ACCEPT);
+		boolean remove = information.getBoolean(MIDs.REMOVE);
+		Transaction tr = new Transaction(information.getJSONObject(MIDs.TRANSACTION));
 
 		//Remove will be done in transferPlayer
 		if (accept) {

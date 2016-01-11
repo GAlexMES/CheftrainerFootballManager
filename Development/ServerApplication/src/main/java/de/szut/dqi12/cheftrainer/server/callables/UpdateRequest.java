@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
@@ -27,9 +28,9 @@ public class UpdateRequest extends CallableAbstract {
 	@Override
 	public void messageArrived(Message message) {
 		JSONObject messageContent = new JSONObject(message.getMessageContent());
-		String update = messageContent.getString("update");
+		String update = messageContent.getString(MIDs.UPDATE);
 		switch (update) {
-		case "CommunityList":
+		case MIDs.COMMUNITY_LIST:
 			sendCommunityList();
 			break;
 		}
@@ -55,8 +56,8 @@ public class UpdateRequest extends CallableAbstract {
 		}
 		
 		JSONObject jsonMessage = new JSONObject();
-		jsonMessage.put("type", "init");
-		jsonMessage.put("information",communityListJSON );
+		jsonMessage.put(MIDs.TYPE, MIDs.INIT);
+		jsonMessage.put(MIDs.INFORMATION,communityListJSON );
 		
 		comminityMessage.setMessageContent(jsonMessage.toString());
 		mesController.sendMessage(comminityMessage);

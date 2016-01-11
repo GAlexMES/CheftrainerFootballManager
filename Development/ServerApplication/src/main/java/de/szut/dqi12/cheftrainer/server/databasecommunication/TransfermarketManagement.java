@@ -9,12 +9,19 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.server.Controller;
 
 public class TransfermarketManagement {
-	
+
 	private final static Logger LOGGER = Logger.getLogger(TransfermarketManagement.class);
 
 	// Given SGLConnection to database
@@ -45,19 +52,69 @@ public class TransfermarketManagement {
 
 	}
 
-	public void addTransaction(Transaction transaction) {
-		String sqlQuery = "INSERT INTO Gebote (Manager_ID, Spieler_ID, Gebot, Spielrunde_ID) " + "VALUES (?,?,?,?)";
-		int manager_ID = DatabaseRequests.getManagerID(transaction.getUserID(), transaction.getCommunityID());
+	public void addTransaction(Transaction tr) {
+		boolean isOnMarket = isPlayerOnMarket(tr.getPlayerSportalID(), tr.getCommunityID());
+		if (isOnMarket) {
+			try {
+				deleteTransaction(tr.getPlayerSportalID(), tr.getCommunityID(), tr.getManagerID());
+				String sqlQuery = "INSERT INTO Gebote (Manager_ID, Spieler_ID, Gebot, Spielrunde_ID) " + "VALUES (?,?,?,?)";
+				int manager_ID = DatabaseRequests.getManagerID(tr.getUserID(), tr.getCommunityID());
+				PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
+				pStatement.setInt(1, manager_ID);
+				pStatement.setInt(2, tr.getPlayerSportalID());
+				pStatement.setLong(3, tr.getOfferedPrice());
+				pStatement.setInt(4, tr.getCommunityID());
+				pStatement.executeUpdate();
+				LOGGER.info(manager_ID + " offered " + tr.getOfferedPrice() + "� for player " + tr.getPlayerSportalID());
+				sendTransactionsUpdate(tr.getCommunityID(), manager_ID);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void sendTransactionsUpdate(int communityID, int managerID)throws SQLException{
+		List<Transaction> transactions = getTransactions(communityID);
+		JSONArray transactionsJSON = new JSONArray();
+		for(Transaction tr : transactions){
+			transactionsJSON.put(tr.toJSON());
+		}
+		
+		JSONObject updateMessage = new JSONObject();
+		updateMessage.put(MIDs.TRANSACTIONS, transactionsJSON);
+		updateMessage.put(MIDs.COMMUNITY_ID, communityID);
+		
+		JSONObject messageContent = new JSONObject();
+		messageContent.put(MIDs.TYPE,MIDs.UPDATE_COMMUNITY);
+		messageContent.put(MIDs.UPDATE_TYPE,MIDs.TRANSACTIONS);
+		messageContent.put(MIDs.UPDATE_MESSAGE, updateMessage);
+		
+		
+		Message message = new Message(ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
+		message.setMessageContent(messageContent);
+		
+		DatabaseRequests.getUserName(managerID);
+		
+		String username = DatabaseRequests.getUserName(managerID);
+		Session session = Controller.getInstance().getSocketController().getSession(username);
+		session.getClientHandler().sendMessage(message);
+	}
+	
+	private boolean isPlayerOnMarket(int playerID, int communityID) {
+
+		String sqlQuery = "SELECT * FROM Transfermarkt WHERE Spieler_ID=? and Spielrunde_ID=?";
+		PreparedStatement pStatement;
 		try {
-			PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
-			pStatement.setInt(1, manager_ID);
-			pStatement.setInt(2, transaction.getPlayerSportalID());
-			pStatement.setLong(3, transaction.getOfferedPrice());
-			pStatement.setInt(4, transaction.getCommunityID());
-			pStatement.executeUpdate();
+			pStatement = sqlCon.prepareStatement(sqlQuery);
+			pStatement.setInt(1, playerID);
+			pStatement.setInt(2, communityID);
+			ResultSet rs = pStatement.executeQuery();
+			return !DatabaseRequests.isResultSetEmpty(rs);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+
+		return false;
 	}
 
 	public void doTransactions() {
@@ -108,31 +165,31 @@ public class TransfermarketManagement {
 			int communityID = t.getCommunityID();
 			int playerSportalID = t.getPlayerSportalID();
 			long price = t.getOfferedPrice();
-			
+
 			pStatement = sqlCon.prepareStatement(sqlQuery);
 			pStatement.setInt(1, communityID);
 			pStatement.setInt(2, playerSportalID);
 			ResultSet rs = pStatement.executeQuery();
-			boolean notOwned  = DatabaseRequests.isResultSetEmpty(rs);
-			if(!notOwned){
+			boolean notOwned = DatabaseRequests.isResultSetEmpty(rs);
+			if (!notOwned) {
 				rs = pStatement.executeQuery();
 				int managerID = rs.getInt("Manager_ID");
-				
+
 				deletPlayerFromTeam(managerID, playerSportalID);
-				updateManagerMoney(managerID,  price);
-				LOGGER.info("Removed Player "+playerSportalID+" from manager "+managerID+" and added "+price+" to him");
+				updateManagerMoney(managerID, price);
+				LOGGER.info("Removed Player " + playerSportalID + " from manager " + managerID + " and added " + price + " to him");
 			}
-			DatabaseRequests.addPlayerToManager(t.getManagerID(),playerSportalID, false);
-			updateManagerMoney(t.getManagerID(), price*-1);
-			LOGGER.info("Added Player "+playerSportalID+" to manager "+t.getManagerID()+" and subtracted him  "+price);
+			DatabaseRequests.addPlayerToManager(t.getManagerID(), playerSportalID, false);
+			updateManagerMoney(t.getManagerID(), price * -1);
+			LOGGER.info("Added Player " + playerSportalID + " to manager " + t.getManagerID() + " and subtracted him  " + price);
 			deleteTransactions(playerSportalID, communityID);
 			deletePlayerFromExchangeMarket(playerSportalID, communityID);
-			LOGGER.info("Deleted  Player "+playerSportalID+" market and deleted offers");
+			LOGGER.info("Deleted  Player " + playerSportalID + " market and deleted offers");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void deletePlayerFromExchangeMarket(int playerSportalID, int communityID) throws SQLException {
 		String sqlQuery = "DELETE FROM Transfermarkt WHERE Spielrunde_ID = ? AND Spieler_ID = ?";
 		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
@@ -153,21 +210,21 @@ public class TransfermarketManagement {
 		String addMoney = "UPDATE Manager" + " SET Budget = Budget + " + money + " WHERE ID = " + managerID;
 		sqlCon.sendQuery(addMoney);
 	}
-	
-	public void deleteTransactions(int playerSportalID, int communityID) throws SQLException{
+
+	public void deleteTransactions(int playerSportalID, int communityID) throws SQLException {
 		String sqlQuery = "DELETE FROM Gebote WHERE Spieler_ID = ? AND Spielrunde_ID = ?";
 		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
 		pStatement.setInt(1, playerSportalID);
-		pStatement.setInt(2,communityID);
-		pStatement.executeUpdate();
+		pStatement.setInt(2, communityID);
+		pStatement.execute();
 	}
 
 	public void deleteTransaction(int playerSportalID, int communityID, int managerID) throws SQLException {
 		String sqlQuery = "DELETE FROM Gebote WHERE Spieler_ID = ? AND Spielrunde_ID = ? AND Manager_ID = ?";
 		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
 		pStatement.setInt(1, playerSportalID);
-		pStatement.setInt(2,communityID);
-		pStatement.setInt(3,managerID);
+		pStatement.setInt(2, communityID);
+		pStatement.setInt(3, managerID);
 		pStatement.executeUpdate();
 	}
 

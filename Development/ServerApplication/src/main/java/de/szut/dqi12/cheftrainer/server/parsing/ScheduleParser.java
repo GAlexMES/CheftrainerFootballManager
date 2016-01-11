@@ -28,7 +28,6 @@ public class ScheduleParser {
 	private static String sportalRoot = "http://www.sportal.de";
 	private String scheduleRoot = sportalRoot
 			+ "/fussball/bundesliga/spielplan/spielplan-spieltag-";
-	private int matchday;
 	private List<Match> matches;
 
 	private final static Logger LOGGER = Logger.getLogger(ScheduleParser.class);
@@ -42,7 +41,7 @@ public class ScheduleParser {
 	 */
 	public List<Match> createSchedule(int matchday, int season)
 			throws MalformedURLException {
-		this.matchday = matchday;
+		LOGGER.error("needs matchday in line 59 matches.add(createMatch/e,season);). At the moment not implemented, because I dont know, if this is maybe dead code.");
 		matches = new ArrayList<>();
 		URL scheduleURL = new URL(scheduleRoot + matchday + "-saison-" + season
 				+ "-" + (season + 1));
@@ -53,8 +52,10 @@ public class ScheduleParser {
 					.getElementById("moduleResultContentResultateList");
 			Elements games = scheduleDiv.getElementsByAttributeValue("class",
 					"table_content table_content_wetten");
+			
 			for(Element e : games){
-				matches.add(createMatch(e,season));
+				matches.add(createMatch(e,season,matchday));
+				
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -67,9 +68,9 @@ public class ScheduleParser {
 	 * @param e the HTML Element from sportal.de
 	 * @return a new Match object
 	 */
-	private Match createMatch(Element e, int season) {
+	private Match createMatch(Element e, int season,int currentMatchDay) {
 		String date = e.select("span[class=date]").text();
-		if (matchday < 18) {
+		if (currentMatchDay < 18) {
 			date += String.valueOf(season);
 		} else {
 			date += String.valueOf(season + 1);
@@ -164,7 +165,7 @@ public class ScheduleParser {
 	}
 	
 	/**
-	 * This method parses the whole schedule for a season-
+	 * This method parses the whole schedule for a season.
 	 * @param season use 2015 for season 2015-2016
 	 * @return a Map, where the key is a matchday and returns a List of Matches for that matchday
 	 */
@@ -173,6 +174,7 @@ public class ScheduleParser {
 		url = url + season+"-"+(season+1);
 		Map<Integer,List<Match>> retval = new HashMap<>();
 		
+		int currentMatchDay = 0;
 		try {
 			Document doc = Jsoup.connect(url).get();
 			Elements matchDays = doc.getElementById("moduleResultContentResultateList").select("ul[class=table_head_spieltag]");
@@ -180,9 +182,10 @@ public class ScheduleParser {
 				int matchDayID = Integer.valueOf(matchDay.child(0).text().split(Pattern.quote("."))[0]);
 				retval.put(matchDayID,new ArrayList<>());
 				Element currentMatch = matchDay;
+				currentMatchDay ++;
 				for(int i = 0; i<9;i++){
 					Element match = currentMatch.nextElementSibling();
-					Match m = createMatch(match, season);
+					Match m = createMatch(match, season,currentMatchDay);
 					m.setSeason(season);
 					m.setMatchDay(matchDayID);
 					retval.get(matchDayID).add(m);

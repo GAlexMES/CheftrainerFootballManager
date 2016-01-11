@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 
@@ -87,8 +88,8 @@ public class UserManagement {
 	 */
 	public HashMap<String, Boolean> login(User user) {
 		HashMap<String,Boolean> retval = new HashMap<String,Boolean>();
-		retval.put("userExist", false);
-		retval.put("password", false);
+		retval.put(MIDs.USER_EXISTS, false);
+		retval.put(MIDs.PASSWORD, false);
 		String sqlQuery = "select Passwort FROM Nutzer where Nutzername = '"
 				+ user.getUserName() + "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
@@ -132,6 +133,24 @@ public class UserManagement {
 
 		}
 		return retval;
+	}
+	
+	/**
+	 * Searches in the database for the {@link User}, that owns the {@link Manager} with the given ID
+	 * @param managerID the ID of one of the managers, the wanted user owns.
+	 * @return the name of the {@link User}, that owns a {@link Manager} with the given ID.
+	 */
+	public String getUserName(int managerID){
+		String sqlQuery = "select Nutzername from Nutzer inner join Manager where Nutzer.ID = Manager.Nutzer_ID and Manager.ID="+managerID;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		try {
+			while (rs.next()) {
+				return rs.getString("Nutzername");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "";
 	}
 
 }
