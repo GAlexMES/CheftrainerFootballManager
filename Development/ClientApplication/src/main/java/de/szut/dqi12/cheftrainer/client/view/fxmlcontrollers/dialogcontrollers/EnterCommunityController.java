@@ -17,6 +17,7 @@ import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
@@ -69,12 +70,12 @@ public class EnterCommunityController {
 	private void createEnterCommunityMessage(){
 		Message enterCommunityMessage = new Message(ClientToServer_MessageIDs.COMMUNITY_AUTHENTIFICATION);
 		JSONObject enterJSON = new JSONObject();
-		enterJSON.put("type", "enter");
-		enterJSON.put("communityName", communityNameField.getText());
+		enterJSON.put(MIDs.TYPE, MIDs.ENTER);
+		enterJSON.put(MIDs.COMMUNITY_NAME, communityNameField.getText());
 		String passwordmd5;
 		try {
 			passwordmd5 = CipherFactory.getMD5(passwordField.getText());
-			enterJSON.put("password", passwordmd5);
+			enterJSON.put(MIDs.PASSWORD, passwordmd5);
 			enterCommunityMessage.setMessageContent(enterJSON);
 			Controller.getInstance().getSession().getClientSocket().sendMessage(enterCommunityMessage);
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {

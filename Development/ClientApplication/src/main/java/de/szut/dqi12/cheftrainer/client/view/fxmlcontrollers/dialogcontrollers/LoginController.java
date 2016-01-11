@@ -37,6 +37,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -161,11 +162,11 @@ public class LoginController implements ControllerInterface {
 		Message loginMessage = new Message(
 				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
 		JSONObject loginInfo = new JSONObject();
-		loginInfo.put("authentificationType", "login");
-		loginInfo.put("username", loginField.getText());
+		loginInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.LOGIN);
+		loginInfo.put(MIDs.USERNAME, loginField.getText());
 		try {
 			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
-			loginInfo.put("password", passwordMD5);
+			loginInfo.put(MIDs.PASSWORD, passwordMD5);
 			loginMessage.setMessageContent(loginInfo);
 			Thread.sleep(1500);
 			serverCon.sendMessage(loginMessage);
