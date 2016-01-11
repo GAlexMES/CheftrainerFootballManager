@@ -163,7 +163,7 @@ public class LoginController implements ControllerInterface {
 				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
 		JSONObject loginInfo = new JSONObject();
 		loginInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.LOGIN);
-		loginInfo.put("username", loginField.getText());
+		loginInfo.put(MIDs.USERNAME, loginField.getText());
 		try {
 			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
 			loginInfo.put(MIDs.PASSWORD, passwordMD5);

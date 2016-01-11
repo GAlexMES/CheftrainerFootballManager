@@ -136,8 +136,8 @@ public class CommunityAuthentification extends CallableAbstract {
 	 * @custom.position /F0012/
 	 */
 	private void createNewCommunity(JSONObject communityJSON) {
-		String communityName = communityJSON.getString("communityName");
-		String communityPassword = communityJSON.getString("communityPassword");
+		String communityName = communityJSON.getString(MIDs.COMMUNITY_NAME);
+		String communityPassword = communityJSON.getString(MIDs.PASSWORD);
 		int userID = mesController.getSession().getUserID();
 		boolean communityCreated = DatabaseRequests.createNewCommunity(communityName, communityPassword, userID);
 
@@ -149,8 +149,8 @@ public class CommunityAuthentification extends CallableAbstract {
 		Message creationACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
 
 		JSONObject creationACKJSON = new JSONObject();
-		creationACKJSON.put("type", "creation");
-		creationACKJSON.put("created", communityCreated);
+		creationACKJSON.put(MIDs.TYPE, MIDs.CREATION);
+		creationACKJSON.put(MIDs.CREATED, communityCreated);
 
 		creationACK.setMessageContent(creationACKJSON);
 

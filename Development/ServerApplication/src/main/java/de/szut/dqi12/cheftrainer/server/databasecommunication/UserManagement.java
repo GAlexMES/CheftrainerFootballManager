@@ -88,8 +88,8 @@ public class UserManagement {
 	 */
 	public HashMap<String, Boolean> login(User user) {
 		HashMap<String,Boolean> retval = new HashMap<String,Boolean>();
-		retval.put("userExist", false);
-		retval.put("password", false);
+		retval.put(MIDs.USER_EXISTS, false);
+		retval.put(MIDs.PASSWORD, false);
 		String sqlQuery = "select Passwort FROM Nutzer where Nutzername = '"
 				+ user.getUserName() + "'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
