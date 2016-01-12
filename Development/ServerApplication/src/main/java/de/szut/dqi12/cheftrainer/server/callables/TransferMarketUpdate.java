@@ -3,9 +3,12 @@ package de.szut.dqi12.cheftrainer.server.callables;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
+import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+import de.szut.dqi12.cheftrainer.connectorlib.messagedummies.NewPlayerOnMarketMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
@@ -31,6 +34,8 @@ public class TransferMarketUpdate extends CallableAbstract {
 		case MIDs.TRANSACTION:
 			transaction(messageContent);
 			break;
+		case MIDs.NEW_MARKET_PLAYER:
+			newMarketPlayer(messageContent);
 		}
 	}
 
@@ -66,5 +71,15 @@ public class TransferMarketUpdate extends CallableAbstract {
 				DatabaseRequests.removeTransaction(tr);
 			}
 		}
+	}
+	
+	/**
+	 * This function is called, when a client wants to add a new {@link Player} to the {@link Market}.
+	 * It will call a SQL Class, which will check, if the transmitted value is valid and will add the {@link Player} to the {@link Market}.
+	 * @param messageContent the JSON, that was sent by the {@link Client}
+	 */
+	private void newMarketPlayer(JSONObject messageContent){
+		NewPlayerOnMarketMessage npomm = new NewPlayerOnMarketMessage(messageContent);
+		DatabaseRequests.putPlayerOnExchangeMarket(npomm.getPlayer(),npomm.getCommunityID(),npomm.getManagerID());
 	}
 }

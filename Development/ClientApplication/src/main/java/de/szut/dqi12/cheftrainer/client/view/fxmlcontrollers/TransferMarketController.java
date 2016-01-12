@@ -1,5 +1,9 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
+import java.util.List;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,16 +20,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.AddPlayerToMarketController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.OfferDialog;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
 /**
  * This is the controller of the transfer-market gui-component.
@@ -52,6 +57,10 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 
 	private boolean updateIsBlocked = false;
 
+	private ObservableList<MarketPlayer> tableObservable;
+	
+	private Stage addPlayerStage;
+	
 	/**
 	 * init() function, which comes from the {@link ControllerInterface}. It is
 	 * not used here.
@@ -60,6 +69,22 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	public void init() {
 	}
 
+	
+	/**
+	 * This functions loads the current {@link Market} from the {@link Session} and creates a {@link ObservableList} from it.
+	 * @return a new {@link ObservableList} with all {@link Player}s, which are on the current {@link Market}.
+	 */
+	private ObservableList<MarketPlayer> getObservable() {
+		tableObservable = FXCollections.observableArrayList();
+		Community currentCommunity = Controller.getInstance().getSession().getCurrentCommunity();
+		List<Player> playerList = currentCommunity.getMarket().getPlayers();
+		for (Player p : playerList) {
+			tableObservable.add(p.getMarketPlayer());
+		}
+		return tableObservable;
+	}
+	
+	
 	/**
 	 * This function is the initialize function of FXML. It is called from FXML,
 	 * when this view should be displayed. This function fetches the players,
@@ -68,9 +93,8 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	 */
 	@FXML
 	public void initialize() {
-
 		imageController = new ImageController(this);
-		marketTable.setItems(Controller.getInstance().getSession().getMarketPlayerObservable());
+		marketTable.setItems(getObservable());
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("Player"));
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
 		worthCol.setCellValueFactory(data -> data.getValue().getWerth());
@@ -162,15 +186,26 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("dialogFXML/AddPlayerToTransfermarket.fxml"));
 			GridPane root = (GridPane) fxmlLoader.load();
-			Stage stage = new Stage();
-			stage.setTitle("Your Players");
-			stage.setScene(new Scene(root));
-			stage.setResizable(true);
-			stage.show();
+			AddPlayerToMarketController aptmc = ((AddPlayerToMarketController)fxmlLoader.getController());
+			aptmc.setTmc(this);
+			addPlayerStage = new Stage();
+			addPlayerStage.setTitle("Your Players");
+			addPlayerStage.setScene(new Scene(root));
+			addPlayerStage.setResizable(true);
+			addPlayerStage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
+	public void addPlayerToTable(MarketPlayer mp){
+		tableObservable.add(mp);
+	}
+	
+	public void removePlayerToTable(MarketPlayer mp){
+		tableObservable.remove(mp);
+	}
+	
 
 	/**
 	 * Is called when the Button "show offers" is called. Opens a dialog which

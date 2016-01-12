@@ -59,7 +59,6 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 					AlertUtils.COMMUNITY_ENTER_WORKED_MESSAGE,
 					AlertType.INFORMATION);
 			GUIController.getInstance().closeCurrentDialog();
-//			UpdateUtils.getCommunityUpdate();
 		}
 	}
 
@@ -75,7 +74,6 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 					AlertUtils.COMMUNITY_CREATION_WORKED_MESSAGE,
 					AlertType.CONFIRMATION);
 			GUIController.getInstance().closeCurrentDialog();
-//			UpdateUtils.getCommunityUpdate();
 		} else {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_CREATION_TITLE,
 					AlertUtils.COMMUNITY_CREATION_WORKED_NOT_HEAD,

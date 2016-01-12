@@ -19,11 +19,15 @@ import javafx.scene.layout.VBox;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.TransferMarketController;
+import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.messagedummies.NewPlayerOnMarketMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.serverside.Server;
 
 public class AddPlayerToMarketController implements ImageUpdate {
 
@@ -47,7 +51,10 @@ public class AddPlayerToMarketController implements ImageUpdate {
 
 	private Community currentCommunity;
 	private Market market;
+	private TransferMarketController tmc;
 
+	private ObservableList<MarketPlayer> tableObservable;
+	
 	public AddPlayerToMarketController() {
 		Controller controller = Controller.getInstance();
 		currentCommunity = controller.getSession().getCurrentCommunity();
@@ -56,17 +63,55 @@ public class AddPlayerToMarketController implements ImageUpdate {
 	}
 
 	private ObservableList<MarketPlayer> getObservable() {
-		ObservableList<MarketPlayer> tableData = FXCollections.observableArrayList();
+		tableObservable = FXCollections.observableArrayList();
 		Manager manager = currentCommunity.getUsersManager();
 		List<Player> playerList = manager.getPlayers();
 		for (Player p : playerList) {
-			tableData.add(p.getMarketPlayer());
+			tableObservable.add(p.getMarketPlayer());
 		}
-		return tableData;
+		return tableObservable;
 	}
 
 	private void triggerStatus(Player mp) {
-		System.out.println("Test");
+		if (mp.isOnMarket()) {
+			removeFromMarket(mp);
+			tmc.removePlayerToTable(mp.getMarketPlayer());
+		} else {
+			addToMarket(mp);
+			tmc.addPlayerToTable(mp.getMarketPlayer());
+		}
+		tableObservable.remove(mp.getMarketPlayer());
+		tableObservable.add(mp.getMarketPlayer());
+	}
+	
+	// TODO: complete Javadoc
+	/**
+	 * This function is called, when the "remove player from market" button was pressed.
+	 * 
+	 * The function will create a Message and will send it to the {@link Server}.
+	 * @param p the {@link Player}r, which should be added to the market.
+	 */
+	private void removeFromMarket(Player p){
+		//TODO: implement code to remove a player from transfer market
+	}
+	
+	/**
+	 * This function is called, when the "ad player to market" button was pressed.
+	 * The function will create a {@link NewPlayerOnMarketMessage} and will send it to the {@link Server}.
+	 * @param p the {@link Player}r, which should be added to the market.
+	 */
+	private void addToMarket(Player p){
+		NewPlayerOnMarketMessage npomm = new NewPlayerOnMarketMessage();
+		npomm.setPlayer(p);
+		int managerID = currentCommunity.getUsersManager().getID();
+		npomm.setManagerID(managerID);
+		int communityID = currentCommunity.getCommunityID();
+		npomm.setCommunityID(communityID);
+
+		Client clientSocket = Controller.getInstance().getSession().getClientSocket();
+		clientSocket.sendMessage(npomm);
+
+		market.addPlayer(p);
 	}
 
 	private boolean isPlayerOnMarket(int sportalId) {
@@ -76,7 +121,6 @@ public class AddPlayerToMarketController implements ImageUpdate {
 
 	@FXML
 	public void initialize() {
-
 		imageController = new ImageController(this);
 		ObservableList<MarketPlayer> tableData = getObservable();
 		playerTable.setItems(tableData);
@@ -93,7 +137,7 @@ public class AddPlayerToMarketController implements ImageUpdate {
 					if (player != null) {
 						int sportalID = player.getSportalID();
 						boolean isOnMarket = isPlayerOnMarket(sportalID);
-
+						player.setOnMarket(isOnMarket);
 						super.updateItem(player, empty);
 						if (empty) {
 							setGraphic(null);
@@ -173,4 +217,7 @@ public class AddPlayerToMarketController implements ImageUpdate {
 
 	}
 
+	public void setTmc(TransferMarketController tmc) {
+		this.tmc = tmc;
+	}
 }
