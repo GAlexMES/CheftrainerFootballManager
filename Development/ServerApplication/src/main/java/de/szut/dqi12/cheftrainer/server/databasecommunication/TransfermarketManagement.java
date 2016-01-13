@@ -38,6 +38,7 @@ public class TransfermarketManagement {
 	}
 
 	public void putPlayerOnExchangeMarket(Player p, int communityID, int ownerID) {
+		
 		try {
 			String sqlQuery = "INSERT INTO Transfermarkt (Spielrunde_ID, Spieler_ID, Min_Preis, Inhaber_ID) VALUES(?,?,?,?)";
 			PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
@@ -101,7 +102,6 @@ public class TransfermarketManagement {
 	}
 	
 	private boolean isPlayerOnMarket(int playerID, int communityID) {
-
 		String sqlQuery = "SELECT * FROM Transfermarkt WHERE Spieler_ID=? and Spielrunde_ID=?";
 		PreparedStatement pStatement;
 		try {
@@ -189,8 +189,9 @@ public class TransfermarketManagement {
 			e.printStackTrace();
 		}
 	}
+	
 
-	private void deletePlayerFromExchangeMarket(int playerSportalID, int communityID) throws SQLException {
+	public void deletePlayerFromExchangeMarket(int playerSportalID, int communityID) throws SQLException {
 		String sqlQuery = "DELETE FROM Transfermarkt WHERE Spielrunde_ID = ? AND Spieler_ID = ?";
 		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
 		pStatement.setInt(1, communityID);
