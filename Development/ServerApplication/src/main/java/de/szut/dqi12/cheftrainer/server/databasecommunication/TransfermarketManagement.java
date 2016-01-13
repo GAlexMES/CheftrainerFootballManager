@@ -189,8 +189,9 @@ public class TransfermarketManagement {
 			e.printStackTrace();
 		}
 	}
+	
 
-	private void deletePlayerFromExchangeMarket(int playerSportalID, int communityID) throws SQLException {
+	public void deletePlayerFromExchangeMarket(int playerSportalID, int communityID) throws SQLException {
 		String sqlQuery = "DELETE FROM Transfermarkt WHERE Spielrunde_ID = ? AND Spieler_ID = ?";
 		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
 		pStatement.setInt(1, communityID);

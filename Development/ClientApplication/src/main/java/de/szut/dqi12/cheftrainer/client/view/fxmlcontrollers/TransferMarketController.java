@@ -202,7 +202,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 		tableObservable.add(mp);
 	}
 	
-	public void removePlayerToTable(MarketPlayer mp){
+	public void removePlayerFromTable(MarketPlayer mp){
 		tableObservable.remove(mp);
 	}
 	

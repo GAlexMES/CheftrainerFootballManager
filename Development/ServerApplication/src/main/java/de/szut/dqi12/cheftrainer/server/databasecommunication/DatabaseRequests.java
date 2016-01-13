@@ -212,6 +212,10 @@ public class DatabaseRequests {
 		transfermarktManagement.transferPlayer(tr);
 	}
 	
+	public static void deletePlayerFromMarket(Player p, int communityID) throws SQLException {
+		transfermarktManagement.deletePlayerFromExchangeMarket(p.getSportalID(),communityID);
+		transfermarktManagement.deleteTransactions(p.getSportalID(), communityID);
+	}
 	public static void removeTransaction(Transaction tr) {
 		try {
 			transfermarktManagement.deleteTransaction(tr.getPlayerSportalID(), tr.getCommunityID(),tr.getManagerID());

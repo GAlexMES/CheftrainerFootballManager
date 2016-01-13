@@ -27,7 +27,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.messagedummies.NewPlayerOnMarketMessage;
-import de.szut.dqi12.cheftrainer.connectorlib.serverside.Server;
 
 public class AddPlayerToMarketController implements ImageUpdate {
 
@@ -54,7 +53,7 @@ public class AddPlayerToMarketController implements ImageUpdate {
 	private TransferMarketController tmc;
 
 	private ObservableList<MarketPlayer> tableObservable;
-	
+
 	public AddPlayerToMarketController() {
 		Controller controller = Controller.getInstance();
 		currentCommunity = controller.getSession().getCurrentCommunity();
@@ -72,46 +71,36 @@ public class AddPlayerToMarketController implements ImageUpdate {
 		return tableObservable;
 	}
 
+	private void refreshTable() {
+		playerTable.getColumns().get(0).setVisible(false);
+		playerTable.getColumns().get(0).setVisible(true);
+	}
+
 	private void triggerStatus(Player mp) {
 		if (mp.isOnMarket()) {
-			removeFromMarket(mp);
-			tmc.removePlayerToTable(mp.getMarketPlayer());
+			sentMessageToServer(mp, false);
+			market.removePlayer(mp);
+			tmc.removePlayerFromTable(mp.getMarketPlayer());
 		} else {
-			addToMarket(mp);
+			sentMessageToServer(mp, true);
+			market.addPlayer(mp);
 			tmc.addPlayerToTable(mp.getMarketPlayer());
 		}
-		tableObservable.remove(mp.getMarketPlayer());
-		tableObservable.add(mp.getMarketPlayer());
+
+		refreshTable();
 	}
-	
-	// TODO: complete Javadoc
-	/**
-	 * This function is called, when the "remove player from market" button was pressed.
-	 * 
-	 * The function will create a Message and will send it to the {@link Server}.
-	 * @param p the {@link Player}r, which should be added to the market.
-	 */
-	private void removeFromMarket(Player p){
-		//TODO: implement code to remove a player from transfer market
-	}
-	
-	/**
-	 * This function is called, when the "ad player to market" button was pressed.
-	 * The function will create a {@link NewPlayerOnMarketMessage} and will send it to the {@link Server}.
-	 * @param p the {@link Player}r, which should be added to the market.
-	 */
-	private void addToMarket(Player p){
+
+	private void sentMessageToServer(Player p, boolean addPlayer) {
 		NewPlayerOnMarketMessage npomm = new NewPlayerOnMarketMessage();
 		npomm.setPlayer(p);
 		int managerID = currentCommunity.getUsersManager().getID();
 		npomm.setManagerID(managerID);
 		int communityID = currentCommunity.getCommunityID();
 		npomm.setCommunityID(communityID);
+		npomm.setAddPlayer(addPlayer);
 
 		Client clientSocket = Controller.getInstance().getSession().getClientSocket();
 		clientSocket.sendMessage(npomm);
-
-		market.addPlayer(p);
 	}
 
 	private boolean isPlayerOnMarket(int sportalId) {
@@ -122,8 +111,8 @@ public class AddPlayerToMarketController implements ImageUpdate {
 	@FXML
 	public void initialize() {
 		imageController = new ImageController(this);
-		ObservableList<MarketPlayer> tableData = getObservable();
-		playerTable.setItems(tableData);
+		getObservable();
+		playerTable.setItems(tableObservable);
 
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
 		worthCol.setCellValueFactory(data -> data.getValue().getWerth());
