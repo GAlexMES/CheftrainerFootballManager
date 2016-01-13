@@ -1,48 +1,36 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import javafx.event.ActionEvent;
-import javafx.event.Event;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-import org.json.JSONObject;
-
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.AddPlayerToMarketController;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.OfferDialog;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
 /**
  * This is the controller of the transfer-market gui-component.
@@ -61,7 +49,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	@FXML
 	private TableColumn<MarketPlayer, String> pointsCol;
 	@FXML
-	private TableColumn<MarketPlayer, String> werthCol;
+	private TableColumn<MarketPlayer, String> worthCol;
 
 	private MarketPlayer selectedMarketPlayer;
 
@@ -69,6 +57,10 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 
 	private boolean updateIsBlocked = false;
 
+	private ObservableList<MarketPlayer> tableObservable;
+	
+	private Stage addPlayerStage;
+	
 	/**
 	 * init() function, which comes from the {@link ControllerInterface}. It is
 	 * not used here.
@@ -77,20 +69,35 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	public void init() {
 	}
 
+	
 	/**
-	 * This function is the initialize funktion of FXML. It is called from FXML,
+	 * This functions loads the current {@link Market} from the {@link Session} and creates a {@link ObservableList} from it.
+	 * @return a new {@link ObservableList} with all {@link Player}s, which are on the current {@link Market}.
+	 */
+	private ObservableList<MarketPlayer> getObservable() {
+		tableObservable = FXCollections.observableArrayList();
+		Community currentCommunity = Controller.getInstance().getSession().getCurrentCommunity();
+		List<Player> playerList = currentCommunity.getMarket().getPlayers();
+		for (Player p : playerList) {
+			tableObservable.add(p.getMarketPlayer());
+		}
+		return tableObservable;
+	}
+	
+	
+	/**
+	 * This function is the initialize function of FXML. It is called from FXML,
 	 * when this view should be displayed. This function fetches the players,
 	 * which are on the {@link Market}, for the selected {@link Community}.
 	 * After that, the {@link Player} will be added to the table.
 	 */
 	@FXML
 	public void initialize() {
-
 		imageController = new ImageController(this);
-		marketTable.setItems(Controller.getInstance().getSession().getMarketPlayerObservable());
+		marketTable.setItems(getObservable());
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("Player"));
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
-		werthCol.setCellValueFactory(data -> data.getValue().getWerth());
+		worthCol.setCellValueFactory(data -> data.getValue().getWerth());
 
 		marketTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> playerPressed(newValue));
 
@@ -149,7 +156,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	}
 
 	private void onDoubleClick() {
-		// INDEXE MUESSTEN MOEGLICHERWEISE UEBERARBEITET WERDEN
+		// TODO: INDEXE MUESSTEN MOEGLICHERWEISE UEBERARBEITET WERDEN
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("sourcesFXML/PlayerDetailedFrame.fxml"));
 			GridPane root = (GridPane) fxmlLoader.load();
@@ -176,73 +183,29 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	 */
 	@FXML
 	public void addPlayer() {
-		ArrayList<Player> players = (ArrayList<Player>) Controller.getInstance().getSession().getCurrentManager().getPlayers();
-
-		ScrollPane sp = new ScrollPane();
-		VBox content = new VBox();
-		sp.setContent(content);
-
-		ImageController iController = new ImageController(this);
-		for (Player player : players) {
-
-			PlayerLabel l = new PlayerLabel();
-			l.setPlayerId(player.getID());
-			l.setPosition(player.getPosition());
-			l.setImage(iController.getPicture(player));
-			player.setLabel(l);
-			content.getChildren().add(l);
-
-			l.setOnMouseClicked(new EventHandler<Event>() {
-
-				@Override
-				public void handle(Event event) {
-
-					GridPane dlog = new GridPane();
-					dlog.add(new Label("Player:"), 1, 0);
-					dlog.add(new Label("Price:"), 2, 0);
-					dlog.add(new Label(player.getName()), 1, 1);
-					TextField field = new TextField();
-					field.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
-						public void handle(KeyEvent t) {
-							char ar[] = t.getCharacter().toCharArray();
-							char ch = ar[t.getCharacter().toCharArray().length - 1];
-							if (!(ch >= '0' && ch <= '9')) {
-								t.consume();
-							}
-						}
-					});
-					dlog.add(field, 2, 1);
-					Button butt = new Button("send");
-					dlog.add(butt, 3, 1);
-					Stage stage = new Stage();
-					Scene s1 = new Scene(dlog);
-					stage.setTitle("offer");
-					stage.setScene(s1);
-					stage.initModality(Modality.WINDOW_MODAL);
-					butt.setOnAction(new EventHandler<ActionEvent>() {
-
-						@Override
-						public void handle(ActionEvent event) {
-							Controller.getInstance().setPlayeronMarket(player, Integer.valueOf(field.getText()));
-							stage.close();
-						}
-					});
-					stage.showAndWait();
-
-				}
-			});
-
+		try {
+			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("dialogFXML/AddPlayerToTransfermarket.fxml"));
+			GridPane root = (GridPane) fxmlLoader.load();
+			AddPlayerToMarketController aptmc = ((AddPlayerToMarketController)fxmlLoader.getController());
+			aptmc.setTmc(this);
+			addPlayerStage = new Stage();
+			addPlayerStage.setTitle("Your Players");
+			addPlayerStage.setScene(new Scene(root));
+			addPlayerStage.setResizable(true);
+			addPlayerStage.show();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		Stage dialogStage = new Stage();
-		// dialogStage.setResizable(false);
-		dialogStage.setTitle("your players");
-		dialogStage.initModality(Modality.WINDOW_MODAL);
-		Scene scene = new Scene(sp);
-		dialogStage.setScene(scene);
-		dialogStage.showAndWait();
-
 	}
+	
+	public void addPlayerToTable(MarketPlayer mp){
+		tableObservable.add(mp);
+	}
+	
+	public void removePlayerFromTable(MarketPlayer mp){
+		tableObservable.remove(mp);
+	}
+	
 
 	/**
 	 * Is called when the Button "show offers" is called. Opens a dialog which
@@ -250,78 +213,8 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	 */
 	@FXML
 	public void showOffers() {
-		Session session = Controller.getInstance().getSession();
-		Community con = session.getCurrentCommunity();
-		List<Transaction> transactions = con.getMarket().getTransactions();
-		GridPane dialog = new GridPane();
-		Button but;
-		int index = 1;
-		dialog.add(new Label("player"), 0, 0);
-		dialog.add(new Label("price"), 1, 0);
-		dialog.add(new Label("action"), 2, 0);
-		for (Transaction tr : transactions) {
-			tr.takeInformation(session);
-			if (tr.isOutgoing()) {
-				but = new Button("remove offer");
-				but.setOnAction(new EventHandler<ActionEvent>() {
-					@Override
-					public void handle(ActionEvent event) {
-
-						sendAnswerOffer(tr, false, true);
-					}
-				});
-			} else {
-				but = new Button("accept offer");
-				but.setOnAction(new EventHandler<ActionEvent>() {
-
-					@Override
-					public void handle(ActionEvent event) {
-
-						sendAnswerOffer(tr, true, true);
-					}
-				});
-			}
-			// TODO: gebot ablehnen k?nnen
-			// else if(tr.isOutgoing()) {
-			// but = new Button("denie offer");
-			// but.setOnAction(new EventHandler<ActionEvent>() {
-			//
-			// @Override
-			// public void handle(ActionEvent event) {
-			//
-			// //sendAnswerOffer(tr, true, true);
-			// }
-			// });
-			// }
-			dialog.add(new Label(tr.getPlayer().getName()), 0, index);
-			dialog.add(new Label(String.valueOf(tr.getOfferedPrice())), 1, index);
-			dialog.add(but, 2, index);
-			index++;
-		}
-
-		Stage dialogStage = new Stage();
-		dialogStage.setResizable(false);
-		dialogStage.setTitle("offers");
-		dialogStage.initModality(Modality.WINDOW_MODAL);
-		Scene scene = new Scene(dialog);
-		dialogStage.setScene(scene);
-		dialogStage.showAndWait();
-	}
-
-	private void sendAnswerOffer(Transaction tr, boolean accept, boolean remove) {
-		JSONObject transactionJSON = new JSONObject();
-		transactionJSON.put(MIDs.TRANSACTION, tr.toJSON());
-		transactionJSON.put(MIDs.ACCEPT, accept);
-		transactionJSON.put(MIDs.REMOVE, remove);
-
-		JSONObject messageContent = new JSONObject();
-		messageContent.put(MIDs.TYPE, MIDs.TRANSACTION);
-		messageContent.put(MIDs.INFORMATION, transactionJSON);
-
-		Message message = new Message(ClientToServer_MessageIDs.TRANSFER_MARKET);
-		message.setMessageContent(messageContent);
-
-		Controller.getInstance().sendMessageToServer(message);
+		OfferDialog offerDialog = new OfferDialog();
+		offerDialog.showOfferDialog();
 	}
 
 	@Override

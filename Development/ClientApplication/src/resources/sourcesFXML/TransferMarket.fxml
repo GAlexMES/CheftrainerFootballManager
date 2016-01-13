@@ -24,7 +24,7 @@
 			<columns>
 				<TableColumn fx:id="nameCol"  prefWidth="-1.0" text="Player" />
 				<TableColumn fx:id="pointsCol"  prefWidth="-1.0" text="Points" />
-				<TableColumn fx:id="werthCol"  prefWidth="-1.0" text="Worth" />
+				<TableColumn fx:id="worthCol"  prefWidth="-1.0" text="Worth" />
 			</columns>
          <columnResizePolicy>
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

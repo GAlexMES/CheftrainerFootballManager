@@ -51,17 +51,17 @@ public class UserAuthentificationACK extends CallableAbstract {
 	 */
 	private void login(JSONObject authentificationAck) {
 		GUIController guiController = GUIController.getInstance();
-		if (authentificationAck.getBoolean("userExist")
-				&& authentificationAck.getBoolean("password")) {
+		if (authentificationAck.getBoolean(MIDs.USER_EXISTS)
+				&& authentificationAck.getBoolean(MIDs.PASSWORD)) {
 			Controller.getInstance().getSession()
-					.setUserID(authentificationAck.getInt("UserID"));
+					.setUserID(authentificationAck.getInt(MIDs.USER_ID));
 			guiController.showMainApplication();
 			UpdateUtils.getCommunityUpdate();
-		} else if (!authentificationAck.getBoolean("userExist")) {
+		} else if (!authentificationAck.getBoolean(MIDs.USER_EXISTS)) {
 			AlertUtils.createSimpleDialog("Login failed",
 					"Ther occured a problem during your login.",
 					AlertUtils.LOGIN_WRONG_USER, AlertType.ERROR);
-		} else if (!authentificationAck.getBoolean("password")) {
+		} else if (!authentificationAck.getBoolean(MIDs.PASSWORD)) {
 			AlertUtils.createSimpleDialog("Login failed",
 					"Ther occured a problem during your login.",
 					AlertUtils.LOGIN_WRONG_PASSWORD, AlertType.ERROR);
@@ -81,21 +81,21 @@ public class UserAuthentificationACK extends CallableAbstract {
 				.getRegistrationController();
 		// when the registration was possible, the registration dialog will be
 		// closed.
-		if (authentificationAck.getBoolean("authentificate")) {
+		if (authentificationAck.getBoolean(MIDs.AUTHENTIFICATE)) {
 			regController.closeDialog();
 		}
 		// when the registration was not possible, a alert dialog shows a
 		// message.
 		else {
 			String errorMessage = "";
-			if (authentificationAck.getBoolean("existUser")
-					&& authentificationAck.getBoolean("existEMail")) {
+			if (authentificationAck.getBoolean(MIDs.USER_EXISTS)
+					&& authentificationAck.getBoolean(MIDs.EMAIL_EXISTS)) {
 				errorMessage = "Your E-Mail Adress and your user name are already in use.";
-			} else if (authentificationAck.getBoolean("existUser")
-					&& !authentificationAck.getBoolean("existEMail")) {
+			} else if (authentificationAck.getBoolean(MIDs.USER_EXISTS)
+					&& !authentificationAck.getBoolean(MIDs.EMAIL_EXISTS)) {
 				errorMessage = "Your user name is already in use. Please chose a other one.";
-			} else if (!authentificationAck.getBoolean("existUser")
-					&& authentificationAck.getBoolean("existEMail")) {
+			} else if (!authentificationAck.getBoolean(MIDs.USER_EXISTS)
+					&& authentificationAck.getBoolean(MIDs.EMAIL_EXISTS)) {
 				errorMessage = "Your E-Mail is already in use. Do you already have an account?";
 			} else {
 				errorMessage = "A unknown error occured";
