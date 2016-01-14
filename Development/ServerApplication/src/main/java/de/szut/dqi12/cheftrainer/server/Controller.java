@@ -11,12 +11,12 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageI
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.SQLConnection;
-import de.szut.dqi12.cheftrainer.server.timetasks.TimeTask;
+import de.szut.dqi12.cheftrainer.server.timetasks.TransfermarktTimeTask;
 import de.szut.dqi12.cheftrainer.server.usercommunication.SocketController;
 
 /**
  * This class is the controller class, which is very important for the start of the application.
- * The class tries to create a connection to the database, it creates the {@link SocketController}, and the {@link TimeTask}.
+ * The class tries to create a connection to the database, it creates the {@link SocketController}, and the {@link TransfermarktTimeTask}.
  * @author Alexander Brennecke
  *
  */
@@ -27,7 +27,7 @@ public class Controller {
 	private SQLConnection sqlConnection;
 	
 	@SuppressWarnings("unused")
-	private TimeTask timerTask;
+	private TransfermarktTimeTask timerTask;
 
 	private final static Logger LOGGER = Logger.getLogger(Controller.class);
 
@@ -89,7 +89,7 @@ public class Controller {
 	}
 
 	/**
-	 * Creates a new {@link TimeTask} object, with tomorrow 1:00 am as trigger time.
+	 * Creates a new {@link TransfermarktTimeTask} object, with tomorrow 1:00 am as trigger time.
 	 */
 	public void newTimerTask() {
 		Calendar cal =  Calendar.getInstance();
@@ -101,6 +101,6 @@ public class Controller {
 		cal.add(Calendar.DAY_OF_MONTH, 1);
 		
 		Date newTimer = cal.getTime();
-		timerTask = new TimeTask(newTimer);
+		timerTask = new TransfermarktTimeTask(newTimer);
 	}
 }

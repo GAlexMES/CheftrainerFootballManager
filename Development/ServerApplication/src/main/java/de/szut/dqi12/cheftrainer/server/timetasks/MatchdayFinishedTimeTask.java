@@ -5,15 +5,13 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import de.szut.dqi12.cheftrainer.server.Controller;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
 
-public class TimeTask {
+public class MatchdayFinishedTimeTask {
 	Toolkit toolkit;
 
 	Timer timer;
 
-	public TimeTask(Date date) {
+	public MatchdayFinishedTimeTask(Date date) {
 		toolkit = Toolkit.getDefaultToolkit();
 		timer = new Timer();
 		long nextTime = date.getTime() - (new Date()).getTime();
@@ -22,9 +20,8 @@ public class TimeTask {
 
 	class ReceiverTask extends TimerTask {
 		public void run() {
-			System.out.println("do transactions");
-			DatabaseRequests.doTransactions();
-			Controller.getInstance().newTimerTask();
+			System.out.println("I must do the point calculation after a match day");
 		}
 	}
 }
+

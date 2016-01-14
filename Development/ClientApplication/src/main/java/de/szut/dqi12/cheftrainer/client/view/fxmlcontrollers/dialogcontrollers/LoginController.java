@@ -8,6 +8,7 @@ import java.util.List;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -21,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import org.json.JSONObject;
 
@@ -249,7 +251,13 @@ public class LoginController implements ControllerInterface {
 			registrationController.setLoginController(this);
 
 			dialogStage.showAndWait();
-
+			dialogStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+	            @Override
+	            public void handle(WindowEvent t) {
+	                Platform.exit();
+	                System.exit(0);
+	            }
+	        });
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
