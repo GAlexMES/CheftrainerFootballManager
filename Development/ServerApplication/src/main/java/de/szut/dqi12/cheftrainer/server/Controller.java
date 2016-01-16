@@ -11,6 +11,8 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageI
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
+import de.szut.dqi12.cheftrainer.server.timetasks.MatchdayFinishedTimeTask;
+import de.szut.dqi12.cheftrainer.server.timetasks.MatchdayStartsTimeTask;
 import de.szut.dqi12.cheftrainer.server.timetasks.TransfermarktTimeTask;
 import de.szut.dqi12.cheftrainer.server.usercommunication.SocketController;
 
@@ -28,6 +30,10 @@ public class Controller {
 	
 	@SuppressWarnings("unused")
 	private TransfermarktTimeTask timerTask;
+	@SuppressWarnings("unused")
+	private MatchdayStartsTimeTask matchdayStartsTimeTask;
+	@SuppressWarnings("unused")
+	private MatchdayFinishedTimeTask matchdayFinishedTimeTask;
 
 	private final static Logger LOGGER = Logger.getLogger(Controller.class);
 
@@ -86,6 +92,14 @@ public class Controller {
 
 	public SocketController getSocketController() {
 		return socketController;
+	}
+	
+	public void createMatchdayFinishedTimer(Date date){
+		matchdayFinishedTimeTask = new MatchdayFinishedTimeTask(date);
+	}
+	
+	public void createMatchdayStartsTimer(Date date){
+		matchdayStartsTimeTask = new MatchdayStartsTimeTask(date);
 	}
 
 	/**

@@ -24,7 +24,7 @@ import de.szut.dqi12.cheftrainer.server.parsing.TeamParser;
  * 
  * @author Alexander Brennecke
  */
-public class PlayerManagement {
+public class PlayerManagement extends SQLManagement {
 
 	private SQLConnection sqlCon;
 
@@ -202,35 +202,6 @@ public class PlayerManagement {
 		return p;
 	}
 
-	private static Integer getIntFromRS(ResultSet rs, String coloumName) {
-		try {
-			int retval = rs.getInt(coloumName);
-			return retval;
-		} catch (Exception e) {
-			return 0;
-		}
-	}
-
-	private static String getStringFromRS(ResultSet rs, String coloumName) {
-		try {
-			String retval = rs.getString(coloumName);
-			return retval;
-		} catch (Exception e) {
-			return "";
-		}
-	}
-
-	private static String getDefault(Object o) {
-		return getDefault(o, "0");
-	}
-
-	private static String getDefault(Object o, String defaultValue) {
-		if (o != null) {
-			return String.valueOf(o);
-		}
-		return defaultValue;
-	}
-	
 	public static List<Player> getPlayersFromResultSet(ResultSet rs) throws SQLException {
 		List<Player> retval = new ArrayList<>();
 		while (rs.next()) {
@@ -255,6 +226,11 @@ public class PlayerManagement {
 		return getPlayerFromResult(rs);
 	}
 
+	
+	/**
+	 * This function updates the SQLEntries for the given {@link Manager}.
+	 * @param manager the {@link Manager}, that should be updated.
+	 */
 	public void updateManager(Manager manager) {
 		Formation f = manager.getFormation();
 		setManagersFormation(manager.getID(), f.getDefenders(), f.getMiddfielders(), f.getOffensives());
@@ -268,5 +244,16 @@ public class PlayerManagement {
 			sqlCon.sendQuery(updateQuery);
 		}
 				
+	}
+
+	/**
+	 * This function clears the "Manschaft Copy" table and copies the "Mannschaft" table to the "Manschaft Copy" table.
+	 */
+	public void copymanagerTeam() {
+		String deleteQuery = "DELETE FROM 'Mannschaft Copy'";
+		String copyQuery = "INSERT INTO 'Mannschaft Copy' SELECT * FROM Mannschaft WHERE Aufgestellt = 1;";
+		
+		sqlCon.sendQuery(deleteQuery);
+		sqlCon.sendQuery(copyQuery);
 	}
 }

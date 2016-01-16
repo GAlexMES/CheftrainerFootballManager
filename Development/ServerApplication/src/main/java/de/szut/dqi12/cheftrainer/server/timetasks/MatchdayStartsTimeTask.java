@@ -1,30 +1,36 @@
 package de.szut.dqi12.cheftrainer.server.timetasks;
 
-import java.awt.Toolkit;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.log4j.Logger;
+
+import de.szut.dqi12.cheftrainer.server.Controller;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
+
 
 public class MatchdayStartsTimeTask {
-	private Toolkit toolkit;
+	private final static Logger LOGGER = Logger.getLogger(MatchdayStartsTimeTask.class);
 
 	private Timer timer;
 	
-	private MatchdayFinishedTimeTask mdftt;
-
 	public MatchdayStartsTimeTask(Date date) {
-		toolkit = Toolkit.getDefaultToolkit();
 		timer = new Timer();
+		
 		long nextTime = date.getTime() - (new Date()).getTime();
 		timer.schedule(new ReceiverTask(), nextTime);
 	}
 
 	class ReceiverTask extends TimerTask {
 		public void run() {
-			System.out.println("I must do the preperations for a matchday");
-			Date d = null;
-			mdftt = new MatchdayFinishedTimeTask(d);
+			LOGGER.info("Save current teams to another table");
+			DatabaseRequests.copyManagerTeams();
+			int matchDay = DatabaseRequests.getCurrentMatchDay(new Date());
+			long startOfNextMatchDay = DatabaseRequests.getStartOfMatchday(matchDay+1);
+			
+			Date newStartTimer = new Date(startOfNextMatchDay);
+			Controller.getInstance().createMatchdayStartsTimer(newStartTimer);
 		}
 	}
 }

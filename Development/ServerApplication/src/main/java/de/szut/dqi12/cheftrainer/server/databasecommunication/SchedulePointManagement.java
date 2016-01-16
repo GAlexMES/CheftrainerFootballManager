@@ -1,9 +1,13 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,32 +17,33 @@ import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.parsing.PointsParser;
 import de.szut.dqi12.cheftrainer.server.parsing.ScheduleParser;
 
-
-/** 
+/**
  * This class is used to write points of players to the databse.
+ * 
  * @author Alexander Brennecke
  *
  */
-public class SchedulePointManagement {
-	
+public class SchedulePointManagement extends SQLManagement {
+
 	private final long WAIT_AFTER_GAME = 15000000;
 
-	@SuppressWarnings("unused")
-	private SQLConnection sqlCon;
 	private ScheduleParser scheduleParser;
 
 	private DateFormat dateFormat;
-	
+
 	private final static Logger LOGGER = Logger.getLogger(SchedulePointManagement.class);
 
 	/**
 	 * Constructor
-	 * @param sqlCon a active {@link SQLConnection}
+	 * 
+	 * @param sqlCon
+	 *            a active {@link SQLConnection}
 	 */
 	public SchedulePointManagement(SQLConnection sqlCon) {
 		this.sqlCon = sqlCon;
@@ -47,66 +52,113 @@ public class SchedulePointManagement {
 	}
 
 	/**
-	 * This function uses the {@link ScheduleParser} to find to current season of the bundesliga.
+	 * This function uses the {@link ScheduleParser} to find to current season
+	 * of the bundesliga.
+	 * 
 	 * @return
 	 */
 	public int getCurrentSeasonFromSportal() {
 		return scheduleParser.getCurrentSeason();
 	}
 
-	
 	/**
-	 * This function is called to load the points of all {@link Player} till now. 
-	 * @param currentSeason use 2015 for 2015-2016
+	 * This function is called to load the points of all {@link Player} till
+	 * now.
+	 * 
+	 * @param currentSeason
+	 *            use 2015 for 2015-2016
 	 */
 	public void initializeScheduleForSeason(int currentSeason) {
-		Map<Integer,List<Match>> matchDays = scheduleParser.getMatchesForSeason(currentSeason);
+		Map<Integer, List<Match>> matchDays = scheduleParser.getMatchesForSeason(currentSeason);
 		Date date = new Date();
-		for(Integer i : matchDays.keySet()){
-			if(wasMatchdayPlayed(matchDays.get(i),date)){
-				LOGGER.info("Adding points for players for matchday "+i);
-				Map<String, Map<String, Player>> playerPoints = new HashMap<String, Map<String,Player>>();
-				for(Match m: matchDays.get(i)){
+		Boolean startTimer = true;
+		for (Integer i : matchDays.keySet()) {
+			List<Match> matchList = matchDays.get(i);
+			if (wasMatchdayPlayed(matchList, date)) {
+				LOGGER.info("Adding points for players for matchday " + i);
+				Map<String, Map<String, Player>> playerPoints = new HashMap<String, Map<String, Player>>();
+				for (Match m : matchList) {
 					playerPoints.putAll(readPointsForMatch(m));
 				}
-				playerPoints.keySet().forEach( s -> DatabaseRequests.writePointsToDatabase(playerPoints.get(s)));
+				playerPoints.keySet().forEach(s -> DatabaseRequests.writePointsToDatabase(playerPoints.get(s)));
+			} else if (startTimer) {
+				Date startDate = getMatchdayDates(matchList, (a, b) -> -LONG_COMPARATOR.compare(a, b));
+				Date endDate = getMatchdayDates(matchList, LONG_COMPARATOR);
+				Controller.getInstance().createMatchdayStartsTimer(startDate);
+				Controller.getInstance().createMatchdayFinishedTimer(endDate);
+				startTimer = false;
 			}
-			else{
-				break;
+			for (Match m : matchList) {
+				try {
+					DatabaseRequests.addMatch(m);
+				} catch (SQLException | ParseException e) {
+					e.printStackTrace();
+				}
 			}
+
 		}
 	}
-	
+
+	private Date getMatchdayDates(List<Match> matches, Comparator<Long> com) {
+		Date retval = null;
+		for (Match m : matches) {
+			try {
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(dateFormat.parse(m.getDate() + " " + m.getTime()));
+				if (retval == null) {
+					retval = cal.getTime();
+				} else {
+					int isBetter = com.compare(cal.getTimeInMillis(), retval.getTime());
+					if (isBetter == 1) {
+						retval = cal.getTime();
+					}
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		return retval;
+	}
+
 	/**
-	 * This function uses the {@link PointsParser} to read all information (points, goals, cards etc.) from a match.
-	 * @param m a {@link Match} object, that has at least the DetailedURL, the season and the matchday
-	 * @return a Map, where the key is the name of a football team. The value is a map, where the key is the name of a player.
-	 * The value of this inner Map is a full filled {@link Player} object.
+	 * This function uses the {@link PointsParser} to read all information
+	 * (points, goals, cards etc.) from a match.
+	 * 
+	 * @param m
+	 *            a {@link Match} object, that has at least the DetailedURL, the
+	 *            season and the matchday
+	 * @return a Map, where the key is the name of a football team. The value is
+	 *         a map, where the key is the name of a player. The value of this
+	 *         inner Map is a full filled {@link Player} object.
 	 */
-	private Map<String, Map<String, Player>> readPointsForMatch(Match m){
-		Map<String, Map<String, Player>> retval = new HashMap<String, Map<String,Player>>();
-		
+	private Map<String, Map<String, Player>> readPointsForMatch(Match m) {
+		Map<String, Map<String, Player>> retval = new HashMap<String, Map<String, Player>>();
+
 		int matchID = ScheduleParser.getSportalID(m.getDetailURL());
-		if(matchID>0){
+		if (matchID > 0) {
 			m.setSportalMatchID(matchID);
 			retval = PointsParser.getPlayerPoints(m);
 		}
 		return retval;
 	}
-	
-	
+
 	/**
 	 * This function checks, if a matchday was completely played.
-	 * @param matches a List of {@link Match} objects.
-	 * @param currentDate the function will check, if all matches were played 4 hours before the currentDate.
-	 * @return true = all matches were played at least 4 hours before the currentDate.
+	 * 
+	 * @param matches
+	 *            a List of {@link Match} objects.
+	 * @param currentDate
+	 *            the function will check, if all matches were played 4 hours
+	 *            before the currentDate.
+	 * @return true = all matches were played at least 4 hours before the
+	 *         currentDate.
 	 */
 	private Boolean wasMatchdayPlayed(List<Match> matches, Date currentDate) {
 		for (Match m : matches) {
 			try {
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(dateFormat.parse(m.getDate()+" "+m.getTime()));
-				cal.setTimeInMillis(cal.getTimeInMillis()+WAIT_AFTER_GAME);
+				cal.setTime(dateFormat.parse(m.getDate() + " " + m.getTime()));
+				cal.setTimeInMillis(cal.getTimeInMillis() + WAIT_AFTER_GAME);
 				Date matchDate = cal.getTime();
 				if (matchDate.compareTo(currentDate) >= 0) {
 					return false;
@@ -118,5 +170,48 @@ public class SchedulePointManagement {
 		}
 		return true;
 	}
+
+	public void addMatch(Match m) throws SQLException, ParseException {
+		String sqlQuery = "INSERT INTO Spieltag ('Saison', 'Spieltag', 'Heim_Verein_ID','Gast_Verein_ID','Ergebnis','URL','Datum') VALUES (?,?,?,?,?,?,?);";
+		PreparedStatement preparedStatement = sqlCon.prepareStatement(sqlQuery);
+		String result = m.getGoalsHome() + ":" + m.getGoalsGuest();
+		preparedStatement.setInt(1, m.getSeason());
+		preparedStatement.setInt(2, m.getMatchDay());
+		preparedStatement.setInt(3, 0);
+		preparedStatement.setInt(4, 0);
+		preparedStatement.setString(5, result);
+		preparedStatement.setString(6, m.getDetailURL());
+
+		Date d = dateFormat.parse(m.getDate() + " " + m.getTime());
+		preparedStatement.setLong(7, d.getTime());
+
+		preparedStatement.execute();
+	}
+
+	public int getCurrentMatchDay(Date d) {
+		long time = d.getTime();
+		String sqlQuery = "select min(Spieltag) from Spieltag where Datum > " + time + " and Ergebnis = '-1:-1'";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+
+		return getIntFromRS(rs, "min(Spieltag)");
+	}
 	
+	public long getStartOfmatchday(int matchDay) {
+		String sqlQuery = "select min(Datum) from Spieltag where Spieltag = " + matchDay;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		return getIntFromRS(rs, "min(Datum)");
+	}
+
+	/**
+	 * Compares two int
+	 */
+	private static final Comparator<Long> LONG_COMPARATOR = (a, b) -> {
+		if (a < b) {
+			return -1;
+		}
+		if (a > b) {
+			return 1;
+		}
+		return 0;
+	};
 }
