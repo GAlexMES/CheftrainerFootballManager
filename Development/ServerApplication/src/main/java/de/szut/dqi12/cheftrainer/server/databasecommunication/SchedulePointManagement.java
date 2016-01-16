@@ -13,6 +13,8 @@ import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.parsing.PointsParser;
 import de.szut.dqi12.cheftrainer.server.parsing.ScheduleParser;
 

@@ -1,6 +1,8 @@
-package de.szut.dqi12.cheftrainer.server.databasecommunication;
+package de.szut.dqi12.cheftrainer.server.database;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -22,11 +24,13 @@ import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
  *
  */
 public class SQLConnection {
+	
+	private final String RELATIVE_DB_PATH ="/Database.db";
 
 	// INITIALISATION
-	private final String SQLEXCEPTION_NORESULT = "query does not return ResultSet";
-	private final String SQLEXCEPTION_ERROR = "[SQLITE_ERROR]";
-	private final String SQLEXCEPTION_BUSY = "[SQLITE_BUSY]";
+	private final static String SQLEXCEPTION_NORESULT = "query does not return ResultSet";
+	private final static String SQLEXCEPTION_ERROR = "[SQLITE_ERROR]";
+	private final static String SQLEXCEPTION_BUSY = "[SQLITE_BUSY]";
 
 	private Connection con = null;
 	private Statement statement = null;
@@ -46,13 +50,31 @@ public class SQLConnection {
 			throws IOException {
 		this.name = name;
 		DatabaseRequests.getInstance().setSQLConnection(this);
+
+		loadDB();
 		
-		URL url = this.getClass().getResource(sqlPath);
-		
-		loadDB(url.toString());
 		if (init) {
 			ServerInitialator.databaseInitalisation();
 		}
+	}
+	
+	private String prepareString(String databasePath) throws MalformedURLException{
+		databasePath = databasePath.replace("\\.\\", "\\");
+		return databasePath;
+	}
+	
+	
+	private String getDatabasePath() throws IOException{
+		File databaseFile = new File("."+RELATIVE_DB_PATH);
+		Boolean databaseExist = databaseFile.exists();
+		String path =databaseFile.getAbsolutePath(); 
+		String databaseURL = prepareString(path);
+		
+		if(!databaseExist){
+			DatabaseCreator.cretae(databaseURL);
+		}
+		
+		return databaseURL;
 	}
 
 	
@@ -61,10 +83,12 @@ public class SQLConnection {
 	 * 
 	 * @param path
 	 *            to the db file
+	 * @throws IOException 
 	 */
-	private void loadDB(String path) {
+	private void loadDB() throws IOException {
+		String databaseURL = getDatabasePath();
 		LOGGER.info("Connecting to the database file!");
-		final String url = "jdbc:sqlite::resource:Database";
+		final String url = "jdbc:sqlite:"+databaseURL;
 
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -105,7 +129,6 @@ public class SQLConnection {
 		ResultSet currentSet = null;
 		try {
 			currentSet = statement.executeQuery(command);
-
 			return currentSet;
 		} catch (SQLException sqle) {
 			handleSQLException(sqle);
@@ -119,7 +142,7 @@ public class SQLConnection {
 	 * @param sqle
 	 *            SQLException
 	 */
-	private void handleSQLException(SQLException sqle) {
+	public static void handleSQLException(SQLException sqle) {
 		if (sqle.getMessage().contains(SQLEXCEPTION_NORESULT)) {
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_ERROR)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
@@ -135,7 +158,7 @@ public class SQLConnection {
 	public PreparedStatement prepareStatement(String sqlQuery) throws SQLException{
 		return con.prepareStatement(sqlQuery);
 	}
-
+	
 	// GETTER&SETTER
 	// /////////////
 	public String getName() {

@@ -10,7 +10,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.SQLConnection;
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.timetasks.TransfermarktTimeTask;
 import de.szut.dqi12.cheftrainer.server.usercommunication.SocketController;
 

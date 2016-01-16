@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.databasecommunication;
+package de.szut.dqi12.cheftrainer.server.database;
 
 import java.io.IOException;
 import java.sql.ResultSet;
@@ -13,7 +13,15 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.CommunityManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.LogicManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.PlayerManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.PointManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.SchedulePointManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.TransfermarketManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.UserManagement;
 
 /**
  * This class provides some Database utils. There is no Javadoc, because the

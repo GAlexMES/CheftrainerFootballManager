@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
+
 /**
  * This class is used to read/write server specific properties to the database.
  * @author Alexander Brennecke

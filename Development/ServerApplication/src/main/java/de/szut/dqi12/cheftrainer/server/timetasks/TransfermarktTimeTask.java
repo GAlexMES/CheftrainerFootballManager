@@ -6,7 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import de.szut.dqi12.cheftrainer.server.Controller;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
 public class TransfermarktTimeTask {
 	Toolkit toolkit;
