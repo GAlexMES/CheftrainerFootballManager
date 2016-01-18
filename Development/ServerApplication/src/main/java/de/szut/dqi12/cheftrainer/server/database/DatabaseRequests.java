@@ -263,4 +263,8 @@ public class DatabaseRequests {
 		return schedulePointManagement.getStartOfmatchday(matchDay);
 	}
 
+	public static Date getLastMatchDate(int matchday) {
+		return schedulePointManagement.getLastMatchDate(matchday);
+	}
+
 }

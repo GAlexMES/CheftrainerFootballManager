@@ -83,9 +83,7 @@ public class SchedulePointManagement extends SQLManagement {
 				playerPoints.keySet().forEach(s -> DatabaseRequests.writePointsToDatabase(playerPoints.get(s)));
 			} else if (startTimer) {
 				Date startDate = getMatchdayDates(matchList, (a, b) -> -LONG_COMPARATOR.compare(a, b));
-				Date endDate = getMatchdayDates(matchList, LONG_COMPARATOR);
 				Controller.getInstance().createMatchdayStartsTimer(startDate);
-				Controller.getInstance().createMatchdayFinishedTimer(endDate);
 				startTimer = false;
 			}
 			for (Match m : matchList) {
@@ -214,4 +212,11 @@ public class SchedulePointManagement extends SQLManagement {
 		}
 		return 0;
 	};
+
+	public Date getLastMatchDate(int matchday) {
+		String sqlQuery = "SELECT max(Datum) FROM Spieltag WHERE Spieltag= "+matchday+" AND Ergebnis = '-1:-1'";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		long dateInMilli = getIntFromRS(rs, "max(Datum)");
+		return new Date(dateInMilli);
+	}
 }

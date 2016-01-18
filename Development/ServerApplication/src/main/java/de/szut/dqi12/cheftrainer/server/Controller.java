@@ -94,8 +94,8 @@ public class Controller {
 		return socketController;
 	}
 	
-	public void createMatchdayFinishedTimer(Date date){
-		matchdayFinishedTimeTask = new MatchdayFinishedTimeTask(date);
+	public void createMatchdayFinishedTimer(Date date, int matchDay){
+		matchdayFinishedTimeTask = new MatchdayFinishedTimeTask(date,matchDay);
 	}
 	
 	public void createMatchdayStartsTimer(Date date){
