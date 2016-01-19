@@ -1,15 +1,11 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.GridPane;
-
-import org.apache.log4j.chainsaw.Main;
-
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts.BarChartController;
@@ -64,23 +60,18 @@ public class StatisticsController implements ControllerInterface {
 	 */
 	@FXML
 	public void setLineChart() {
-		// HIER SOLLTEN NICHT DIE AKTUELLEN PUNKTE DER MANAGER STEHEN SONDERN
-		// DER VERLAUF DER PUNKTE DES MANAGERS PRO SPIELTAG
 		Session s = Controller.getInstance().getSession();
-		ArrayList<Manager> managers = (ArrayList<Manager>) s.getCurrentCommunity().getManagers();
-		///////////////////////////////////
-		// FALSCHE DATEN
 		HashMap<String, Integer> data = new HashMap<String, Integer>();
-		for (Manager m : managers) {
-			data.put(m.getName(), m.getPoints());
+
+		try{
+		HashMap<Integer, Integer> history = (HashMap<Integer, Integer>) s.getCurrentManager().getHistory();
+		for (Integer day : history.keySet()) {
+			data.put(String.valueOf(day), history.get(day));
+		}
+		}catch(NullPointerException e){
+			
 		}
 
-		for (int i = 0; i < 10; i++) {
-			data.put(String.valueOf(i), i);
-		}
-		// FALSCHE DATEN ENDE
-		//////////////////
-		
 		lineController.setData(data);
 		stats.getChildren().set(0, lineController.getChart());
 
