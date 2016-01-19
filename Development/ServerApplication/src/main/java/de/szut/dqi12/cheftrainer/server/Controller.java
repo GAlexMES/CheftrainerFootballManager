@@ -77,9 +77,9 @@ public class Controller {
 	 * @param sqlPath	the path to the director of the database
 	 * @throws IOException when there is a database, but it is empty, and the initialization doesn't work.
 	 */
-	public void creatDatabaseCommunication(String sqlName, String sqlPath) throws IOException {
+	public void creatDatabaseCommunication() throws IOException {
 		try {
-			sqlConnection = new SQLConnection(sqlName, sqlPath, true);
+			sqlConnection = new SQLConnection(true);
 		} catch (IOException io) {
 			LOGGER.error("Creating access to database failed.");
 			throw io;
@@ -94,8 +94,8 @@ public class Controller {
 		return socketController;
 	}
 	
-	public void createMatchdayFinishedTimer(Date date, int matchDay){
-		matchdayFinishedTimeTask = new MatchdayFinishedTimeTask(date,matchDay);
+	public void createMatchdayFinishedTimer(Date date, int matchDay, int season){
+		matchdayFinishedTimeTask = new MatchdayFinishedTimeTask(date,matchDay, season);
 	}
 	
 	public void createMatchdayStartsTimer(Date date){

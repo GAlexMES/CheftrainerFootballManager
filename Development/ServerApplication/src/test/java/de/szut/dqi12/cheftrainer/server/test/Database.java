@@ -13,14 +13,10 @@ import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesMa
 
 public class Database {
 	
-	private final static String DB_NAME = "Database";
-	private final static String DB_PATH = ServerApplication.class.getResource(
-			"../../../../../Database").toString();
-
 	@Test
 	public void test() {
 		try {
-			SQLConnection sqlCon = new SQLConnection(DB_NAME, DB_PATH,false);
+			SQLConnection sqlCon = new SQLConnection(false);
 			ServerPropertiesManagement spm = new ServerPropertiesManagement(sqlCon);
 			spm.setProperty("TestBoolean", true);
 			spm.setProperty("TestInt", 9564);

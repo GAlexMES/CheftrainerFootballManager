@@ -2,6 +2,7 @@ package de.szut.dqi12.cheftrainer.server.parsing;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -84,6 +85,8 @@ public class ScheduleParser {
 		String detailURL = e.select("li[class=score]").get(0).select("a")
 				.attr("href");
 		Match m = new Match(date, time, home, guest, score, detailURL);
+		m.setSeason(season);
+		m.setMatchDay(currentMatchDay);
 		return m;
 	}
 	
@@ -100,9 +103,12 @@ public class ScheduleParser {
 			String[] hrefParts = firstnavigationIcon.attr("href").split("-");
 			String completeID = hrefParts[hrefParts.length - 1];
 			return Integer.valueOf(completeID);
-		} catch (IOException e) {
+		} 
+		catch (SocketTimeoutException ste ){
+			LOGGER.error("Unreachable URL "+sportalRoot+url);}
+		catch (IOException e) {
 			e.printStackTrace();
-		}catch(NullPointerException npe){
+		}catch(Exception npe){
 			boolean isPage404 = isPageSportal404(url);
 			if(isPage404){
 				return -1;

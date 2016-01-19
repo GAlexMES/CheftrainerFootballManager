@@ -15,7 +15,7 @@ import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
  * @author Alexander Brennecke
  *
  */
-public class DatabaseUtils {
+public class DatabaseUtils extends  SQLManagement {
 	
 	private SQLConnection sqlCon;
 	
@@ -149,5 +149,21 @@ public class DatabaseUtils {
 	 */
 	public void sendSimpleQuery(String query) {
 		sqlCon.sendQuery(query);
+	}
+
+	public int getTeamIDForName(String teamName) {
+		String sqlQuery ="SELECT ID FROM Verein WHERE Vereinsname='"+teamName+"'";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		if (!isResultSetEmpty(rs)) {
+			rs = sqlCon.sendQuery(sqlQuery);
+			try {
+				while (rs.next()) {
+					return getIntFromRS(rs, "ID");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} 
+		return -1;
 	}
 }

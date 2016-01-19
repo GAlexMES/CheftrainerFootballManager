@@ -24,8 +24,9 @@ import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
  */
 public class SQLConnection {
 	
-	private final String RELATIVE_DB_PATH ="/Database.db";
-
+	private final String DATABASE_NAME = "Database";
+	private final String RELATIVE_DB_PATH ="/"+DATABASE_NAME+".db";
+	
 	// INITIALISATION
 	private final static String SQLEXCEPTION_NORESULT = "query does not return ResultSet";
 	private final static String SQLEXCEPTION_ERROR = "[SQLITE_ERROR]";
@@ -33,7 +34,7 @@ public class SQLConnection {
 
 	private Connection con = null;
 	private Statement statement = null;
-	private String name = "";
+	
 
 	private final static Logger LOGGER = Logger.getLogger(SQLConnection.class);
 
@@ -45,9 +46,8 @@ public class SQLConnection {
 	 * @param name
 	 *            of the database
 	 */
-	public SQLConnection(String name, String sqlPath, boolean init)
+	public SQLConnection(boolean init)
 			throws IOException {
-		this.name = name;
 		DatabaseRequests.getInstance().setSQLConnection(this);
 
 		loadDB();
@@ -109,8 +109,8 @@ public class SQLConnection {
 
 			statement = con.createStatement();
 
-			statement.executeQuery("ATTACH '" + name + "' as "
-					+ name.substring(0, name.length() - 3));
+			statement.executeQuery("ATTACH '" + DATABASE_NAME + "' as "
+					+ DATABASE_NAME);
 			LOGGER.info("Connecting to the database file was succesfull!");
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -161,7 +161,7 @@ public class SQLConnection {
 	// GETTER&SETTER
 	// /////////////
 	public String getName() {
-		return this.name;
+		return this.DATABASE_NAME;
 	}
 
 	public ArrayList<String> getTableNames() {

@@ -163,4 +163,12 @@ public class PointManagement {
 		filledQuery = filledQuery.replace("%POINTS%", String.valueOf(points));
 		return filledQuery;
 	}
+
+	public void addPointsToPlayingPlayers(Map<String, Player> playerList) {
+		for(String s : playerList.keySet()){
+			Player p = playerList.get(s);
+			String sqlQuery = "UPDATE 'Mannschaft Copy' SET Punkte = "+p.getPoints()+" WHERE Spieler_ID = "+p.getSportalID();
+			sqlCon.sendQuery(sqlQuery);
+		}
+	}
 }

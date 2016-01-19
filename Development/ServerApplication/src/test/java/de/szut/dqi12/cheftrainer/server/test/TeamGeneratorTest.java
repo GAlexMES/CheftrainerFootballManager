@@ -23,7 +23,7 @@ public class TeamGeneratorTest {
 	public void test() {
 		Controller con = Controller.getInstance();
 		try {
-			con.creatDatabaseCommunication(DB_NAME, DB_PATH);
+			con.creatDatabaseCommunication();
 			TeamGenerator tg = new TeamGenerator();
 			tg.generateTeamForUser(1, 1);
 		} catch (IOException e) {

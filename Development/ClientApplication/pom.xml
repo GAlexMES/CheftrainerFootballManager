@@ -21,7 +21,6 @@
 		<dependency>
 			<groupId>de.szut.dqi12.cheftrainer</groupId>
 			<artifactId>ConnectorLib</artifactId>
-			<version>0.0.1</version>
 		</dependency>
 
 		<!-- Public dependencies, Version Management in parent POM -->

@@ -29,9 +29,10 @@ public class MatchdayStartsTimeTask {
 			LOGGER.info("Save current teams to another table for matchday!");
 			DatabaseRequests.copyManagerTeams();
 			int matchDay = DatabaseRequests.getCurrentMatchDay(new Date());
-
+			int currentSeason = DatabaseRequests.getCurrentSeasonFromSportal();
+			
 			Date finishDate = DatabaseRequests.getLastMatchDate(matchDay);
-			Controller.getInstance().createMatchdayFinishedTimer(finishDate, matchDay);
+			Controller.getInstance().createMatchdayFinishedTimer(finishDate, matchDay, currentSeason);
 			LOGGER.info("Created MatchdayFinishedTimeTask for: "+sdf.format(finishDate));
 		}
 	}

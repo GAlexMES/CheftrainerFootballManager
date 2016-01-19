@@ -129,7 +129,7 @@ public class SchedulePointManagement extends SQLManagement {
 	 *         a map, where the key is the name of a player. The value of this
 	 *         inner Map is a full filled {@link Player} object.
 	 */
-	private Map<String, Map<String, Player>> readPointsForMatch(Match m) {
+	public Map<String, Map<String, Player>> readPointsForMatch(Match m) {
 		Map<String, Map<String, Player>> retval = new HashMap<String, Map<String, Player>>();
 
 		int matchID = ScheduleParser.getSportalID(m.getDetailURL());
@@ -172,11 +172,14 @@ public class SchedulePointManagement extends SQLManagement {
 	public void addMatch(Match m) throws SQLException, ParseException {
 		String sqlQuery = "INSERT INTO Spieltag ('Saison', 'Spieltag', 'Heim_Verein_ID','Gast_Verein_ID','Ergebnis','URL','Datum') VALUES (?,?,?,?,?,?,?);";
 		PreparedStatement preparedStatement = sqlCon.prepareStatement(sqlQuery);
+
+		int homeTeamID = DatabaseRequests.getTeamIDForName(m.getHome());
+		int guestTeamID = DatabaseRequests.getTeamIDForName(m.getGuest());
 		String result = m.getGoalsHome() + ":" + m.getGoalsGuest();
 		preparedStatement.setInt(1, m.getSeason());
 		preparedStatement.setInt(2, m.getMatchDay());
-		preparedStatement.setInt(3, 0);
-		preparedStatement.setInt(4, 0);
+		preparedStatement.setInt(3, homeTeamID);
+		preparedStatement.setInt(4, guestTeamID);
 		preparedStatement.setString(5, result);
 		preparedStatement.setString(6, m.getDetailURL());
 
@@ -194,10 +197,28 @@ public class SchedulePointManagement extends SQLManagement {
 		return getIntFromRS(rs, "min(Spieltag)");
 	}
 	
-	public long getStartOfmatchday(int matchDay) {
-		String sqlQuery = "select min(Datum) from Spieltag where Spieltag = " + matchDay;
+	public Date getLastMatchDate(int matchday) {
+		String sqlQuery = "SELECT max(Datum) FROM Spieltag WHERE Spieltag= " + matchday + " AND Ergebnis = '-1:-1'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		return getIntFromRS(rs, "min(Datum)");
+		long dateTime = 0;
+		try {
+			dateTime = rs.getLong("max(Datum)");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new Date(dateTime);
+	}
+
+	public Date getStartOfmatchday(int matchDay) {
+		String sqlQuery = "SELECT min(Datum) FROM Spieltag WHERE Spieltag = " + matchDay;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		long dateTime = 0;
+		try {
+			dateTime = rs.getLong("min(Datum)");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new Date(dateTime);
 	}
 
 	/**
@@ -213,10 +234,29 @@ public class SchedulePointManagement extends SQLManagement {
 		return 0;
 	};
 
-	public Date getLastMatchDate(int matchday) {
-		String sqlQuery = "SELECT max(Datum) FROM Spieltag WHERE Spieltag= "+matchday+" AND Ergebnis = '-1:-1'";
-		ResultSet rs = sqlCon.sendQuery(sqlQuery);
-		long dateInMilli = getIntFromRS(rs, "max(Datum)");
-		return new Date(dateInMilli);
+	public void updateSchedule(List<Match> matches, int season, int matchday) {
+		String sqlQuery = "UPDATE Spieltag SET Datum = ?, Ergebnis = ?, URL= ? WHERE Spieltag = ? AND Saison=? AND Heim_Verein_ID = ? AND Gast_Verein_ID = ? ;";
+		for (Match m : matches) {
+			
+			try {
+				int homeTeamID = DatabaseRequests.getTeamIDForName(m.getHome());
+				int guestTeamID = DatabaseRequests.getTeamIDForName(m.getGuest());
+				
+				PreparedStatement ps = sqlCon.prepareStatement(sqlQuery);
+				Date d = dateFormat.parse(m.getDate() + " " + m.getTime());
+				ps.setLong(1, d.getTime());
+				ps.setString(2, m.getGoalsHome()+"-"+m.getGoalsGuest());
+				ps.setString(3, m.getDetailURL());
+				ps.setInt(4, matchday);
+				ps.setInt(5, season);
+				ps.setInt(6, homeTeamID);
+				ps.setInt(7, guestTeamID);
+				ps.execute();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

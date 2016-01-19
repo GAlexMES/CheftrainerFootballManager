@@ -67,6 +67,10 @@ public class DatabaseRequests {
 		pointManagement = new PointManagement(sqlCon);
 		transfermarktManagement = new TransfermarketManagement(sqlCon);
 	}
+	
+	public static SchedulePointManagement getSchedulePointManagement(){
+		return schedulePointManagement;
+	}
 
 	public static HashMap<String, Boolean> registerNewUser(User newUser) {
 		return userManagement.register(newUser);
@@ -198,6 +202,10 @@ public class DatabaseRequests {
 	public static Object getUniqueValue(String coloumName, String table, String whereCondition) throws IOException {
 		return databaseUtils.getUniqueValue(coloumName, table, whereCondition);
 	}
+	
+	public static void addPointsToPlayingPlayers(Map<String, Player> playerList) {
+		pointManagement.addPointsToPlayingPlayers(playerList);
+	}
 
 	public static void writePointsToDatabase(Map<String, Player> playerList) {
 		pointManagement.updatePointsOfPlayers(playerList);
@@ -259,7 +267,7 @@ public class DatabaseRequests {
 		return schedulePointManagement.getCurrentMatchDay(d);
 	}
 
-	public static long getStartOfMatchday(int matchDay) {
+	public static Date getStartOfMatchday(int matchDay) {
 		return schedulePointManagement.getStartOfmatchday(matchDay);
 	}
 
@@ -267,4 +275,11 @@ public class DatabaseRequests {
 		return schedulePointManagement.getLastMatchDate(matchday);
 	}
 
+	public static void updateSchedule(List<Match> matches, int season, int matchday) {
+		schedulePointManagement.updateSchedule(matches, matchday, season);
+	}
+
+	public static int getTeamIDForName(String teamNam) {
+		return databaseUtils.getTeamIDForName(teamNam);
+	}
 }
