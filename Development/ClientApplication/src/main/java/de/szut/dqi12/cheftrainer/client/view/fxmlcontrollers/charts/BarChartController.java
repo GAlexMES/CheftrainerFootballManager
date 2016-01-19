@@ -15,16 +15,14 @@ public class BarChartController {
 	private GridPane barChart;
 	private BarChart<String, Integer> chart;
 	private XYChart.Series<String, Integer> series;
-	
-	public BarChartController(){
-		series = new XYChart.Series<>();	
+
+	public BarChartController() {
+		series = new XYChart.Series<>();
 	}
-	
-	
+
 	public BarChart<String, Integer> getChart() {
 		return chart;
 	}
-
 
 	public void init() {
 
@@ -33,13 +31,13 @@ public class BarChartController {
 		data.add(series);
 		chart.setData(data);
 	}
-	
-	public void setData(HashMap<String, Integer> data){
-		try{
+
+	public void setData(HashMap<String, Integer> data) {
+		try {
 			series.getData().clear();
-		}catch(NullPointerException e){
+		} catch (NullPointerException e) {
 		}
-		for(String key : data.keySet()){
+		for (String key : data.keySet()) {
 			series.getData().add(new XYChart.Data<>(key, data.get(key)));
 		}
 	}
