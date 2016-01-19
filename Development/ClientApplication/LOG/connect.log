@@ -923,3 +923,66 @@
 2016-01-19 10:09:14 INFO  MessageController:211 - The handshake was completed!
 2016-01-19 10:09:15 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
 2016-01-19 10:09:16 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:39:12 ERROR ServerHandler:67 - [Ljava.lang.StackTraceElement;@172f18a0
+2016-01-19 10:39:12 ERROR ServerHandler:67 - [Ljava.lang.StackTraceElement;@3c29dfe3
+2016-01-19 10:39:12 ERROR ServerHandler:67 - [Ljava.lang.StackTraceElement;@250ffeae
+2016-01-19 10:39:12 ERROR ServerHandler:67 - [Ljava.lang.StackTraceElement;@62f627db
+2016-01-19 10:39:12 ERROR ServerHandler:67 - [Ljava.lang.StackTraceElement;@62f627db
+2016-01-19 10:48:59 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:48:59 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:48:59 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:49:21 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:49:21 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:49:21 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:49:23 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:49:30 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:49:30 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:49:30 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:49:31 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:49:35 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:49:35 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:49:35 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:49:36 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:49:36 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:49:44 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:49:44 INFO  MessageController:149 - Server: A new message with the following ID arrived: CommunityAuthentificationAck
+2016-01-19 10:50:27 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:50:27 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:50:27 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:50:28 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:50:28 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:51:38 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:51:38 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:51:38 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:51:39 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:51:40 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:52:54 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:52:54 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:52:54 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:52:55 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:52:55 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:56:18 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:56:19 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:56:19 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:56:20 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:56:20 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:57:20 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:57:20 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:57:20 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:57:21 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:57:21 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:58:13 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:58:14 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:58:14 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:58:15 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:58:15 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:59:00 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:59:00 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:59:00 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:59:01 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:59:01 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
+2016-01-19 10:59:38 INFO  MessageController:149 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-01-19 10:59:39 INFO  MessageController:149 - Server: A new message with the following ID arrived: HandshakeAck
+2016-01-19 10:59:39 INFO  MessageController:211 - The handshake was completed!
+2016-01-19 10:59:40 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserAuthentificationACK
+2016-01-19 10:59:40 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
