@@ -36,7 +36,7 @@
 		<triggerButton>false</triggerButton>
 		<logoutButton>false</logoutButton>
 		<alwaysClickable>false</alwaysClickable>
-		<fxmlComponent></fxmlComponent>
+		<fxmlComponent>Statistics</fxmlComponent>
 	</button>
 	<button position="5">
 		<text>Logout</text>
