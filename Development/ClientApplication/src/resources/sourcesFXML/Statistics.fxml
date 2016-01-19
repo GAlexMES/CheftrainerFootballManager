@@ -5,20 +5,31 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<GridPane fx:id="stats" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.StatisticsController">
+<GridPane fx:id="stats" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.StatisticsController">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints hgrow="ALWAYS" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints maxHeight="65.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+      <RowConstraints vgrow="ALWAYS" />
+    <RowConstraints vgrow="ALWAYS" />
+    <RowConstraints vgrow="ALWAYS" />
   </rowConstraints>
    <children>
-      <ButtonBar maxHeight="65.0" prefHeight="40.0" prefWidth="200.0" GridPane.rowIndex="1">
-         <buttons>
-            <Button mnemonicParsing="false" onAction="#setBarChart" text="Ranking" />
-            <Button mnemonicParsing="false" onAction="#setLineChart" text="History" />
-         </buttons>
-      </ButtonBar>
+      <GridPane>
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+      </GridPane>
+      <AnchorPane GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+      	<ButtonBar>
+         	<buttons>
+            	<Button mnemonicParsing="false" onAction="#setBarChart" text="Ranking" />
+            	<Button mnemonicParsing="false" onAction="#setLineChart" text="History" />
+        	 </buttons>
+      	</ButtonBar>
+      </AnchorPane>
    </children>
 </GridPane>
