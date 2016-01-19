@@ -19,10 +19,11 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
 /**
  * This is the controller for the different charts.
+ * 
  * @author Robin
  *
  */
-public class StatisticsController implements ControllerInterface{
+public class StatisticsController implements ControllerInterface {
 
 	private BarChartController barController;
 	private LineChartController<String, Integer> lineController;
@@ -31,8 +32,8 @@ public class StatisticsController implements ControllerInterface{
 	private GridPane stats;
 
 	/**
-	 * This method have to be called before all other methods
-	 * Initialization of gui-components
+	 * This method have to be called before all other methods Initialization of
+	 * gui-components
 	 */
 	@Override
 	public void init() {
@@ -55,6 +56,7 @@ public class StatisticsController implements ControllerInterface{
 		}
 		lineController = loader.getController();
 		lineController.init();
+		setBarChart();
 	}
 
 	/**
@@ -62,24 +64,28 @@ public class StatisticsController implements ControllerInterface{
 	 */
 	@FXML
 	public void setLineChart() {
-		//HIER SOLLTEN NICHT DIE AKTUELLEN PUNKTE DER MANAGER STEHEN SONDERN DER VERLAUF DER PUNKTE
+		// HIER SOLLTEN NICHT DIE AKTUELLEN PUNKTE DER MANAGER STEHEN SONDERN
+		// DER VERLAUF DER PUNKTE DES MANAGERS PRO SPIELTAG
 		Session s = Controller.getInstance().getSession();
 		ArrayList<Manager> managers = (ArrayList<Manager>) s.getCurrentCommunity().getManagers();
-		//FALSCHE DATEN
+		///////////////////////////////////
+		// FALSCHE DATEN
 		HashMap<String, Integer> data = new HashMap<String, Integer>();
-		for(Manager m : managers){
+		for (Manager m : managers) {
 			data.put(m.getName(), m.getPoints());
 		}
-		
-		for(int i = 0; i < 10; i++){
+
+		for (int i = 0; i < 10; i++) {
 			data.put(String.valueOf(i), i);
 		}
-		//FALSCHE DATEN ENDE
+		// FALSCHE DATEN ENDE
+		//////////////////
 		
 		lineController.setData(data);
 		stats.getChildren().set(0, lineController.getChart());
 
 	}
+
 	/**
 	 * Fills the BarChart with data
 	 */
@@ -87,13 +93,12 @@ public class StatisticsController implements ControllerInterface{
 	public void setBarChart() {
 		Session s = Controller.getInstance().getSession();
 		ArrayList<Manager> managers = (ArrayList<Manager>) s.getCurrentCommunity().getManagers();
-		
+
 		HashMap<String, Integer> data = new HashMap<String, Integer>();
-		for(Manager m : managers){
+		for (Manager m : managers) {
 			data.put(m.getName(), m.getPoints());
 		}
 		barController.setData(data);
-//		stats.getChildren().get(0).setUserData(barController.getChart());
 		stats.getChildren().set(0, barController.getChart());
 
 	}
@@ -101,13 +106,13 @@ public class StatisticsController implements ControllerInterface{
 	@Override
 	public void enterPressed() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void messageArrived(Boolean flag) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

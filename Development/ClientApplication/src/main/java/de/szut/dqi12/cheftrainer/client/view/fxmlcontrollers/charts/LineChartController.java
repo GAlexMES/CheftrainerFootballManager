@@ -26,24 +26,20 @@ public class LineChartController<Y, X> {
 		chart = (LineChart) lineChart.getChildren().get(0);
 	}
 
-	
-	
 	public LineChart<String, Integer> getChart() {
 		return chart;
 	}
-
-
 
 	public void setTitle(String name) {
 		chart.setTitle(name);
 	}
 
 	public void setData(HashMap<String, Integer> data) {
+		this.chart.getData().clear();
 		Series<String, Integer> series = new Series<String, Integer>();
 		for (String key : data.keySet()) {
 
-			series.getData().add(
-					new XYChart.Data<String, Integer>(key, data.get(key)));
+			series.getData().add(new XYChart.Data<String, Integer>(key, data.get(key)));
 		}
 
 		try {
@@ -52,7 +48,6 @@ public class LineChartController<Y, X> {
 			// e.printStackTrace();
 		}
 		this.data.add(series);
-		this.chart.getData().clear();
 		this.chart.setData(this.data);
 
 	}
@@ -83,8 +78,7 @@ public class LineChartController<Y, X> {
 			if (this.chart.getData().size() == 0) {
 				this.chart.getData().add(new Series<String, Integer>());
 			}
-			this.chart.getData().get(series).getData()
-					.add(new XYChart.Data(xValue, yValue));
+			this.chart.getData().get(series).getData().add(new XYChart.Data(xValue, yValue));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
