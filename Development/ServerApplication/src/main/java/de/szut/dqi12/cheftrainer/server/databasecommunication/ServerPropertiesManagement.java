@@ -79,6 +79,7 @@ public class ServerPropertiesManagement {
 	 * This function reads the property with the given name and will return it as a boolean.
 	 * The value of the given property must be a Integer
 	 * @param property name of the property
+	 * @return true = property was not "0", false otherwise
 	 */
 	public boolean getPropAsBoolean(String property){
 		try{

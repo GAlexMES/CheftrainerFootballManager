@@ -141,6 +141,7 @@ public class PlayerManagement extends SQLManagement {
 	 * @param playerID
 	 *            the ID of the {@link Player}, that should be owned by the
 	 *            {@link Manager};
+	 * @param plays true = player is in the formation, false = he is not.
 	 */
 	public void addPlayerToManager(int managerID, int playerID, boolean plays){
 		int play = 0;

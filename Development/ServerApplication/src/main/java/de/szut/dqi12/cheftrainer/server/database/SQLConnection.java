@@ -2,7 +2,6 @@ package de.szut.dqi12.cheftrainer.server.database;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -43,11 +42,10 @@ public class SQLConnection {
 	/**
 	 * Constructor
 	 * 
-	 * @param name
-	 *            of the database
+	 * @param init  true = database content will be initialized.
+	 * @throws IOException 
 	 */
-	public SQLConnection(boolean init)
-			throws IOException {
+	public SQLConnection(boolean init)	throws IOException {
 		DatabaseRequests.getInstance().setSQLConnection(this);
 
 		loadDB();
@@ -57,17 +55,16 @@ public class SQLConnection {
 		}
 	}
 	
-	private String prepareString(String databasePath) throws MalformedURLException{
-		databasePath = databasePath.replace("\\.\\", "\\");
-		return databasePath;
-	}
-	
-	
+	/**
+	 * This function returns the relative database path as an absolute path
+	 * @return a String, which represents the path (e.g. C:/Databse.db)
+	 * @throws IOException
+	 */
 	private String getDatabasePath() throws IOException{
 		File databaseFile = new File("."+RELATIVE_DB_PATH);
 		Boolean databaseExist = databaseFile.exists();
 		String path =databaseFile.getAbsolutePath(); 
-		String databaseURL = prepareString(path);
+		String databaseURL = path.replace("\\.\\", "\\");
 		
 		if(!databaseExist){
 			DatabaseCreator.cretae(databaseURL);
@@ -154,6 +151,12 @@ public class SQLConnection {
 		}
 	}
 	
+	/**
+	 * This function creates a {@link PreparedStatement} for the given Query.
+	 * @param sqlQuery the query for the {@link PreparedStatement}
+	 * @return a new {@link PreparedStatement} object
+	 * @throws SQLException
+	 */
 	public PreparedStatement prepareStatement(String sqlQuery) throws SQLException{
 		return con.prepareStatement(sqlQuery);
 	}

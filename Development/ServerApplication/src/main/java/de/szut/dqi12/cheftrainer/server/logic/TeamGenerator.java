@@ -133,6 +133,7 @@ public class TeamGenerator {
 	/**
 	 * This method checks, if the team worth is correct and calls the
 	 * findBetterPlayer function to improve the team worth
+	 * @return true = worth is correct, false otherwise
 	 */
 	private boolean correctWorth() {
 		boolean smallerThanMax = teamWorth < TEAM_WORTH * (1 + TEAM_WORTH_TOLERANZ);
@@ -285,6 +286,7 @@ public class TeamGenerator {
 	/**
 	 * Creates a random int and takes the player with this ID out of the
 	 * database
+	 * @param heighestPlayerID the highest possible player ID
 	 * 
 	 * @return a new random Player object with values from the database
 	 */

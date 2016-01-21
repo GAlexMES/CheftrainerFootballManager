@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import de.szut.dqi12.cheftrainer.server.ServerApplication;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesManagement;
 

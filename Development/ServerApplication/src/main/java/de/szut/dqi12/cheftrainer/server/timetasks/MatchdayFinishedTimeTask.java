@@ -19,6 +19,12 @@ import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.SchedulePointManagement;
 import de.szut.dqi12.cheftrainer.server.parsing.ScheduleParser;
 
+/**
+ * This class is a {@link TimerTask}. It should be called after a matchday was played, and the points are available.
+ * It also creates a new {@link MatchdayStartsTimeTask} for the next matchday.
+ * @author Alexander Brennecke
+ *
+ */
 public class MatchdayFinishedTimeTask {
 	private final static Logger LOGGER = Logger.getLogger(MatchdayFinishedTimeTask.class);
 
@@ -31,7 +37,14 @@ public class MatchdayFinishedTimeTask {
 	private int season;
 	private int matchday;
 
+	/**
+	 * Constructor
+	 * @param date the date, when the {@link ReceiverTask} should be executed.
+	 * @param matchday the current matchday (1-34 for bundesliga)
+	 * @param season the current season (2015 for 2015-2016)
+	 */
 	public MatchdayFinishedTimeTask(Date date, int matchday, int season) {
+		LOGGER.info("Created MatchdayFinishedTimeTask for: " + sdf.format(date));
 		this.matchday = matchday;
 		toolkit = Toolkit.getDefaultToolkit();
 		timer = new Timer();
@@ -39,6 +52,9 @@ public class MatchdayFinishedTimeTask {
 		timer.schedule(new ReceiverTask(), nextTime);
 	}
 
+	/**
+	 * The {@link ReceiverTask} will be called by the {@link MatchdayStartsTimeTask}. Itself calls Parsing and {@link DatabaseRequests} functions to get the newest points.
+	 */
 	class ReceiverTask extends TimerTask {
 		public void run() {
 			LOGGER.info("Timetask to collect points for matchday " + matchday + " started.");
@@ -48,6 +64,9 @@ public class MatchdayFinishedTimeTask {
 			LOGGER.info("Created MatchdayStartTimeTask for: " + sdf.format(newStartTimer));
 		}
 
+		/**
+		 * This functions uses a List of {@link Match} to call the {@link SchedulePointManagement}, to get the newest points for each player of each match in the list. 
+		 */
 		private void readPoints() {
 			List<Match> matches = updateSchedule();
 			SchedulePointManagement spm = DatabaseRequests.getSchedulePointManagement();
@@ -63,6 +82,10 @@ public class MatchdayFinishedTimeTask {
 
 		}
 
+		/**
+		 * This function is called, to parse the current matchday and the next one again. This is used to updated dates.
+		 * @return returns a List of {@link Match}es for the current matchday.
+		 */
 		private List<Match> updateSchedule() {
 			ScheduleParser sp = new ScheduleParser();
 			List<Match> currentMatches = new ArrayList<>();

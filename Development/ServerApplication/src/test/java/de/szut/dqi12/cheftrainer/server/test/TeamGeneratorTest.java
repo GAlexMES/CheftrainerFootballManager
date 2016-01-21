@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import de.szut.dqi12.cheftrainer.server.ServerApplication;
 import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
 
@@ -14,10 +13,6 @@ import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
  *
  */
 public class TeamGeneratorTest {
-
-	private final static String DB_NAME = "Database";
-	private final static String DB_PATH = ServerApplication.class.getResource(
-			"../../../../../Database").toString();
 
 	@Test
 	public void test() {

@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
@@ -146,11 +147,17 @@ public class DatabaseUtils extends  SQLManagement {
 
 	/**
 	 * This method sends the Query to the database.
+	 * @param query the Query, that should be send to the database.
 	 */
 	public void sendSimpleQuery(String query) {
 		sqlCon.sendQuery(query);
 	}
 
+	/**
+	 * this function reads the ID of a {@link RealTeam} with the given name.
+	 * @param teamName the name of the {@link RealTeam}
+	 * @return the ID of the {@link RealTeam}
+	 */
 	public int getTeamIDForName(String teamName) {
 		String sqlQuery ="SELECT ID FROM Verein WHERE Vereinsname='"+teamName+"'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
