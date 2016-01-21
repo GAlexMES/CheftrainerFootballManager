@@ -21,6 +21,7 @@ public class SocketController {
 
 	/**
 	 * This method creates a new server and starts it.
+	 * @param serverProps a {@link ServerProperties} object, where all fields are setted.
 	 * 
 	 * @throws Exception
 	 */

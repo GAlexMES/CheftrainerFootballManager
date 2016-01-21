@@ -67,6 +67,8 @@ public class ScheduleParser {
 	/**
 	 * Parses a HTML Element to a Match object
 	 * @param e the HTML Element from sportal.de
+	 * @param season the current season (use 2015 for 2015-2016)
+	 * @param currentMatchDay the current matchday (1-34 for bundesliga)
 	 * @return a new Match object
 	 */
 	private Match createMatch(Element e, int season,int currentMatchDay) {
