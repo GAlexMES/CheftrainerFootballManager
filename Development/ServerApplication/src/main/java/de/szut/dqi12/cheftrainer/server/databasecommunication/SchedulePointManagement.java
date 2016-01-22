@@ -7,7 +7,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,6 @@ import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.parsing.PointsParser;
@@ -71,7 +69,6 @@ public class SchedulePointManagement extends SQLManagement {
 	public void initializeScheduleForSeason(int currentSeason) {
 		Map<Integer, List<Match>> matchDays = scheduleParser.getMatchesForSeason(currentSeason);
 		Date date = new Date();
-		Boolean startTimer = true;
 		for (Integer i : matchDays.keySet()) {
 			List<Match> matchList = matchDays.get(i);
 			if (wasMatchdayPlayed(matchList, date)) {
@@ -81,10 +78,6 @@ public class SchedulePointManagement extends SQLManagement {
 					playerPoints.putAll(readPointsForMatch(m));
 				}
 				playerPoints.keySet().forEach(s -> DatabaseRequests.writePointsToDatabase(playerPoints.get(s)));
-			} else if (startTimer) {
-				Date startDate = getMatchdayDates(matchList, (a, b) -> -LONG_COMPARATOR.compare(a, b));
-				Controller.getInstance().createMatchdayStartsTimer(startDate);
-				startTimer = false;
 			}
 			for (Match m : matchList) {
 				try {
@@ -95,27 +88,6 @@ public class SchedulePointManagement extends SQLManagement {
 			}
 
 		}
-	}
-
-	private Date getMatchdayDates(List<Match> matches, Comparator<Long> com) {
-		Date retval = null;
-		for (Match m : matches) {
-			try {
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(dateFormat.parse(m.getDate() + " " + m.getTime()));
-				if (retval == null) {
-					retval = cal.getTime();
-				} else {
-					int isBetter = com.compare(cal.getTimeInMillis(), retval.getTime());
-					if (isBetter == 1) {
-						retval = cal.getTime();
-					}
-				}
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-		}
-		return retval;
 	}
 
 	/**
@@ -220,19 +192,6 @@ public class SchedulePointManagement extends SQLManagement {
 		}
 		return new Date(dateTime);
 	}
-
-	/**
-	 * Compares two int
-	 */
-	private static final Comparator<Long> LONG_COMPARATOR = (a, b) -> {
-		if (a < b) {
-			return -1;
-		}
-		if (a > b) {
-			return 1;
-		}
-		return 0;
-	};
 
 	public void updateSchedule(List<Match> matches, int season, int matchday) {
 		String sqlQuery = "UPDATE Spieltag SET Datum = ?, Ergebnis = ?, URL= ? WHERE Spieltag = ? AND Saison=? AND Heim_Verein_ID = ? AND Gast_Verein_ID = ? ;";

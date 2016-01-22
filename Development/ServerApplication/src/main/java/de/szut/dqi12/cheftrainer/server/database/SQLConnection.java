@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
+import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
 
 /**
@@ -22,10 +23,10 @@ import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
  *
  */
 public class SQLConnection {
-	
+
 	private final String DATABASE_NAME = "Database";
-	private final String RELATIVE_DB_PATH ="/"+DATABASE_NAME+".db";
-	
+	private final String RELATIVE_DB_PATH = "/" + DATABASE_NAME + ".db";
+
 	// INITIALISATION
 	private final static String SQLEXCEPTION_NORESULT = "query does not return ResultSet";
 	private final static String SQLEXCEPTION_ERROR = "[SQLITE_ERROR]";
@@ -33,7 +34,6 @@ public class SQLConnection {
 
 	private Connection con = null;
 	private Statement statement = null;
-	
 
 	private final static Logger LOGGER = Logger.getLogger(SQLConnection.class);
 
@@ -42,49 +42,50 @@ public class SQLConnection {
 	/**
 	 * Constructor
 	 * 
-	 * @param init  true = database content will be initialized.
-	 * @throws IOException 
+	 * @param init
+	 *            true = database content will be initialized.
+	 * @throws IOException
 	 */
-	public SQLConnection(boolean init)	throws IOException {
+	public SQLConnection(boolean init) throws IOException {
 		DatabaseRequests.getInstance().setSQLConnection(this);
-
 		loadDB();
-		
+
 		if (init) {
 			ServerInitialator.databaseInitalisation();
 		}
+		Controller.getInstance().createMatchdayTimeTask();
 	}
-	
+
 	/**
 	 * This function returns the relative database path as an absolute path
+	 * 
 	 * @return a String, which represents the path (e.g. C:/Databse.db)
 	 * @throws IOException
 	 */
-	private String getDatabasePath() throws IOException{
-		File databaseFile = new File("."+RELATIVE_DB_PATH);
+	private String getDatabasePath() throws IOException {
+		File databaseFile = new File("." + RELATIVE_DB_PATH);
 		Boolean databaseExist = databaseFile.exists();
-		String path =databaseFile.getAbsolutePath(); 
+		String path = databaseFile.getAbsolutePath();
 		String databaseURL = path.replace("\\.\\", "\\");
-		
-		if(!databaseExist){
+
+		if (!databaseExist) {
 			DatabaseCreator.cretae(databaseURL);
 		}
-		
+
 		return databaseURL;
 	}
 
-	
 	/**
 	 * Tries to connect to the given db file
 	 * 
 	 * @param path
 	 *            to the db file
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	private void loadDB() throws IOException {
 		String databaseURL = getDatabasePath();
 		LOGGER.info("Connecting to the database file!");
-		final String url = "jdbc:sqlite:"+databaseURL;
+		final String url = "jdbc:sqlite:" + databaseURL;
 
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -106,8 +107,7 @@ public class SQLConnection {
 
 			statement = con.createStatement();
 
-			statement.executeQuery("ATTACH '" + DATABASE_NAME + "' as "
-					+ DATABASE_NAME);
+			statement.executeQuery("ATTACH '" + DATABASE_NAME + "' as " + DATABASE_NAME);
 			LOGGER.info("Connecting to the database file was succesfull!");
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -150,17 +150,19 @@ public class SQLConnection {
 			LOGGER.error(sqle.getLocalizedMessage());
 		}
 	}
-	
+
 	/**
 	 * This function creates a {@link PreparedStatement} for the given Query.
-	 * @param sqlQuery the query for the {@link PreparedStatement}
+	 * 
+	 * @param sqlQuery
+	 *            the query for the {@link PreparedStatement}
 	 * @return a new {@link PreparedStatement} object
 	 * @throws SQLException
 	 */
-	public PreparedStatement prepareStatement(String sqlQuery) throws SQLException{
+	public PreparedStatement prepareStatement(String sqlQuery) throws SQLException {
 		return con.prepareStatement(sqlQuery);
 	}
-	
+
 	// GETTER&SETTER
 	// /////////////
 	public String getName() {

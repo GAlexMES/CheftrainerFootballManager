@@ -10,6 +10,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.timetasks.MatchdayFinishedTimeTask;
 import de.szut.dqi12.cheftrainer.server.timetasks.MatchdayStartsTimeTask;
@@ -17,8 +18,10 @@ import de.szut.dqi12.cheftrainer.server.timetasks.TransfermarktTimeTask;
 import de.szut.dqi12.cheftrainer.server.usercommunication.SocketController;
 
 /**
- * This class is the controller class, which is very important for the start of the application.
- * The class tries to create a connection to the database, it creates the {@link SocketController}, and the {@link TransfermarktTimeTask}.
+ * This class is the controller class, which is very important for the start of
+ * the application. The class tries to create a connection to the database, it
+ * creates the {@link SocketController}, and the {@link TransfermarktTimeTask}.
+ * 
  * @author Alexander Brennecke
  *
  */
@@ -27,7 +30,7 @@ public class Controller {
 	private static Controller instance;
 	private SocketController socketController;
 	private SQLConnection sqlConnection;
-	
+
 	@SuppressWarnings("unused")
 	private TransfermarktTimeTask timerTask;
 	@SuppressWarnings("unused")
@@ -39,6 +42,7 @@ public class Controller {
 
 	/**
 	 * This function is used for singleton pattern.
+	 * 
 	 * @return each time the same instance of a {@link Controller} object.
 	 */
 	public static Controller getInstance() {
@@ -49,19 +53,24 @@ public class Controller {
 	}
 
 	/**
-	 * This function creates {@link ServerProperties} and with them a new {@link SocketController}.
-	 * To create valid {@link ServerProperties}, it needs to map the IDs, defined in the {@link ClientToServer_MessageIDs},
+	 * This function creates {@link ServerProperties} and with them a new
+	 * {@link SocketController}. To create valid {@link ServerProperties}, it
+	 * needs to map the IDs, defined in the {@link ClientToServer_MessageIDs},
 	 * to classes, which extends {@link CallableAbstract}.
-	 * @param packagePath the package path of the classes, which should be mapped to the IDs
-	 * @param callableDir the director, in which the {@link CallableAbstract} classes are saved.
+	 * 
+	 * @param packagePath
+	 *            the package path of the classes, which should be mapped to the
+	 *            IDs
+	 * @param callableDir
+	 *            the director, in which the {@link CallableAbstract} classes
+	 *            are saved.
 	 */
 	public void startServerSocket(String packagePath, String callableDir) {
 		ServerProperties serverProps = new ServerProperties();
-		
+
 		String pathAsString = "de/szut/dqi12/cheftrainer/server/callables/";
 		ClientToServer_MessageIDs cts = new ClientToServer_MessageIDs();
-		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, pathAsString,
-				packagePath);
+		IDClass_Path_Mapper idMapper = new IDClass_Path_Mapper(cts, pathAsString, packagePath);
 		serverProps.addClassPathMapper(idMapper);
 		serverProps.setPort(5000);
 		try {
@@ -72,10 +81,16 @@ public class Controller {
 	}
 
 	/**
-	 * This function creates a new {@link SQLConnection} object and saves it in the {@link Controller} for further instructions.
-	 * @param sqlName the name of the database
-	 * @param sqlPath	the path to the director of the database
-	 * @throws IOException when there is a database, but it is empty, and the initialization doesn't work.
+	 * This function creates a new {@link SQLConnection} object and saves it in
+	 * the {@link Controller} for further instructions.
+	 * 
+	 * @param sqlName
+	 *            the name of the database
+	 * @param sqlPath
+	 *            the path to the director of the database
+	 * @throws IOException
+	 *             when there is a database, but it is empty, and the
+	 *             initialization doesn't work.
 	 */
 	public void creatDatabaseCommunication() throws IOException {
 		try {
@@ -93,27 +108,47 @@ public class Controller {
 	public SocketController getSocketController() {
 		return socketController;
 	}
-	
-	public void createMatchdayFinishedTimer(Date date, int matchDay, int season){
-		matchdayFinishedTimeTask = new MatchdayFinishedTimeTask(date,matchDay, season);
+
+	public void createMatchdayFinishedTimer(Date date, int matchDay, int season) {
+		matchdayFinishedTimeTask = new MatchdayFinishedTimeTask(date, matchDay, season);
 	}
-	
-	public void createMatchdayStartsTimer(Date date){
+
+	public void createMatchdayStartsTimer(Date date) {
 		matchdayStartsTimeTask = new MatchdayStartsTimeTask(date);
 	}
 
+	public void createMatchdayTimeTask() {
+		int matchday = DatabaseRequests.getCurrentMatchDay(new Date());
+		Date startTime = DatabaseRequests.getStartOfMatchday(matchday);
+
+		Date currentTime = new Date();
+		if (startTime.after(currentTime)) {
+			createMatchdayStartsTimer(startTime);
+		}
+		else{
+			Date endTime = DatabaseRequests.getLastMatchDate(matchday);
+			
+			if(endTime.after(currentTime)){
+				int currentSeason = DatabaseRequests.getCurrentSeasonFromSportal();
+				createMatchdayFinishedTimer(endTime,matchday,currentSeason);
+			}
+			
+		}
+	}
+
 	/**
-	 * Creates a new {@link TransfermarktTimeTask} object, with tomorrow 1:00 am as trigger time.
+	 * Creates a new {@link TransfermarktTimeTask} object, with tomorrow 1:00 am
+	 * as trigger time.
 	 */
 	public void newTimerTask() {
-		Calendar cal =  Calendar.getInstance();
+		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 1);
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
 
 		cal.add(Calendar.DAY_OF_MONTH, 1);
-		
+
 		Date newTimer = cal.getTime();
 		timerTask = new TransfermarktTimeTask(newTimer);
 	}
