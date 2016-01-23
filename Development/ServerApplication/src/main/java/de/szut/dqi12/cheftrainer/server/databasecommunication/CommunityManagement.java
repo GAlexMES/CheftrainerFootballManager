@@ -16,6 +16,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
@@ -115,6 +116,11 @@ public class CommunityManagement {
 		return retval;
 	}
 
+	/**
+	 * This function sends a Query to to the database to fetch the transfer {@link Market} for the given {@link Community}.
+	 * @param communityID the community ID of the market, that will be read out of the database.
+	 * @return a {@link Market} object, which is filled by the database results.
+	 */
 	private Market getMarket(int communityID) {
 		Market retval = new Market();
 
@@ -132,6 +138,12 @@ public class CommunityManagement {
 		return retval;
 	}
 	
+	/**
+	 * This function creates a query to fetch all {@link Transaction}s for the given {@link Community}.
+	 * @param communityID the ID of the {@link Community}
+	 * @return a List of {@link Transaction} objects, which were filled by the result of the database.
+	 * @throws SQLException
+	 */
 	private List<Transaction> getTransactions(int communityID) throws SQLException{
 		List<Transaction> retval = new ArrayList<>();
 	
@@ -352,8 +364,14 @@ public class CommunityManagement {
 		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
 	
-	public List<Player> getTeam(String managerName) {
-		String condition =  "Manager.Nutzer_ID = Nutzer.ID AND Nutzer.Nutzername = '"+managerName+"'";
+	
+	/**
+	 * This function creates a Query to read the ID of a {@link User} from the database.
+	 * @param userName the name of the user (login name)
+	 * @return see getTeam(int managerID)
+	 */
+	public List<Player> getTeam(String userName) {
+		String condition =  "Manager.Nutzer_ID = Nutzer.ID AND Nutzer.Nutzername = '"+userName+"'";
 		int managerID;
 		try {
 			managerID = DatabaseRequests.getUniqueInt("Manager.ID", "Manager INNER JOIN Nutzer", condition);

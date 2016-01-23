@@ -4,6 +4,12 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * This class contains all Table Queries, which will be executed, when the database file was created.
+ * @author Alexander Brennecke
+ *
+ */
 public class TableQueries {
 
 	public static final String GEBOTE_QUERY = "CREATE TABLE `Gebote` (`Manager_ID`	INTEGER,`Spieler_ID` INTEGER,`Gebot`INTEGER,`Spielrunde_ID`	INTEGER)";

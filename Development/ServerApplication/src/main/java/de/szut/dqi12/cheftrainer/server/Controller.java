@@ -117,6 +117,9 @@ public class Controller {
 		matchdayStartsTimeTask = new MatchdayStartsTimeTask(date);
 	}
 
+	/**
+	 * This function is used, when the application starts. It fetches the next matchday from the database and creates the necessary time tasks for it.
+	 */
 	public void createMatchdayTimeTask() {
 		int matchday = DatabaseRequests.getCurrentMatchDay(new Date());
 		Date startTime = DatabaseRequests.getStartOfMatchday(matchday);

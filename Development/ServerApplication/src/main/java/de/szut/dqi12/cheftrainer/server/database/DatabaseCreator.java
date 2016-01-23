@@ -12,6 +12,11 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+/**
+ * This class is used to create the database file, when it not exists.
+ * @author Alexander Brennecke
+ *
+ */
 public class DatabaseCreator {
 
 	private final static Logger LOGGER = Logger.getLogger(DatabaseCreator.class);
@@ -20,6 +25,11 @@ public class DatabaseCreator {
 	private static Statement statement = null;
 	private static String name = "";
 
+	/**
+	 * This function created the file itself at the given location and fills the database with the tables, which are defined in the {@link TableQueries}.
+	 * @param path the absolute path to the database file-
+	 * @throws IOException
+	 */
 	public static void cretae(String path) throws IOException {
 		LOGGER.info("Creating database, because it does not exist.");
 
@@ -50,6 +60,10 @@ public class DatabaseCreator {
 		LOGGER.info("database was created under: " + path);
 	}
 	
+	/**
+	 *  Fetches all Queries from {@link TableQueries} and sends them to the database.
+	 * @param statement the statement, which should execute the queries.
+	 */
 	private static void createTables(Statement statement){
 		List<String> tableQueries = TableQueries.getTableQueries();
 		for(String s : tableQueries){
@@ -61,6 +75,10 @@ public class DatabaseCreator {
 		}
 	}
 	
+	/**
+	 * This function creates the name of the database by the given path.
+	 * @param path the path, that contains the filename
+	 */
 	private static void createName(String path){
 		Path p = Paths.get(path);
 		name = p.getFileName().toString();
