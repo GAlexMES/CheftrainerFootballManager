@@ -6,9 +6,12 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +39,8 @@ public class SchedulePointManagement extends SQLManagement {
 	private DateFormat dateFormat;
 
 	private final static Logger LOGGER = Logger.getLogger(SchedulePointManagement.class);
+
+	private List<Integer> currentMatchIDs = new ArrayList<>();
 
 	/**
 	 * Constructor
@@ -70,14 +75,15 @@ public class SchedulePointManagement extends SQLManagement {
 		Map<Integer, List<Match>> matchDays = scheduleParser.getMatchesForSeason(currentSeason);
 		Date date = new Date();
 		for (Integer i : matchDays.keySet()) {
+			currentMatchIDs = new ArrayList<>();
 			List<Match> matchList = matchDays.get(i);
 			if (wasMatchdayPlayed(matchList, date)) {
 				LOGGER.info("Adding points for players for matchday " + i);
-				Map<String, Map<String, Player>> playerPoints = new HashMap<String, Map<String, Player>>();
-				for (Match m : matchList) {
-					playerPoints.putAll(readPointsForMatch(m));
+				List<HashMap<String, HashMap<String, Player>>> parsedPoints = readPointsForMatches(matchList);
+				for (int match = 0; match < parsedPoints.size(); match++) {
+					HashMap<String, HashMap<String, Player>> playerPoints = parsedPoints.get(match);
+					playerPoints.keySet().forEach(s -> DatabaseRequests.writePointsToDatabase(playerPoints.get(s)));
 				}
-				playerPoints.keySet().forEach(s -> DatabaseRequests.writePointsToDatabase(playerPoints.get(s)));
 			}
 			for (Match m : matchList) {
 				try {
@@ -88,6 +94,46 @@ public class SchedulePointManagement extends SQLManagement {
 			}
 
 		}
+	}
+
+	public List<HashMap<String, HashMap<String, Player>>> readPointsForMatches(List<Match> matches) {
+		List<HashMap<String, HashMap<String, Player>>> retval = new ArrayList<HashMap<String, HashMap<String, Player>>>();
+		int matchday = matches.get(0).getMatchDay();
+		int season = matches.get(0).getSeason();
+
+		for (Match m : matches) {
+			retval.add(readPointsForMatch(m));
+		}
+
+		while (currentMatchIDs.size() < 9) {
+			int minID = Collections.min(currentMatchIDs);
+			int maxID = Collections.max(currentMatchIDs);
+			if (maxID - minID == 8) {
+				int newID = -1;
+				for (int i = minID; i < maxID; i++) {
+					if (!currentMatchIDs.contains(i)) {
+						newID = i;
+						break;
+					}
+				}
+
+				if (newID > 0) {
+					HashMap<String, HashMap<String, Player>> points = PointsParser.getPlayerPoints(season, matchday, newID);
+					Iterator<String> iterator = points.keySet().iterator();
+					LOGGER.info("Found ID for the match: "+iterator.next()+"-"+iterator.next());
+					retval.add(points);
+					currentMatchIDs.add(newID);
+				} else {
+					break;
+				}
+			} else {
+				break;
+
+			}
+		}
+
+		return retval;
+
 	}
 
 	/**
@@ -101,11 +147,18 @@ public class SchedulePointManagement extends SQLManagement {
 	 *         a map, where the key is the name of a player. The value of this
 	 *         inner Map is a full filled {@link Player} object.
 	 */
-	public Map<String, Map<String, Player>> readPointsForMatch(Match m) {
-		Map<String, Map<String, Player>> retval = new HashMap<String, Map<String, Player>>();
+	private HashMap<String, HashMap<String, Player>> readPointsForMatch(Match m) {
+		HashMap<String, HashMap<String, Player>> retval = new HashMap<String, HashMap<String, Player>>();
 
-		int matchID = ScheduleParser.getSportalID(m.getDetailURL());
+		int matchID = -1;
+		try {
+			matchID = ScheduleParser.getSportalID(m.getDetailURL());
+		} catch (Exception e) {
+
+		}
+
 		if (matchID > 0) {
+			currentMatchIDs.add(matchID);
 			m.setSportalMatchID(matchID);
 			retval = PointsParser.getPlayerPoints(m);
 		}
@@ -168,7 +221,7 @@ public class SchedulePointManagement extends SQLManagement {
 
 		return getIntFromRS(rs, "min(Spieltag)");
 	}
-	
+
 	public Date getLastMatchDate(int matchday) {
 		String sqlQuery = "SELECT max(Datum) FROM Spieltag WHERE Spieltag= " + matchday + " AND Ergebnis = '-1:-1'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
@@ -196,15 +249,15 @@ public class SchedulePointManagement extends SQLManagement {
 	public void updateSchedule(List<Match> matches, int season, int matchday) {
 		String sqlQuery = "UPDATE Spieltag SET Datum = ?, Ergebnis = ?, URL= ? WHERE Spieltag = ? AND Saison=? AND Heim_Verein_ID = ? AND Gast_Verein_ID = ? ;";
 		for (Match m : matches) {
-			
+
 			try {
 				int homeTeamID = DatabaseRequests.getTeamIDForName(m.getHome());
 				int guestTeamID = DatabaseRequests.getTeamIDForName(m.getGuest());
-				
+
 				PreparedStatement ps = sqlCon.prepareStatement(sqlQuery);
 				Date d = dateFormat.parse(m.getDate() + " " + m.getTime());
 				ps.setLong(1, d.getTime());
-				ps.setString(2, m.getGoalsHome()+"-"+m.getGoalsGuest());
+				ps.setString(2, m.getGoalsHome() + "-" + m.getGoalsGuest());
 				ps.setString(3, m.getDetailURL());
 				ps.setInt(4, matchday);
 				ps.setInt(5, season);

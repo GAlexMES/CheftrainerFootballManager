@@ -26,7 +26,7 @@ public class PointUpdateTest {
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
-	private int matchday = 17;
+	private int matchday = 18;
 	private int season = 2015;
 	
 	@Test

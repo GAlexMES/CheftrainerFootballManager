@@ -5,8 +5,8 @@ import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -58,7 +58,9 @@ public class MatchdayFinishedTimeTask {
 	class ReceiverTask extends TimerTask {
 		public void run() {
 			LOGGER.info("Timetask to collect points for matchday " + matchday + " started.");
+			
 			readPoints();
+			
 			Date newStartTimer = DatabaseRequests.getStartOfMatchday(matchday + 1);
 			Controller.getInstance().createMatchdayStartsTimer(newStartTimer);
 			LOGGER.info("Created MatchdayStartTimeTask for: " + sdf.format(newStartTimer));
@@ -71,11 +73,12 @@ public class MatchdayFinishedTimeTask {
 			List<Match> matches = updateSchedule();
 			SchedulePointManagement spm = DatabaseRequests.getSchedulePointManagement();
 
-			for (Match m : matches) {
-				Map<String, Map<String, Player>> newPoints = spm.readPointsForMatch(m);
-				for (String s : newPoints.keySet()) {
-					DatabaseRequests.writePointsToDatabase(newPoints.get(s));
-					DatabaseRequests.addPointsToPlayingPlayers(newPoints.get(s));
+			List<HashMap<String, HashMap<String, Player>>> parsedPoints = spm.readPointsForMatches(matches);
+			for(int match = 0; match<parsedPoints.size();match++){
+				HashMap<String, HashMap<String, Player>> playerPoints = parsedPoints.get(0);
+				for (String s : playerPoints.keySet()) {
+					DatabaseRequests.writePointsToDatabase(playerPoints.get(s));
+					DatabaseRequests.addPointsToPlayingPlayers(playerPoints.get(s));
 				}
 
 			}

@@ -159,7 +159,7 @@ public class PointManagement {
 	}
 
 	private String createUpdatePlayerPointsQuery(int points, int sportalID) {
-		String filledQuery = UPDATE_POINT_QUERY + "WHERE SportalID = " + sportalID;
+		String filledQuery = UPDATE_POINT_QUERY + "WHERE SportalID = '" + sportalID+"'";
 		filledQuery = filledQuery.replace("%POINTS%", String.valueOf(points));
 		return filledQuery;
 	}

@@ -252,7 +252,6 @@ public class PlayerManagement extends SQLManagement {
 	 */
 	public void copymanagerTeam() {
 		String deleteQuery = "DELETE FROM 'Mannschaft Copy'";
-		//TODO: check if works
 		String copyQuery = "INSERT INTO 'Mannschaft Copy' SELECT Manager_ID, Spieler_ID, NULL FROM Mannschaft WHERE Aufgestellt = 1;";
 		
 		sqlCon.sendQuery(deleteQuery);

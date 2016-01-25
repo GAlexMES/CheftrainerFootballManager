@@ -2,3 +2,4 @@
 /Development/ClientApplication/LOG
 
 Development/ServerApplication/Database.db
+*.db
