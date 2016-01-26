@@ -3,6 +3,8 @@ package de.szut.dqi12.cheftrainer.server.databasecommunication;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
@@ -20,6 +22,10 @@ public class DatabaseUtils extends  SQLManagement {
 	
 	private SQLConnection sqlCon;
 	
+	/**
+	 * Constructor
+	 * @param sqlCon active {@link SQLConnection}.
+	 */
 	public DatabaseUtils(SQLConnection sqlCon){
 		this.sqlCon = sqlCon;
 	}
@@ -172,5 +178,20 @@ public class DatabaseUtils extends  SQLManagement {
 			}
 		} 
 		return -1;
+	}
+	
+	/**
+	 * This function iterates over the given {@link ResultSet} and creates a {@link Integer} {@link List} from the values in the given column (must be integer values)
+	 * @param rs a active {@link ResultSet}
+	 * @param column the name of the column in the {@link ResultSet}
+	 * @return a {@link List} of {@link Integer} values, which were read out of the column.
+	 * @throws SQLException
+	 */
+	public static List<Integer> getListFromResultSet(ResultSet rs, String column) throws SQLException{
+		List<Integer> retval = new ArrayList<>();
+		while(rs.next()){
+			retval.add(rs.getInt(column));
+		}
+		return retval;
 	}
 }

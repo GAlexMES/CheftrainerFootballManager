@@ -46,7 +46,6 @@ public class ScheduleParser {
 	 * @throws MalformedURLException
 	 */
 	public List<Match> createSchedule(int matchday, int season) throws MalformedURLException {
-		LOGGER.error("needs matchday in line 59 matches.add(createMatch/e,season);). At the moment not implemented, because I dont know, if this is maybe dead code.");
 		matches = new ArrayList<>();
 		URL scheduleURL = new URL(scheduleRoot + matchday + "-saison-" + season + "-" + (season + 1));
 

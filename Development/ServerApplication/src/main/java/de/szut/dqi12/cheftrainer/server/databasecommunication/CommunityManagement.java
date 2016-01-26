@@ -41,7 +41,8 @@ public class CommunityManagement {
 	/**
 	 * Constructor.
 	 * 
-	 * @param sqlCon the current {@link SQLConnection}
+	 * @param sqlCon
+	 *            the current {@link SQLConnection}
 	 */
 	public CommunityManagement(SQLConnection sqlCon) {
 		this.sqlCon = sqlCon;
@@ -117,8 +118,12 @@ public class CommunityManagement {
 	}
 
 	/**
-	 * This function sends a Query to to the database to fetch the transfer {@link Market} for the given {@link Community}.
-	 * @param communityID the community ID of the market, that will be read out of the database.
+	 * This function sends a Query to to the database to fetch the transfer
+	 * {@link Market} for the given {@link Community}.
+	 * 
+	 * @param communityID
+	 *            the community ID of the market, that will be read out of the
+	 *            database.
 	 * @return a {@link Market} object, which is filled by the database results.
 	 */
 	private Market getMarket(int communityID) {
@@ -137,19 +142,23 @@ public class CommunityManagement {
 		}
 		return retval;
 	}
-	
+
 	/**
-	 * This function creates a query to fetch all {@link Transaction}s for the given {@link Community}.
-	 * @param communityID the ID of the {@link Community}
-	 * @return a List of {@link Transaction} objects, which were filled by the result of the database.
+	 * This function creates a query to fetch all {@link Transaction}s for the
+	 * given {@link Community}.
+	 * 
+	 * @param communityID
+	 *            the ID of the {@link Community}
+	 * @return a List of {@link Transaction} objects, which were filled by the
+	 *         result of the database.
 	 * @throws SQLException
 	 */
-	private List<Transaction> getTransactions(int communityID) throws SQLException{
+	private List<Transaction> getTransactions(int communityID) throws SQLException {
 		List<Transaction> retval = new ArrayList<>();
-	
-		String transactionQuery = "Select * From Gebote Where Spielrunde_ID = "+communityID;
+
+		String transactionQuery = "Select * From Gebote Where Spielrunde_ID = " + communityID;
 		ResultSet rs = sqlCon.sendQuery(transactionQuery);
-		while(rs.next()){
+		while (rs.next()) {
 			Transaction t = new Transaction();
 			t.setManagerID(rs.getInt("Manager_ID"));
 			t.setPlayerSportalID(rs.getInt("Spieler_ID"));
@@ -159,19 +168,18 @@ public class CommunityManagement {
 		}
 		return retval;
 	}
-	
-	
 
 	/**
-	 * This method collects all managers, that play in the given {@link Community}.
+	 * This method collects all managers, that play in the given
+	 * {@link Community}.
 	 * 
 	 * @param communityID
 	 *            the ID of the {@link Community}
 	 * @param communityName
-	 * 			  the Name of the {@link Community}.
+	 *            the Name of the {@link Community}.
 	 * @return a List of {@link Manager} Objects.
 	 */
-	
+
 	public List<Manager> getManagers(int communityID, String communityName) {
 		List<Manager> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Manager.*, Nutzer.Nutzername " + "FROM  Manager INNER JOIN Nutzer WHERE Spielrunde_ID=" + communityID + " AND Manager.Nutzer_ID=Nutzer.ID";
@@ -363,15 +371,17 @@ public class CommunityManagement {
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistUser);
 		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
-	
-	
+
 	/**
-	 * This function creates a Query to read the ID of a {@link User} from the database.
-	 * @param userName the name of the user (login name)
+	 * This function creates a Query to read the ID of a {@link User} from the
+	 * database.
+	 * 
+	 * @param userName
+	 *            the name of the user (login name)
 	 * @return see getTeam(int managerID)
 	 */
 	public List<Player> getTeam(String userName) {
-		String condition =  "Manager.Nutzer_ID = Nutzer.ID AND Nutzer.Nutzername = '"+userName+"'";
+		String condition = "Manager.Nutzer_ID = Nutzer.ID AND Nutzer.Nutzername = '" + userName + "'";
 		int managerID;
 		try {
 			managerID = DatabaseRequests.getUniqueInt("Manager.ID", "Manager INNER JOIN Nutzer", condition);
@@ -394,10 +404,8 @@ public class CommunityManagement {
 	 */
 	public List<Player> getTeam(int managerID) {
 		List<Player> playerList = new ArrayList<>();
-		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein" 
-						+ " WHERE Mannschaft.Manager_ID=" + managerID 
-						+ " AND Spieler.Verein_ID = Verein.ID"
-						+ " AND Mannschaft.Spieler_ID=Spieler.SportalID";
+		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein" + " WHERE Mannschaft.Manager_ID=" + managerID + " AND Spieler.Verein_ID = Verein.ID"
+				+ " AND Mannschaft.Spieler_ID=Spieler.SportalID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
 			playerList.addAll(PlayerManagement.getPlayersFromResultSet(rs));
@@ -405,5 +413,21 @@ public class CommunityManagement {
 			e.printStackTrace();
 		}
 		return playerList;
+	}
+
+	/**
+	 * This function collects all {@link Manager} IDs from the Database.
+	 * 
+	 * @return a {@link List} of IDs of {@link Manager}s.
+	 */
+	public List<Integer> getAllManagerIDs() {
+		String managerIDsQuery = "SELECT ID FROM Manager";
+		ResultSet rs = sqlCon.sendQuery(managerIDsQuery);
+		try {
+			return DatabaseUtils.getListFromResultSet(rs, "ID");
+		} catch (SQLException sqe) {
+			sqe.printStackTrace();
+			return null;
+		}
 	}
 }

@@ -1,6 +1,11 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -42,8 +47,8 @@ public class PointManagement {
 	 * points stored in the database.
 	 * 
 	 * @param playerList
-	 *            a Map, where the key is a String and the value is a {@link Player} object. The Keys are not
-	 *            relevant.
+	 *            a Map, where the key is a String and the value is a
+	 *            {@link Player} object. The Keys are not relevant.
 	 */
 	public void updatePointsOfPlayers(Map<String, Player> playerList) {
 		for (String s : playerList.keySet()) {
@@ -158,17 +163,78 @@ public class PointManagement {
 		return filledQuery + ";";
 	}
 
+	/**
+	 * This function updates the points of a player in the database.
+	 * 
+	 * @param points
+	 *            the points, that should be added (positive int) or subtracted
+	 *            (negative int)
+	 * @param sportalID
+	 *            the sportal ID of the {@link Player}
+	 * @return the sql query as String
+	 */
 	private String createUpdatePlayerPointsQuery(int points, int sportalID) {
-		String filledQuery = UPDATE_POINT_QUERY + "WHERE SportalID = '" + sportalID+"'";
+		String filledQuery = UPDATE_POINT_QUERY + "WHERE SportalID = '" + sportalID + "'";
 		filledQuery = filledQuery.replace("%POINTS%", String.valueOf(points));
 		return filledQuery;
 	}
 
+	/**
+	 * This function saves the given points in the "Mannschaft Copy" table.
+	 * 
+	 * @param playerList
+	 *            a {@link List} where a String is the key (name of the
+	 *            {@link Player}) and the {@link Player} object is the value.
+	 */
 	public void addPointsToPlayingPlayers(Map<String, Player> playerList) {
-		for(String s : playerList.keySet()){
+		for (String s : playerList.keySet()) {
 			Player p = playerList.get(s);
-			String sqlQuery = "UPDATE 'Mannschaft Copy' SET Punkte = "+p.getPoints()+" WHERE Spieler_ID = "+p.getSportalID();
+			String sqlQuery = "UPDATE 'Mannschaft Copy' SET Punkte = " + p.getPoints() + " WHERE Spieler_ID = " + p.getSportalID();
 			sqlCon.sendQuery(sqlQuery);
 		}
+	}
+
+	/**
+	 * This function reads the "Mannschaft Copy" table, after the points were
+	 * added.
+	 * @param matchday the current matchday
+	 */
+	public void addTempPointsToManager(int matchday) {
+		List<Integer> managerIDs = DatabaseRequests.getAllManagerIDs();
+		for (int id : managerIDs) {
+			String collectQuery = "SELECT Punkte FROM 'Mannschaft Copy' WHERE Manager_ID =  " + id;
+			ResultSet rs = sqlCon.sendQuery(collectQuery);
+			try {
+				List<Integer> points = DatabaseUtils.getListFromResultSet(rs, "Punkte");
+				int managerPoints = 0;
+				for (int i = 0; i < 11; i++) {
+					if (points.size() > i) {
+						managerPoints += points.get(i);
+					} else {
+						managerPoints -= 4;
+					}
+				}
+				addManagerPoints(matchday,id,managerPoints);
+			} catch (SQLException sqe) {
+				sqe.printStackTrace();
+			}
+		}
+	}
+
+	private void addManagerPoints(int matchday, int managerID, int points) throws SQLException {
+		// Add to statistic table
+		String addPointsToStatQuery = "INSERT INTO Manager_Statistik (Spieltag,Manager_ID,Punkte) VALUES (?,?,?)";
+		PreparedStatement pStatement = sqlCon.prepareStatement(addPointsToStatQuery);
+		pStatement.setInt(1, matchday);
+		pStatement.setInt(2, managerID);
+		pStatement.setInt(3, points);
+		pStatement.execute();
+
+		// Add to manager table
+		String addToManagerTableQuery = "UPDATE Manager Set Punkte = Punkte + ? where ID =?";
+		pStatement = sqlCon.prepareStatement(addToManagerTableQuery);
+		pStatement.setInt(1, points);
+		pStatement.setInt(2, managerID);
+		pStatement.execute();
 	}
 }

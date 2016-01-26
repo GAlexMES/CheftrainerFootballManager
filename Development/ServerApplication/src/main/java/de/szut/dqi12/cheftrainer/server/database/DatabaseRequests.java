@@ -282,4 +282,12 @@ public class DatabaseRequests {
 	public static int getTeamIDForName(String teamNam) {
 		return databaseUtils.getTeamIDForName(teamNam);
 	}
+
+	public static void addTempPointsToManager(int matchday) {
+		pointManagement.addTempPointsToManager(matchday);
+	}
+
+	public static List<Integer> getAllManagerIDs() {
+		return communityManagement.getAllManagerIDs();
+	}
 }

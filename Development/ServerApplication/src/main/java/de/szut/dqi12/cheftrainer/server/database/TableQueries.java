@@ -12,6 +12,7 @@ import java.util.List;
  */
 public class TableQueries {
 
+	
 	public static final String GEBOTE_QUERY = "CREATE TABLE `Gebote` (`Manager_ID`	INTEGER,`Spieler_ID` INTEGER,`Gebot`INTEGER,`Spielrunde_ID`	INTEGER)";
 	public static final String LIGA_QUERY = "CREATE TABLE `Liga` (`ID`	INTEGER PRIMARY KEY AUTOINCREMENT, `Name` TEXT,	`Land`TEXT)";
 	public static final String MANAGER_QUERY = "CREATE TABLE `Manager` (`ID`INTEGER PRIMARY KEY AUTOINCREMENT,`Nutzer_ID` INTEGER,`Spielrunde_ID` INTEGER,`Budget` INTEGER DEFAULT 0,`Punkte` INTEGER DEFAULT 0, `Anzahl_Stuermer` INTEGER DEFAULT 0, `Anzahl_Mittelfeld` INTEGER DEFAULT 0, `Anzahl_Abwehr` INTEGER DEFAULT 0)";
@@ -27,7 +28,10 @@ public class TableQueries {
 	public static final String TRANSFER_STATISTIk_QUERY ="CREATE TABLE `Transfer_Statistik` (`Datum` INTEGER, `Verkauefer_ID`INTEGER,`kaufer_ID`INTEGER,`Preis` INTEGER,`Spieler_ID` INTEGER)";
 	public static final String TRANSFERMARKT_QUERY ="CREATE TABLE `Transfermarkt` (`Spielrunde_ID` INTEGER, `Spieler_ID` INTEGER, `Min_Preis` INTEGER, `Inhaber_ID` INTEGER)";
 	public static final String VEREIN_QUERY = "CREATE TABLE `Verein` (`ID` INTEGER PRIMARY KEY AUTOINCREMENT,`Vereinsname` INTEGER,`LogoPath` TEXT,`Liga_ID` INTEGER)";
-	
+	/**
+	 * This function creates a {@link List} of all Queries defined in this class.
+	 * @return a {@link List} of Strings, which represents a Query.
+	 */
 	public static List<String> getTableQueries(){
 		List<String> retval = new ArrayList<>();
 		Field[] fields=TableQueries.class.getFields(); 

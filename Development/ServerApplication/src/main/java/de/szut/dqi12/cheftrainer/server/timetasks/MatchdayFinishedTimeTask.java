@@ -75,14 +75,13 @@ public class MatchdayFinishedTimeTask {
 
 			List<HashMap<String, HashMap<String, Player>>> parsedPoints = spm.readPointsForMatches(matches);
 			for(int match = 0; match<parsedPoints.size();match++){
-				HashMap<String, HashMap<String, Player>> playerPoints = parsedPoints.get(0);
+				HashMap<String, HashMap<String, Player>> playerPoints = parsedPoints.get(match);
 				for (String s : playerPoints.keySet()) {
 					DatabaseRequests.writePointsToDatabase(playerPoints.get(s));
 					DatabaseRequests.addPointsToPlayingPlayers(playerPoints.get(s));
 				}
-
 			}
-
+			DatabaseRequests.addTempPointsToManager(matchday);
 		}
 
 		/**
