@@ -162,6 +162,16 @@ public class SQLConnection {
 	public PreparedStatement prepareStatement(String sqlQuery) throws SQLException {
 		return con.prepareStatement(sqlQuery);
 	}
+	
+	public void close(){
+		try {
+			statement.close();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	// GETTER&SETTER
 	// /////////////

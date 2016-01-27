@@ -72,7 +72,7 @@ public class DatabaseUtils extends  SQLManagement {
 			String condition = "Manager.Nutzer_ID=" + userID
 					+ " AND Manager.Spielrunde_ID=" + communityID;
 			return Integer.valueOf(getUniqueValue( "Manager.ID",
-					"Manager INNER JOIN Nutzer", condition).toString());
+					"Manager ", condition).toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 			return -1;

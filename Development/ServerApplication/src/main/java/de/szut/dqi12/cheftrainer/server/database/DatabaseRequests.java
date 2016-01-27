@@ -290,4 +290,8 @@ public class DatabaseRequests {
 	public static List<Integer> getAllManagerIDs() {
 		return communityManagement.getAllManagerIDs();
 	}
+
+	public static void updatedPlacement() {
+		communityManagement.updatePlacement();
+	}
 }

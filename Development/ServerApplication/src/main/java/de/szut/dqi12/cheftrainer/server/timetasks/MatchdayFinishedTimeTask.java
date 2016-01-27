@@ -82,6 +82,7 @@ public class MatchdayFinishedTimeTask {
 				}
 			}
 			DatabaseRequests.addTempPointsToManager(matchday);
+			DatabaseRequests.updatedPlacement();
 		}
 
 		/**

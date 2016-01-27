@@ -15,7 +15,7 @@ public class TableQueries {
 	
 	public static final String GEBOTE_QUERY = "CREATE TABLE `Gebote` (`Manager_ID`	INTEGER,`Spieler_ID` INTEGER,`Gebot`INTEGER,`Spielrunde_ID`	INTEGER)";
 	public static final String LIGA_QUERY = "CREATE TABLE `Liga` (`ID`	INTEGER PRIMARY KEY AUTOINCREMENT, `Name` TEXT,	`Land`TEXT)";
-	public static final String MANAGER_QUERY = "CREATE TABLE `Manager` (`ID`INTEGER PRIMARY KEY AUTOINCREMENT,`Nutzer_ID` INTEGER,`Spielrunde_ID` INTEGER,`Budget` INTEGER DEFAULT 0,`Punkte` INTEGER DEFAULT 0, `Anzahl_Stuermer` INTEGER DEFAULT 0, `Anzahl_Mittelfeld` INTEGER DEFAULT 0, `Anzahl_Abwehr` INTEGER DEFAULT 0)";
+	public static final String MANAGER_QUERY = "CREATE TABLE `Manager` (`ID`INTEGER PRIMARY KEY AUTOINCREMENT,`Nutzer_ID` INTEGER,`Spielrunde_ID` INTEGER,`Budget` INTEGER DEFAULT 0,`Punkte` INTEGER DEFAULT 0,`Platz` INTEGER DEFAULT 0, `Anzahl_Stuermer` INTEGER DEFAULT 0, `Anzahl_Mittelfeld` INTEGER DEFAULT 0, `Anzahl_Abwehr` INTEGER DEFAULT 0)";
 	public static final String MANAGER_STATISTIC_QUERY = "CREATE TABLE `Manager_Statistik` (`Spieltag` INTEGER, `Manager_ID` INTEGER,`Punkte` INTEGER)";
 	public static final String MANNSCHAFT_QUERY = "CREATE TABLE `Mannschaft` ( `Manager_ID` INTEGER, `Spieler_ID` INTEGER,`Aufgestellt` INTEGER)";
 	public static final String MANNSCHAFT_COPY_QUERY = "CREATE TABLE `Mannschaft Copy` ( `Manager_ID` INTEGER, `Spieler_ID` INTEGER,`Punkte` INTEGER)";

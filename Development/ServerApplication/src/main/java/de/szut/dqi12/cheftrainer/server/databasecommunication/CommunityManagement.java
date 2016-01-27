@@ -1,6 +1,7 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -429,5 +430,63 @@ public class CommunityManagement {
 			sqe.printStackTrace();
 			return null;
 		}
+	}
+
+	private List<Integer> getAllCommunityIDs() throws SQLException {
+		String sqlQuery = "Select ID FROM Spielrunde";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		return DatabaseUtils.getListFromResultSet(rs, "ID");
+	}
+
+	public void updatePlacement() {
+		try {
+			List<Integer> communityIDs = getAllCommunityIDs();
+			for (int id : communityIDs) {
+				List<Integer[]> orderedManagers = getOrdererManagerIDs(id);
+				
+				int counter = 1;
+				int duplicatedCounter = 1;
+				int lastPoints = 0;
+				for(Integer[] manager : orderedManagers){
+					if(manager[1] == lastPoints){
+						updateManagerPlace(manager[0],counter-duplicatedCounter);
+						duplicatedCounter ++;
+					}
+					else{
+						updateManagerPlace(manager[0],counter);
+						duplicatedCounter = 1;
+					}
+					
+					lastPoints = manager[1];
+					counter ++;
+				}
+
+			}
+		} catch (SQLException sqe) {
+			sqe.printStackTrace();
+		}
+	}
+	
+	private void updateManagerPlace(Integer managerID, int place) throws SQLException {
+		String sqlQuery =  "UPDATE Manager Set Platz = ? where ID = ?";
+		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
+		pStatement.setInt(1,place);
+		pStatement.setInt(2, managerID);
+		pStatement.execute();
+	}
+
+	private List<Integer[]> getOrdererManagerIDs(int communityID) throws SQLException{
+		List<Integer[]> retval = new ArrayList<>();
+		String orderedPointsQuery = "Select Punkte, ID From Manager where Spielrunde_ID = ? ORDER BY Punkte DESC";
+		PreparedStatement pStatement = sqlCon.prepareStatement(orderedPointsQuery);
+		pStatement.setInt(1, communityID);
+		ResultSet rs = pStatement.executeQuery();
+		while(rs.next()){
+			int managerID = rs.getInt("ID");
+			int points = rs.getInt("Punkte");
+			Integer[] entry ={managerID,points};
+			retval.add(entry);
+		}
+		return retval;
 	}
 }

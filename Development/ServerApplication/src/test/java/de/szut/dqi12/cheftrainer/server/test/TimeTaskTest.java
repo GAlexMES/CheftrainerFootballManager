@@ -36,8 +36,20 @@ public class TimeTaskTest {
 		newUser.setPassword("abc");
 		newUser.setUserName("Alexander");
 		DatabaseRequests.registerNewUser(newUser);
+		
+		User secondUser = new User();
+		newUser.seteMail("abc@abc.de");
+		newUser.setFirstName("Robin");
+		newUser.setLastName("B.");
+		newUser.setPassword("abc");
+		newUser.setUserName("Robin");
+		DatabaseRequests.registerNewUser(secondUser);
+		
 		DatabaseRequests.createNewCommunity("Testcommunity", "test", 0);
+		
 		DatabaseRequests.createNewManager("Testcommunity", 0);
+		DatabaseRequests.createNewManager("Testcommunity", 1);
+		
 		DatabaseRequests.copyManagerTeams();
 		readPoints();
 	}
@@ -58,6 +70,7 @@ public class TimeTaskTest {
 			}
 		}
 		DatabaseRequests.addTempPointsToManager(matchday);
+		DatabaseRequests.updatedPlacement();
 	}
 
 	/**

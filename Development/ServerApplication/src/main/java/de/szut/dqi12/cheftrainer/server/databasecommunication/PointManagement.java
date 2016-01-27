@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
@@ -196,7 +196,7 @@ public class PointManagement {
 
 	/**
 	 * This function reads the "Mannschaft Copy" table, after the points were
-	 * added.
+	 * added. It then adds the points to the managers via addManagerPoints()
 	 * @param matchday the current matchday
 	 */
 	public void addTempPointsToManager(int matchday) {
@@ -221,7 +221,14 @@ public class PointManagement {
 		}
 	}
 
-	private void addManagerPoints(int matchday, int managerID, int points) throws SQLException {
+	/**
+	 * This function creates two queries by the given data. One for the Manager table and one for the Manager_Statistik table.
+	 * @param matchday the current matchday (used for the statistics)
+	 * @param managerID the ID of a {@link Manager}
+	 * @param points the points, which were earned by the {@link Manager} at that matchday.
+	 * @throws SQLException
+	 */
+	public void addManagerPoints(int matchday, int managerID, int points) throws SQLException {
 		// Add to statistic table
 		String addPointsToStatQuery = "INSERT INTO Manager_Statistik (Spieltag,Manager_ID,Punkte) VALUES (?,?,?)";
 		PreparedStatement pStatement = sqlCon.prepareStatement(addPointsToStatQuery);
