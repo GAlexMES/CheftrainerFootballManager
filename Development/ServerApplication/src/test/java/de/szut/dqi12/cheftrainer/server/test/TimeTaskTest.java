@@ -51,6 +51,7 @@ public class TimeTaskTest {
 		DatabaseRequests.createNewManager("Testcommunity", 1);
 		
 		DatabaseRequests.copyManagerTeams();
+		
 		readPoints();
 	}
 	

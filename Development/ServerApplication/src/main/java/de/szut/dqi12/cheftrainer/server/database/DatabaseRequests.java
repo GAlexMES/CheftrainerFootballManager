@@ -193,6 +193,11 @@ public class DatabaseRequests {
 		String result = getUniqueString(coloumName, table, whereCondition);
 		return Integer.valueOf(result);
 	}
+	
+	public static Long getUniqueLong(String coloumName, String table, String whereCondition) throws IOException {
+		String result = getUniqueString(coloumName, table, whereCondition);
+		return Long.valueOf(result);
+	}
 
 	public static String getUniqueString(String coloumName, String table, String whereCondition) throws IOException {
 		Object result = getUniqueValue(coloumName, table, whereCondition);

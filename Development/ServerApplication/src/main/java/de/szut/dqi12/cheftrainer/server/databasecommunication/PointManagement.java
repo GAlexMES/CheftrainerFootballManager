@@ -62,8 +62,53 @@ public class PointManagement {
 				sqlQuery = createUpdatePlayerPointsQuery(p.getPoints(), p.getName(), p.getTeamName());
 			}
 			sqlCon.sendQuery(sqlQuery);
+			try {
+				String updateQuery = updateWorth(p);
+				sqlCon.sendQuery(updateQuery);
+			} catch (IOException | SQLException e) {
+				e.printStackTrace();
+			}
 		}
 
+	}
+
+	/**
+	 * This function updates the worth of the given {@link Player}
+	 * 
+	 * @param p
+	 * @throws IOException
+	 * @throws SQLException 
+	 */
+	private String updateWorth(Player p) throws IOException, SQLException {
+		String updateWorthQuery = "UPDATE Spieler Set Marktwert = %NEWPOINTS% WHERE";
+		String selectPlayerQuery=getPlayerSelectionQuery(p);
+		long newWorth =  calculateNewWorht(p,selectPlayerQuery);
+		
+		updateWorthQuery = updateWorthQuery+selectPlayerQuery;
+		return updateWorthQuery.replace("%NEWPOINTS%",String.valueOf(newWorth));
+	}
+	
+	private String getPlayerSelectionQuery(Player p){
+		if (p.getSportalID() > 0) {
+			return "WHERE SportalID = " + p.getSportalID();
+			
+		} else {
+			return createWhereQuery(p.getName(), p.getTeamName());
+		}
+	}
+
+	private long calculateNewWorht(Player p, String sqlQuery) throws IOException {
+		long currentWorth = DatabaseRequests.getUniqueLong("Punkte", "Spieler", sqlQuery);
+		int x = p.getPoints();
+		if (x > 16) {
+			x = 16;
+		} else if (x < -4) {
+			x = -1;
+		}
+		double worthUpdate = (-0.032 * Math.pow(x, 2) + x - 0.971) * 100000;
+		long newWorth = currentWorth + (long) worthUpdate;
+		LOGGER.info("Update worth of " + p.getName() + "from '" + currentWorth + "' to '" + newWorth + " (+'" + worthUpdate + "')");
+		return newWorth;
 	}
 
 	/**
@@ -197,7 +242,9 @@ public class PointManagement {
 	/**
 	 * This function reads the "Mannschaft Copy" table, after the points were
 	 * added. It then adds the points to the managers via addManagerPoints()
-	 * @param matchday the current matchday
+	 * 
+	 * @param matchday
+	 *            the current matchday
 	 */
 	public void addTempPointsToManager(int matchday) {
 		List<Integer> managerIDs = DatabaseRequests.getAllManagerIDs();
@@ -214,7 +261,7 @@ public class PointManagement {
 						managerPoints -= 4;
 					}
 				}
-				addManagerPoints(matchday,id,managerPoints);
+				addManagerPoints(matchday, id, managerPoints);
 			} catch (SQLException sqe) {
 				sqe.printStackTrace();
 			}
@@ -222,10 +269,16 @@ public class PointManagement {
 	}
 
 	/**
-	 * This function creates two queries by the given data. One for the Manager table and one for the Manager_Statistik table.
-	 * @param matchday the current matchday (used for the statistics)
-	 * @param managerID the ID of a {@link Manager}
-	 * @param points the points, which were earned by the {@link Manager} at that matchday.
+	 * This function creates two queries by the given data. One for the Manager
+	 * table and one for the Manager_Statistik table.
+	 * 
+	 * @param matchday
+	 *            the current matchday (used for the statistics)
+	 * @param managerID
+	 *            the ID of a {@link Manager}
+	 * @param points
+	 *            the points, which were earned by the {@link Manager} at that
+	 *            matchday.
 	 * @throws SQLException
 	 */
 	public void addManagerPoints(int matchday, int managerID, int points) throws SQLException {
