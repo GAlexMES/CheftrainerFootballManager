@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ public class PointManagement {
 	private final String WHERE_PLAYER_QUERY = "Name LIKE '%%PLAYERNAME%%' ";
 	private final String WHERE_TEAM_QUERY = "Verein_ID IN (SELECT ID FROM Verein WHERE Verein.Vereinsname LIKE '%%TEAMNAME%%') ";
 
+	private long worth_team_stats = 0;
 	SQLConnection sqlCon;
 
 	/**
@@ -51,8 +53,11 @@ public class PointManagement {
 	 *            {@link Player} object. The Keys are not relevant.
 	 */
 	public void updatePointsOfPlayers(Map<String, Player> playerList) {
+		worth_team_stats = 0L;
+		Player p = null;
+		List<String> invalidPlayers = new ArrayList<>();
 		for (String s : playerList.keySet()) {
-			Player p = playerList.get(s);
+			p = playerList.get(s);
 			int pointsForGoal = getPointsForGoals(p);
 			p.setPoints(p.getPoints() + pointsForGoal);
 			String sqlQuery = "";
@@ -65,11 +70,15 @@ public class PointManagement {
 			try {
 				String updateQuery = updateWorth(p);
 				sqlCon.sendQuery(updateQuery);
-			} catch (IOException | SQLException e) {
-				e.printStackTrace();
+			} catch (IOException ioe) {
+				invalidPlayers.add(s);
+			}catch ( SQLException sqe) {
+				sqe.printStackTrace();
 			}
 		}
 
+		LOGGER.info("Added points and update worth for team '"+p.getTeamName()+"'. Worth change: "+worth_team_stats);
+		invalidPlayers.forEach(s ->LOGGER.info("No update for '"+s+"'. He is not in the database."));
 	}
 
 	/**
@@ -77,37 +86,41 @@ public class PointManagement {
 	 * 
 	 * @param p
 	 * @throws IOException
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	private String updateWorth(Player p) throws IOException, SQLException {
-		String updateWorthQuery = "UPDATE Spieler Set Marktwert = %NEWPOINTS% WHERE";
-		String selectPlayerQuery=getPlayerSelectionQuery(p);
-		long newWorth =  calculateNewWorht(p,selectPlayerQuery);
-		
-		updateWorthQuery = updateWorthQuery+selectPlayerQuery;
-		return updateWorthQuery.replace("%NEWPOINTS%",String.valueOf(newWorth));
+		String updateWorthQuery = "UPDATE Spieler Set Marktwert = %NEWPOINTS% WHERE ";
+		String selectPlayerQuery = getPlayerSelectionQuery(p);
+		long newWorth = calculateNewWorht(p, selectPlayerQuery);
+
+		updateWorthQuery = updateWorthQuery + selectPlayerQuery;
+		return updateWorthQuery.replace("%NEWPOINTS%", String.valueOf(newWorth));
 	}
-	
-	private String getPlayerSelectionQuery(Player p){
+
+	private String getPlayerSelectionQuery(Player p) {
 		if (p.getSportalID() > 0) {
-			return "WHERE SportalID = " + p.getSportalID();
-			
+			return "SportalID = " + p.getSportalID();
+
 		} else {
 			return createWhereQuery(p.getName(), p.getTeamName());
 		}
 	}
 
 	private long calculateNewWorht(Player p, String sqlQuery) throws IOException {
-		long currentWorth = DatabaseRequests.getUniqueLong("Punkte", "Spieler", sqlQuery);
-		int x = p.getPoints();
-		if (x > 16) {
-			x = 16;
-		} else if (x < -4) {
-			x = -1;
+		long currentWorth = DatabaseRequests.getUniqueLong("Marktwert", "Spieler", sqlQuery);
+		int x = p.getPoints()-2;
+		if (x > 20) {
+			x = 20;
+		} else if (x < -6) {
+			x = -6;
 		}
-		double worthUpdate = (-0.032 * Math.pow(x, 2) + x - 0.971) * 100000;
-		long newWorth = currentWorth + (long) worthUpdate;
-		LOGGER.info("Update worth of " + p.getName() + "from '" + currentWorth + "' to '" + newWorth + " (+'" + worthUpdate + "')");
+		double roundedWorth = (currentWorth/1000000)-5;
+		double personalFaktor = Math.pow(2.718,-0.01*Math.pow(roundedWorth,2));
+		double worthUpdate = 0.75* x * 100000;
+		double personalWorthUpdate = personalFaktor * worthUpdate;
+		long newWorth = currentWorth + (long) personalWorthUpdate;
+		
+		worth_team_stats += (long) personalWorthUpdate;
 		return newWorth;
 	}
 

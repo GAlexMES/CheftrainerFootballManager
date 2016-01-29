@@ -75,7 +75,7 @@ public class PlayerManagement extends SQLManagement {
 	 *            the id of the {@link RealTeam}, in which this player plays.
 	 */
 	private void addPlayer(Player p, int teamID) {
-		int worth = (int) (Math.random() * 5000000);
+		long worth = 2000000;
 		String sqlQuery = "INSERT INTO Spieler (Name,Verein_ID, Position, Punkte, Marktwert, Nummer, SportalID, Birthday, PicturePath) "
 						+ "VALUES ('"+p.getName()+ "','"
 						+ teamID +"','"

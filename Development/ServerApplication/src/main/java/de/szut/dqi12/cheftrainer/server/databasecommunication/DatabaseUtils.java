@@ -142,8 +142,7 @@ public class DatabaseUtils extends  SQLManagement {
 					return rs.getString(coloumName);
 				}
 			} else {
-				throw new IOException("The value does not exist!");
-
+				throw new IOException("The value does not exist! The Query was: '"+sqlQuery+"'");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

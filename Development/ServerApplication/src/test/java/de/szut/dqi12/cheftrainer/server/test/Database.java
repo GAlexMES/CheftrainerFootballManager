@@ -6,11 +6,16 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.junit.Before;
 import org.junit.Test;
 
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.server.Controller;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.CommunityManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
@@ -18,7 +23,7 @@ import de.szut.dqi12.cheftrainer.server.databasecommunication.PointManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesManagement;
 
 public class Database {
-
+	
 	@Test
 	public void testProperties() {
 		try {
@@ -93,6 +98,34 @@ public class Database {
 		checkDatabase(managerIDs.get(4), 2, sqlCon);
 		
 		sqlCon.close();
+	}
+	
+	@Test
+	public void testWorthCalculation() throws IOException{
+		Controller con = Controller.getInstance();
+		try {
+			con.creatDatabaseCommunication();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		SQLConnection sqlCon = con.getSQLConnection();
+		
+		PointManagement pm = new PointManagement(sqlCon);
+		
+		Player p = new Player();
+		p.setSportalID(28206);
+		p.setPoints(10);
+		String SQLQuery  = "SportalID = "+p.getSportalID();
+		long currentWorth = DatabaseRequests.getUniqueLong("Marktwert", "Spieler", SQLQuery);
+		
+		Map<String,Player> playerList = new HashMap<>();
+		playerList.put("Joel Matip", p);
+		pm.updatePointsOfPlayers(playerList);
+		
+		long newWorth = DatabaseRequests.getUniqueLong("Marktwert", "Spieler", SQLQuery);
+		
+		assertTrue(currentWorth-newWorth == 5.83*100000);
+		
 	}
 
 	private int getHeighestCommunityID(SQLConnection sqlCon) throws SQLException {
