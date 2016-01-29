@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.parsing.PointsParser;
@@ -56,13 +57,16 @@ public class PointManagement {
 		worth_team_stats = 0L;
 		Player p = null;
 		List<String> invalidPlayers = new ArrayList<>();
+		List<Integer> playingPlayers = new ArrayList<>();
 		for (String s : playerList.keySet()) {
 			p = playerList.get(s);
 			int pointsForGoal = getPointsForGoals(p);
 			p.setPoints(p.getPoints() + pointsForGoal);
 			String sqlQuery = "";
-			if (p.getSportalID() > 0) {
-				sqlQuery = createUpdatePlayerPointsQuery(p.getPoints(), p.getSportalID());
+			int sportalID = p.getSportalID(); 
+			if (sportalID > 0) {
+				sqlQuery = createUpdatePlayerPointsQuery(p.getPoints(), sportalID);
+				playingPlayers.add(sportalID);
 			} else {
 				sqlQuery = createUpdatePlayerPointsQuery(p.getPoints(), p.getName(), p.getTeamName());
 			}
@@ -76,27 +80,72 @@ public class PointManagement {
 				sqe.printStackTrace();
 			}
 		}
-
+		try {
+			int teamID = DatabaseRequests.getTeamIDForName(p.getTeamName());
+			updateWorthOfNotPlayingPlayers(playingPlayers,teamID);
+			setMinimumWorth(teamID);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		LOGGER.info("Added points and update worth for team '"+p.getTeamName()+"'. Worth change: "+worth_team_stats);
 		invalidPlayers.forEach(s ->LOGGER.info("No update for '"+s+"'. He is not in the database."));
+		
+	}
+	
+	/**
+	 * Sets the worth of each {@link Player}, who plays in the given {@link RealTeam} to 160.000, when his worth is under 160.000.
+	 * @param teamID the ID of the {@link RealTeam}, which {@link Player}s should be checked.
+	 */
+	private void setMinimumWorth(int teamID){
+		String sqlQuery = "Update Spieler Set Marktwert = 160000 WHERE Marktwert < 160.000 AND Verein_ID = "+teamID;
+		sqlCon.sendQuery(sqlQuery);
 	}
 
 	/**
-	 * This function updates the worth of the given {@link Player}
+	 * This function increases the worth of each {@link Player}, who is part of the given team, but whose ID is not in the given list.
+	 * @param playingPlayers a {@link List} of {@link Integer}, which represents the SportalID of a {@link Player}
+	 * @param teamID the ID of the {@link RealTeam} in which the {@link Player} plays
+	 * @throws SQLException
+	 */
+	private void updateWorthOfNotPlayingPlayers(List<Integer> playingPlayers, int teamID) throws SQLException {
+		String idList = arrayListToSQLiteArray(playingPlayers);
+		String sqlQuery  = "Update Spieler Set Marktwert = round(Marktwert * 0.975) where SportalID not in "+idList+" AND Verein_ID = "+teamID;
+		sqlCon.sendQuery(sqlQuery);
+	}
+	
+	/**
+	 * This function creates a list, which can be used in an SQLQuery out of an {@link Integer} {@link List}
+	 * @param list a {@link List} of {@link Integer}s, which will be in the return value
+	 * @return a SQLList. for example: '(1,2,3)'
+	 */
+	private String arrayListToSQLiteArray(List<Integer> list){
+		String retval="("+list.get(0);
+		for(int i = 1; i<list.size();i++){
+			retval = retval +", "+list.get(i);
+		}
+		return retval +")";
+	}
+
+	/**
+	 * This function creates a 'UPDATE' Query to update the points of the given {@link Player} based on his current worth and the points he earned.
 	 * 
-	 * @param p
+	 * @param p a {@link Player} object, where the Points, SportalID and Name is set.
 	 * @throws IOException
 	 * @throws SQLException
 	 */
 	private String updateWorth(Player p) throws IOException, SQLException {
 		String updateWorthQuery = "UPDATE Spieler Set Marktwert = %NEWPOINTS% WHERE ";
 		String selectPlayerQuery = getPlayerSelectionQuery(p);
-		long newWorth = calculateNewWorht(p, selectPlayerQuery);
-
+		long newWorth = calculateNewWorht(p.getPoints(), selectPlayerQuery);
 		updateWorthQuery = updateWorthQuery + selectPlayerQuery;
 		return updateWorthQuery.replace("%NEWPOINTS%", String.valueOf(newWorth));
 	}
 
+	/**
+	 * Creates a WHERE Query to select the given Player
+	 * @param A {@link Player} object, where is either the SportalID or the name set.
+	 * @return for example: SportalID = 5. Returns query without 'WHERE' at the beginning.
+	 */
 	private String getPlayerSelectionQuery(Player p) {
 		if (p.getSportalID() > 0) {
 			return "SportalID = " + p.getSportalID();
@@ -106,9 +155,16 @@ public class PointManagement {
 		}
 	}
 
-	private long calculateNewWorht(Player p, String sqlQuery) throws IOException {
+	/**
+	 * This function calculates a new worth for the given player based on the points he earned and his current worth, which is saved in the database.
+	 * @param points the points, which were earned by the player
+	 * @param sqlQuery a SQLQuery to select the player
+	 * @return the new calculated worth as long
+	 * @throws IOException
+	 */
+	private long calculateNewWorht(int points, String sqlQuery) throws IOException {
 		long currentWorth = DatabaseRequests.getUniqueLong("Marktwert", "Spieler", sqlQuery);
-		int x = p.getPoints()-2;
+		int x =points-2;
 		if (x > 20) {
 			x = 20;
 		} else if (x < -6) {
