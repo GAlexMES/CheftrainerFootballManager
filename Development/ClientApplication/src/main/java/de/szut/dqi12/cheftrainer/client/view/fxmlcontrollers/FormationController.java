@@ -49,6 +49,10 @@ public class FormationController implements ImageUpdate {
 		imageUpdateStack = new HashMap<>();
 	}
 
+	/**
+	 * Ganerates an Image of different properties from an Player. The Image will setted in the PlayerLabel of the Player.
+	 * @param player 
+	 */
 	public void generateImage(Player player) {
 		String text = player.getName() + "\n" + player.getPosition() + " Points: " + player.getPoints();
 		Label label = new Label(text);
@@ -64,6 +68,11 @@ public class FormationController implements ImageUpdate {
 
 	}
 
+	/**
+	 * Generates an Image of an String
+	 * @param text text, which is in the Image
+	 * @return The generated Image
+	 */
 	public static WritableImage getImageOfString(String text) {
 		Label label = new Label(text);
 		label.setMinSize(125, 125);
@@ -77,10 +86,12 @@ public class FormationController implements ImageUpdate {
 		return img;
 	}
 
+	/**
+	 * Initialisation of the graphical formation whith the matching players.
+	 */
 	@SuppressWarnings("unchecked")
 	public void init() {
 		// Initialisation of an not-playing-Players
-		// ArrayList
 		notPlayingPlayers = new ArrayList<Player>();
 
 		currentPlayers = new ArrayList<Player>();
@@ -162,6 +173,9 @@ public class FormationController implements ImageUpdate {
 		}
 	}
 
+	/**
+	 * @return an Array of all Players of the current Manager, which are playing.
+	 */
 	public ArrayList<Player> getCurrentPlayers() {
 		currentPlayers = new ArrayList<Player>();
 		for (Node n : formationFrame.getChildren()) {
@@ -196,7 +210,9 @@ public class FormationController implements ImageUpdate {
 		return players;
 	}
 
-
+	/**
+	 * @return An ArrayList of all Player of the current Manager, which are not playing.
+	 */
 	public ArrayList<Player> getNotPlayingPlayers() {
 		boolean found;
 		getCurrentPlayers();
@@ -333,7 +349,11 @@ public class FormationController implements ImageUpdate {
 			setImageToPlayer(id, image);
 		}
 	}
-
+	/**
+	 * Loads the Image of the matching Player and set it into the Label of the Player.
+	 * @param playerID ID of the Player
+	 * @param image Image of the Player
+	 */
 	private void setImageToPlayer(int playerID, Image image) {
 		for (Player player : getAllPlayers()) {
 			if (player.getSportalID() == playerID) {
