@@ -45,13 +45,15 @@ public class LineChartController<Y, X> {
 		try {
 			this.data.clear();
 		} catch (Exception e) {
-			// e.printStackTrace();
 		}
 		this.data.add(series);
 		this.chart.setData(this.data);
 
 	}
-
+	/**
+	 * Generates an graph and adds him to the global data.
+	 * @param data data of the graph.
+	 */
 	public void addSeries(HashMap<String, Integer> data) {
 		Series<String, Integer> series = new Series<String, Integer>();
 		for (String key : data.keySet()) {
@@ -64,13 +66,10 @@ public class LineChartController<Y, X> {
 	}
 
 	/**
-	 * 
-	 * @param xValue
-	 *            Wert fuer X-Achse
-	 * @param yValue
-	 *            Wert fuer Y-Achse
-	 * @param series
-	 *            Die Position des Graphes (0 fuer ersten Graph)
+	 * Adds an value to an graph
+	 * @param xValue value for x-axis
+	 * @param yValue value for y-axis
+	 * @param series Position of Series in ArrayList
 	 */
 	public void addValue(String xValue, int yValue, int series) {
 
