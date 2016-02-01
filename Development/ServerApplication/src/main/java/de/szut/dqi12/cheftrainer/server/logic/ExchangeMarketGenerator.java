@@ -6,8 +6,8 @@ import java.util.List;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.server.Controller;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.SQLConnection;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 
 /**
  * This class is used to create a new Exchange Market and to update it.

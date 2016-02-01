@@ -1,8 +1,10 @@
-package de.szut.dqi12.cheftrainer.server.databasecommunication;
+package de.szut.dqi12.cheftrainer.server.database;
 
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +12,19 @@ import java.util.NoSuchElementException;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.CommunityManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.LogicManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.PlayerManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.PointManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.SchedulePointManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.TransfermarketManagement;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.UserManagement;
 
 /**
  * This class provides some Database utils. There is no Javadoc, because the
@@ -55,6 +66,10 @@ public class DatabaseRequests {
 		databaseUtils = new DatabaseUtils(sqlCon);
 		pointManagement = new PointManagement(sqlCon);
 		transfermarktManagement = new TransfermarketManagement(sqlCon);
+	}
+	
+	public static SchedulePointManagement getSchedulePointManagement(){
+		return schedulePointManagement;
 	}
 
 	public static HashMap<String, Boolean> registerNewUser(User newUser) {
@@ -178,6 +193,11 @@ public class DatabaseRequests {
 		String result = getUniqueString(coloumName, table, whereCondition);
 		return Integer.valueOf(result);
 	}
+	
+	public static Long getUniqueLong(String coloumName, String table, String whereCondition) throws IOException {
+		String result = getUniqueString(coloumName, table, whereCondition);
+		return Long.valueOf(result);
+	}
 
 	public static String getUniqueString(String coloumName, String table, String whereCondition) throws IOException {
 		Object result = getUniqueValue(coloumName, table, whereCondition);
@@ -186,6 +206,10 @@ public class DatabaseRequests {
 
 	public static Object getUniqueValue(String coloumName, String table, String whereCondition) throws IOException {
 		return databaseUtils.getUniqueValue(coloumName, table, whereCondition);
+	}
+	
+	public static void addPointsToPlayingPlayers(Map<String, Player> playerList) {
+		pointManagement.addPointsToPlayingPlayers(playerList);
 	}
 
 	public static void writePointsToDatabase(Map<String, Player> playerList) {
@@ -236,4 +260,43 @@ public class DatabaseRequests {
 		playerManagement.updateManager(manager);
 	}
 
+	public static void copyManagerTeams() {
+		playerManagement.copymanagerTeam();
+	}
+
+	public static void addMatch(Match m) throws SQLException, ParseException {
+		schedulePointManagement.addMatch(m);
+	}
+
+	public static int getCurrentMatchDay(Date d) {
+		return schedulePointManagement.getCurrentMatchDay(d);
+	}
+
+	public static Date getStartOfMatchday(int matchDay) {
+		return schedulePointManagement.getStartOfmatchday(matchDay);
+	}
+
+	public static Date getLastMatchDate(int matchday) {
+		return schedulePointManagement.getLastMatchDate(matchday);
+	}
+
+	public static void updateSchedule(List<Match> matches, int season, int matchday) {
+		schedulePointManagement.updateSchedule(matches, matchday, season);
+	}
+
+	public static int getTeamIDForName(String teamNam) {
+		return databaseUtils.getTeamIDForName(teamNam);
+	}
+
+	public static void addTempPointsToManager(int matchday) {
+		pointManagement.addTempPointsToManager(matchday);
+	}
+
+	public static List<Integer> getAllManagerIDs() {
+		return communityManagement.getAllManagerIDs();
+	}
+
+	public static void updatedPlacement() {
+		communityManagement.updatePlacement();
+	}
 }

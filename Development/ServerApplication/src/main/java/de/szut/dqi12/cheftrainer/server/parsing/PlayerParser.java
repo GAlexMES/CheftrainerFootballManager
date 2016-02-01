@@ -51,9 +51,8 @@ public class PlayerParser {
 
 	/**
 	 * Creates a new Player object out of the given Element 
-	 * @param playerElement the Element, out of which the player object can be created
-	 * @param role the role of the player
-	 * @return a new Player object, that was created out of the given parameters
+	 * @param e a valid {@link Element}
+	 * @return a new Player object, that was created out of the given {@link Element}
 	 */
 	private Player createPlayer(Element e) {
 		Player player = new Player();

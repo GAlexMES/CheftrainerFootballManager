@@ -21,7 +21,6 @@
 		<dependency>
 			<groupId>de.szut.dqi12.cheftrainer</groupId>
 			<artifactId>ConnectorLib</artifactId>
-			<version>0.0.1</version>
 		</dependency>
 
 		<!-- Public dependencies, Version Management in parent POM -->
@@ -61,7 +60,22 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+					<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>de.szut.dqi12.cheftrainer.client.ClientApplication</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
 		</plugins>
+		
+
 
 		<resources>
 			<resource>

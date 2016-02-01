@@ -16,7 +16,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
 /**
  * This callable handles everything according to the formation and Line-Up of a {@link Manager}.

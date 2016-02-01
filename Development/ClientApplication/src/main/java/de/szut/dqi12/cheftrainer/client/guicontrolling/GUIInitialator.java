@@ -8,6 +8,7 @@ import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.L
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
@@ -15,6 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  * The GUI Initialator replaces, generates and renders the components of the
@@ -137,6 +139,13 @@ public class GUIInitialator {
 			});
 			mainApplicationStage.setScene(scene);
 			mainApplicationStage.show();
+			mainApplicationStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+	            @Override
+	            public void handle(WindowEvent t) {
+	                Platform.exit();
+	                System.exit(0);
+	            }
+	        });
 
 		} catch (IOException e) {
 			e.printStackTrace();

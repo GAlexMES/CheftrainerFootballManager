@@ -2,6 +2,7 @@ package de.szut.dqi12.cheftrainer.server.parsing;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +19,9 @@ import org.jsoup.select.Elements;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 
 /**
- * This class should be used to parse information, which are required for a matchday, a match or a season
+ * This class should be used to parse information, which are required for a
+ * matchday, a match or a season
+ * 
  * @author Alexander Brennecke
  *
  */
@@ -26,36 +29,36 @@ public class ScheduleParser {
 
 	private static String sportalBundesligaRoot = "http://www.sportal.de/fussball/bundesliga/";
 	private static String sportalRoot = "http://www.sportal.de";
-	private String scheduleRoot = sportalRoot
-			+ "/fussball/bundesliga/spielplan/spielplan-spieltag-";
+	private String scheduleRoot = sportalRoot + "/fussball/bundesliga/spielplan/spielplan-spieltag-";
 	private List<Match> matches;
 
 	private final static Logger LOGGER = Logger.getLogger(ScheduleParser.class);
-	
+
 	/**
-	 * This method parses the information for the given matchday in the given season to Match objects.
-	 * @param matchday the matchday (should be 1-34 for bundesliga)
-	 * @param season use 2015 for season 2015-2016
+	 * This method parses the information for the given matchday in the given
+	 * season to Match objects.
+	 * 
+	 * @param matchday
+	 *            the matchday (should be 1-34 for bundesliga)
+	 * @param season
+	 *            use 2015 for season 2015-2016
 	 * @return a List of all Matches, that are part of this matchday
 	 * @throws MalformedURLException
 	 */
-	public List<Match> createSchedule(int matchday, int season)
-			throws MalformedURLException {
-		LOGGER.error("needs matchday in line 59 matches.add(createMatch/e,season);). At the moment not implemented, because I dont know, if this is maybe dead code.");
+	public List<Match> createSchedule(int matchday, int season) throws MalformedURLException {
+		LOGGER.info("Loading matchday information for matchday "+matchday);
 		matches = new ArrayList<>();
-		URL scheduleURL = new URL(scheduleRoot + matchday + "-saison-" + season
-				+ "-" + (season + 1));
+		URL scheduleURL = new URL(scheduleRoot + matchday + "-saison-" + season + "-" + (season + 1));
 
 		try {
 			Document doc = Jsoup.connect(scheduleURL.toString()).get();
-			Element scheduleDiv = doc
-					.getElementById("moduleResultContentResultateList");
-			Elements games = scheduleDiv.getElementsByAttributeValue("class",
-					"table_content table_content_wetten");
-			
-			for(Element e : games){
-				matches.add(createMatch(e,season,matchday));
-				
+			Element scheduleDiv = doc.getElementById("moduleResultContentResultateList");
+			Elements games = scheduleDiv.getElementsByAttributeValue("class", "table_content table_content_wetten");
+
+			for (Element e : games) {
+				Match m = createMatch(e, season, matchday);
+				matches.add(m);
+				LOGGER.info("Added Match "+m.getHome()+":"+m.getGuest());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -65,10 +68,16 @@ public class ScheduleParser {
 
 	/**
 	 * Parses a HTML Element to a Match object
-	 * @param e the HTML Element from sportal.de
+	 * 
+	 * @param e
+	 *            the HTML Element from sportal.de
+	 * @param season
+	 *            the current season (use 2015 for 2015-2016)
+	 * @param currentMatchDay
+	 *            the current matchday (1-34 for bundesliga)
 	 * @return a new Match object
 	 */
-	private Match createMatch(Element e, int season,int currentMatchDay) {
+	private Match createMatch(Element e, int season, int currentMatchDay) {
 		String date = e.select("span[class=date]").text();
 		if (currentMatchDay < 18) {
 			date += String.valueOf(season);
@@ -76,23 +85,25 @@ public class ScheduleParser {
 			date += String.valueOf(season + 1);
 		}
 		String time = e.select("span[class=time]").text();
-		String home = e.select("li[class=heim]").get(0).select("a")
-				.attr("title");
-		String guest = e.select("li[class=auswaerts]").get(0).select("a")
-				.attr("title");
+		String home = e.select("li[class=heim]").get(0).select("a").attr("title");
+		String guest = e.select("li[class=auswaerts]").get(0).select("a").attr("title");
 		String score = e.select("li[class=score]").get(0).select("a").text();
-		String detailURL = e.select("li[class=score]").get(0).select("a")
-				.attr("href");
+		String detailURL = e.select("li[class=score]").get(0).select("a").attr("href");
 		Match m = new Match(date, time, home, guest, score, detailURL);
+		m.setSeason(season);
+		m.setMatchDay(currentMatchDay);
 		return m;
 	}
-	
+
 	/**
 	 * This method returns the ID of a match.
-	 * @param url must be a URL to a sportal detail side of a match
+	 * 
+	 * @param url
+	 *            must be a URL to a sportal detail side of a match
 	 * @return the id of the match as int
+	 * @throws Exception
 	 */
-	public static int getSportalID(String url) {
+	public static int getSportalID(String url) throws Exception {
 		try {
 			Document doc = Jsoup.connect(sportalRoot + url).get();
 			Element navigation = doc.getElementById("kompaktformat_topnavi");
@@ -100,107 +111,117 @@ public class ScheduleParser {
 			String[] hrefParts = firstnavigationIcon.attr("href").split("-");
 			String completeID = hrefParts[hrefParts.length - 1];
 			return Integer.valueOf(completeID);
+		} catch (SocketTimeoutException ste) {
+			LOGGER.error("Unreachable URL " + sportalRoot + url);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}catch(NullPointerException npe){
+		} catch (Exception npe) {
+
 			boolean isPage404 = isPageSportal404(url);
-			if(isPage404){
+			if (isPage404) {
 				return -1;
-			}
-			else{
+			} else {
 				boolean wrongContent = hasSportalPageWrongContent(url);
-				if(wrongContent){
+				if (wrongContent) {
 					return -1;
 				}
 				npe.printStackTrace();
 			}
+			throw new Exception();
 		}
 		return -1;
 	}
-	
+
 	/**
-	 * This function checks, if the sportal webside has the navigation bar, to find the id of the game.
-	 * @param url the url of a game detail page on sportal.
+	 * This function checks, if the sportal webside has the navigation bar, to
+	 * find the id of the game.
+	 * 
+	 * @param url
+	 *            the url of a game detail page on sportal.
 	 * @return true = webside has wrong content.
 	 */
-	private static boolean hasSportalPageWrongContent(String url){
-		try{
+	private static boolean hasSportalPageWrongContent(String url) {
+		try {
 			Document doc = Jsoup.connect(sportalRoot + url).get();
 			Element impressumContent = doc.getElementById("kompaktformat_topnavi");
-			if(impressumContent==null){
-				LOGGER.error("The page of the given game URL  was invalid! It was: "+url);
+			if (impressumContent == null) {
+				LOGGER.error("The page of the given game URL  was invalid! It was: " + url);
 				return true;
 			}
 			return false;
-		} catch(NullPointerException npe){
+		} catch (NullPointerException npe) {
 			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
-	
-	
+
 	/**
 	 * This function checks, if the given URL is a sportal 404 page.
-	 * @param url the url, that should be checked.
+	 * 
+	 * @param url
+	 *            the url, that should be checked.
 	 * @return true = it is a 404 Error page.
 	 */
-	private static boolean isPageSportal404(String url){
-		try{
+	private static boolean isPageSportal404(String url) {
+		try {
 			Document doc = Jsoup.connect(sportalRoot + url).get();
 			Element impressumContent = doc.getElementById("impressumContent");
 			String text = impressumContent.getElementsByTag("h1").text();
-			if(text.equals("Ooops, diese Seite…")){
-				LOGGER.error("The URL of a game was invalid! It results in a 404. It was: "+url);
+			if (text.equals("Ooops, diese Seite…")) {
+				LOGGER.error("The URL of a game was invalid! It results in a 404. It was: " + url);
 				return true;
 			}
 			return false;
-		} catch(NullPointerException npe){
+		} catch (NullPointerException npe) {
 			return false;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
 		}
 	}
-	
+
 	/**
 	 * This method parses the whole schedule for a season.
-	 * @param season use 2015 for season 2015-2016
-	 * @return a Map, where the key is a matchday and returns a List of Matches for that matchday
+	 * 
+	 * @param season
+	 *            use 2015 for season 2015-2016
+	 * @return a Map, where the key is a matchday and returns a List of Matches
+	 *         for that matchday
 	 */
-	public Map<Integer,List<Match>> getMatchesForSeason(int season){
-		String url =sportalBundesligaRoot+"spielplan/spielplan-chronologisch-saison-";
-		url = url + season+"-"+(season+1);
-		Map<Integer,List<Match>> retval = new HashMap<>();
-		
+	public Map<Integer, List<Match>> getMatchesForSeason(int season) {
+		String url = sportalBundesligaRoot + "spielplan/spielplan-chronologisch-saison-";
+		url = url + season + "-" + (season + 1);
+		Map<Integer, List<Match>> retval = new HashMap<>();
+
 		int currentMatchDay = 0;
 		try {
 			Document doc = Jsoup.connect(url).get();
 			Elements matchDays = doc.getElementById("moduleResultContentResultateList").select("ul[class=table_head_spieltag]");
-			for(Element matchDay: matchDays){
+			for (Element matchDay : matchDays) {
 				int matchDayID = Integer.valueOf(matchDay.child(0).text().split(Pattern.quote("."))[0]);
-				retval.put(matchDayID,new ArrayList<>());
+				retval.put(matchDayID, new ArrayList<>());
 				Element currentMatch = matchDay;
-				currentMatchDay ++;
-				for(int i = 0; i<9;i++){
+				currentMatchDay++;
+				for (int i = 0; i < 9; i++) {
 					Element match = currentMatch.nextElementSibling();
-					Match m = createMatch(match, season,currentMatchDay);
+					Match m = createMatch(match, season, currentMatchDay);
 					m.setSeason(season);
 					m.setMatchDay(matchDayID);
 					retval.get(matchDayID).add(m);
-					currentMatch=match;
+					currentMatch = match;
 				}
 			}
-		}
-		catch(IOException e1){
-			
+		} catch (IOException e1) {
+
 		}
 		return retval;
 	}
 
 	/**
 	 * This method parses the sportal.de webside t find the current season.
+	 * 
 	 * @return the current season as int. Will return 2015 for season 2015-2016
 	 */
 	public int getCurrentSeason() {
@@ -210,18 +231,18 @@ public class ScheduleParser {
 			Element navigationBar = doc.getElementById("HeaderMenuBottomSub");
 			Elements navigationElements = navigationBar.select("a");
 			Element results = null;
-			for(Element e : navigationElements){
-				if(e.text().equals("Ergebnisse")){
+			for (Element e : navigationElements) {
+				if (e.text().equals("Ergebnisse")) {
 					results = e;
 					break;
 				}
 			}
 			String[] splittedHref = results.attr("href").split(Pattern.quote("-"));
-			String currentSeason = splittedHref[splittedHref.length-2];
+			String currentSeason = splittedHref[splittedHref.length - 2];
 			return Integer.valueOf(currentSeason);
 		} catch (IOException e1) {
 			return 0;
 		}
-		
+
 	}
 }

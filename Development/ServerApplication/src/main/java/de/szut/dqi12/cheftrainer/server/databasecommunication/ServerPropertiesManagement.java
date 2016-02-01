@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
+
 /**
  * This class is used to read/write server specific properties to the database.
  * @author Alexander Brennecke
@@ -77,6 +79,7 @@ public class ServerPropertiesManagement {
 	 * This function reads the property with the given name and will return it as a boolean.
 	 * The value of the given property must be a Integer
 	 * @param property name of the property
+	 * @return true = property was not "0", false otherwise
 	 */
 	public boolean getPropAsBoolean(String property){
 		try{

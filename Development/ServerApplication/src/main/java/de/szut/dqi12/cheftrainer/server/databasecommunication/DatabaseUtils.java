@@ -3,20 +3,29 @@ package de.szut.dqi12.cheftrainer.server.databasecommunication;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 
 /**
  * This class provides a few simple method, to communicate with the database or to check ResultSets.
  * @author Alexander Brennecke
  *
  */
-public class DatabaseUtils {
+public class DatabaseUtils extends  SQLManagement {
 	
 	private SQLConnection sqlCon;
 	
+	/**
+	 * Constructor
+	 * @param sqlCon active {@link SQLConnection}.
+	 */
 	public DatabaseUtils(SQLConnection sqlCon){
 		this.sqlCon = sqlCon;
 	}
@@ -63,7 +72,7 @@ public class DatabaseUtils {
 			String condition = "Manager.Nutzer_ID=" + userID
 					+ " AND Manager.Spielrunde_ID=" + communityID;
 			return Integer.valueOf(getUniqueValue( "Manager.ID",
-					"Manager INNER JOIN Nutzer", condition).toString());
+					"Manager ", condition).toString());
 		} catch (IOException e) {
 			e.printStackTrace();
 			return -1;
@@ -133,8 +142,7 @@ public class DatabaseUtils {
 					return rs.getString(coloumName);
 				}
 			} else {
-				throw new IOException("The value does not exist!");
-
+				throw new IOException("The value does not exist! The Query was: '"+sqlQuery+"'");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -144,8 +152,45 @@ public class DatabaseUtils {
 
 	/**
 	 * This method sends the Query to the database.
+	 * @param query the Query, that should be send to the database.
 	 */
 	public void sendSimpleQuery(String query) {
 		sqlCon.sendQuery(query);
+	}
+
+	/**
+	 * this function reads the ID of a {@link RealTeam} with the given name.
+	 * @param teamName the name of the {@link RealTeam}
+	 * @return the ID of the {@link RealTeam}
+	 */
+	public int getTeamIDForName(String teamName) {
+		String sqlQuery ="SELECT ID FROM Verein WHERE Vereinsname='"+teamName+"'";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		if (!isResultSetEmpty(rs)) {
+			rs = sqlCon.sendQuery(sqlQuery);
+			try {
+				while (rs.next()) {
+					return getIntFromRS(rs, "ID");
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		} 
+		return -1;
+	}
+	
+	/**
+	 * This function iterates over the given {@link ResultSet} and creates a {@link Integer} {@link List} from the values in the given column (must be integer values)
+	 * @param rs a active {@link ResultSet}
+	 * @param column the name of the column in the {@link ResultSet}
+	 * @return a {@link List} of {@link Integer} values, which were read out of the column.
+	 * @throws SQLException
+	 */
+	public static List<Integer> getListFromResultSet(ResultSet rs, String column) throws SQLException{
+		List<Integer> retval = new ArrayList<>();
+		while(rs.next()){
+			retval.add(rs.getInt(column));
+		}
+		return retval;
 	}
 }
