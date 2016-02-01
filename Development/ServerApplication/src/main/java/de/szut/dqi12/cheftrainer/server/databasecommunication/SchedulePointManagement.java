@@ -96,6 +96,12 @@ public class SchedulePointManagement extends SQLManagement {
 		}
 	}
 
+	/**
+	 * This function collects the points for the given {@link List} of {@link Match}es.
+	 * @param matches a {@link List} of {@link Match} objects.
+	 * @return A {@link List} of {@link HashMap}s, where the Key is the name of a team and the value is a HashMap, 
+	 * 			where the Key is a {@link Player} name and the value is a {@link Player} object.
+	 */
 	public List<HashMap<String, HashMap<String, Player>>> readPointsForMatches(List<Match> matches) {
 		List<HashMap<String, HashMap<String, Player>>> retval = new ArrayList<HashMap<String, HashMap<String, Player>>>();
 		int matchday = matches.get(0).getMatchDay();
@@ -214,6 +220,11 @@ public class SchedulePointManagement extends SQLManagement {
 		preparedStatement.execute();
 	}
 
+	/**
+	 * This function returns the next matchday. It searches in the database for the nearest date, where no result was set for a match.
+	 * @param d the current date as long in ms
+	 * @return a int, which represents a matchday (e.g.: 14)
+	 */
 	public int getCurrentMatchDay(Date d) {
 		long time = d.getTime();
 		String sqlQuery = "select min(Spieltag) from Spieltag where Datum > " + time + " and Ergebnis = '-1:-1'";
@@ -222,6 +233,11 @@ public class SchedulePointManagement extends SQLManagement {
 		return getIntFromRS(rs, "min(Spieltag)");
 	}
 
+	/**
+	 * This function searches in the database for the last match of a matchday.
+	 * @param matchday for example 14 for matchday 14
+	 * @return
+	 */
 	public Date getLastMatchDate(int matchday) {
 		String sqlQuery = "SELECT max(Datum) FROM Spieltag WHERE Spieltag= " + matchday + " AND Ergebnis = '-1:-1'";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
@@ -234,6 +250,11 @@ public class SchedulePointManagement extends SQLManagement {
 		return new Date(dateTime);
 	}
 
+	/**
+	 * This function returns the start of a matchday, which is the start of the first match of the matchday
+	 * @param matchDay for example 14, for matchday 14
+	 * @return the start date of the earliest match for the given matchday.
+	 */
 	public Date getStartOfmatchday(int matchDay) {
 		String sqlQuery = "SELECT min(Datum) FROM Spieltag WHERE Spieltag = " + matchDay;
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
@@ -246,6 +267,12 @@ public class SchedulePointManagement extends SQLManagement {
 		return new Date(dateTime);
 	}
 
+	/**
+	 * This function updates the database. It updates the dates, results etc. of each {@link Match} given to this function.
+	 * @param matches a {@link List} of {@link Match} objects
+	 * @param season the season (use 2015 for 2015-2016)
+	 * @param matchday the matchday of the matches.
+	 */
 	public void updateSchedule(List<Match> matches, int season, int matchday) {
 		String sqlQuery = "UPDATE Spieltag SET Datum = ?, Ergebnis = ?, URL= ? WHERE Spieltag = ? AND Saison=? AND Heim_Verein_ID = ? AND Gast_Verein_ID = ? ;";
 		for (Match m : matches) {

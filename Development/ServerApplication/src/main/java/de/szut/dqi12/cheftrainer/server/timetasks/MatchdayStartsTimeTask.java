@@ -58,7 +58,6 @@ public class MatchdayStartsTimeTask {
 
 			Date newTimerDate = cal.getTime();
 			Controller.getInstance().createMatchdayFinishedTimer(newTimerDate, matchDay, currentSeason);
-			LOGGER.info("Created MatchdayFinishedTimeTask for: " + sdf.format(newTimerDate));
 		}
 	}
 }

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -189,10 +190,9 @@ public class CommunityManagement {
 			while (rs.next()) {
 				try {
 					String managerName = rs.getString("Nutzername");
-					// TODO: benoetigt?
-					// double money = rs.getDouble("Budget");
 					int points = rs.getInt("Punkte");
-					Manager manager = new Manager(managerName, null, points, communityName);
+					int place = rs.getInt("Platz");
+					Manager manager = new Manager(managerName, place, points, communityName);
 					int defenders = rs.getInt("Anzahl_Abwehr");
 					int middfielders = rs.getInt("Anzahl_Mittelfeld");
 					int offensives = rs.getInt("Anzahl_Stuermer");
@@ -210,6 +210,28 @@ public class CommunityManagement {
 			List<Player> playerList = getTeam(m.getID());
 			Player[] playerArray = playerList.toArray(new Player[playerList.size()]);
 			m.addPlayer(playerArray);
+			Map<Integer,Integer> stats = getManagerStats(m.getID());
+			m.setHistory(stats);
+		}
+		return retval;
+	}
+	
+	/**
+	 * This function collects the statistic from the database for the given manager and creates a {@link Map} from it.
+	 * @param managerID the ID of the manager
+	 * @return A Map, where the matchday is the key and the points are the value.
+	 */
+	private Map<Integer,Integer> getManagerStats(int managerID){
+		Map<Integer,Integer> retval = new HashMap<Integer, Integer>();
+		String sqlQuery = "SELECT * FROM Manager_Statistik WHERE Manager_ID = "+managerID;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		try {
+			while(rs.next()){
+				retval.put(rs.getInt("Spieltag"), rs.getInt("Punkte"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return retval;
 	}

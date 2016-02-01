@@ -90,6 +90,7 @@ public class MatchdayFinishedTimeTask {
 		 * @return returns a List of {@link Match}es for the current matchday.
 		 */
 		private List<Match> updateSchedule() {
+			LOGGER.info("Updateing the shedule.");
 			ScheduleParser sp = new ScheduleParser();
 			List<Match> currentMatches = new ArrayList<>();
 			List<Match> nextMatches = new ArrayList<>();

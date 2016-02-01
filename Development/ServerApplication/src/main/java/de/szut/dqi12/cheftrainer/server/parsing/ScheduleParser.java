@@ -46,6 +46,7 @@ public class ScheduleParser {
 	 * @throws MalformedURLException
 	 */
 	public List<Match> createSchedule(int matchday, int season) throws MalformedURLException {
+		LOGGER.info("Loading matchday information for matchday "+matchday);
 		matches = new ArrayList<>();
 		URL scheduleURL = new URL(scheduleRoot + matchday + "-saison-" + season + "-" + (season + 1));
 
@@ -55,8 +56,9 @@ public class ScheduleParser {
 			Elements games = scheduleDiv.getElementsByAttributeValue("class", "table_content table_content_wetten");
 
 			for (Element e : games) {
-				matches.add(createMatch(e, season, matchday));
-
+				Match m = createMatch(e, season, matchday);
+				matches.add(m);
+				LOGGER.info("Added Match "+m.getHome()+":"+m.getGuest());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

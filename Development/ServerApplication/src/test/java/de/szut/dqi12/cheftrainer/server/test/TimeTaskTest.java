@@ -18,7 +18,7 @@ import de.szut.dqi12.cheftrainer.server.parsing.ScheduleParser;
 
 public class TimeTaskTest {
 	
-	private int matchday = 18;
+	private int matchday = 19;
 	private int season = 2015;
 	
 	@Test
