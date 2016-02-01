@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
 
 /**

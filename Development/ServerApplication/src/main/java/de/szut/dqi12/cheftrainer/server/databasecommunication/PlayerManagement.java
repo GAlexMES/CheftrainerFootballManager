@@ -13,6 +13,8 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.RealTeam;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.parsing.PlayerParser;
 import de.szut.dqi12.cheftrainer.server.parsing.TeamParser;
 
@@ -22,7 +24,7 @@ import de.szut.dqi12.cheftrainer.server.parsing.TeamParser;
  * 
  * @author Alexander Brennecke
  */
-public class PlayerManagement {
+public class PlayerManagement extends SQLManagement {
 
 	private SQLConnection sqlCon;
 
@@ -73,7 +75,7 @@ public class PlayerManagement {
 	 *            the id of the {@link RealTeam}, in which this player plays.
 	 */
 	private void addPlayer(Player p, int teamID) {
-		int worth = (int) (Math.random() * 5000000);
+		long worth = 2000000;
 		String sqlQuery = "INSERT INTO Spieler (Name,Verein_ID, Position, Punkte, Marktwert, Nummer, SportalID, Birthday, PicturePath) "
 						+ "VALUES ('"+p.getName()+ "','"
 						+ teamID +"','"
@@ -139,6 +141,7 @@ public class PlayerManagement {
 	 * @param playerID
 	 *            the ID of the {@link Player}, that should be owned by the
 	 *            {@link Manager};
+	 * @param plays true = player is in the formation, false = he is not.
 	 */
 	public void addPlayerToManager(int managerID, int playerID, boolean plays){
 		int play = 0;
@@ -200,35 +203,6 @@ public class PlayerManagement {
 		return p;
 	}
 
-	private static Integer getIntFromRS(ResultSet rs, String coloumName) {
-		try {
-			int retval = rs.getInt(coloumName);
-			return retval;
-		} catch (Exception e) {
-			return 0;
-		}
-	}
-
-	private static String getStringFromRS(ResultSet rs, String coloumName) {
-		try {
-			String retval = rs.getString(coloumName);
-			return retval;
-		} catch (Exception e) {
-			return "";
-		}
-	}
-
-	private static String getDefault(Object o) {
-		return getDefault(o, "0");
-	}
-
-	private static String getDefault(Object o, String defaultValue) {
-		if (o != null) {
-			return String.valueOf(o);
-		}
-		return defaultValue;
-	}
-	
 	public static List<Player> getPlayersFromResultSet(ResultSet rs) throws SQLException {
 		List<Player> retval = new ArrayList<>();
 		while (rs.next()) {
@@ -253,6 +227,11 @@ public class PlayerManagement {
 		return getPlayerFromResult(rs);
 	}
 
+	
+	/**
+	 * This function updates the SQLEntries for the given {@link Manager}.
+	 * @param manager the {@link Manager}, that should be updated.
+	 */
 	public void updateManager(Manager manager) {
 		Formation f = manager.getFormation();
 		setManagersFormation(manager.getID(), f.getDefenders(), f.getMiddfielders(), f.getOffensives());
@@ -266,5 +245,16 @@ public class PlayerManagement {
 			sqlCon.sendQuery(updateQuery);
 		}
 				
+	}
+
+	/**
+	 * This function clears the "Manschaft Copy" table and copies the "Mannschaft" table to the "Manschaft Copy" table.
+	 */
+	public void copymanagerTeam() {
+		String deleteQuery = "DELETE FROM 'Mannschaft Copy'";
+		String copyQuery = "INSERT INTO 'Mannschaft Copy' SELECT Manager_ID, Spieler_ID, NULL FROM Mannschaft WHERE Aufgestellt = 1;";
+		
+		sqlCon.sendQuery(deleteQuery);
+		sqlCon.sendQuery(copyQuery);
 	}
 }

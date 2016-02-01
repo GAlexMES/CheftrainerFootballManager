@@ -1,11 +1,13 @@
 package de.szut.dqi12.cheftrainer.server.databasecommunication;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -16,7 +18,10 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
 
 /**
@@ -38,7 +43,8 @@ public class CommunityManagement {
 	/**
 	 * Constructor.
 	 * 
-	 * @param sqlCon the current {@link SQLConnection}
+	 * @param sqlCon
+	 *            the current {@link SQLConnection}
 	 */
 	public CommunityManagement(SQLConnection sqlCon) {
 		this.sqlCon = sqlCon;
@@ -113,6 +119,15 @@ public class CommunityManagement {
 		return retval;
 	}
 
+	/**
+	 * This function sends a Query to to the database to fetch the transfer
+	 * {@link Market} for the given {@link Community}.
+	 * 
+	 * @param communityID
+	 *            the community ID of the market, that will be read out of the
+	 *            database.
+	 * @return a {@link Market} object, which is filled by the database results.
+	 */
 	private Market getMarket(int communityID) {
 		Market retval = new Market();
 
@@ -129,13 +144,23 @@ public class CommunityManagement {
 		}
 		return retval;
 	}
-	
-	private List<Transaction> getTransactions(int communityID) throws SQLException{
+
+	/**
+	 * This function creates a query to fetch all {@link Transaction}s for the
+	 * given {@link Community}.
+	 * 
+	 * @param communityID
+	 *            the ID of the {@link Community}
+	 * @return a List of {@link Transaction} objects, which were filled by the
+	 *         result of the database.
+	 * @throws SQLException
+	 */
+	private List<Transaction> getTransactions(int communityID) throws SQLException {
 		List<Transaction> retval = new ArrayList<>();
-	
-		String transactionQuery = "Select * From Gebote Where Spielrunde_ID = "+communityID;
+
+		String transactionQuery = "Select * From Gebote Where Spielrunde_ID = " + communityID;
 		ResultSet rs = sqlCon.sendQuery(transactionQuery);
-		while(rs.next()){
+		while (rs.next()) {
 			Transaction t = new Transaction();
 			t.setManagerID(rs.getInt("Manager_ID"));
 			t.setPlayerSportalID(rs.getInt("Spieler_ID"));
@@ -145,19 +170,18 @@ public class CommunityManagement {
 		}
 		return retval;
 	}
-	
-	
 
 	/**
-	 * This method collects all managers, that play in the given {@link Community}.
+	 * This method collects all managers, that play in the given
+	 * {@link Community}.
 	 * 
 	 * @param communityID
 	 *            the ID of the {@link Community}
 	 * @param communityName
-	 * 			  the Name of the {@link Community}.
+	 *            the Name of the {@link Community}.
 	 * @return a List of {@link Manager} Objects.
 	 */
-	
+
 	public List<Manager> getManagers(int communityID, String communityName) {
 		List<Manager> retval = new ArrayList<>();
 		String sqlQuery = "SELECT Manager.*, Nutzer.Nutzername " + "FROM  Manager INNER JOIN Nutzer WHERE Spielrunde_ID=" + communityID + " AND Manager.Nutzer_ID=Nutzer.ID";
@@ -166,10 +190,9 @@ public class CommunityManagement {
 			while (rs.next()) {
 				try {
 					String managerName = rs.getString("Nutzername");
-					// TODO: benoetigt?
-					// double money = rs.getDouble("Budget");
 					int points = rs.getInt("Punkte");
-					Manager manager = new Manager(managerName, null, points, communityName);
+					int place = rs.getInt("Platz");
+					Manager manager = new Manager(managerName, place, points, communityName);
 					int defenders = rs.getInt("Anzahl_Abwehr");
 					int middfielders = rs.getInt("Anzahl_Mittelfeld");
 					int offensives = rs.getInt("Anzahl_Stuermer");
@@ -187,6 +210,28 @@ public class CommunityManagement {
 			List<Player> playerList = getTeam(m.getID());
 			Player[] playerArray = playerList.toArray(new Player[playerList.size()]);
 			m.addPlayer(playerArray);
+			Map<Integer,Integer> stats = getManagerStats(m.getID());
+			m.setHistory(stats);
+		}
+		return retval;
+	}
+	
+	/**
+	 * This function collects the statistic from the database for the given manager and creates a {@link Map} from it.
+	 * @param managerID the ID of the manager
+	 * @return A Map, where the matchday is the key and the points are the value.
+	 */
+	private Map<Integer,Integer> getManagerStats(int managerID){
+		Map<Integer,Integer> retval = new HashMap<Integer, Integer>();
+		String sqlQuery = "SELECT * FROM Manager_Statistik WHERE Manager_ID = "+managerID;
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		try {
+			while(rs.next()){
+				retval.put(rs.getInt("Spieltag"), rs.getInt("Punkte"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return retval;
 	}
@@ -349,9 +394,17 @@ public class CommunityManagement {
 		ResultSet rs = sqlCon.sendQuery(sqlQueryExistUser);
 		return !DatabaseRequests.isResultSetEmpty(rs);
 	}
-	
-	public List<Player> getTeam(String managerName) {
-		String condition =  "Manager.Nutzer_ID = Nutzer.ID AND Nutzer.Nutzername = '"+managerName+"'";
+
+	/**
+	 * This function creates a Query to read the ID of a {@link User} from the
+	 * database.
+	 * 
+	 * @param userName
+	 *            the name of the user (login name)
+	 * @return see getTeam(int managerID)
+	 */
+	public List<Player> getTeam(String userName) {
+		String condition = "Manager.Nutzer_ID = Nutzer.ID AND Nutzer.Nutzername = '" + userName + "'";
 		int managerID;
 		try {
 			managerID = DatabaseRequests.getUniqueInt("Manager.ID", "Manager INNER JOIN Nutzer", condition);
@@ -374,10 +427,8 @@ public class CommunityManagement {
 	 */
 	public List<Player> getTeam(int managerID) {
 		List<Player> playerList = new ArrayList<>();
-		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein" 
-						+ " WHERE Mannschaft.Manager_ID=" + managerID 
-						+ " AND Spieler.Verein_ID = Verein.ID"
-						+ " AND Mannschaft.Spieler_ID=Spieler.SportalID";
+		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Mannschaft INNER JOIN Verein" + " WHERE Mannschaft.Manager_ID=" + managerID + " AND Spieler.Verein_ID = Verein.ID"
+				+ " AND Mannschaft.Spieler_ID=Spieler.SportalID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
 			playerList.addAll(PlayerManagement.getPlayersFromResultSet(rs));
@@ -385,5 +436,79 @@ public class CommunityManagement {
 			e.printStackTrace();
 		}
 		return playerList;
+	}
+
+	/**
+	 * This function collects all {@link Manager} IDs from the Database.
+	 * 
+	 * @return a {@link List} of IDs of {@link Manager}s.
+	 */
+	public List<Integer> getAllManagerIDs() {
+		String managerIDsQuery = "SELECT ID FROM Manager";
+		ResultSet rs = sqlCon.sendQuery(managerIDsQuery);
+		try {
+			return DatabaseUtils.getListFromResultSet(rs, "ID");
+		} catch (SQLException sqe) {
+			sqe.printStackTrace();
+			return null;
+		}
+	}
+
+	private List<Integer> getAllCommunityIDs() throws SQLException {
+		String sqlQuery = "Select ID FROM Spielrunde";
+		ResultSet rs = sqlCon.sendQuery(sqlQuery);
+		return DatabaseUtils.getListFromResultSet(rs, "ID");
+	}
+
+	public void updatePlacement() {
+		try {
+			List<Integer> communityIDs = getAllCommunityIDs();
+			for (int id : communityIDs) {
+				List<Integer[]> orderedManagers = getOrdererManagerIDs(id);
+				
+				int counter = 1;
+				int duplicatedCounter = 1;
+				int lastPoints = 0;
+				for(Integer[] manager : orderedManagers){
+					if(manager[1] == lastPoints){
+						updateManagerPlace(manager[0],counter-duplicatedCounter);
+						duplicatedCounter ++;
+					}
+					else{
+						updateManagerPlace(manager[0],counter);
+						duplicatedCounter = 1;
+					}
+					
+					lastPoints = manager[1];
+					counter ++;
+				}
+
+			}
+		} catch (SQLException sqe) {
+			sqe.printStackTrace();
+		}
+	}
+	
+	private void updateManagerPlace(Integer managerID, int place) throws SQLException {
+		String sqlQuery =  "UPDATE Manager Set Platz = ? where ID = ?";
+		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
+		pStatement.setInt(1,place);
+		pStatement.setInt(2, managerID);
+		pStatement.execute();
+	}
+
+	private List<Integer[]> getOrdererManagerIDs(int communityID) throws SQLException{
+		List<Integer[]> retval = new ArrayList<>();
+		String orderedPointsQuery = "Select Punkte, ID From Manager where Spielrunde_ID = ? ORDER BY Punkte DESC";
+		PreparedStatement pStatement = sqlCon.prepareStatement(orderedPointsQuery);
+		pStatement.setInt(1, communityID);
+		ResultSet rs = pStatement.executeQuery();
+		while(rs.next()){
+			int managerID = rs.getInt("ID");
+			int points = rs.getInt("Punkte");
+			Integer[] entry ={managerID,points};
+			retval.add(entry);
+		}
+		return retval;
 	}
 }

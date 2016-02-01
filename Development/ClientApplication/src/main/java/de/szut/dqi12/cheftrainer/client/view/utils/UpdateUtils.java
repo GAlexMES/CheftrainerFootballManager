@@ -15,7 +15,8 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  */
 public class UpdateUtils {
 
-	private static boolean init_update = false;
+	public static boolean init_update = false;
+	
 
 	/**
 	 * Requests the actual list of Communities Server will send a

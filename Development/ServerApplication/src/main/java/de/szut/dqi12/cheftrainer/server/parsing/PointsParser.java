@@ -1,6 +1,7 @@
 package de.szut.dqi12.cheftrainer.server.parsing;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -9,6 +10,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
@@ -38,9 +40,10 @@ public class PointsParser {
 	public static final int POINTS_GOAL_OFFENSIVE = 3;
 	public static final int POINTS_GOAL_PENALTY = -6;
 
-	public static Map<String, Map<String, Player>> getPlayerPoints(Match m) {
-		return getPlayerPoints(m.getSeason(), m.getMatchDay(),
-				m.getSportalMatchID());
+	private final static Logger LOGGER = Logger.getLogger(PointsParser.class);
+
+	public static HashMap<String, HashMap<String, Player>> getPlayerPoints(Match m) {
+		return getPlayerPoints(m.getSeason(), m.getMatchDay(), m.getSportalMatchID());
 	}
 
 	/**
@@ -57,25 +60,26 @@ public class PointsParser {
 	 *         Each key has a new Map, where the keys are the Player names and
 	 *         the value is a player object.
 	 */
-	public static Map<String, Map<String, Player>> getPlayerPoints(int season,
-			int matchday, int matchID) {
-		Map<String, Map<String, Player>> retval = new HashMap<>();
+	public static HashMap<String, HashMap<String, Player>> getPlayerPoints(int season, int matchday, int matchID) {
+		HashMap<String, HashMap<String, Player>> retval = new HashMap<>();
 		String compactformURL = getURL(season, matchday, matchID);
 
 		try {
 			Document doc = Jsoup.connect(compactformURL).get();
 
 			String homeTeamName = getTeamName(TEAM_HOME, doc);
-			Map<String, Player> homeTeam = getPlayersForTeam(TEAM_HOME, doc);
+			HashMap<String, Player> homeTeam = getPlayersForTeam(TEAM_HOME, doc);
 			homeTeam = addTeamToPlayers(homeTeam, homeTeamName);
 
 			String guestTeamName = getTeamName(TEAM_GUEST, doc);
-			Map<String, Player> guestTeam = getPlayersForTeam(TEAM_GUEST, doc);
+			HashMap<String, Player> guestTeam = getPlayersForTeam(TEAM_GUEST, doc);
 			guestTeam = addTeamToPlayers(guestTeam, guestTeamName);
 
 			retval.put(homeTeamName, homeTeam);
 			retval.put(guestTeamName, guestTeam);
 
+		} catch (SocketTimeoutException ste) {
+			LOGGER.error("The following URL was not reachable: " + compactformURL);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -93,8 +97,7 @@ public class PointsParser {
 	 *            team
 	 * @return the team list with modified values
 	 */
-	private static Map<String, Player> addTeamToPlayers(
-			Map<String, Player> team, String teamName) {
+	private static HashMap<String, Player> addTeamToPlayers(HashMap<String, Player> team, String teamName) {
 		for (String s : team.keySet()) {
 			team.get(s).setTeamName(teamName);
 		}
@@ -112,14 +115,11 @@ public class PointsParser {
 	 * @return a map with all players, that received points and plays in the
 	 *         given team
 	 */
-	private static Map<String, Player> getPlayersForTeam(String team,
-			Document doc) {
-		Element teamOnPitch = doc.select("div[class=spielfeld" + team + "]")
-				.first();
-		Elements beginnerPlayers = teamOnPitch
-				.select("div[class=spielinfoSpielfeldPlayer]");
+	private static HashMap<String, Player> getPlayersForTeam(String team, Document doc) {
+		Element teamOnPitch = doc.select("div[class=spielfeld" + team + "]").first();
+		Elements beginnerPlayers = teamOnPitch.select("div[class=spielinfoSpielfeldPlayer]");
 
-		Map<String, Player> players = getPlayerOnPitch(beginnerPlayers);
+		HashMap<String, Player> players = getPlayerOnPitch(beginnerPlayers);
 		players.putAll(getReplacementPlayer(team, doc));
 
 		players = addAditionalInformationToPlayers(players, team, doc);
@@ -140,15 +140,11 @@ public class PointsParser {
 	 *            the document or the sportal player grade form
 	 * @return the team map with the additional data
 	 */
-	private static Map<String, Player> addAditionalInformationToPlayers(
-			Map<String, Player> players, String team, Document doc) {
+	private static HashMap<String, Player> addAditionalInformationToPlayers(HashMap<String, Player> players, String team, Document doc) {
 
-		players = mapAdditionalInformationToPlayer(players,
-				getRedCardPlayers(team, doc), "RedCard");
-		players = mapAdditionalInformationToPlayer(players,
-				getYellowRedCardPlayers(team, doc), "YellowRedCard");
-		players = mapAdditionalInformationToPlayer(players,
-				getGoalPlayers(team, doc), "Goals");
+		players = mapAdditionalInformationToPlayer(players, getRedCardPlayers(team, doc), "RedCard");
+		players = mapAdditionalInformationToPlayer(players, getYellowRedCardPlayers(team, doc), "YellowRedCard");
+		players = mapAdditionalInformationToPlayer(players, getGoalPlayers(team, doc), "Goals");
 
 		return players;
 	}
@@ -166,9 +162,7 @@ public class PointsParser {
 	 * @return the players map with the additional data for the mapping
 	 *         parameter
 	 */
-	private static Map<String, Player> mapAdditionalInformationToPlayer(
-			Map<String, Player> players, Map<String, Integer> information,
-			String mapping) {
+	private static HashMap<String, Player> mapAdditionalInformationToPlayer(HashMap<String, Player> players, HashMap<String, Integer> information, String mapping) {
 		for (String s : information.keySet()) {
 			if (!players.keySet().contains(s)) {
 				players.put(s, new Player(s, 0));
@@ -176,13 +170,11 @@ public class PointsParser {
 			switch (mapping) {
 			case "RedCard":
 				players.get(s).setRedCard(true);
-				players.get(s).setPoints(
-						players.get(s).getPoints() + POINTS_RED_CARD);
+				players.get(s).setPoints(players.get(s).getPoints() + POINTS_RED_CARD);
 				break;
 			case "YellowRedCard":
 				players.get(s).setYellowRedCard(true);
-				players.get(s).setPoints(
-						players.get(s).getPoints() + POINTS_YELLOW_RED_CARD);
+				players.get(s).setPoints(players.get(s).getPoints() + POINTS_YELLOW_RED_CARD);
 				break;
 			case "Goals":
 				players.get(s).setGoals(information.get(s));
@@ -203,16 +195,15 @@ public class PointsParser {
 	 *            beginning and received a grade
 	 * @return
 	 */
-	private static Map<String, Player> getPlayerOnPitch(Elements players) {
-		Map<String, Player> retval = new HashMap<>();
+	private static HashMap<String, Player> getPlayerOnPitch(Elements players) {
+		HashMap<String, Player> retval = new HashMap<>();
 
 		for (Element e : players) {
 			Player p = new Player();
-			p.setName(e.select("a[class=spielfeld_spielinfo_pos_item_link]")
-					.text());
+			p.setName(e.select("a[class=spielfeld_spielinfo_pos_item_link]").text());
 			String[] splittedPath = e.select("img").attr("src").split("\\.");
-			String[] splittedID = splittedPath[splittedPath.length-2].split("-");
-			int id = Integer.valueOf(splittedID[splittedID.length-1]);
+			String[] splittedID = splittedPath[splittedPath.length - 2].split("-");
+			int id = Integer.valueOf(splittedID[splittedID.length - 1]);
 			p.setSportalID(id);
 			String gradeAsString = e.select("div[class=note_zahl]").text();
 			if (gradeAsString.contains(",")) {
@@ -260,8 +251,7 @@ public class PointsParser {
 	 * @return a Map with player names as key and a player object as value for
 	 *         all players, that replaced a other player during the game
 	 */
-	private static Map<String, Player> getReplacementPlayer(String team,
-			Document doc) {
+	private static Map<String, Player> getReplacementPlayer(String team, Document doc) {
 		Map<String, Player> retval = new HashMap<>();
 
 		Elements changes = getRowData(doc, team, "Einwechslung");
@@ -271,8 +261,7 @@ public class PointsParser {
 			String playerName = eleText.split("für")[0];
 			if (playerName.contains("(")) {
 				String gradeAsString = playerName.split(Pattern.quote("("))[1];
-				gradeAsString = gradeAsString.substring(0,
-						gradeAsString.length() - 2);
+				gradeAsString = gradeAsString.substring(0, gradeAsString.length() - 2);
 				gradeAsString = gradeAsString.replace(",", ".");
 				int grade = getGrade(gradeAsString);
 
@@ -317,8 +306,8 @@ public class PointsParser {
 	 *         for all players, that plays in the given team and scored at least
 	 *         one goal.
 	 */
-	private static Map<String, Integer> getGoalPlayers(String team, Document doc) {
-		Map<String, Integer> retval = new HashMap<>();
+	private static HashMap<String, Integer> getGoalPlayers(String team, Document doc) {
+		HashMap<String, Integer> retval = new HashMap<>();
 		Elements goals = getRowData(doc, team, "Tore");
 		for (Element e : goals) {
 			if (!e.text().contains("Eigentor")) {
@@ -346,9 +335,8 @@ public class PointsParser {
 	 *         for all players, that plays in the given team and received a
 	 *         YellowRedCard
 	 */
-	private static Map<String, Integer> getYellowRedCardPlayers(String team,
-			Document doc) {
-		Map<String, Integer> retval = new HashMap<>();
+	private static HashMap<String, Integer> getYellowRedCardPlayers(String team, Document doc) {
+		HashMap<String, Integer> retval = new HashMap<>();
 		Elements yellowRedCards = getRowData(doc, team, "Gelb-Rote Karten");
 		for (Element e : yellowRedCards) {
 			String playerName = e.text().split(Pattern.quote("("))[0];
@@ -368,9 +356,8 @@ public class PointsParser {
 	 *         for all players, that plays in the given team and received a
 	 *         RedCard
 	 */
-	private static Map<String, Integer> getRedCardPlayers(String team,
-			Document doc) {
-		Map<String, Integer> retval = new HashMap<>();
+	private static HashMap<String, Integer> getRedCardPlayers(String team, Document doc) {
+		HashMap<String, Integer> retval = new HashMap<>();
 		Elements redCards = getRowData(doc, team, "Rote Karten");
 		for (Element e : redCards) {
 			String playerName = e.text().split(Pattern.quote("("))[0];
@@ -390,8 +377,7 @@ public class PointsParser {
 	 *            the name of the information, that should be parsed
 	 * @return All Elements under the given row header
 	 */
-	private static Elements getRowData(Document doc, String team,
-			String headerText) {
+	private static Elements getRowData(Document doc, String team, String headerText) {
 		String teamAB = "";
 		if (team.equals(TEAM_GUEST)) {
 			teamAB = "B";
@@ -399,9 +385,7 @@ public class PointsParser {
 			teamAB = "A";
 		}
 
-		Element table = doc
-				.select("li[class=first]:contains(" + headerText + ")").first()
-				.parent();
+		Element table = doc.select("li[class=first]:contains(" + headerText + ")").first().parent();
 		Element teams = table.nextElementSibling();
 		Element data = teams.nextElementSibling();
 		Element rowData = data.select("div[class=team" + teamAB + "]").first();
@@ -423,14 +407,11 @@ public class PointsParser {
 	private static String getURL(int season, int matchday, int matchID) {
 		String parsedSeason = String.valueOf(season);
 		parsedSeason = parsedSeason.substring(2, parsedSeason.length());
-		parsedSeason = parsedSeason
-				+ String.valueOf(Integer.valueOf(parsedSeason) + 1);
+		parsedSeason = parsedSeason + String.valueOf(Integer.valueOf(parsedSeason) + 1);
 
-		String filledAppendix = appendix.replace("%GAMEDAY%",
-				String.valueOf(matchday));
+		String filledAppendix = appendix.replace("%GAMEDAY%", String.valueOf(matchday));
 		filledAppendix = filledAppendix.replace("%SEASON%", parsedSeason);
-		filledAppendix = filledAppendix.replace("%MATCHID%",
-				String.valueOf(matchID).substring(2));
+		filledAppendix = filledAppendix.replace("%MATCHID%", String.valueOf(matchID).substring(2));
 
 		return root + filledAppendix;
 	}

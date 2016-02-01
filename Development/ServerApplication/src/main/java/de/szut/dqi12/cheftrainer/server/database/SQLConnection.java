@@ -1,7 +1,7 @@
-package de.szut.dqi12.cheftrainer.server.databasecommunication;
+package de.szut.dqi12.cheftrainer.server.database;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 
+import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
 
 /**
@@ -23,14 +24,16 @@ import de.szut.dqi12.cheftrainer.server.logic.ServerInitialator;
  */
 public class SQLConnection {
 
+	private final String DATABASE_NAME = "Database";
+	private final String RELATIVE_DB_PATH = "/" + DATABASE_NAME + ".db";
+
 	// INITIALISATION
-	private final String SQLEXCEPTION_NORESULT = "query does not return ResultSet";
-	private final String SQLEXCEPTION_ERROR = "[SQLITE_ERROR]";
-	private final String SQLEXCEPTION_BUSY = "[SQLITE_BUSY]";
+	private final static String SQLEXCEPTION_NORESULT = "query does not return ResultSet";
+	private final static String SQLEXCEPTION_ERROR = "[SQLITE_ERROR]";
+	private final static String SQLEXCEPTION_BUSY = "[SQLITE_BUSY]";
 
 	private Connection con = null;
 	private Statement statement = null;
-	private String name = "";
 
 	private final static Logger LOGGER = Logger.getLogger(SQLConnection.class);
 
@@ -39,32 +42,50 @@ public class SQLConnection {
 	/**
 	 * Constructor
 	 * 
-	 * @param name
-	 *            of the database
+	 * @param init
+	 *            true = database content will be initialized.
+	 * @throws IOException
 	 */
-	public SQLConnection(String name, String sqlPath, boolean init)
-			throws IOException {
-		this.name = name;
+	public SQLConnection(boolean init) throws IOException {
 		DatabaseRequests.getInstance().setSQLConnection(this);
-		
-		URL url = this.getClass().getResource(sqlPath);
-		
-		loadDB(url.toString());
+		loadDB();
+
 		if (init) {
 			ServerInitialator.databaseInitalisation();
 		}
+		Controller.getInstance().createMatchdayTimeTask();
 	}
 
-	
+	/**
+	 * This function returns the relative database path as an absolute path
+	 * 
+	 * @return a String, which represents the path (e.g. C:/Databse.db)
+	 * @throws IOException
+	 */
+	private String getDatabasePath() throws IOException {
+		File databaseFile = new File("." + RELATIVE_DB_PATH);
+		Boolean databaseExist = databaseFile.exists();
+		String path = databaseFile.getAbsolutePath();
+		String databaseURL = path.replace("\\.\\", "\\");
+
+		if (!databaseExist) {
+			DatabaseCreator.cretae(databaseURL);
+		}
+
+		return databaseURL;
+	}
+
 	/**
 	 * Tries to connect to the given db file
 	 * 
 	 * @param path
 	 *            to the db file
+	 * @throws IOException
 	 */
-	private void loadDB(String path) {
+	private void loadDB() throws IOException {
+		String databaseURL = getDatabasePath();
 		LOGGER.info("Connecting to the database file!");
-		final String url = "jdbc:sqlite::resource:Database";
+		final String url = "jdbc:sqlite:" + databaseURL;
 
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -86,8 +107,7 @@ public class SQLConnection {
 
 			statement = con.createStatement();
 
-			statement.executeQuery("ATTACH '" + name + "' as "
-					+ name.substring(0, name.length() - 3));
+			statement.executeQuery("ATTACH '" + DATABASE_NAME + "' as " + DATABASE_NAME);
 			LOGGER.info("Connecting to the database file was succesfull!");
 		} catch (SQLException e) {
 			handleSQLException(e);
@@ -105,7 +125,6 @@ public class SQLConnection {
 		ResultSet currentSet = null;
 		try {
 			currentSet = statement.executeQuery(command);
-
 			return currentSet;
 		} catch (SQLException sqle) {
 			handleSQLException(sqle);
@@ -119,7 +138,7 @@ public class SQLConnection {
 	 * @param sqle
 	 *            SQLException
 	 */
-	private void handleSQLException(SQLException sqle) {
+	public static void handleSQLException(SQLException sqle) {
 		if (sqle.getMessage().contains(SQLEXCEPTION_NORESULT)) {
 		} else if (sqle.getMessage().contains(SQLEXCEPTION_ERROR)) {
 			String sqLiteError = sqle.getMessage().split("]")[1];
@@ -131,15 +150,33 @@ public class SQLConnection {
 			LOGGER.error(sqle.getLocalizedMessage());
 		}
 	}
-	
-	public PreparedStatement prepareStatement(String sqlQuery) throws SQLException{
+
+	/**
+	 * This function creates a {@link PreparedStatement} for the given Query.
+	 * 
+	 * @param sqlQuery
+	 *            the query for the {@link PreparedStatement}
+	 * @return a new {@link PreparedStatement} object
+	 * @throws SQLException
+	 */
+	public PreparedStatement prepareStatement(String sqlQuery) throws SQLException {
 		return con.prepareStatement(sqlQuery);
+	}
+	
+	public void close(){
+		try {
+			statement.close();
+			con.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	// GETTER&SETTER
 	// /////////////
 	public String getName() {
-		return this.name;
+		return this.DATABASE_NAME;
 	}
 
 	public ArrayList<String> getTableNames() {

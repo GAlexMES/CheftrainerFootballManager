@@ -23,7 +23,7 @@ import de.szut.dqi12.cheftrainer.server.parsing.ScheduleParser;
 public class ScheduleParsingTest {
 
 	@Test
-	public void testGrades() {
+	public void testGrades() throws Exception {
 		ScheduleParser sp = new ScheduleParser();
 		PointsParser pp = new PointsParser();
 		Map<String,Map<String,Player>> playerList = new HashMap<>();
@@ -32,7 +32,7 @@ public class ScheduleParsingTest {
 			for (Match m : matches) {
 				m.setSportalMatchID(ScheduleParser.getSportalID(m.getDetailURL()));
 				@SuppressWarnings("static-access")
-				Map<String,Map<String,Player>> currentPlayerList = pp.getPlayerPoints(2015, 7, m.getSportalMatchID());
+				HashMap<String,HashMap<String,Player>> currentPlayerList = pp.getPlayerPoints(2015, 7, m.getSportalMatchID());
 				playerList.putAll(currentPlayerList);
 			}
 		} catch (MalformedURLException e) {

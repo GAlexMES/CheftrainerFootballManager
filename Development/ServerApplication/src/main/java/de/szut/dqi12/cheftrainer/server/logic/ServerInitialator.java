@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesManagement;
 
 /**

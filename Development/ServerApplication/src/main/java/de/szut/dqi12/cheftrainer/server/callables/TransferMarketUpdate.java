@@ -11,7 +11,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.messagedummies.NewPlayerOnMarketMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
 /**
  * This callable is used to handle changes on the exchange market. It is used,

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
+import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 
 
 /**

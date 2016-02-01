@@ -11,7 +11,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseRequests;
+import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
 /**
  * This class is used to handle "UpdateRequest" messages, which were send

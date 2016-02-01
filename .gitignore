@@ -2,3 +2,6 @@
 /Development/ClientApplication/LOG
 
 Development/ServerApplication/Database.db
+*.db
+Development/ServerApplication/Database.db-journal
+Development/ServerApplication/Database.db
