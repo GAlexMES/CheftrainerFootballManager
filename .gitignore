@@ -5,3 +5,4 @@ Development/ServerApplication/Database.db
 *.db
 Development/ServerApplication/Database.db-journal
 Development/ServerApplication/Database.db
+Development/ClientApplication/LOG/connect.log
