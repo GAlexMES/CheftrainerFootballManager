@@ -192,7 +192,7 @@ public class CommunityManagement {
 					String managerName = rs.getString("Nutzername");
 					int points = rs.getInt("Punkte");
 					int place = rs.getInt("Platz");
-					Manager manager = new Manager(managerName, place, points, communityName);
+					Manager manager = new Manager(managerName, null, place, communityName);
 					int defenders = rs.getInt("Anzahl_Abwehr");
 					int middfielders = rs.getInt("Anzahl_Mittelfeld");
 					int offensives = rs.getInt("Anzahl_Stuermer");
