@@ -20,7 +20,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
  * from the server to the client after a login or a registration.
  * 
  * @author Alexander Brennecke
- *
  */
 public class UserAuthentificationACK extends CallableAbstract {
 

@@ -28,8 +28,7 @@ public class GUIController {
 	/**
 	 * Constructor
 	 * 
-	 * @param primaryStage
-	 *            needs a Stage to display GUI Elements onto it.
+	 * @param primaryStage needs a Stage to display GUI Elements onto it.
 	 */
 
 	public GUIController(Stage primaryStage) {
@@ -78,7 +77,6 @@ public class GUIController {
 				guiInitialator.getSideMenuController().expandColums();
 			}
 		});
-
 	}
 
 	/**
@@ -111,9 +109,8 @@ public class GUIController {
 				((ControllerInterface) currentContentLoader.getController())
 						.init();
 			} catch (Exception e) {
-
 			}
-
+			
 			newContentPane.autosize();
 
 			if (update) {
@@ -152,6 +149,9 @@ public class GUIController {
 		return this.currentDialogStage;
 	}
 
+	/**
+	 * Closes the Dialog, which is currently opend.
+	 */
 	public void closeCurrentDialog() {
 		Platform.runLater(new Runnable() {
 			@Override
@@ -160,7 +160,9 @@ public class GUIController {
 			}
 		});
 	}
-
+	/**
+	 * Enables the Buttons of the SideMenu.
+	 */
 	public void enableButtons() {
 		guiInitialator.getSideMenuController().triggerButtonClickable(true);
 	}

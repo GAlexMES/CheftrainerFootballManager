@@ -12,6 +12,9 @@ import javafx.scene.image.Image;
 import de.szut.dqi12.cheftrainer.client.ClientApplication;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 
+/**
+ * Loads an required Image for an ImageUpdate.
+ */
 public class ImageController {
 
 	private final static String DIR_PATH = ClientApplication.class.getResource(
@@ -20,16 +23,28 @@ public class ImageController {
 	private final static String DUMMY_IMG = DIR_PATH + "dummy.png";
 	private ImageUpdate imageUpdate;
 	
+	/**
+	 * @param iu ImageUpdate, which needs an Picture to load.
+	 */
 	public ImageController(ImageUpdate iu){
 		this.imageUpdate = iu;
 	}
-
+	/**
+	 * Loads an Picture of an Player
+	 * @param p Player, whos Picture is needed.
+	 * @return A Picture of the Player
+	 */
 	public Image getPicture(Player p) {
 		String path = getPath(p);
 		File imageFile = new File(path);
 		return new Image(imageFile.toURI().toString());
 	}
 
+	/**
+	 * Loads the Path of an Picture for an Player.
+	 * @param p The Player, which Path of the Picture is needed.
+	 * @return The Path of the Picture.
+	 */
 	private String getPath(Player p) {
 		String url = p.getAbsolutePictureURL();
 		String picturePath = getPicturePath(url);
@@ -49,19 +64,32 @@ public class ImageController {
 		return DUMMY_IMG;
 	}
 
+	/**
+	 * Loads an Picture
+	 * @param path Path of the Picture
+	 * @return Picture of the Path
+	 */
 	private String getPicturePath(String path) {
 		String[] splittedPath = path.split("/");
 		String fileName = splittedPath[splittedPath.length - 1];
 		return LOADED_IMAGE_DIR + fileName;
 	}
 
+	/**
+	 * Loads an Image
+	 */
 	private class ImageLoader implements Runnable {
 
 		private URL imageURL;
 		private int id;
 		private String destinationFile;
 		
-
+		/**
+		 * @param url URL of the Picture
+		 * @param destinationFile File to save the Picture in
+		 * @param id Id of the Player
+		 * @throws MalformedURLException
+		 */
 		public ImageLoader(String url, String destinationFile, int id)
 				throws MalformedURLException {
 			imageURL = new URL(url);

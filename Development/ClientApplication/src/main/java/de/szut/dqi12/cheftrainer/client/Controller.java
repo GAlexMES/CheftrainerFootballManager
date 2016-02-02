@@ -1,13 +1,9 @@
 package de.szut.dqi12.cheftrainer.client;
 
-import java.util.ArrayList;
-
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -28,7 +24,7 @@ public class Controller {
 	/**
 	 * For singleton patter.
 	 * 
-	 * @return
+	 * @return  An Instance of this class
 	 */
 	public static Controller getInstance() {
 		if (instance == null) {
@@ -40,8 +36,7 @@ public class Controller {
 	/**
 	 * Creates the GUI with the GUIController.
 	 * 
-	 * @param primaryStage
-	 *            needs the primary stage of the application.
+	 * @param primaryStage needs the primary stage of the application.
 	 */
 	public void startApplication(Stage primaryStage) {
 		guiController = GUIController.getInstance(primaryStage);
@@ -76,27 +71,12 @@ public class Controller {
 		currentSession.getClientSocket().sendMessage(message);
 	}
 	
-	// GETTER AND SETTER
 	public Session getSession() {
 		return currentSession;
 	}
 
 	public void setSession(Session session) {
 		this.currentSession = session;
-		session.getClientSocket().getServerHandler().getMessageController()
-				.setSession(session);
+		session.getClientSocket().getServerHandler().getMessageController().setSession(session);
 	}
-
-	// Dummy
-	public void setPlayeronMarket(Player player, int price) {
-
-	}
-
-	public void save(ArrayList<Player> currentPlayers, Formation currentFormation) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
 }

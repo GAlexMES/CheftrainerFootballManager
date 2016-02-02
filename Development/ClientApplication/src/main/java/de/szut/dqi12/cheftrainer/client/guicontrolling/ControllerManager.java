@@ -5,6 +5,10 @@ import java.util.Map;
 
 import javax.management.InstanceAlreadyExistsException;
 
+/**
+ * 
+ *
+ */
 public class ControllerManager {
 
 	private static ControllerManager instance = null;

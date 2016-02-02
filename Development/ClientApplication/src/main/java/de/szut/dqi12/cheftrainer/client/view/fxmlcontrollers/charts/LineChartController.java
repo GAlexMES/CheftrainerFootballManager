@@ -11,6 +11,11 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.layout.GridPane;
 
+/**
+ * Controller for the FXML-Component of an LineChart.
+ * @author Robin
+ *
+ */
 public class LineChartController<Y, X> {
 	final NumberAxis xAxis = new NumberAxis();
 	final NumberAxis yAxis = new NumberAxis();

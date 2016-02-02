@@ -5,10 +5,16 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+/**
+ * Listener for the Enter key.
+ */
 public class EnterPressedListener implements EventHandler<KeyEvent> {
 	
 	private ControllerInterface controller;
 	
+	/**
+	 * @param controller Controller of FXML Component
+	 */
 	public EnterPressedListener(ControllerInterface controller) {
 		this.controller = controller;
 	}

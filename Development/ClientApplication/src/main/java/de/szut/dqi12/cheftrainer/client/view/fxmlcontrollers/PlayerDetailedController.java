@@ -12,6 +12,9 @@ import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 
+/**
+ * Shows detailed informations of an Player
+ */
 public class PlayerDetailedController implements ControllerInterface, ImageUpdate {
 
 	private Player displayedPlayer;

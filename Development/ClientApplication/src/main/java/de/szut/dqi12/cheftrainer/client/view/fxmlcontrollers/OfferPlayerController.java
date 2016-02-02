@@ -13,6 +13,9 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageI
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
+/**
+ * This is an Controller for the FXML-Component which shows the Dialog to offer an Player on the Transfermarket
+ */
 public class OfferPlayerController implements ControllerInterface {
 
 	private Player displayedPlayer;
@@ -20,6 +23,9 @@ public class OfferPlayerController implements ControllerInterface {
 	@FXML
 	private TextField priceField;
 
+	/**
+	 * Is called, when the OfferButton is clicked and calles the sendOffer-Method.
+	 */
 	@FXML
 	public void offerButtonClicked() {
 		long offerPrice = Long.parseLong(priceField.getText(),10);
@@ -32,9 +38,12 @@ public class OfferPlayerController implements ControllerInterface {
 
 	private void showWarningDialog() {
 		// TODO Auto-generated method stub
-		
 	}
 
+	/**
+	 * Sends an offer for a Player to the Server
+	 * @param offerPrice Price of the Offer
+	 */
 	private void sendOffer(long offerPrice) {
 		Session s = Controller.getInstance().getSession();
 		int communityID = s.getCurrentCommunityID();

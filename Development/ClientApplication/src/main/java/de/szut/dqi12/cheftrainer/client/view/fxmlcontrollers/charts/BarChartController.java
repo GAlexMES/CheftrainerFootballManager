@@ -9,6 +9,11 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.GridPane;
 
+/**
+ * Controller for the FXML-Component of an BarChart.
+ * @author Robin
+ *
+ */
 public class BarChartController {
 	@FXML
 	private GridPane barChart;
@@ -31,6 +36,10 @@ public class BarChartController {
 		chart.setData(data);
 	}
 
+	/**
+	 * Fills the Chart with Data.
+	 * @param data Data for the Chart.
+	 */
 	public void setData(HashMap<String, Integer> data) {
 		try {
 			series.getData().clear();
