@@ -97,7 +97,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 		marketTable.setItems(getObservable());
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("Player"));
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
-		worthCol.setCellValueFactory(data -> data.getValue().getWerth());
+		worthCol.setCellValueFactory(data -> data.getValue().getWorth());
 
 		marketTable.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> playerPressed(newValue));
 

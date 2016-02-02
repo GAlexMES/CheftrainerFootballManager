@@ -455,18 +455,25 @@ public class CommunityManagement {
 		}
 	}
 
+	/**
+	 * This function selects all Community IDs from the database
+	 * @return a {@link List} of Integer values, where each value represents a ID
+	 * @throws SQLException
+	 */
 	private List<Integer> getAllCommunityIDs() throws SQLException {
 		String sqlQuery = "Select ID FROM Spielrunde";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		return DatabaseUtils.getListFromResultSet(rs, "ID");
 	}
 
+	/**
+	 * This function updates the placement of all {@link Manager} in all {@link Community}, which are saved in the database.
+	 */
 	public void updatePlacement() {
 		try {
 			List<Integer> communityIDs = getAllCommunityIDs();
 			for (int id : communityIDs) {
 				List<Integer[]> orderedManagers = getOrdererManagerIDs(id);
-				
 				int counter = 1;
 				int duplicatedCounter = 1;
 				int lastPoints = 0;
@@ -479,17 +486,21 @@ public class CommunityManagement {
 						updateManagerPlace(manager[0],counter);
 						duplicatedCounter = 1;
 					}
-					
 					lastPoints = manager[1];
 					counter ++;
 				}
-
 			}
 		} catch (SQLException sqe) {
 			sqe.printStackTrace();
 		}
 	}
 	
+	/**
+	 * This function creates a SQLQuery to update the {@link Manager} table with the given place 
+	 * @param managerID the ID of the {@link Manager}, who should be updated.
+	 * @param place the new place of the manager
+	 * @throws SQLException
+	 */
 	private void updateManagerPlace(Integer managerID, int place) throws SQLException {
 		String sqlQuery =  "UPDATE Manager Set Platz = ? where ID = ?";
 		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
@@ -498,6 +509,12 @@ public class CommunityManagement {
 		pStatement.execute();
 	}
 
+	/**
+	 * This function creates a List of Integer Arrays. It searches in the database for all {@link Manager}s in the given {@link Community} and orders them by point.
+	 * @param communityID the ID of the {@link Community}
+	 * @return a {@link List} of Integer, where the first value is the ID of the {@link Manager} and the second value are the points.
+	 * @throws SQLException
+	 */
 	private List<Integer[]> getOrdererManagerIDs(int communityID) throws SQLException{
 		List<Integer[]> retval = new ArrayList<>();
 		String orderedPointsQuery = "Select Punkte, ID From Manager where Spielrunde_ID = ? ORDER BY Punkte DESC";

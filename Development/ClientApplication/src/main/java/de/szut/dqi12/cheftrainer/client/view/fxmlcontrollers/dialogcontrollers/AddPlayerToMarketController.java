@@ -3,6 +3,7 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers;
 import java.util.List;
 import java.util.Map;
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -115,7 +116,7 @@ public class AddPlayerToMarketController implements ImageUpdate {
 		playerTable.setItems(tableObservable);
 
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
-		worthCol.setCellValueFactory(data -> data.getValue().getWerth());
+		worthCol.setCellValueFactory(data -> data.getValue().getWorth());
 
 		actionCol.setCellValueFactory(new PropertyValueFactory<>("Player"));
 		actionCol.setCellFactory(params -> {
