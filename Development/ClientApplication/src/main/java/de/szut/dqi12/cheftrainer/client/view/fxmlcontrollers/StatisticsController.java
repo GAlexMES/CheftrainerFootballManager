@@ -56,7 +56,7 @@ public class StatisticsController implements ControllerInterface {
 	}
 
 	/**
-	 * Fills the LineChart with data
+	 * Fills the LineChart with data. The data contains the history of the points matchday day of the current manager.
 	 */
 	@FXML
 	public void setLineChart() {
@@ -78,7 +78,7 @@ public class StatisticsController implements ControllerInterface {
 	}
 
 	/**
-	 * Fills the BarChart with data
+	 * Fills the BarChart with data. The data contains the points of every manager in the current cummunity.
 	 */
 	@FXML
 	public void setBarChart() {
@@ -89,6 +89,7 @@ public class StatisticsController implements ControllerInterface {
 		for (Manager m : managers) {
 			data.put(m.getName(), m.getPoints());
 		}
+		
 		barController.setData(data);
 		stats.getChildren().set(0, barController.getChart());
 
