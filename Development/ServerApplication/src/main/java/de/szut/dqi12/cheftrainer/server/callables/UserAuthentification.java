@@ -10,6 +10,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthentificationMessage;
 import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
@@ -30,13 +31,14 @@ public class UserAuthentification extends CallableAbstract {
 	public void messageArrived(Message message) {
 		JSONObject authentification = new JSONObject(
 				message.getMessageContent());
+		UserAuthentificationMessage uaMessage = new UserAuthentificationMessage(authentification);
 		// switches the type of the authentification to "login" or "register".
-		switch (authentification.getString(MIDs.AUTHENTIFICATION_TYPE)) {
+		switch (uaMessage.getAuthentificationType()) {
 		case MIDs.REGISTRATION:
-			register(authentification);
+			register(uaMessage);
 			break;
 		case MIDs.LOGIN:
-			login(authentification);
+			login(uaMessage);
 			break;
 		}
 	}
@@ -55,10 +57,9 @@ public class UserAuthentification extends CallableAbstract {
 	 *            JSONObject, including the user data
 	 * @custom.position /F0011/
 	 */
-	private void register(JSONObject registrationInfo) {
+	private void register(UserAuthentificationMessage uaMessage) {
 		initialize();
-		User newUser = new User();
-		newUser.setWithJSON(registrationInfo);
+		User newUser = uaMessage.getUser();
 		HashMap<String, Boolean> dbInfo = DatabaseRequests.registerNewUser(newUser);
 		createRegistrationAnswer(dbInfo.get(MIDs.EMAIL_EXISTS),
 				dbInfo.get(MIDs.USER_EXISTS), dbInfo.get(MIDs.AUTHENTIFICATE));
@@ -71,13 +72,9 @@ public class UserAuthentification extends CallableAbstract {
 	 *            JSONObject, including the user data
 	 * @custom.position /F0020/
 	 */
-	public void login(JSONObject loginInfo) {
+	public void login(UserAuthentificationMessage uaMessage) {
 		initialize();
-		User loginUser = new User();
-		String username = loginInfo.getString(MIDs.USERNAME);
-		String password = loginInfo.getString(MIDs.PASSWORD);
-		loginUser.setUserName(username);
-		loginUser.setPassword(password);
+		User loginUser = uaMessage.getUser();
 
 		HashMap<String, Boolean> dbInfo = DatabaseRequests.loginUser(loginUser);
 		boolean correctPassword = dbInfo.get(MIDs.PASSWORD);

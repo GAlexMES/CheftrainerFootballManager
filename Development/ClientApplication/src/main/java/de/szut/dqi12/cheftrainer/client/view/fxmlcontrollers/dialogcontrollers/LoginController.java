@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -27,6 +28,7 @@ import javafx.stage.WindowEvent;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.callables.UserAuthentificationACK;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
 import de.szut.dqi12.cheftrainer.client.listeners.EnterPressedListener;
@@ -42,6 +44,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthentificationMessage;
 
 /**
  * Controller class for the Login dialog, which is defined in the Login.fxml
@@ -161,32 +164,28 @@ public class LoginController implements ControllerInterface {
 	 */
 	private void doLogin() throws IOException {
 		Client serverCon = createServerCon();
-		Message loginMessage = new Message(
-				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
-		JSONObject loginInfo = new JSONObject();
-		loginInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.LOGIN);
-		loginInfo.put(MIDs.USERNAME, loginField.getText());
-		try {
-			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
-			loginInfo.put(MIDs.PASSWORD, passwordMD5);
-			loginMessage.setMessageContent(loginInfo);
-			Thread.sleep(1500);
-			serverCon.sendMessage(loginMessage);
+		
+		
+		User user = new User();
+		user.setUserName(loginField.getText());
+		user.setPassword(passwordField.getText());
+		
+		UserAuthentificationMessage uaMessage = new UserAuthentificationMessage();
+		uaMessage.setUser(user);
+		uaMessage.setAuthentificationType(MIDs.LOGIN);
+		
+		try{
+			serverCon.waitForConnect(10);
+			serverCon.sendMessage(uaMessage);
 
 			Session newSession = new Session();
 			newSession.setClientSocket(serverCon);
-			User user = new User();
-			user.setUserName(loginField.getText());
+			
 			newSession.setUser(user);
 			Controller.getInstance().setSession(newSession);
-		} catch (NoSuchAlgorithmException e) {
+		} catch (TimeoutException e) {
 			Alert alert = AlertUtils.createExceptionDialog(e);
 			alert.showAndWait();
-		} catch (UnsupportedEncodingException e) {
-			Alert alert = AlertUtils.createExceptionDialog(e);
-			alert.showAndWait();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 
