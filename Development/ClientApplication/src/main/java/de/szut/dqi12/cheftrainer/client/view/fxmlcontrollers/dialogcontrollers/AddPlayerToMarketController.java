@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -27,7 +28,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.messagedummies.NewPlayerOnMarketMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewPlayerOnMarketMessage;
 
 public class AddPlayerToMarketController implements ImageUpdate {
 
