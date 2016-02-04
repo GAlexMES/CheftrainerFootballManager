@@ -20,6 +20,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.TransactionMessage;
 
 public class OfferDialog {
 
@@ -87,20 +88,11 @@ public class OfferDialog {
 	}
 	
 	private void sendAnswerOffer(Transaction tr, boolean accept, boolean remove) {
-		JSONObject transactionJSON = new JSONObject();
-		transactionJSON.put(MIDs.TRANSACTION, tr.toJSON());
-		transactionJSON.put(MIDs.ACCEPT, accept);
-		transactionJSON.put(MIDs.REMOVE, remove);
-
-		JSONObject messageContent = new JSONObject();
-		messageContent.put(MIDs.TYPE, MIDs.TRANSACTION);
-		messageContent.put(MIDs.INFORMATION, transactionJSON);
-
-		Message message = new Message(ClientToServer_MessageIDs.TRANSFER_MARKET);
-		message.setMessageContent(messageContent);
+		Message message = new TransactionMessage(tr,accept,remove);
 		
 		Controller controller = Controller.getInstance();
 		controller.sendMessageToServer(message);
+		
 		Market market = controller.getSession().getCurrentCommunity().getMarket();
 		market.removeTransactions(tr);
 	}

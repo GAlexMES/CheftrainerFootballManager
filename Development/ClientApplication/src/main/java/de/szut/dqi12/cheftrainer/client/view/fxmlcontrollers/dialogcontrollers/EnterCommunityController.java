@@ -68,7 +68,7 @@ public class EnterCommunityController {
 	 * This method is called, when a new community should be created. It creates a message with the required data and sends it to the server.
 	 */
 	private void createEnterCommunityMessage(){
-		Message enterCommunityMessage = new Message(ClientToServer_MessageIDs.COMMUNITY_AUTHENTIFICATION);
+		Message enterCommunityMessage = new Message(ClientToServer_MessageIDs.COMMUNITY_AUTHENTICATION);
 		JSONObject enterJSON = new JSONObject();
 		enterJSON.put(MIDs.TYPE, MIDs.ENTER);
 		enterJSON.put(MIDs.COMMUNITY_NAME, communityNameField.getText());

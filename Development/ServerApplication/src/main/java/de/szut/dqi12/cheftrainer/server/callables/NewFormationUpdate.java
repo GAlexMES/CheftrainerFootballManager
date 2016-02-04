@@ -16,6 +16,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewFormationMessage;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
 /**
@@ -30,10 +31,10 @@ public class NewFormationUpdate extends CallableAbstract {
 	@Override
 	public void messageArrived(Message message) {
 		initMap();
-		JSONObject managerJSON = new JSONObject(message.getMessageContent());
-
-		Manager sendedManager = new Manager(managerJSON);
-
+		JSONObject authentification = new JSONObject(message.getMessageContent());
+		NewFormationMessage nfMessage = new NewFormationMessage(authentification);
+		Manager sendedManager = nfMessage.getManager();
+		
 		List<Player> dbPlayers = DatabaseRequests.getTeam(sendedManager.getID());
 		boolean successful = false;
 		boolean checkedFormation = checkFormation(sendedManager.getFormation());

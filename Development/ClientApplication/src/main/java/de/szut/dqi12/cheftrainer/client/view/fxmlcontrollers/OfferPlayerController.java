@@ -12,6 +12,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewOfferMessage;
 
 /**
  * This is an Controller for the FXML-Component which shows the Dialog to offer an Player on the Transfermarket
@@ -55,14 +56,8 @@ public class OfferPlayerController implements ControllerInterface {
 		tr.setUserID(userID);
 		tr.setCommunityID(communityID);
 		
-		JSONObject offerInformation = tr.toJSON();
+		Message offerMessage = new NewOfferMessage(tr);
 		
-		JSONObject messageContent = new JSONObject();
-		messageContent.put(MIDs.TYPE, MIDs.NEW_OFFER);
-		messageContent.put(MIDs.INFORMATION, offerInformation);
-		
-		Message offerMessage = new Message(ClientToServer_MessageIDs.TRANSFER_MARKET);
-		offerMessage.setMessageContent(messageContent);
 		s.getClientSocket().sendMessage(offerMessage);
 		
 		s.getCurrentCommunity().getMarket().addTransaction(tr);

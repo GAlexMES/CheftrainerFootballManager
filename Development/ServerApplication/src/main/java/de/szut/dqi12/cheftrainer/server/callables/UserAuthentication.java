@@ -10,18 +10,19 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewFormationMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthentificationMessage;
 import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
 /**
- * This class is used to handle "UserAuthentification" messages, which were send
+ * This class is used to handle "UserAuthentication" messages, which were send
  * by a client.
  * 
  * @author Alexander Brennecke
  * @custom.position /F0011/ </br> /F0020/
  */
-public class UserAuthentification extends CallableAbstract {
+public class UserAuthentication extends CallableAbstract {
 
 	private static Controller controller;
 
@@ -29,10 +30,9 @@ public class UserAuthentification extends CallableAbstract {
 	 * Is called from the message controller, when a new message arrived.
 	 */
 	public void messageArrived(Message message) {
-		JSONObject authentification = new JSONObject(
-				message.getMessageContent());
+		JSONObject authentification = new JSONObject(message.getMessageContent());
 		UserAuthentificationMessage uaMessage = new UserAuthentificationMessage(authentification);
-		// switches the type of the authentification to "login" or "register".
+		// switches the type of the authentication to "login" or "register".
 		switch (uaMessage.getAuthentificationType()) {
 		case MIDs.REGISTRATION:
 			register(uaMessage);

@@ -79,7 +79,7 @@ public class CreateCommunityController {
 	 * Creates a message with the required data to create a new community and sends it to the server.
 	 */
 	private void createNewCommunityMessage(){
-		Message communityMessage = new Message(ClientToServer_MessageIDs.COMMUNITY_AUTHENTIFICATION);
+		Message communityMessage = new Message(ClientToServer_MessageIDs.COMMUNITY_AUTHENTICATION);
 		JSONObject communitJSON = new JSONObject();
 		communitJSON.put(MIDs.TYPE, MIDs.CREATION);
 		String passwordMD5;

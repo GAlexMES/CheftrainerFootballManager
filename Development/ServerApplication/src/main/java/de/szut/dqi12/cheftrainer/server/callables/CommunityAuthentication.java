@@ -23,7 +23,7 @@ import de.szut.dqi12.cheftrainer.server.logic.ExchangeMarketGenerator;
  * @author Alexander Brennecke
  * @custom.position /F0012/ </br> /F0040/
  */
-public class CommunityAuthentification extends CallableAbstract {
+public class CommunityAuthentication extends CallableAbstract {
 
 	/**
 	 * This method is called by the message controller, whenever the message

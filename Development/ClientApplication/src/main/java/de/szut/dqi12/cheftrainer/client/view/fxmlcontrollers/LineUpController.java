@@ -28,6 +28,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewFormationMessage;
 
 /**
  * This is the controller for the gui-module LineUp
@@ -164,8 +165,8 @@ public class LineUpController implements ControllerInterface {
 			tempSendingManager.setLineUp(guiLineUp);
 			tempSendingManager.setFormation(currentFormation);
 			tempSendingManager.setName(manager.getName());
-			Message updateMessage = new Message(ClientToServer_MessageIDs.NEW_FORMATION);
-			updateMessage.setMessageContent(tempSendingManager.toJSON());
+			
+			Message updateMessage = new NewFormationMessage(tempSendingManager);
 			Controller.getInstance().getSession().getClientSocket().sendMessage(updateMessage);
 		} else {
 			AlertUtils.createSimpleDialog("Nothing to save", "There are no changes!", "", AlertType.CONFIRMATION);
