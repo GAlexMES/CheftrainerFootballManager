@@ -12,6 +12,9 @@ public class ServerApplication {
 	
 	private final static Logger LOGGER = Logger.getLogger(ServerApplication.class);
 
+	/**
+	 * Main function of the application. Initialzies a few things.
+	 */
 	public static void main(String[] args) {
 		LOGGER.info("Server will start now!");
 		try {

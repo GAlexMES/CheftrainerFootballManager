@@ -44,7 +44,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthentificationMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationMessage;
 
 /**
  * Controller class for the Login dialog, which is defined in the Login.fxml
@@ -170,7 +170,7 @@ public class LoginController implements ControllerInterface {
 		user.setUserName(loginField.getText());
 		user.setPassword(passwordField.getText());
 		
-		UserAuthentificationMessage uaMessage = new UserAuthentificationMessage();
+		UserAuthenticationMessage uaMessage = new UserAuthenticationMessage();
 		uaMessage.setUser(user);
 		uaMessage.setAuthentificationType(MIDs.LOGIN);
 		

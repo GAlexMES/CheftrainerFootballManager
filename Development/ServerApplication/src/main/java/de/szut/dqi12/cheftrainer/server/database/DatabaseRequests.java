@@ -29,7 +29,7 @@ import de.szut.dqi12.cheftrainer.server.databasecommunication.UserManagement;
 
 /**
  * This class provides some Database utils. There is no Javadoc, because the
- * functions just forwarde to functions in the according *Management (e.g
+ * functions just forwards to functions in the according *Management (e.g
  * UserManagement) class.
  * 
  * @author Alexander Brennecke

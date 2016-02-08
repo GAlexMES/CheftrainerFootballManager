@@ -7,6 +7,7 @@ import java.util.Date;
 import org.apache.log4j.Logger;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.IDClass_Path_Mapper;
 import de.szut.dqi12.cheftrainer.connectorlib.serverside.ServerProperties;
@@ -101,18 +102,22 @@ public class Controller {
 		}
 	}
 
-	public SQLConnection getSQLConnection() {
-		return sqlConnection;
-	}
-
-	public SocketController getSocketController() {
-		return socketController;
-	}
-
+	/**
+	 * Creates a {@link MatchdayFinishedTimeTask} with the given parameter
+	 * @param date should be a few hours after the end of the last game of the matchday
+	 * @param matchDay the matchday (should be 1-34 for bundesliga)
+	 * @param season the season (use 2015 for 2015-2016)
+	 */
 	public void createMatchdayFinishedTimer(Date date, int matchDay, int season) {
 		matchdayFinishedTimeTask = new MatchdayFinishedTimeTask(date, matchDay, season);
 	}
 
+	/**
+	 * Creates a {@link MatchdayStartsTimeTask} with the given parameter
+	 * @param date should be the start date of the first {@link Match} at the matchday
+	 * @param matchDay the matchday (should be 1-34 for bundesliga)
+	 * @param season the season (use 2015 for 2015-2016)
+	 */
 	public void createMatchdayStartsTimer(Date date) {
 		matchdayStartsTimeTask = new MatchdayStartsTimeTask(date);
 	}
@@ -154,5 +159,14 @@ public class Controller {
 
 		Date newTimer = cal.getTime();
 		timerTask = new TransfermarktTimeTask(newTimer);
+	}
+	
+	//GETTER AND SETTER
+	public SQLConnection getSQLConnection() {
+		return sqlConnection;
+	}
+
+	public SocketController getSocketController() {
+		return socketController;
 	}
 }

@@ -8,11 +8,9 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewFormationMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationAckMessage;
-import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthentificationMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationMessage;
 import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
@@ -32,7 +30,7 @@ public class UserAuthentication extends CallableAbstract {
 	 */
 	public void messageArrived(Message message) {
 		JSONObject authentification = new JSONObject(message.getMessageContent());
-		UserAuthentificationMessage uaMessage = new UserAuthentificationMessage(authentification);
+		UserAuthenticationMessage uaMessage = new UserAuthenticationMessage(authentification);
 		// switches the type of the authentication to "login" or "register".
 		switch (uaMessage.getAuthentificationType()) {
 		case MIDs.REGISTRATION:
@@ -58,7 +56,7 @@ public class UserAuthentication extends CallableAbstract {
 	 *            JSONObject, including the user data
 	 * @custom.position /F0011/
 	 */
-	private void register(UserAuthentificationMessage uaMessage) {
+	private void register(UserAuthenticationMessage uaMessage) {
 		initialize();
 		User newUser = uaMessage.getUser();
 		HashMap<String, Boolean> dbInfo = DatabaseRequests.registerNewUser(newUser);
@@ -67,12 +65,11 @@ public class UserAuthentication extends CallableAbstract {
 
 	/**
 	 * Is called, when the message was a "login" message
+	 * @param uaMessage a {@link UserAuthenticationMessage}, where at least the user is set
 	 * 
-	 * @param loginInfo
-	 *            JSONObject, including the user data
 	 * @custom.position /F0020/
 	 */
-	public void login(UserAuthentificationMessage uaMessage) {
+	public void login(UserAuthenticationMessage uaMessage) {
 		initialize();
 		User loginUser = uaMessage.getUser();
 
