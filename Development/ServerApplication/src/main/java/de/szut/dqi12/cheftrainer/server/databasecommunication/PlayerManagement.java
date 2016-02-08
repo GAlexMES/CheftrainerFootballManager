@@ -203,6 +203,12 @@ public class PlayerManagement extends SQLManagement {
 		return p;
 	}
 
+	/**
+	 * This function iterates over the given {@link ResultSet} and calls the getPlayerFromResult for each entry.
+	 * @param rs the {@link ResultSet} with the {@link Player} information
+	 * @return a {@link List} of {@link Player} objects.
+	 * @throws SQLException
+	 */
 	public static List<Player> getPlayersFromResultSet(ResultSet rs) throws SQLException {
 		List<Player> retval = new ArrayList<>();
 		while (rs.next()) {

@@ -20,6 +20,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAutenticationAckMessage;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
@@ -287,24 +288,20 @@ public class CommunityManagement {
 	 * @return a HashMap with booleans, that describes, if the entering was
 	 *         successful.
 	 */
-	public HashMap<String, Boolean> enterCommunity(String communityName, String communityPassword, int userID) {
-		HashMap<String, Boolean> retval = new HashMap<String, Boolean>();
-		retval.put(MIDs.USER_EXISTS, false);
-		retval.put(MIDs.COMMUNITY_EXISTS, false);
-		retval.put(MIDs.CORRECT_PASSWORD, false);
-		retval.put(MIDs.MANAGER_CREATED, false);
+	public CommunityAutenticationAckMessage enterCommunity(String communityName, String communityPassword, int userID) {
+		CommunityAutenticationAckMessage caaMessage = new CommunityAutenticationAckMessage();
 		if (existCommunity(communityName)) {
-			retval.put(MIDs.COMMUNITY_EXISTS, true);
+			caaMessage.setCommunityExists(true);
 			if (checkPassword(communityPassword, communityName)) {
-				retval.put(MIDs.CORRECT_PASSWORD, true);
+				caaMessage.setCorrectPassword(true);
 				if (!existUserInCommunity(userID, communityName)) {
-					retval.put(MIDs.USER_EXISTS, true);
+					caaMessage.setUserExists(true);
 					boolean created = createNewManager(communityName, userID);
-					retval.put(MIDs.MANAGER_CREATED, created);
+					caaMessage.setManagerCreated(created);
 				}
 			}
 		}
-		return retval;
+		return caaMessage;
 	}
 
 	/**

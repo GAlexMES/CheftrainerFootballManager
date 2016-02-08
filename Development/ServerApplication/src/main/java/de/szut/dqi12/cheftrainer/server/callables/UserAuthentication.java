@@ -11,6 +11,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewFormationMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationAckMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthentificationMessage;
 import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
@@ -61,8 +62,7 @@ public class UserAuthentication extends CallableAbstract {
 		initialize();
 		User newUser = uaMessage.getUser();
 		HashMap<String, Boolean> dbInfo = DatabaseRequests.registerNewUser(newUser);
-		createRegistrationAnswer(dbInfo.get(MIDs.EMAIL_EXISTS),
-				dbInfo.get(MIDs.USER_EXISTS), dbInfo.get(MIDs.AUTHENTIFICATE));
+		createRegistrationAnswer(dbInfo.get(MIDs.EMAIL_EXISTS), dbInfo.get(MIDs.USER_EXISTS), dbInfo.get(MIDs.AUTHENTICATE));
 	}
 
 	/**
@@ -80,8 +80,7 @@ public class UserAuthentication extends CallableAbstract {
 		boolean correctPassword = dbInfo.get(MIDs.PASSWORD);
 		boolean userExist = dbInfo.get("userExist");
 		if (userExist && correctPassword) {
-			User databaseUser = DatabaseRequests.getUserData(loginUser
-					.getUserName());
+			User databaseUser = DatabaseRequests.getUserData(loginUser.getUserName());
 			Session session = new Session();
 			session.setUser(databaseUser);
 			session.setUserID(databaseUser.getUserID());
@@ -106,18 +105,14 @@ public class UserAuthentication extends CallableAbstract {
 	 * @custom.position /F0020/
 	 */
 	private void createLoginAnswer(boolean correctPassword, boolean existUser) {
-		Message authentificationMessage = new Message(
-				ServerToClient_MessageIDs.USER_AUTHENTIFICATION_ACK);
-		JSONObject authentificationInfo = new JSONObject();
-		authentificationInfo.put(MIDs.MODE, MIDs.LOGIN);
-		authentificationInfo.put(MIDs.PASSWORD, correctPassword);
-		authentificationInfo.put(MIDs.USER_EXISTS, existUser);
+		UserAuthenticationAckMessage uaaMessage = new UserAuthenticationAckMessage(MIDs.LOGIN);
+		uaaMessage.setCorrectPassword(correctPassword);
+		uaaMessage.setUserExists(existUser);
 		if (correctPassword && existUser) {
-			authentificationInfo.put(MIDs.USER_ID, mesController.getSession()
-					.getUserID());
+			int userID = mesController.getSession().getUserID();
+			uaaMessage.setUserID(userID);
 		}
-		authentificationMessage.setMessageContent(authentificationInfo);
-		mesController.sendMessage(authentificationMessage);
+		mesController.sendMessage(uaaMessage);
 	}
 
 	/**
@@ -132,16 +127,11 @@ public class UserAuthentication extends CallableAbstract {
 	 *            true = registration completed
 	 * @custom.position /F0011/
 	 */
-	private void createRegistrationAnswer(boolean existEMail,
-			boolean existUser, boolean registrationCompleted) {
-		Message answerMessage = new Message(
-				ServerToClient_MessageIDs.USER_AUTHENTIFICATION_ACK);
-		JSONObject authentification = new JSONObject();
-		authentification.put(MIDs.MODE, MIDs.REGISTRATION);
-		authentification.put(MIDs.AUTHENTIFICATE, registrationCompleted);
-		authentification.put(MIDs.USER_EXISTS, existUser);
-		authentification.put(MIDs.EMAIL_EXISTS, existEMail);
-		answerMessage.setMessageContent(authentification);
-		this.mesController.sendMessage(answerMessage);
+	private void createRegistrationAnswer(boolean existEMail, boolean existUser, boolean registrationCompleted) {
+		UserAuthenticationAckMessage uaaMessage = new UserAuthenticationAckMessage(MIDs.REGISTRATION);
+		uaaMessage.setAuthentication(registrationCompleted);
+		uaaMessage.setUserExists(existUser);
+		uaaMessage.setEMailExists(existEMail);
+		this.mesController.sendMessage(uaaMessage);
 	}
 }

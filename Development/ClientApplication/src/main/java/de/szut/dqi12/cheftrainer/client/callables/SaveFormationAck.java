@@ -9,14 +9,15 @@ import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LineUpController;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.SaveFormationAckMessage;
 
 public class SaveFormationAck extends CallableAbstract {
 
 	@Override
 	public void messageArrived(Message message) {
 		JSONObject saveFormationAck = new JSONObject(message.getMessageContent());
-		boolean successful = saveFormationAck.getBoolean("successful");
-		if(!successful){
+		SaveFormationAckMessage sfaMessage = new SaveFormationAckMessage(saveFormationAck);
+		if(!sfaMessage.isSuccessful()){
 			AlertUtils.createSimpleDialog("Saved failed",
 					"Ther occured a problem!.",
 					AlertUtils.FORMATION_NOT_SAVED, AlertType.ERROR);
@@ -27,6 +28,6 @@ public class SaveFormationAck extends CallableAbstract {
 					AlertUtils.FORMATION_SAVED, AlertType.CONFIRMATION);
 		}
 		
-		ControllerManager.getInstance().onAction(LineUpController.RESET_MANAGER,successful);
+		ControllerManager.getInstance().onAction(LineUpController.RESET_MANAGER,sfaMessage.isSuccessful());
 	}
 }

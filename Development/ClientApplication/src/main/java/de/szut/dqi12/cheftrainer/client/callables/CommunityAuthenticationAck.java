@@ -9,28 +9,28 @@ import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAutenticationAckMessage;
 
 /**
  * This class is called when a message with the id "CommunityAuthentificationAck" arrived.
  * @author Alexander Brennecke
  *
  */
-public class CommunityAuthentificationAck extends CallableAbstract {
+public class CommunityAuthenticationAck extends CallableAbstract {
 
 	/**
 	 * This method is called by the message controller, when a message with the id "CommunityAuthentificationAck" arrived at the message controller.
 	 */
 	@Override
 	public void messageArrived(Message message) {
-		JSONObject authentificationACK = new JSONObject(
-				message.getMessageContent());
-		String type = authentificationACK.getString(MIDs.TYPE);  
-		switch (type){
+		JSONObject json = new JSONObject(message.getMessageContent());
+		CommunityAutenticationAckMessage caaMessage = new CommunityAutenticationAckMessage(json);
+		switch (caaMessage.getType()){
 		case MIDs.CREATION :
-			handleCreation(authentificationACK);
+			handleCreation(caaMessage);
 			break;
 		case MIDs.ENTER:
-			handleEnter(authentificationACK);
+			handleEnter(caaMessage);
 			break;
 		}
 	}
@@ -40,16 +40,13 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 	 * It shows a Alert Dialog appending on the information in the given JSON.
 	 * @param authentificationACK the JSONObject with the required information to display one of the Alerts.
 	 */
-	private void handleEnter(JSONObject authentificationACK) {
-		boolean communityExists = authentificationACK.getBoolean(MIDs.COMMUNITY_EXISTS);
-		boolean correctPassword = authentificationACK.getBoolean(MIDs.CORRECT_PASSWORD);
-		if (!communityExists
-				|| !correctPassword) {
+	private void handleEnter(CommunityAutenticationAckMessage caaMessage) {
+		if (!caaMessage.communityExists()|| !caaMessage.correctPassword()) {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_ENTER_TITLE,
 					AlertUtils.COMMUNITY_ENTER_WORKED_NOT_HEAD,
 					AlertUtils.COMMUNITY_ENTER_WRONG_AUTHENTIFICATION,
 					AlertType.ERROR);
-		} else if (!authentificationACK.getBoolean(MIDs.USER_EXISTS)) {
+		} else if (!caaMessage.userExists()) {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_ENTER_TITLE,
 					AlertUtils.COMMUNITY_ENTER_WORKED_NOT_HEAD,
 					AlertUtils.COMMUNITY_ENTER_ALREADY_EXIST, AlertType.ERROR);
@@ -67,8 +64,8 @@ public class CommunityAuthentificationAck extends CallableAbstract {
 	 * It shows a Alert Dialog appending on the information in the given JSON.
 	 * @param creationJSON the JSONObject with the required information to display one of the Alerts.
 	 */
-	private void handleCreation(JSONObject creationJSON) {
-		if (creationJSON.getBoolean(MIDs.CREATED)) {
+	private void handleCreation(CommunityAutenticationAckMessage caaMessage) {
+		if (caaMessage.managerCreated()) {
 			AlertUtils.createSimpleDialog(AlertUtils.COMMUNITY_CREATION_TITLE,
 					AlertUtils.COMMUNITY_CREATION_WORKED_HEAD,
 					AlertUtils.COMMUNITY_CREATION_WORKED_MESSAGE,

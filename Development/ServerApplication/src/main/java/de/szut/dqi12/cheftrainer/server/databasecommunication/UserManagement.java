@@ -36,10 +36,10 @@ public class UserManagement {
 
 	public HashMap<String, Boolean> register(User newUser) {
 		HashMap<String, Boolean> retval = existUser(newUser);
-		retval.put(MIDs.AUTHENTIFICATE, false);
+		retval.put(MIDs.AUTHENTICATE, false);
 		if ((!retval.get(MIDs.USER_EXISTS)) && (!retval.get(MIDs.EMAIL_EXISTS))) {
 			addNewUserToDatabase(newUser);
-			retval.put(MIDs.AUTHENTIFICATE, true);
+			retval.put(MIDs.AUTHENTICATE, true);
 		}
 		return retval;
 	}

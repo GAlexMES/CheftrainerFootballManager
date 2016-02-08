@@ -17,6 +17,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewFormationMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.SaveFormationAckMessage;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
 /**
@@ -56,11 +57,8 @@ public class NewFormationUpdate extends CallableAbstract {
 	 * @param successful true = sent formation was valid and saved, false = otherwise
 	 */
 	private void updateClient(Boolean successful){
-		Message message = new Message(ServerToClient_MessageIDs.SAVE_FORMATION_ACK);
-		JSONObject content = new JSONObject();
-		content.put(MIDs.SUCCESFULL, successful);
-		message.setMessageContent(content);
-		mesController.sendMessage(message);
+		SaveFormationAckMessage sfaMessage  = new SaveFormationAckMessage(successful);
+		mesController.sendMessage(sfaMessage);
 	}
 
 	/**

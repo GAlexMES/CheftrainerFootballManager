@@ -16,9 +16,11 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAuthenticationMessage;
 
 /**
  * This class is the Controller for the CreateCommunityDialog.
@@ -79,18 +81,9 @@ public class CreateCommunityController {
 	 * Creates a message with the required data to create a new community and sends it to the server.
 	 */
 	private void createNewCommunityMessage(){
-		Message communityMessage = new Message(ClientToServer_MessageIDs.COMMUNITY_AUTHENTICATION);
-		JSONObject communitJSON = new JSONObject();
-		communitJSON.put(MIDs.TYPE, MIDs.CREATION);
-		String passwordMD5;
-		try {
-			passwordMD5 = CipherFactory.getMD5(passwordField.getText());
-			communitJSON.put(MIDs.COMMUNITY_NAME, communityNameField.getText());
-			communitJSON.put(MIDs.PASSWORD, passwordMD5);
-			communityMessage.setMessageContent(communitJSON);
-			Controller.getInstance().getSession().getClientSocket().sendMessage(communityMessage);
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			AlertUtils.createExceptionDialog(e);
-		}
+		CommunityAuthenticationMessage message = new CommunityAuthenticationMessage(MIDs.CREATION);
+		message.setName(communityNameField.getText());
+		message.setPassword(passwordField.getText());
+		Controller.getInstance().getSession().getClientSocket().sendMessage(message);
 	}
 }

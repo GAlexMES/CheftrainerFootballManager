@@ -1,7 +1,6 @@
 package de.szut.dqi12.cheftrainer.server.callables;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -13,7 +12,9 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.connectorlib.utils.JSONUtils;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAutenticationAckMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAuthenticationMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserCommunityListMessage;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.logic.ExchangeMarketGenerator;
 
@@ -32,13 +33,13 @@ public class CommunityAuthentication extends CallableAbstract {
 	@Override
 	public void messageArrived(Message message) {
 		JSONObject communityJSON = new JSONObject(message.getMessageContent());
-		String type = communityJSON.getString(MIDs.TYPE); 
-		switch (type) {
+		CommunityAuthenticationMessage caMessage = new CommunityAuthenticationMessage(communityJSON);
+		switch (caMessage.getType()) {
 		case MIDs.CREATION:
-			createNewCommunity(communityJSON);
+			createNewCommunity(caMessage);
 			break;
 		case MIDs.ENTER:
-			enterCommunity(communityJSON);
+			enterCommunity(caMessage);
 			break;
 		}
 	}
@@ -53,20 +54,17 @@ public class CommunityAuthentication extends CallableAbstract {
 	 *            community.
 	 * @custom.position /F0040/
 	 */
-	private void enterCommunity(JSONObject communityJSON) {
-		String communityName = communityJSON.getString(MIDs.COMMUNITY_NAME);
-		String communityPassword = communityJSON.getString(MIDs.PASSWORD);
+	private void enterCommunity(CommunityAuthenticationMessage caMessage) {
+		String communityName = caMessage.getName();
+		String communityPassword = caMessage.getPassword();
 		int userID = mesController.getSession().getUserID();
-		HashMap<String, Boolean> enterFeedback = DatabaseRequests.enterCommunity(communityName, communityPassword,
+		
+		CommunityAutenticationAckMessage caaMessage = DatabaseRequests.enterCommunity(communityName, communityPassword,
 				userID);
-		Message enterACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
-		JSONObject enterACKJSON = JSONUtils.mapToJSON(enterFeedback);
-
+		caaMessage.setEnterType();
 		updateSessionAndClient();
 
-		enterACKJSON.put(MIDs.TYPE, MIDs.ENTER);
-		enterACK.setMessageContent(enterACKJSON);
-		mesController.sendMessage(enterACK);
+		mesController.sendMessage(caaMessage);
 	}
 
 	/**
@@ -113,15 +111,10 @@ public class CommunityAuthentication extends CallableAbstract {
 	 * @param communityID The ID of the Community, that will be send to the client.
 	 */
 	private void sendUpdateToClient(int communityID) {
-		Message communityListUpdate = new Message(ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
-
-		JSONObject updateJSON = new JSONObject();
-		updateJSON.put(MIDs.TYPE, MIDs.NEW_COMMUNITY);
 		Community community = DatabaseRequests.getCummunityForID(communityID);
-		updateJSON.put(MIDs.COMMUNITY, community.toJSON());
-		communityListUpdate.setMessageContent(updateJSON);
-		
-		mesController.sendMessage(communityListUpdate);
+		UserCommunityListMessage uclMessage = new UserCommunityListMessage(MIDs.NEW_COMMUNITY);
+		uclMessage.addCommunity(community);
+		mesController.sendMessage(uclMessage);
 	}
 
 
@@ -135,9 +128,10 @@ public class CommunityAuthentication extends CallableAbstract {
 	 *            community.
 	 * @custom.position /F0012/
 	 */
-	private void createNewCommunity(JSONObject communityJSON) {
-		String communityName = communityJSON.getString(MIDs.COMMUNITY_NAME);
-		String communityPassword = communityJSON.getString(MIDs.PASSWORD);
+	private void createNewCommunity(CommunityAuthenticationMessage caMessage) {
+		String communityName = caMessage.getName();
+		String communityPassword = caMessage.getPassword();
+		
 		int userID = mesController.getSession().getUserID();
 		boolean communityCreated = DatabaseRequests.createNewCommunity(communityName, communityPassword, userID);
 
@@ -146,15 +140,12 @@ public class CommunityAuthentication extends CallableAbstract {
 			DatabaseRequests.enterCommunity(communityName, communityPassword, userID);
 			updateSessionAndClient();
 		}
-		Message creationACK = new Message(ServerToClient_MessageIDs.COMMUNITY_AUTHENTIFICATION_ACK);
+		
+		CommunityAutenticationAckMessage caaMessage = new CommunityAutenticationAckMessage();
+		caaMessage.setCreationType();
+		caaMessage.setManagerCreated(communityCreated);
 
-		JSONObject creationACKJSON = new JSONObject();
-		creationACKJSON.put(MIDs.TYPE, MIDs.CREATION);
-		creationACKJSON.put(MIDs.CREATED, communityCreated);
-
-		creationACK.setMessageContent(creationACKJSON);
-
-		mesController.sendMessage(creationACK);
+		mesController.sendMessage(caaMessage);
 	}
 
 }
