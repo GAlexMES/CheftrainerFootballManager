@@ -36,6 +36,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthentificationMessage;
 
 /**
  * Controller for the registration dialog
@@ -107,9 +108,6 @@ public class RegistrationController implements ControllerInterface {
 		ControllerManager.getInstance().registerController(this, ON_ACTION_KEY);
 	}
 
-	public void setDialogStage(Stage dialogStage) {
-		this.dialogStage = dialogStage;
-	}
 
 	/**
 	 * triggers the frame size, to display the additional server information
@@ -186,26 +184,18 @@ public class RegistrationController implements ControllerInterface {
 	 * @throws UnsupportedEncodingException
 	 */
 	private void sendRegistrationMessage() throws UnsupportedEncodingException {
-		Message registrationMessage = new Message(ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
 
 		User user = new User();
 		user.seteMail(mailField.getText());
 		user.setFirstName(vornameField.getText());
 		user.setLastName(nachnameField.getText());
 		user.setUserName(loginField.getText());
+		user.setPassword(passwordField.getText());
 
-		try {
-			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
-			user.setPassword(passwordMD5);
-			JSONObject registrationInfo = user.toJSON();
-			registrationInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.REGISTRATION);
-			registrationMessage.setMessageContent(registrationInfo);
-			serverCon.sendMessage(registrationMessage);
-		} catch (NoSuchAlgorithmException e) {
-			Alert alert = AlertUtils.createExceptionDialog(e);
-			alert.showAndWait();
-		}
-		
+		UserAuthentificationMessage uaMessage = new UserAuthentificationMessage();
+		uaMessage.setUser(user);
+		uaMessage.setAuthentificationType(MIDs.REGISTRATION);
+		serverCon.sendMessage(uaMessage);
 
 	}
 
@@ -270,5 +260,10 @@ public class RegistrationController implements ControllerInterface {
 	@Override
 	public void messageArrived(Boolean flag) {
 		registrationButton.setDisable(false);
+	}
+	
+	
+	public void setDialogStage(Stage dialogStage) {
+		this.dialogStage = dialogStage;
 	}
 }

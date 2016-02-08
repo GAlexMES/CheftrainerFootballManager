@@ -16,6 +16,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAutenticationAckMessage;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.CommunityManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.LogicManagement;
@@ -104,7 +105,7 @@ public class DatabaseRequests {
 		return communityManagement.getManagers(communityID, communityName);
 	}
 
-	public static HashMap<String, Boolean> enterCommunity(String communityName, String communityPassword, int userID) {
+	public static CommunityAutenticationAckMessage enterCommunity(String communityName, String communityPassword, int userID) {
 		return communityManagement.enterCommunity(communityName, communityPassword, userID);
 	}
 

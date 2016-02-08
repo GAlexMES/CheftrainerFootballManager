@@ -18,6 +18,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserCommunityListMessage;
 import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
@@ -78,29 +79,15 @@ public class TransfermarketManagement {
 
 	private void sendTransactionsUpdate(int communityID, int managerID)throws SQLException{
 		List<Transaction> transactions = getTransactions(communityID);
-		JSONArray transactionsJSON = new JSONArray();
-		for(Transaction tr : transactions){
-			transactionsJSON.put(tr.toJSON());
-		}
 		
-		JSONObject updateMessage = new JSONObject();
-		updateMessage.put(MIDs.TRANSACTIONS, transactionsJSON);
-		updateMessage.put(MIDs.COMMUNITY_ID, communityID);
-		
-		JSONObject messageContent = new JSONObject();
-		messageContent.put(MIDs.TYPE,MIDs.UPDATE_COMMUNITY);
-		messageContent.put(MIDs.UPDATE_TYPE,MIDs.TRANSACTIONS);
-		messageContent.put(MIDs.UPDATE_MESSAGE, updateMessage);
-		
-		
-		Message message = new Message(ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
-		message.setMessageContent(messageContent);
+		UserCommunityListMessage uclMessage = new UserCommunityListMessage(MIDs.UPDATE_COMMUNITY);
+		uclMessage.setTransactions(transactions);
 		
 		DatabaseRequests.getUserName(managerID);
 		
 		String username = DatabaseRequests.getUserName(managerID);
 		Session session = Controller.getInstance().getSocketController().getSession(username);
-		session.getClientHandler().sendMessage(message);
+		session.getClientHandler().sendMessage(uclMessage);
 	}
 	
 	private boolean isPlayerOnMarket(int playerID, int communityID) {
