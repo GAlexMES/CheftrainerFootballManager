@@ -101,8 +101,6 @@ public class LineUpController implements ControllerInterface {
 			Community community = session.getCurrentCommunity();
 			int managerID = session.getCurrentManagerID();
 			Formation formation = community.getManager(managerID).getFormation();
-			// Doppelter Aufruf benoetigt (Fehler noch nicht entdeckt!)
-			changeFormation(formation);
 			changeFormation(formation);
 		} catch (Exception e) {
 			e.printStackTrace();

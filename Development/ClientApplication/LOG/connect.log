@@ -1052,3 +1052,36 @@
 2016-02-08 21:14:50 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
 2016-02-08 21:15:05 INFO  MessageController:149 - Server: A new message with the following ID arrived: UserCommunityList
 2016-02-08 21:15:05 INFO  MessageController:149 - Server: A new message with the following ID arrived: CommunityAuthenticationAck
+2016-02-10 18:25:05 INFO  MessageController:148 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-02-10 18:25:05 INFO  MessageController:148 - Server: A new message with the following ID arrived: HandshakeAck
+2016-02-10 18:25:05 INFO  MessageController:210 - The handshake was completed!
+2016-02-10 18:25:05 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserAuthenticationACK
+2016-02-10 18:25:10 INFO  MessageController:148 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-02-10 18:25:10 INFO  MessageController:148 - Server: A new message with the following ID arrived: HandshakeAck
+2016-02-10 18:25:10 INFO  MessageController:210 - The handshake was completed!
+2016-02-10 18:25:10 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserAuthenticationACK
+2016-02-10 18:25:10 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserCommunityList
+2016-02-10 18:25:22 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserCommunityList
+2016-02-10 18:25:23 INFO  MessageController:148 - Server: A new message with the following ID arrived: CommunityAuthenticationAck
+2016-02-10 18:28:17 INFO  MessageController:148 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-02-10 18:28:17 INFO  MessageController:148 - Server: A new message with the following ID arrived: HandshakeAck
+2016-02-10 18:28:17 INFO  MessageController:210 - The handshake was completed!
+2016-02-10 18:28:17 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserAuthenticationACK
+2016-02-10 18:28:18 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserCommunityList
+2016-02-10 18:28:33 INFO  MessageController:148 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-02-10 18:28:33 INFO  MessageController:148 - Server: A new message with the following ID arrived: HandshakeAck
+2016-02-10 18:28:33 INFO  MessageController:210 - The handshake was completed!
+2016-02-10 18:28:33 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserAuthenticationACK
+2016-02-10 18:28:33 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserCommunityList
+2016-02-10 18:29:01 INFO  MessageController:148 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-02-10 18:29:02 INFO  MessageController:148 - Server: A new message with the following ID arrived: HandshakeAck
+2016-02-10 18:29:02 INFO  MessageController:210 - The handshake was completed!
+2016-02-10 18:29:02 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserAuthenticationACK
+2016-02-10 18:29:02 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserCommunityList
+2016-02-10 18:30:10 INFO  MessageController:148 - Server: A new message with the following ID arrived: SaveFormationAck
+2016-02-10 18:30:18 INFO  MessageController:148 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-02-10 18:30:18 INFO  MessageController:148 - Server: A new message with the following ID arrived: HandshakeAck
+2016-02-10 18:30:18 INFO  MessageController:210 - The handshake was completed!
+2016-02-10 18:30:18 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserAuthenticationACK
+2016-02-10 18:30:18 INFO  MessageController:148 - Server: A new message with the following ID arrived: UserCommunityList
+2016-02-10 18:30:41 INFO  MessageController:148 - Server: A new message with the following ID arrived: SaveFormationAck

@@ -112,12 +112,9 @@ public class FormationController implements ImageUpdate {
 			l.setPlayerId(player.getID());
 			l.setPosition(player.getPosition());
 			player.setLabel(l);
-			// generateImage(player);
 			ImageController c = new ImageController(this);
 			image = c.getPicture(player);
 			player.getLabel().setImage(image);
-			// player.getLabel().setText(player.getName() + "\n" + "Points: " +
-			// player.getPoints());
 		}
 		putImageToStack = false;
 		checkForImageUpdate();
