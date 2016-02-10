@@ -26,8 +26,8 @@
       <AnchorPane GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
       	<ButtonBar>
          	<buttons>
-            	<Button mnemonicParsing="false" onAction="#setBarChart" text="Ranking" />
-            	<Button mnemonicParsing="false" onAction="#setLineChart" text="History" />
+            	<Button mnemonicParsing="false" onAction="#setBarChart" text="Platzierung" />
+            	<Button mnemonicParsing="false" onAction="#setLineChart" text="Verlauf" />
         	 </buttons>
       	</ButtonBar>
       </AnchorPane>
