@@ -7,10 +7,10 @@
 
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" fx:id="lineChart" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts.LineChartController" minHeight="-Infinity" minWidth="-Infinity" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints  />
   </rowConstraints>
    <children>
       <LineChart>

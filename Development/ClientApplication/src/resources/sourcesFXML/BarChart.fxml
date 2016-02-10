@@ -7,10 +7,10 @@
 
 <GridPane maxHeight="-Infinity" fx:id="barChart" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.charts.BarChartController" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.40">
   <columnConstraints>
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+    <ColumnConstraints />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints />
   </rowConstraints>
    <children>
       <BarChart>
