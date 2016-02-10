@@ -19,7 +19,7 @@ import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
  * by a client.
  * 
  * @author Alexander Brennecke
- * @custom.position /F0011/ </br> /F0020/
+ * @see /F0011/ </br> /F0020/
  */
 public class UserAuthentication extends CallableAbstract {
 
@@ -54,7 +54,7 @@ public class UserAuthentication extends CallableAbstract {
 	 * 
 	 * @param registrationInfo
 	 *            JSONObject, including the user data
-	 * @custom.position /F0011/
+	 * @see /F0011/
 	 */
 	private void register(UserAuthenticationMessage uaMessage) {
 		initialize();
@@ -67,7 +67,7 @@ public class UserAuthentication extends CallableAbstract {
 	 * Is called, when the message was a "login" message
 	 * @param uaMessage a {@link UserAuthenticationMessage}, where at least the user is set
 	 * 
-	 * @custom.position /F0020/
+	 * @see /F0020/
 	 */
 	public void login(UserAuthenticationMessage uaMessage) {
 		initialize();
@@ -99,7 +99,7 @@ public class UserAuthentication extends CallableAbstract {
 	 *            true = password was correct
 	 * @param existUser
 	 *            true= user exists
-	 * @custom.position /F0020/
+	 * @see/F0020/
 	 */
 	private void createLoginAnswer(boolean correctPassword, boolean existUser) {
 		UserAuthenticationAckMessage uaaMessage = new UserAuthenticationAckMessage(MIDs.LOGIN);
@@ -122,7 +122,7 @@ public class UserAuthentication extends CallableAbstract {
 	 *            true = user exists
 	 * @param registrationCompleted
 	 *            true = registration completed
-	 * @custom.position /F0011/
+	 * @see /F0011/
 	 */
 	private void createRegistrationAnswer(boolean existEMail, boolean existUser, boolean registrationCompleted) {
 		UserAuthenticationAckMessage uaaMessage = new UserAuthenticationAckMessage(MIDs.REGISTRATION);

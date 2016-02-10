@@ -72,7 +72,7 @@ public class UserManagement {
 	}
 
 	/**
-	 * This methid adds a new user to the database.
+	 * This method adds a new user to the database.
 	 * @param newUser
 	 */
 	private void addNewUserToDatabase(User newUser) {

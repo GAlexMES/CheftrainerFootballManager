@@ -21,7 +21,7 @@ import de.szut.dqi12.cheftrainer.server.logic.ExchangeMarketGenerator;
  * This class handles messaged with the id "CommunityAuthentification".
  * 
  * @author Alexander Brennecke
- * @custom.position /F0012/ </br> /F0040/
+ * @see /F0012/ </br> /F0040/
  */
 public class CommunityAuthentication extends CallableAbstract {
 
@@ -51,7 +51,7 @@ public class CommunityAuthentication extends CallableAbstract {
 	 * @param communityJSON
 	 *            a JSONObject with all required information to enter a
 	 *            community.
-	 * @custom.position /F0040/
+	 * @see /F0040/
 	 */
 	private void enterCommunity(CommunityAuthenticationMessage caMessage) {
 		String communityName = caMessage.getName();
@@ -125,7 +125,7 @@ public class CommunityAuthentication extends CallableAbstract {
 	 * @param communityJSON
 	 *            a JSONObject with all required information to create a new
 	 *            community.
-	 * @custom.position /F0012/
+	 * @see /F0012/
 	 */
 	private void createNewCommunity(CommunityAuthenticationMessage caMessage) {
 		String communityName = caMessage.getName();

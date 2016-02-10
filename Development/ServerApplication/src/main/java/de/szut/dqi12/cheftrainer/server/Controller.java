@@ -32,11 +32,8 @@ public class Controller {
 	private SocketController socketController;
 	private SQLConnection sqlConnection;
 
-	@SuppressWarnings("unused")
 	private TransfermarktTimeTask timerTask;
-	@SuppressWarnings("unused")
 	private MatchdayStartsTimeTask matchdayStartsTimeTask;
-	@SuppressWarnings("unused")
 	private MatchdayFinishedTimeTask matchdayFinishedTimeTask;
 
 	private final static Logger LOGGER = Logger.getLogger(Controller.class);
