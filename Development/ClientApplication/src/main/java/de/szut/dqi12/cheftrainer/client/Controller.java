@@ -20,6 +20,8 @@ public class Controller {
 	private Session currentSession;
 
 	private GUIController guiController;
+	
+	private Stage mainStage;
 
 	/**
 	 * For singleton patter.
@@ -40,6 +42,7 @@ public class Controller {
 	 */
 	public void startApplication(Stage primaryStage) {
 		guiController = GUIController.getInstance(primaryStage);
+		mainStage = primaryStage;
 		guiController.showLogin();
 	}
 
@@ -78,5 +81,9 @@ public class Controller {
 	public void setSession(Session session) {
 		this.currentSession = session;
 		session.getClientSocket().getServerHandler().getMessageController().setSession(session);
+	}
+	
+	public Stage getMainStage(){
+		return mainStage;
 	}
 }
