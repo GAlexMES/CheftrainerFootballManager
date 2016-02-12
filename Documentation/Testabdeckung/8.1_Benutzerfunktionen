@@ -7,7 +7,7 @@ Testabdeckung:
 
 /T0100/ Spielrunde beitreten					....
 	/T0110/ Spielrundenübersicht				NICHT MÖGLICH, DA GUI TEST
-	/T0120/ Spielrunden Registration			TODO
+	/T0120/ Spielrunden Registration			DONE
 	/T0130/ Spielrunde auswählen				NICHT MÖGLICH, DA GUI TEST
 		
 /T0130/ Spielrunde auswählen					....

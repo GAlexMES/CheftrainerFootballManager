@@ -47,7 +47,7 @@ public class GUIController {
 	 * Should be used to initialize this class for singleton pattern.
 	 * 
 	 * @param primaryStage
-	 * @return
+	 * @return the only GUIController object
 	 */
 	public static GUIController getInstance(Stage primaryStage) {
 		if (instance == null) {
