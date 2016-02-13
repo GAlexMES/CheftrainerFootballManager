@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
@@ -18,11 +17,10 @@ import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.CommunityManagement;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.PointManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesManagement;
 
-public class Database {
+public class DatabaseTest {
 	
 	@Test
 	public void testProperties() {

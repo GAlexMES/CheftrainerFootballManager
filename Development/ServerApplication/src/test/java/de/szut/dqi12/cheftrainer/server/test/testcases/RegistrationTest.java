@@ -8,39 +8,30 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import javafx.beans.binding.When;
+
+
 
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.MessageController;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAuthenticationMessage;
-import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewOfferMessage;
-import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewPlayerOnMarketMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationMessage;
 import de.szut.dqi12.cheftrainer.server.callables.CommunityAuthentication;
-import de.szut.dqi12.cheftrainer.server.callables.TransferMarketUpdate;
 import de.szut.dqi12.cheftrainer.server.callables.UserAuthentication;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
+import de.szut.dqi12.cheftrainer.server.test.utils.TestUtils;
 
 /**
  * This TestCase will Test all user functions.
@@ -49,14 +40,10 @@ import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
  * @author Alexander Brennecke
  *
  */
-public class UserFunction {
+public class RegistrationTest {
 
 	private static SQLConnection sqlCon;
 	private static User user;
-	@InjectMocks
-	private static Community community;
-	@Mock
-	private static Market market;
 
 	private final static String USER_NAME = "Kurt";
 	private final static String USER_SURNAME = "Testi";
@@ -67,17 +54,17 @@ public class UserFunction {
 	private final static String COMMUNITY_NAME = "Testrunde";
 	private final static String COMMUNITY_PASSWORD = "654321";
 
-	private final static int PLAYER_SPORTAL_ID = 999999;
-	private final static String PLAYER_NAME = "Papi";
-	private final static int PLAYER_WORTH = 7;
-
 	@Mock
 	private static MessageController messageController;
 
+	/**
+	 * Initializes the class for all test cases
+	 * @throws IOException
+	 */
 	@BeforeClass
 	public static void init() throws IOException {
 		sqlCon = new SQLConnection(true);
-		prepareDatabase();
+		TestUtils.prepareDatabase(sqlCon);
 
 		user = new User();
 		user.setFirstName(USER_NAME);
@@ -85,17 +72,6 @@ public class UserFunction {
 		user.setUserName(USER_LOGIN);
 		user.setPassword(USER_PASSWORD);
 		user.seteMail(USER_EMAIL);
-
-		market = Mockito.mock(Market.class);
-		Mockito.when(market.getPlayers()).thenReturn(generatePlayerList());
-		community = Mockito.mock(Community.class);
-		Mockito.when(community.getMarket()).thenReturn(market);
-		Mockito.when(community.getCommunityID()).thenReturn(99);
-	}
-
-	private static void clearTable(String tableName) {
-		String query = "DELETE FROM " + tableName;
-		sqlCon.sendQuery(query);
 	}
 
 	/**
@@ -210,56 +186,6 @@ public class UserFunction {
 		assertEquals(1, communityCounter);
 	}
 
-	/**
-	 * Tests the creation of an offer/{@link Transaction}.
-	 * 
-	 * @see /T0212/
-	 */
-	@Test
-	public void testCreateOffer() {
-		Player player = market.getPlayers().get(0);
-		int playerWorth = player.getWorth();
-		Transaction tr = new Transaction(playerWorth + 10, player.getSportalID(), community.getCommunityID(), user.getUserID());
-
-		addPlayerToMarket(community.getCommunityID());
-
-		NewOfferMessage nfMessage = new NewOfferMessage(tr);
-		nfMessage.setMessageContent(nfMessage.createJSON());
-
-		String addManager = "INSERT INTO Manager (Nutzer_ID,Spielrunde_ID,Budget) VALUES (" + user.getUserID() + "," + community.getCommunityID() + "15000000)";
-		sqlCon.sendQuery(addManager);
-
-		TransferMarketUpdate tmUpdate = new TransferMarketUpdate();
-		tmUpdate.setMessageController(messageController);
-		try {
-			tmUpdate.messageArrived(nfMessage);
-		} catch (NullPointerException npe) {
-			// valid null pointer, because there is no client, where the answer
-			// can be sent to
-		}
-
-		clearTable("Manager");
-	}
-
-	/**
-	 * Tests, if a {@link Player} can be added to the {@link Market}
-	 * 
-	 * @see /T0224/
-	 */
-	@Test
-	public void addPlayerToMarket() {
-
-	}
-
-	private static List<Player> generatePlayerList() {
-		List<Player> retval = new ArrayList<>();
-		Player p = new Player();
-		p.setSportalID(PLAYER_SPORTAL_ID);
-		p.setName(PLAYER_NAME);
-		p.setWorth(PLAYER_WORTH);
-		retval.add(p);
-		return retval;
-	}
 
 	private void testUser(ResultSet rs) throws SQLException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		assertEquals(rs.getString("Vorname"), USER_NAME);
@@ -270,19 +196,4 @@ public class UserFunction {
 		String hashPassword = CipherFactory.getMD5(USER_PASSWORD);
 		assertEquals(hashPassword, rs.getString("Passwort"));
 	}
-
-	private static void prepareDatabase() {
-		clearTable("NUTZER");
-		clearTable("Spielrunde");
-		clearTable("Manager");
-		clearTable("Mannschaft");
-		clearTable("Transfermarkt");
-		clearTable("Gebote");
-	}
-
-	private void addPlayerToMarket(int communityID) {
-		String addPlayerTOMarket = "INSERT INTO Transfermarkt (Spielrunde_ID,Spieler_ID,Min_Preis,Inhaber_ID) VALUES (" + communityID + "," + PLAYER_SPORTAL_ID + "," + PLAYER_WORTH + ",-1)";
-		sqlCon.sendQuery(addPlayerTOMarket);
-	}
-
 }
