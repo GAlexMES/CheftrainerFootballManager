@@ -25,7 +25,7 @@ public class TimeTaskTest {
 	public void test() {
 		Controller con = Controller.getInstance();
 		try {
-			con.creatDatabaseCommunication();
+			con.creatDatabaseCommunication(false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

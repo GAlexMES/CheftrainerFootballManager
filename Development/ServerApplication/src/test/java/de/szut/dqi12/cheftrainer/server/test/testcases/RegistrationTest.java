@@ -8,10 +8,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
-
-
-
+import java.util.List;
 
 import org.json.JSONObject;
 import org.junit.BeforeClass;
@@ -21,16 +20,20 @@ import org.mockito.Mockito;
 
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.MessageController;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAuthenticationMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationMessage;
+import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.callables.CommunityAuthentication;
 import de.szut.dqi12.cheftrainer.server.callables.UserAuthentication;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
+import de.szut.dqi12.cheftrainer.server.databasecommunication.PlayerManagement;
 import de.szut.dqi12.cheftrainer.server.test.utils.TestUtils;
 
 /**
@@ -56,14 +59,17 @@ public class RegistrationTest {
 
 	@Mock
 	private static MessageController messageController;
-
+	
+	
 	/**
 	 * Initializes the class for all test cases
 	 * @throws IOException
 	 */
 	@BeforeClass
 	public static void init() throws IOException {
-		sqlCon = new SQLConnection(true);
+		Controller controller = Controller.getInstance();
+		controller.creatDatabaseCommunication(false);
+		sqlCon = controller.getSQLConnection();
 		TestUtils.prepareDatabase(sqlCon);
 
 		user = new User();
@@ -135,6 +141,7 @@ public class RegistrationTest {
 	 */
 	@Test
 	public void communityRegistration() {
+		TestUtils.preparePlayerTable(sqlCon);
 		User u = DatabaseRequests.getUserData(USER_LOGIN);
 		Session s = new Session();
 		s.setUserID(u.getUserID());
@@ -174,7 +181,7 @@ public class RegistrationTest {
 			while (rs.next()) {
 				communityCounter++;
 				testUser(rs);
-				assertEquals(rs.getLong("Budget"), 15000000);
+				assertEquals(rs.getLong("Budget"), 10000000);
 				assertEquals(rs.getInt("Anzahl_Stuermer"), 2);
 				assertEquals(rs.getInt("Anzahl_Mittelfeld"), 4);
 				assertEquals(rs.getInt("Anzahl_Abwehr"), 4);

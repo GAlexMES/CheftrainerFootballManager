@@ -23,7 +23,7 @@ import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
  * 
  * @author Alexander Brennecke
  *
- * @custom.position /F0230/ </br> /F2040/ </br> /F0260/
+ * @see /F0230/ </br> /F2040/ </br> /F0260/
  */
 public class TransferMarketUpdate extends CallableAbstract {
 
@@ -50,7 +50,7 @@ public class TransferMarketUpdate extends CallableAbstract {
 	 * 
 	 * @param messageContent
 	 *            the JSONObject, sended by the client.
-	 * @custom.position /F0230/
+	 * @see /F0230/
 	 */
 	private void newOffer(JSONObject messageContent) {
 		NewOfferMessage noMessage = new NewOfferMessage(messageContent);
@@ -67,7 +67,7 @@ public class TransferMarketUpdate extends CallableAbstract {
 	 * @param messageContent
 	 *            the JSONObject, which was sended by the client, with all
 	 *            nested information to transfer a {@link Player}.
-	 * @custom.position /F0260/
+	 * @see /F0260/
 	 */
 	private void transaction(JSONObject messageContent) {
 		TransactionMessage tMessage = new TransactionMessage(messageContent);

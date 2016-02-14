@@ -54,7 +54,7 @@ public class DatabaseTest {
 	public void testPlacement() throws IOException, SQLException {
 		Controller con = Controller.getInstance();
 		try {
-			con.creatDatabaseCommunication();
+			con.creatDatabaseCommunication(false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -102,7 +102,7 @@ public class DatabaseTest {
 	public void testWorthCalculation() throws IOException{
 		Controller con = Controller.getInstance();
 		try {
-			con.creatDatabaseCommunication();
+			con.creatDatabaseCommunication(false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

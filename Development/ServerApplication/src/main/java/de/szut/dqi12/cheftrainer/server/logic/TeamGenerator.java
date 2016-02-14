@@ -184,17 +184,9 @@ public class TeamGenerator {
 		boolean playerFound = false;
 		List<Integer> idList = new ArrayList<>();
 
-		while (!playerFound && idList.size() < heighestPlayerID - 1) {
+		while (!playerFound && idList.size() < heighestPlayerID - 1&&!breakFlag) {
+			noPlayerFoundCounter++;
 			Player newPlayer = getNewRandomPlayer(heighestPlayerID);
-
-			if (newPlayer == null) {
-				noPlayerFoundCounter++;
-				if (noPlayerFoundCounter >= 10) {
-					System.out.println("Could not find a better player. Team worth is: " + teamWorth);
-					breakFlag = true;
-					break;
-				}
-			}
 
 			if (newPlayer != null && !idList.contains(newPlayer.getSportalID())) {
 				idList.add(newPlayer.getSportalID());
@@ -214,6 +206,11 @@ public class TeamGenerator {
 						playerFound = true;
 					}
 				}
+			}
+			if (noPlayerFoundCounter >= 10) {
+				System.out.println("Could not find a better player. Team worth is: " + teamWorth);
+				breakFlag = true;
+				break;
 			}
 		}
 	}

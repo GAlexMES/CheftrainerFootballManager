@@ -211,23 +211,27 @@ public class CommunityManagement {
 			List<Player> playerList = getTeam(m.getID());
 			Player[] playerArray = playerList.toArray(new Player[playerList.size()]);
 			m.addPlayer(playerArray);
-			Map<Integer,Integer> stats = getManagerStats(m.getID());
+			Map<Integer, Integer> stats = getManagerStats(m.getID());
 			m.setHistory(stats);
 		}
 		return retval;
 	}
-	
+
 	/**
-	 * This function collects the statistic from the database for the given manager and creates a {@link Map} from it.
-	 * @param managerID the ID of the manager
-	 * @return A Map, where the matchday is the key and the points are the value.
+	 * This function collects the statistic from the database for the given
+	 * manager and creates a {@link Map} from it.
+	 * 
+	 * @param managerID
+	 *            the ID of the manager
+	 * @return A Map, where the matchday is the key and the points are the
+	 *         value.
 	 */
-	private Map<Integer,Integer> getManagerStats(int managerID){
-		Map<Integer,Integer> retval = new HashMap<Integer, Integer>();
-		String sqlQuery = "SELECT * FROM Manager_Statistik WHERE Manager_ID = "+managerID;
+	private Map<Integer, Integer> getManagerStats(int managerID) {
+		Map<Integer, Integer> retval = new HashMap<Integer, Integer>();
+		String sqlQuery = "SELECT * FROM Manager_Statistik WHERE Manager_ID = " + managerID;
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
-			while(rs.next()){
+			while (rs.next()) {
 				retval.put(rs.getInt("Spieltag"), rs.getInt("Punkte"));
 			}
 		} catch (SQLException e) {
@@ -338,16 +342,10 @@ public class CommunityManagement {
 			int managerID = DatabaseRequests.getManagerID(userID, communityID);
 			TeamGenerator tg = new TeamGenerator();
 			int teamWorth = tg.generateTeamForUser(managerID, communityID);
-			int budget = BUDGET;
 
 			int maxTeamWorth = (int) (TeamGenerator.TEAM_WORTH * (1 + TeamGenerator.TEAM_WORTH_TOLERANZ));
-			int minTeamWorth = (int) (TeamGenerator.TEAM_WORTH * (1 - TeamGenerator.TEAM_WORTH_TOLERANZ));
 
-			if (teamWorth > maxTeamWorth) {
-				budget = BUDGET - (maxTeamWorth - teamWorth);
-			} else if (teamWorth < minTeamWorth) {
-				budget = BUDGET + (minTeamWorth - teamWorth);
-			}
+			int budget = BUDGET + (maxTeamWorth - teamWorth);
 
 			sqlQuery = "UPDATE Manager SET Budget='" + budget + "'" + "WHERE ID=" + managerID;
 			sqlCon.sendQuery(sqlQuery);
@@ -453,7 +451,9 @@ public class CommunityManagement {
 
 	/**
 	 * This function selects all Community IDs from the database
-	 * @return a {@link List} of Integer values, where each value represents a ID
+	 * 
+	 * @return a {@link List} of Integer values, where each value represents a
+	 *         ID
 	 * @throws SQLException
 	 */
 	private List<Integer> getAllCommunityIDs() throws SQLException {
@@ -463,7 +463,8 @@ public class CommunityManagement {
 	}
 
 	/**
-	 * This function updates the placement of all {@link Manager} in all {@link Community}, which are saved in the database.
+	 * This function updates the placement of all {@link Manager} in all
+	 * {@link Community}, which are saved in the database.
 	 */
 	public void updatePlacement() {
 		try {
@@ -473,54 +474,62 @@ public class CommunityManagement {
 				int counter = 1;
 				int duplicatedCounter = 1;
 				int lastPoints = 0;
-				for(Integer[] manager : orderedManagers){
-					if(manager[1] == lastPoints){
-						updateManagerPlace(manager[0],counter-duplicatedCounter);
-						duplicatedCounter ++;
-					}
-					else{
-						updateManagerPlace(manager[0],counter);
+				for (Integer[] manager : orderedManagers) {
+					if (manager[1] == lastPoints) {
+						updateManagerPlace(manager[0], counter - duplicatedCounter);
+						duplicatedCounter++;
+					} else {
+						updateManagerPlace(manager[0], counter);
 						duplicatedCounter = 1;
 					}
 					lastPoints = manager[1];
-					counter ++;
+					counter++;
 				}
 			}
 		} catch (SQLException sqe) {
 			sqe.printStackTrace();
 		}
 	}
-	
+
 	/**
-	 * This function creates a SQLQuery to update the {@link Manager} table with the given place 
-	 * @param managerID the ID of the {@link Manager}, who should be updated.
-	 * @param place the new place of the manager
+	 * This function creates a SQLQuery to update the {@link Manager} table with
+	 * the given place
+	 * 
+	 * @param managerID
+	 *            the ID of the {@link Manager}, who should be updated.
+	 * @param place
+	 *            the new place of the manager
 	 * @throws SQLException
 	 */
 	private void updateManagerPlace(Integer managerID, int place) throws SQLException {
-		String sqlQuery =  "UPDATE Manager Set Platz = ? where ID = ?";
+		String sqlQuery = "UPDATE Manager Set Platz = ? where ID = ?";
 		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
-		pStatement.setInt(1,place);
+		pStatement.setInt(1, place);
 		pStatement.setInt(2, managerID);
 		pStatement.execute();
 	}
 
 	/**
-	 * This function creates a List of Integer Arrays. It searches in the database for all {@link Manager}s in the given {@link Community} and orders them by point.
-	 * @param communityID the ID of the {@link Community}
-	 * @return a {@link List} of Integer, where the first value is the ID of the {@link Manager} and the second value are the points.
+	 * This function creates a List of Integer Arrays. It searches in the
+	 * database for all {@link Manager}s in the given {@link Community} and
+	 * orders them by point.
+	 * 
+	 * @param communityID
+	 *            the ID of the {@link Community}
+	 * @return a {@link List} of Integer, where the first value is the ID of the
+	 *         {@link Manager} and the second value are the points.
 	 * @throws SQLException
 	 */
-	private List<Integer[]> getOrdererManagerIDs(int communityID) throws SQLException{
+	private List<Integer[]> getOrdererManagerIDs(int communityID) throws SQLException {
 		List<Integer[]> retval = new ArrayList<>();
 		String orderedPointsQuery = "Select Punkte, ID From Manager where Spielrunde_ID = ? ORDER BY Punkte DESC";
 		PreparedStatement pStatement = sqlCon.prepareStatement(orderedPointsQuery);
 		pStatement.setInt(1, communityID);
 		ResultSet rs = pStatement.executeQuery();
-		while(rs.next()){
+		while (rs.next()) {
 			int managerID = rs.getInt("ID");
 			int points = rs.getInt("Punkte");
-			Integer[] entry ={managerID,points};
+			Integer[] entry = { managerID, points };
 			retval.add(entry);
 		}
 		return retval;

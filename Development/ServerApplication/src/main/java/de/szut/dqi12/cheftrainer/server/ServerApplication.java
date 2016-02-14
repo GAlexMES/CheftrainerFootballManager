@@ -19,7 +19,7 @@ public class ServerApplication {
 		LOGGER.info("Server will start now!");
 		try {
 			Controller controller = Controller.getInstance();
-			controller.creatDatabaseCommunication();
+			controller.creatDatabaseCommunication(true);
 			controller.startServerSocket(PACKAGE_PATH,DIR_PATH);
 			controller.newTimerTask();
 		} catch (Exception e) {

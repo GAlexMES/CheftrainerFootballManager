@@ -90,9 +90,9 @@ public class Controller {
 	 *             when there is a database, but it is empty, and the
 	 *             initialization doesn't work.
 	 */
-	public void creatDatabaseCommunication() throws IOException {
+	public void creatDatabaseCommunication(boolean init) throws IOException {
 		try {
-			sqlConnection = new SQLConnection(true);
+			sqlConnection = new SQLConnection(init);
 		} catch (IOException io) {
 			LOGGER.error("Creating access to database failed.");
 			throw io;
@@ -162,7 +162,7 @@ public class Controller {
 	public SQLConnection getSQLConnection() {
 		return sqlConnection;
 	}
-
+	
 	public SocketController getSocketController() {
 		return socketController;
 	}

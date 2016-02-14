@@ -13,7 +13,7 @@ public class TransferMarketTest {
 	public void transfer() {
 		Controller con = Controller.getInstance();
 		try {
-			con.creatDatabaseCommunication();
+			con.creatDatabaseCommunication(false);
 			DatabaseRequests.doTransactions();
 		} catch (Exception e) {
 			e.printStackTrace();
