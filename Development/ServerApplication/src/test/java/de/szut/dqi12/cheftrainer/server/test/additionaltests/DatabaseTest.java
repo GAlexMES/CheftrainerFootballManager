@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.test;
+package de.szut.dqi12.cheftrainer.server.test.additionaltests;
 
 import static org.junit.Assert.*;
 
@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
@@ -19,59 +21,62 @@ import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.CommunityManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.PointManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.ServerPropertiesManagement;
+import de.szut.dqi12.cheftrainer.server.test.utils.TestUtils;
 
 public class DatabaseTest {
+
+	private static SQLConnection sqlCon;
+
+	@BeforeClass
+	public static void prepareDatabase() throws IOException {
+		Controller controller = Controller.getInstance();
+		controller.creatDatabaseCommunication(false);
+		sqlCon = controller.getSQLConnection();
+		TestUtils.prepareDatabase(sqlCon);
+		TestUtils.preparePlayerTable(sqlCon);
+	}
 	
+	@AfterClass
+	public static void closeDatabase(){
+		sqlCon.close();
+	}
+
 	@Test
 	public void testProperties() {
-		try {
-			SQLConnection sqlCon = new SQLConnection(false);
-			ServerPropertiesManagement spm = new ServerPropertiesManagement(sqlCon);
-			spm.setProperty("TestBoolean", true);
-			spm.setProperty("TestInt", 9564);
-			spm.setProperty("TestString", "Test String");
+		ServerPropertiesManagement spm = new ServerPropertiesManagement(sqlCon);
+		spm.setProperty("TestBoolean", true);
+		spm.setProperty("TestInt", 9564);
+		spm.setProperty("TestString", "Test String");
 
-			Boolean testBoolean = spm.getPropAsBoolean("TestBoolean");
-			Integer testInt = spm.getPropAsInt("TestInt");
-			String testString = spm.getPropAsString("TestString");
+		Boolean testBoolean = spm.getPropAsBoolean("TestBoolean");
+		Integer testInt = spm.getPropAsInt("TestInt");
+		String testString = spm.getPropAsString("TestString");
 
-			assertTrue(testBoolean);
-			assertTrue(testInt == 9564);
-			assertTrue(testString.equals("Test String"));
+		assertTrue(testBoolean);
+		assertTrue(testInt == 9564);
+		assertTrue(testString.equals("Test String"));
 
-			spm.setProperty("TestBoolean", false);
-			testBoolean = spm.getPropAsBoolean("TestBoolean");
-			assertFalse(testBoolean);
+		spm.setProperty("TestBoolean", false);
+		testBoolean = spm.getPropAsBoolean("TestBoolean");
+		assertFalse(testBoolean);
 
-			sqlCon.sendQuery(" DELETE FROM " + ServerPropertiesManagement.SERVER_PROPS_TABLE);
-			sqlCon.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		sqlCon.sendQuery(" DELETE FROM " + ServerPropertiesManagement.SERVER_PROPS_TABLE);
 	}
 
 	@Test
 	public void testPlacement() throws IOException, SQLException {
-		Controller con = Controller.getInstance();
-		try {
-			con.creatDatabaseCommunication(false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		SQLConnection sqlCon = con.getSQLConnection();
 		CommunityManagement cm = new CommunityManagement(sqlCon);
 		int id = getHeighestUserID(sqlCon);
 		int spielrundeID = getHeighestCommunityID(sqlCon) + 1;
 		String communityName = "Testspielrunde-" + spielrundeID;
 		Integer[] userIDs = { id + 1, id + 2, id + 3, id + 4, id + 5 };
-		
-		for(Integer i : userIDs){
-			addUser(i,sqlCon);
+
+		for (Integer i : userIDs) {
+			addUser(i, sqlCon);
 		}
-		
-		
+
 		cm.createNewCommunity(communityName, "test", userIDs[0]);
-		
+
 		cm.createNewManager(communityName, userIDs[0]);
 		cm.createNewManager(communityName, userIDs[1]);
 		cm.createNewManager(communityName, userIDs[2]);
@@ -94,36 +99,27 @@ public class DatabaseTest {
 		checkDatabase(managerIDs.get(2), 4, sqlCon);
 		checkDatabase(managerIDs.get(3), 1, sqlCon);
 		checkDatabase(managerIDs.get(4), 2, sqlCon);
-		
-		sqlCon.close();
+
 	}
-	
+
 	@Test
-	public void testWorthCalculation() throws IOException{
-		Controller con = Controller.getInstance();
-		try {
-			con.creatDatabaseCommunication(false);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		SQLConnection sqlCon = con.getSQLConnection();
-		
+	public void testWorthCalculation() throws IOException {
 		PointManagement pm = new PointManagement(sqlCon);
-		
+
 		Player p = new Player();
-		p.setSportalID(28206);
+		p.setSportalID(100);
 		p.setPoints(10);
-		String SQLQuery  = "SportalID = "+p.getSportalID();
+		String SQLQuery = "SportalID = " + p.getSportalID();
 		long currentWorth = DatabaseRequests.getUniqueLong("Marktwert", "Spieler", SQLQuery);
-		
-		Map<String,Player> playerList = new HashMap<>();
-		playerList.put("Joel Matip", p);
+
+		Map<String, Player> playerList = new HashMap<>();
+		playerList.put("Testplayer", p);
 		pm.updatePointsOfPlayers(playerList);
-		
+
 		long newWorth = DatabaseRequests.getUniqueLong("Marktwert", "Spieler", SQLQuery);
-		
-		assertTrue(currentWorth-newWorth == 5.83*100000);
-		
+
+		assertTrue(newWorth == 2548363);
+
 	}
 
 	private int getHeighestCommunityID(SQLConnection sqlCon) throws SQLException {
@@ -166,9 +162,9 @@ public class DatabaseTest {
 		rs.next();
 		assertEquals(rs.getInt("Platz"), place);
 	}
-	
-	private void addUser(int id, SQLConnection sqlCon){
-		String sqlQuery =  "INSERT INTO Nutzer (ID) VALUES ("+id+")";
+
+	private void addUser(int id, SQLConnection sqlCon) {
+		String sqlQuery = "INSERT INTO Nutzer (ID) VALUES (" + id + ")";
 		sqlCon.sendQuery(sqlQuery);
 	}
 

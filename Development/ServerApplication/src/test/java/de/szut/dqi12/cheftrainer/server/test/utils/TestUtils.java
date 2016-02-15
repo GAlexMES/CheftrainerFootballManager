@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
-import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.PlayerManagement;
 

@@ -1,4 +1,4 @@
-package de.szut.dqi12.cheftrainer.server.test;
+package de.szut.dqi12.cheftrainer.server.test.additionaltests;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
