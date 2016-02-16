@@ -251,7 +251,7 @@ public class CommunityManagement {
 	 *            the password of the new community
 	 * @param adminID
 	 *            the user ID of the user, that creates the community.
-	 * @return true = commmuniy was created.
+	 * @return true = community was created.
 	 */
 	public boolean createNewCommunity(String name, String password, int adminID) {
 		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name + "'";
@@ -271,7 +271,7 @@ public class CommunityManagement {
 	 *            the password of the new community
 	 * @param adminID
 	 *            the user ID of the user, that creates the community.
-	 * @return true = commmuniy was created.
+	 * @return true = {@link Community} was created.
 	 */
 	private boolean createCommunity(String name, String password, int adminID) {
 		String sqlQuery = "INSERT INTO Spielrunde (Name, Administrator_ID, Passwort) VALUES ( '" + name + "', '" + adminID + "', '" + password + "')";

@@ -1,12 +1,14 @@
 package de.szut.dqi12.cheftrainer.server.test.pflichtenheft;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -21,13 +23,16 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.MessageController;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewOfferMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewPlayerOnMarketMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.TransactionMessage;
 import de.szut.dqi12.cheftrainer.server.Controller;
 import de.szut.dqi12.cheftrainer.server.callables.TransferMarketUpdate;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
+import de.szut.dqi12.cheftrainer.server.logic.ExchangeMarketGenerator;
 import de.szut.dqi12.cheftrainer.server.test.utils.TestUtils;
 
 public class MarketTest {
@@ -76,6 +81,7 @@ public class MarketTest {
 		DatabaseRequests.registerNewUser(user);
 		DatabaseRequests.createNewCommunity(COMMUNITY_NAME,COMMUNITY_PASSWORD, 0);
 		DatabaseRequests.enterCommunity(COMMUNITY_NAME, COMMUNITY_PASSWORD, user.getUserID());
+		ExchangeMarketGenerator.createNewMarket(COMMUNITY_NAME);
 		
 		market = Mockito.mock(Market.class);
 		Mockito.when(market.getPlayers()).thenReturn(generatePlayerList());
@@ -173,6 +179,90 @@ public class MarketTest {
 		}
 		
 		assertTrue(managerOwnsPlayer);
+	}
+	
+	/**
+	 * Tests, if a offer can be deleted.
+	 * @see /T0213/		
+	 */
+	@Test
+	public void deleteOffer(){
+		Community con = DatabaseRequests.getCummunitiesForUser(user.getUserID()).get(0);
+		Market dMarket = con.getMarket();
+		Player marketPlayer = dMarket.getPlayers().get(0);
+		Manager m = con.getManagers().get(0);
+		
+		String addOffer = "INSERT INTO Gebote (Manager_ID,Spieler_ID,Gebot,Spielrunde_ID) VALUES ('"+
+							m.getID()+"','"+marketPlayer.getSportalID()+"','"+marketPlayer.getWorth()+1000+"','"+con.getCommunityID()+"')";
+		sqlCon.sendQuery(addOffer);
+		
+		Transaction tr = new Transaction();
+		tr.setCommunityID(con.getCommunityID());
+		tr.setManagerID(m.getID());
+		tr.setPlayerSportalID(marketPlayer.getSportalID());
+		
+		TransactionMessage message = new TransactionMessage(tr,false,true);
+		
+		try {
+			tmUpdate.messageArrived(message);
+		} catch (NullPointerException npe) {
+			// valid null pointer, because there is no client, where the answer
+			// can be sent to
+		}
+		
+		
+		Community dCon = DatabaseRequests.getCummunitiesForUser(user.getUserID()).get(0);
+		Market dbMarket = dCon.getMarket();
+		boolean noTransaction = true;
+		List<Transaction> transactions= dbMarket.getTransactions();
+		
+		for(Transaction t : transactions){
+			boolean player = t.getPlayerSportalID() == marketPlayer.getSportalID();
+			boolean managerID = t.getManagerID() == m.getID();
+			noTransaction = !(player && managerID);
+		}
+		
+		assertTrue(noTransaction);
+	}
+	
+	/**
+	 * Tests, if a offer can be accepted.
+	 * @see /T0214/		
+	 */
+	@Test
+	public void acceptOffer(){
+		Community con = DatabaseRequests.getCummunitiesForUser(user.getUserID()).get(0);
+		Market dMarket = con.getMarket();
+		Player marketPlayer = dMarket.getPlayers().get(0);
+		Manager m = con.getManagers().get(0);
+		
+		String addOffer = "INSERT INTO Gebote (Manager_ID,Spieler_ID,Gebot,Spielrunde_ID) VALUES ('"+
+							m.getID()+"','"+marketPlayer.getSportalID()+"','"+marketPlayer.getWorth()+1000+"','"+con.getCommunityID()+"')";
+		sqlCon.sendQuery(addOffer);
+		
+		DatabaseRequests.doTransactions();
+		
+		Community dCon = DatabaseRequests.getCummunitiesForUser(user.getUserID()).get(0);
+		Manager dManager = dCon.getManager(m.getID());
+		List<Player> players = dManager.getPlayers();
+		Player p = null;
+		for(Player pl : players){
+			if(pl.getSportalID() == marketPlayer.getSportalID()){
+				p = pl;
+				break;
+			}
+		}
+		
+		assertTrue(p!=null);
+		
+		Market dbMarket = dCon.getMarket();
+		Set<Integer> keySet = dbMarket.getPlayerMap().keySet();
+		assertTrue(!keySet.contains(marketPlayer.getSportalID()));
+		
+		List<Transaction> transactions = dbMarket.getTransactions();
+		for(Transaction t : transactions){
+			assertTrue(t.getPlayerSportalID()!=marketPlayer.getSportalID());
+		}
 	}
 	
 	private static List<Player> generatePlayerList() {
