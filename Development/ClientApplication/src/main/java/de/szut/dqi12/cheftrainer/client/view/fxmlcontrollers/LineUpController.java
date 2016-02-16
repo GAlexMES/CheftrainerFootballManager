@@ -12,7 +12,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -26,7 +32,6 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.FormationFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewFormationMessage;
 
@@ -97,6 +102,20 @@ public class LineUpController implements ControllerInterface {
 	@Override
 	public void init() {
 		try {
+//			lineUpFrame.setStyle("-fx-background-image: url('400px-Fuﬂballfeld.png')");
+			
+			Image image = new Image ("https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Soccer_Field_Transparant.svg/250px-Soccer_Field_Transparant.svg.png");
+	        
+			
+			BackgroundSize bs = new BackgroundSize(100, 0, true, false, true, false);
+			
+			lineUpFrame.setBackground(new Background(new BackgroundImage(image,BackgroundRepeat.NO_REPEAT,
+	                                                                  BackgroundRepeat.NO_REPEAT,
+	                                                                  BackgroundPosition.DEFAULT,
+	                                                                  bs)));
+			
+			
+			
 			Session session = Controller.getInstance().getSession();
 			Community community = session.getCurrentCommunity();
 			int managerID = session.getCurrentManagerID();

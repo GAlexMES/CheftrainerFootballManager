@@ -18,7 +18,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import de.szut.dqi12.cheftrainer.client.ClientApplication;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
