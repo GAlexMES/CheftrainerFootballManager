@@ -18,6 +18,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import de.szut.dqi12.cheftrainer.client.ClientApplication;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
@@ -236,7 +237,6 @@ public class FormationController implements ImageUpdate {
 	 */
 	public void setClickedListener() {
 		getCurrentPlayers();
-		ScrollPane scrollPane = new ScrollPane();
 		VBox content = new VBox();
 		
 		// Iteration durch alle Nodes
@@ -319,11 +319,12 @@ public class FormationController implements ImageUpdate {
 								}
 							}
 							if (content.getChildren().size() > 0) {
-								scrollPane.setContent(content);
+								ScrollPane sp = new ScrollPane();
+								sp.setContent(content);
 //								dialogStage.setResizable(false);
 								dialogStage.setTitle("Player");
 								dialogStage.initModality(Modality.WINDOW_MODAL);
-								Scene scene = new Scene(scrollPane);
+								Scene scene = new Scene(sp);
 
 								dialogStage.setScene(scene);
 								dialogStage.showAndWait();
