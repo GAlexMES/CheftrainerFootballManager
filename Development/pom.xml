@@ -27,7 +27,7 @@
 			<dependency>
 				<groupId>de.szut.dqi12.cheftrainer</groupId>
 				<artifactId>ConnectorLib</artifactId>
-				<version>0.0.6</version>
+				<version>0.0.7</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
