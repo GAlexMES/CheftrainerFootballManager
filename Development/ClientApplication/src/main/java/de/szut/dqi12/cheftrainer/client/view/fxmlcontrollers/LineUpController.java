@@ -102,7 +102,7 @@ public class LineUpController implements ControllerInterface {
 	@Override
 	public void init() {
 		try {
-//			lineUpFrame.setStyle("-fx-background-image: url('400px-Fußballfeld.png')");
+//			lineUpFrame.setStyle("-fx-background-image: url('400px-Fuï¿½ballfeld.png')");
 			
 			Image image = new Image ("https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Soccer_Field_Transparant.svg/250px-Soccer_Field_Transparant.svg.png");
 	        
@@ -174,7 +174,7 @@ public class LineUpController implements ControllerInterface {
 		int currentManagerID = s.getCurrentManagerID();
 		Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
 		ArrayList<Player> guiLineUp = fController.getCurrentPlayers();
-		boolean formationChanged = guiLineUp.equals(manager.getLineUp());
+		boolean formationChanged = guiLineUp.equals(manager.getLineUp(false));
 		if (!currentFormation.getName().equals(manager.getFormation().getName()) || !formationChanged) {
 			tempSendingManager = new Manager();
 			tempSendingManager.setID(manager.getID());
@@ -242,7 +242,7 @@ public class LineUpController implements ControllerInterface {
 			int currentManagerID = s.getCurrentManagerID();
 			Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
 			manager.setFormation(tempSendingManager.getFormation());
-			manager.setLineUp(tempSendingManager.getLineUp());
+			manager.setLineUp(tempSendingManager.getLineUp(false));
 		} else {
 			tempSendingManager = null;
 		}
