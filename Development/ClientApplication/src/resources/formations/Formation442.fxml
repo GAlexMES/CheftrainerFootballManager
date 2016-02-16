@@ -6,7 +6,8 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel?>
 
-<GridPane fx:id="formationFrame" alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.FormationController">
+
+<GridPane fx:id="formationFrame" alignment="CENTER" prefHeight="71.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.FormationController">
   <columnConstraints>
       <ColumnConstraints />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -19,7 +20,7 @@
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+      <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
       <PlayerLabel text="Keeper" GridPane.columnIndex="3" GridPane.rowIndex="3" />

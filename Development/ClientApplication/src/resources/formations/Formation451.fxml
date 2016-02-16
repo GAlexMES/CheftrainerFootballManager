@@ -20,7 +20,7 @@
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
     <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+      <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
       <PlayerLabel text="Keeper" GridPane.columnIndex="3" GridPane.rowIndex="3" />
