@@ -21,7 +21,7 @@ import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 /**
  * This callable handles everything according to the formation and Line-Up of a {@link Manager}.
  * @author Alexander Brennecke
- * @custom.position /F0110/ </br> /F0120/ </br> /F0130/ </br> /F0140/
+ * @see /F0110/ </br> /F0120/ </br> /F0130/ </br> /F0140/
  */
 public class NewFormationUpdate extends CallableAbstract {
 

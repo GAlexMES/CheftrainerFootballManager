@@ -20,7 +20,7 @@ import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
  *  Generates a new random team for a user.
  * 
  * @author Alexander Brennecke
- * @custom.position /F0040/
+ * @see /F0040/
  */
 public class TeamGenerator {
 
