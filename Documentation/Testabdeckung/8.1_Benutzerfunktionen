@@ -28,7 +28,7 @@ Testabdeckung:
 /T2010/ Parser
 		/T2011/ Spielplan						Möglicherweiße getan
 		/T2012/ Noten							Möglicherweiße getan
-		/T2013/ Spieler							Möglicherweiße getan
+		/T2013/ Spieler							DONE
 /T2020/ Team Generierung						DONE
 /T2030/ Punkteberechnung						DONE
 /T2040/ Nutzerverwaltung						Bereits in /T0020/ getestet 

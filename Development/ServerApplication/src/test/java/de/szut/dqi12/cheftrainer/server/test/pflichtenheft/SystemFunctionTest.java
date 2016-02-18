@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
@@ -33,17 +35,17 @@ public class SystemFunctionTest {
 	private final static String COMMUNITY_NAME = "Testrunde";
 	private final static String COMMUNITY_PASSWORD = "654321";
 
-	@Before
-	public void prepareDatabase() throws IOException {
+	@BeforeClass
+	public static void prepareDatabase() throws IOException {
 		Controller controller = Controller.getInstance();
 		controller.creatDatabaseCommunication(false);
 		sqlCon = controller.getSQLConnection();
-		TestUtils.prepareDatabase(sqlCon);
+		TestUtils.cleareDatabase(sqlCon);
 		TestUtils.preparePlayerTable(sqlCon);
 	}
 
-	@After
-	public void closeDatabase() {
+	@AfterClass
+	public static void closeDatabase() {
 		sqlCon.close();
 	}
 

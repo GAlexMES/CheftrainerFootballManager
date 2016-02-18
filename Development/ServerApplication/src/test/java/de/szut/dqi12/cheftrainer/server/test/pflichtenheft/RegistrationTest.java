@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONObject;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -70,7 +71,7 @@ public class RegistrationTest {
 		Controller controller = Controller.getInstance();
 		controller.creatDatabaseCommunication(false);
 		sqlCon = controller.getSQLConnection();
-		TestUtils.prepareDatabase(sqlCon);
+		TestUtils.cleareDatabase(sqlCon);
 
 		user = new User();
 		user.setFirstName(USER_NAME);
@@ -78,6 +79,11 @@ public class RegistrationTest {
 		user.setUserName(USER_LOGIN);
 		user.setPassword(USER_PASSWORD);
 		user.seteMail(USER_EMAIL);
+	}
+	
+	@AfterClass
+	public static void closeDatabase(){
+		sqlCon.close();
 	}
 
 	/**

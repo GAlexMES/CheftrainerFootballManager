@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Test;
 
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
@@ -21,9 +22,16 @@ public class TimeTaskTest {
 	private int matchday = 19;
 	private int season = 2015;
 	
+	private Controller con;
+	
+	@After
+	public void closeDatabase(){
+		con.getSQLConnection().close();
+	}
+	
 	@Test
 	public void test() {
-		Controller con = Controller.getInstance();
+		con = Controller.getInstance();
 		try {
 			con.creatDatabaseCommunication(false);
 		} catch (IOException e) {
@@ -53,6 +61,7 @@ public class TimeTaskTest {
 		DatabaseRequests.copyManagerTeams();
 		
 		readPoints();
+		
 	}
 	
 	/**

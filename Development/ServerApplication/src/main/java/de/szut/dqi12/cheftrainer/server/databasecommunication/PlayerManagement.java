@@ -239,7 +239,7 @@ public class PlayerManagement extends SQLManagement {
 	 *         table of the database.
 	 */
 	public Player getPlayer(int playerID) {
-		String sqlQuery = "SELECT * FROM Spieler WHERE Spieler.ID = " + playerID;
+		String sqlQuery = "SELECT * FROM Spieler INNER JOIN Verein WHERE Spieler.ID = " + playerID+" AND Verein_ID = Verein.ID";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		return getPlayerFromResult(rs);
 	}

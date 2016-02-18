@@ -65,7 +65,7 @@ public class MarketTest {
 		Controller controller = Controller.getInstance();
 		controller.creatDatabaseCommunication(false);
 		sqlCon = controller.getSQLConnection();
-		TestUtils.prepareDatabase(sqlCon);
+		TestUtils.cleareDatabase(sqlCon);
 
 		user = new User();
 		user.setFirstName(USER_NAME);

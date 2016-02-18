@@ -10,7 +10,7 @@ import de.szut.dqi12.cheftrainer.server.databasecommunication.PlayerManagement;
 
 public class TestUtils {
 
-	public static void prepareDatabase(SQLConnection sqlCon) {
+	public static void cleareDatabase(SQLConnection sqlCon) {
 		clearTable(sqlCon,"NUTZER");
 		clearTable(sqlCon,"Spielrunde");
 		clearTable(sqlCon,"Manager");

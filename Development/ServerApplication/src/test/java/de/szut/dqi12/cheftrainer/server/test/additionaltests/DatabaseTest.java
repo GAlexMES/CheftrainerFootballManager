@@ -22,7 +22,7 @@ public class DatabaseTest {
 		Controller controller = Controller.getInstance();
 		controller.creatDatabaseCommunication(false);
 		sqlCon = controller.getSQLConnection();
-		TestUtils.prepareDatabase(sqlCon);
+		TestUtils.cleareDatabase(sqlCon);
 		TestUtils.preparePlayerTable(sqlCon);
 	}
 	
