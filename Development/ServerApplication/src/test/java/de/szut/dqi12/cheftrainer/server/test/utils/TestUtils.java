@@ -11,47 +11,67 @@ import de.szut.dqi12.cheftrainer.server.databasecommunication.PlayerManagement;
 public class TestUtils {
 
 	public static void cleareDatabase(SQLConnection sqlCon) {
-		clearTable(sqlCon,"NUTZER");
-		clearTable(sqlCon,"Spielrunde");
-		clearTable(sqlCon,"Manager");
-		clearTable(sqlCon,"Mannschaft");
-		clearTable(sqlCon,"Transfermarkt");
-		clearTable(sqlCon,"Gebote");
-		clearTable(sqlCon,"Spieler");
-		clearTable(sqlCon,"Verein");
-		clearTable(sqlCon,"sqlite_sequence");
+		clearTable(sqlCon, "Nutzer");
+		clearTable(sqlCon, "Spielrunde");
+		clearTable(sqlCon, "Manager");
+		clearTable(sqlCon, "Mannschaft");
+		clearTable(sqlCon, "Transfermarkt");
+		clearTable(sqlCon, "Gebote");
+		clearTable(sqlCon, "Spieler");
+		clearTable(sqlCon, "Verein");
+		clearTable(sqlCon, "sqlite_sequence");
 	}
-	
-	public  static void clearTable(SQLConnection sqlCon, String tableName) {
+
+	public static void cleareUserDatabase(SQLConnection sqlCon) {
+		clearTable(sqlCon, "Nutzer");
+		clearTable(sqlCon, "Spielrunde");
+		clearTable(sqlCon, "Manager");
+		clearTable(sqlCon, "Mannschaft");
+		clearTable(sqlCon, "Transfermarkt");
+		clearTable(sqlCon, "Gebote");
+		removeFromSequence(sqlCon,"Nutzer");
+		removeFromSequence(sqlCon,"Spielrunde");
+		removeFromSequence(sqlCon,"Manager");
+		removeFromSequence(sqlCon,"Transfermarkt");
+		removeFromSequence(sqlCon,"Mannschaft");
+		removeFromSequence(sqlCon,"Gebote");
+	}
+
+	private static void removeFromSequence(SQLConnection sqlCon, String name) {
+		String query = "UPDATE sqlite_sequence SET seq=0 WHERE name='"+name+"'";
+		sqlCon.sendQuery(query);
+	}
+
+	public static void clearTable(SQLConnection sqlCon, String tableName) {
 		String query = "DELETE FROM " + tableName;
 		sqlCon.sendQuery(query);
 	}
-	
-	public static void preparePlayerTable(SQLConnection sqlCon){
+
+	public static void preparePlayerTable(SQLConnection sqlCon) {
 		int playerNumber = 300;
 		List<Player> players = generatePlayerList(playerNumber);
 		PlayerManagement pm = new PlayerManagement(sqlCon);
-		
-		String teamName= "Testteam";
-		String createTeam = "INSERT INTO VEREIN (Vereinsname, LogoPath, Liga_ID) VALUES ('"+teamName+"','www.example.com','1')";
+
+		String teamName = "Testteam";
+		String createTeam = "INSERT INTO VEREIN (Vereinsname, LogoPath, Liga_ID) VALUES ('" + teamName + "','www.example.com','1')";
 		sqlCon.sendQuery(createTeam);
-		for(Player p : players){
+		for (Player p : players) {
 			pm.addPlayer(p, 1);
 		}
-		String updateSquence = "INSERT INTO sqlite_sequence (Name, seq) VALUES ('Spieler',"+playerNumber+")";
+		String updateSquence = "INSERT INTO sqlite_sequence (Name, seq) VALUES ('Spieler'," + playerNumber + ")";
 		sqlCon.sendQuery(updateSquence);
 	}
-	
-	private static List<Player> generatePlayerList(int size){
+
+	private static List<Player> generatePlayerList(int size) {
 		List<Player> retval = new ArrayList<>();
-		for(int i = 0;i<size;i++){
-				double worth = Math.random()*3000000;
-				Player p = new Player();
-				p.setSportalID(i);
-				p.setWorth((int)worth);
-				p.setName("Player "+i);
-				p.setPosition(Position.getPositions().get(i%4));
-				retval.add(p);
+		for (int i = 0; i < size; i++) {
+			double worth = Math.random() * 3000000;
+			Player p = new Player();
+			p.setSportalID(i);
+			p.setWorth((int) worth);
+			p.setName("Player " + i);
+			p.setPosition(Position.getPositions().get(i % 4));
+			retval.add(p);
 		}
 		return retval;
 	}

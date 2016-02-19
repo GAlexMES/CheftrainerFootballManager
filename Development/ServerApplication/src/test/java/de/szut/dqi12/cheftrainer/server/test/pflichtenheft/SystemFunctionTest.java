@@ -43,6 +43,11 @@ public class SystemFunctionTest {
 		TestUtils.cleareDatabase(sqlCon);
 		TestUtils.preparePlayerTable(sqlCon);
 	}
+	
+	@Before
+	public void clearDatabase(){
+		TestUtils.cleareUserDatabase(sqlCon);
+	}
 
 	@AfterClass
 	public static void closeDatabase() {
@@ -144,6 +149,8 @@ public class SystemFunctionTest {
 	 */
 	@Test
 	public void testTeamGeneration() {
+		TestUtils.clearTable(sqlCon, "Transfermarkt");
+		TestUtils.clearTable(sqlCon, "Mannschaft");
 		CommunityManagement cm = new CommunityManagement(sqlCon);
 
 		addUser(1, sqlCon);

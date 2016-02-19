@@ -37,7 +37,7 @@ public class ParserTest {
 		TestUtils.cleareDatabase(sqlCon);
 		sqlCon.close();
 		
-		controller.creatDatabaseCommunication(false);
+		controller.creatDatabaseCommunication(true);
 		sqlCon = controller.getSQLConnection();
 	}
 	
