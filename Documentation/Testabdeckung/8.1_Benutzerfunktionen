@@ -1,0 +1,35 @@
+Testabdeckung:
+
+8.1:
+/T0010/ Nutzerregistrierung						DONE
+/T0020/ Anmeldung								DONE	
+/T0030/ Abmeldung								NICHT UMSETZBAR, DA NICHT IMPLEMENTIERT
+
+/T0100/ Spielrunde beitreten					....
+	/T0110/ Spielrundenübersicht				NICHT MÖGLICH, DA GUI TEST
+	/T0120/ Spielrunden Registration			DONE
+	/T0130/ Spielrunde auswählen				NICHT MÖGLICH, DA GUI TEST
+		
+
+/T0200/ Spielen					
+	/T0210/ Transfermarkt
+		/T0211/ Transfermarkt anschauen		NICHT MÖGLICH, DA GUI TEST
+		/T0212/ Gebot abgeben				DONE
+		/T0213/ Gebot löschen				DONE
+		/T0214/ Gebot annehmen				DONE
+	/T0220/ Aufstellung
+		/T0221/ Aufstellung anschauen		NICHT MÖGLICH, DA GUI TEST
+		/T0222/ Formation ändern			NICHT MÖGLICH, DA GUI TEST
+		/T0223/ Spieler wechseln			NICHT MÖGLICH, DA GUI TEST
+		/T0224/ Spieler verkaufen			DONE
+			
+			
+/T2000/ Marktwertberechnung						DONE
+/T2010/ Parser
+		/T2011/ Spielplan						DONE
+		/T2012/ Noten							DONE
+		/T2013/ Spieler							DONE
+/T2020/ Team Generierung						DONE
+/T2030/ Punkteberechnung						DONE
+/T2040/ Nutzerverwaltung						Bereits in /T0020/ getestet 
+
