@@ -3,9 +3,11 @@ package de.szut.dqi12.cheftrainer.client.guicontrolling;
 import java.io.IOException;
 import java.net.URL;
 
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LineUpController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -28,7 +30,8 @@ public class GUIController {
 	/**
 	 * Constructor
 	 * 
-	 * @param primaryStage needs a Stage to display GUI Elements onto it.
+	 * @param primaryStage
+	 *            needs a Stage to display GUI Elements onto it.
 	 */
 
 	public GUIController(Stage primaryStage) {
@@ -99,6 +102,7 @@ public class GUIController {
 	 *            root at de\szut\dqi12\cheftrainer\client</li>
 	 */
 	public void setContentFrameByPath(String path, boolean update) {
+		GridPane currentContentPane = null;
 		try {
 			currentContentLoader = new FXMLLoader();
 			fxmlFile = classLoader.getResource("sourcesFXML/" + path);
@@ -106,23 +110,35 @@ public class GUIController {
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 
 			try {
-				((ControllerInterface) currentContentLoader.getController())
-						.init();
+				((ControllerInterface) currentContentLoader.getController()).init();
 			} catch (Exception e) {
 			}
-			
+
 			newContentPane.autosize();
 
 			if (update) {
-				GridPane currentContentPane = ((GridPane) guiInitialator
-						.getRootlayout());
+				currentContentPane = ((GridPane) guiInitialator.getRootlayout());
 				Node sideMenu = currentContentPane.getChildren().get(2);
 				currentContentPane.getChildren().removeAll(sideMenu);
 			}
 			guiInitialator.getRootlayout().add(newContentPane, 1, 0);
+
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (currentContentPane != null) {
+				Scene scene = currentContentPane.getScene();
+				if (scene != null) {
+					try {
+						LineUpController luc = (LineUpController) currentContentLoader.getController();
+						luc.notifyFormationController();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
+
 	}
 
 	public void initController() {
@@ -160,6 +176,7 @@ public class GUIController {
 			}
 		});
 	}
+
 	/**
 	 * Enables the Buttons of the SideMenu.
 	 */

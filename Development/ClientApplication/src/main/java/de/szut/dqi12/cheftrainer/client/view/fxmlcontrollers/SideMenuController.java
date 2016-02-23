@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -206,7 +207,8 @@ public class SideMenuController {
 	 */
 	@FXML
 	public void buttonPressed(ActionEvent evt) {
-		String sourceID = ((Button) evt.getSource()).getId();
+		Button button = (Button) evt.getSource();
+		String sourceID = button.getId();
 		String fxmlComponent = button_FXMLComponent.get(sourceID);
 		String fileName = fxmlComponent + ".fxml";
 		GUIController.getInstance().setContentFrameByName(fileName, true);

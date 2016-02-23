@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
@@ -94,28 +96,20 @@ public class LineUpController implements ControllerInterface {
 	}
 
 	/**
-	 * This method have to be called before all other methods. It initializates
+	 * This method have to be called before all other methods. It initializes
 	 * every gui-components
-	 * 
-	 * @return success or not
 	 */
 	@Override
 	public void init() {
 		try {
-//			lineUpFrame.setStyle("-fx-background-image: url('400px-Fu�ballfeld.png')");
-			
-			Image image = new Image ("https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Soccer_Field_Transparant.svg/250px-Soccer_Field_Transparant.svg.png");
-	        
-			
+			// lineUpFrame.setStyle("-fx-background-image: url('400px-Fu�ballfeld.png')");
+
+			Image image = new Image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Soccer_Field_Transparant.svg/250px-Soccer_Field_Transparant.svg.png");
+
 			BackgroundSize bs = new BackgroundSize(100, 0, true, false, true, false);
-			
-			lineUpFrame.setBackground(new Background(new BackgroundImage(image,BackgroundRepeat.NO_REPEAT,
-	                                                                  BackgroundRepeat.NO_REPEAT,
-	                                                                  BackgroundPosition.DEFAULT,
-	                                                                  bs)));
-			
-			
-			
+
+			lineUpFrame.setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, bs)));
+
 			Session session = Controller.getInstance().getSession();
 			Community community = session.getCurrentCommunity();
 			int managerID = session.getCurrentManagerID();
@@ -152,8 +146,8 @@ public class LineUpController implements ControllerInterface {
 			}
 			i++;
 			oldPane = newContentPane;
-			
-			if((i % 2) != 0){
+
+			if ((i % 2) != 0) {
 				changeFormation(formation);
 			}
 			return true;
@@ -170,6 +164,9 @@ public class LineUpController implements ControllerInterface {
 	 */
 	@FXML
 	public void saveButtonClicked() {
+
+		// fController.createResizeListener();
+
 		Session s = Controller.getInstance().getSession();
 		int currentManagerID = s.getCurrentManagerID();
 		Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
@@ -182,7 +179,7 @@ public class LineUpController implements ControllerInterface {
 			tempSendingManager.setLineUp(guiLineUp);
 			tempSendingManager.setFormation(currentFormation);
 			tempSendingManager.setName(manager.getName());
-			
+
 			Message updateMessage = new NewFormationMessage(tempSendingManager);
 			Controller.getInstance().getSession().getClientSocket().sendMessage(updateMessage);
 		} else {
@@ -248,4 +245,7 @@ public class LineUpController implements ControllerInterface {
 		}
 	}
 
+	public void notifyFormationController() {
+		fController.createResizeListener();
+	}
 }

@@ -1,7 +1,7 @@
 package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
 /**
- * Interface for FXMLControllers, which ar Components for the graphical user interface. 
+ * Interface for FXMLControllers, which are Components for the graphical user interface. 
  *
  */
 public interface ControllerInterface {

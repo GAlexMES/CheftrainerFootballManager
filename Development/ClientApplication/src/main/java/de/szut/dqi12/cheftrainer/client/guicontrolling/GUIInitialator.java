@@ -54,7 +54,7 @@ public class GUIInitialator {
 		classLoader = getClass().getClassLoader();
 		currentFXMLLoader = new FXMLLoader();
 	}
-
+	
 	/**
 	 * Is called to close the application.
 	 */
