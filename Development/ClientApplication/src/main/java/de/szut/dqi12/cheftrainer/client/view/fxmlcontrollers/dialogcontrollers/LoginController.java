@@ -309,4 +309,10 @@ public class LoginController implements ControllerInterface {
 	public void messageArrived(Boolean flag) {
 		loginButton.setDisable(false);
 	}
+
+	@Override
+	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
 }

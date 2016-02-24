@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
@@ -102,9 +100,7 @@ public class LineUpController implements ControllerInterface {
 	@Override
 	public void init() {
 		try {
-			// lineUpFrame.setStyle("-fx-background-image: url('400px-Fu�ballfeld.png')");
-
-			Image image = new Image("https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Soccer_Field_Transparant.svg/250px-Soccer_Field_Transparant.svg.png");
+			Image image = new Image(getClass().getResourceAsStream("/images/football_field.png"));
 
 			BackgroundSize bs = new BackgroundSize(100, 0, true, false, true, false);
 
@@ -139,17 +135,16 @@ public class LineUpController implements ControllerInterface {
 
 			if (i > 0) {
 				lineUpFrame.getChildren().remove(oldPane);
-				lineUpFrame.add(newContentPane, 0, 0);
-			} else {
-				lineUpFrame.add(newContentPane, 0, 0);
-
 			}
+			lineUpFrame.add(newContentPane, 0, 0);
+			
 			i++;
+			
 			oldPane = newContentPane;
 
-			if ((i % 2) != 0) {
-				changeFormation(formation);
-			}
+//			if ( (i % 2) != 0 ) {
+//				changeFormation(formation);
+//			}
 			return true;
 
 		} catch (IOException e) {
@@ -245,7 +240,8 @@ public class LineUpController implements ControllerInterface {
 		}
 	}
 
-	public void notifyFormationController() {
-		fController.createResizeListener();
+	@Override
+	public void initializationFinihed(Scene scene) {
+		fController.createResizeListener(scene);
 	}
 }

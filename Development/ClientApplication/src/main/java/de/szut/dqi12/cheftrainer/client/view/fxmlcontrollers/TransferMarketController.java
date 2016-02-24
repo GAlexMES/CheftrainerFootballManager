@@ -234,4 +234,11 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 		// TODO Auto-generated method stub
 		
 	}
+
+
+	@Override
+	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
 }

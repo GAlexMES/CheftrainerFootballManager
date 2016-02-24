@@ -2,6 +2,7 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -75,6 +76,12 @@ public class PlayerDetailedController implements ControllerInterface, ImageUpdat
 
 	@Override
 	public void messageArrived(Boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initializationFinihed(Scene scene) {
 		// TODO Auto-generated method stub
 		
 	}

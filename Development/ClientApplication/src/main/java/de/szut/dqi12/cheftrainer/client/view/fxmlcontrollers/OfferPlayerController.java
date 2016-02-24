@@ -3,6 +3,7 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 import org.json.JSONObject;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.TextField;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
@@ -79,6 +80,12 @@ public class OfferPlayerController implements ControllerInterface {
 
 	@Override
 	public void messageArrived(Boolean flag) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void initializationFinihed(Scene scene) {
 		// TODO Auto-generated method stub
 		
 	}

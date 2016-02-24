@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
@@ -105,6 +106,12 @@ public class StatisticsController implements ControllerInterface {
 	public void messageArrived(Boolean flag) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

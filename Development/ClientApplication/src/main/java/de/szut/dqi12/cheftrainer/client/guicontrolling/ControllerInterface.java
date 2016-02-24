@@ -1,5 +1,7 @@
 package de.szut.dqi12.cheftrainer.client.guicontrolling;
 
+import javafx.scene.Scene;
+
 /**
  * Interface for FXMLControllers, which are Components for the graphical user interface. 
  *
@@ -19,4 +21,6 @@ public interface ControllerInterface {
 	 * @param flag 
 	 */
 	public void messageArrived(Boolean flag);
+	
+	public void initializationFinihed(Scene scene);
 }

@@ -103,6 +103,7 @@ public class GUIController {
 	 */
 	public void setContentFrameByPath(String path, boolean update) {
 		GridPane currentContentPane = null;
+		ControllerInterface controller = null;
 		try {
 			currentContentLoader = new FXMLLoader();
 			fxmlFile = classLoader.getResource("sourcesFXML/" + path);
@@ -110,7 +111,8 @@ public class GUIController {
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 
 			try {
-				((ControllerInterface) currentContentLoader.getController()).init();
+				controller = ((ControllerInterface) currentContentLoader.getController());
+				controller.init();
 			} catch (Exception e) {
 			}
 
@@ -128,13 +130,8 @@ public class GUIController {
 		} finally {
 			if (currentContentPane != null) {
 				Scene scene = currentContentPane.getScene();
-				if (scene != null) {
-					try {
-						LineUpController luc = (LineUpController) currentContentLoader.getController();
-						luc.notifyFormationController();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+				if (scene != null && controller != null) {
+					controller.initializationFinihed(scene);
 				}
 			}
 		}

@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -265,5 +266,12 @@ public class RegistrationController implements ControllerInterface {
 	
 	public void setDialogStage(Stage dialogStage) {
 		this.dialogStage = dialogStage;
+	}
+
+
+	@Override
+	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
 	}
 }

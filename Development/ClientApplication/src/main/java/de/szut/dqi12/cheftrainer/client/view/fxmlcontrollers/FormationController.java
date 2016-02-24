@@ -53,48 +53,7 @@ public class FormationController implements ImageUpdate {
 		players = new ArrayList<Player>();
 		imageUpdateStack = new HashMap<>();
 	}
-
-	/**
-	 * Ganerates an Image of different properties from an Player. The Image will
-	 * setted in the PlayerLabel of the Player.
-	 * 
-	 * @param player
-	 */
-	public void generateImage(Player player) {
-		String text = player.getName() + "\n" + player.getPosition() + " Points: " + player.getPoints();
-		Label label = new Label(text);
-		label.setMinSize(125, 125);
-		label.setMaxSize(125, 125);
-		label.setPrefSize(125, 125);
-		label.setStyle("-fx-background-color: white; -fx-text-fill:black;");
-		label.setWrapText(true);
-		Scene scene = new Scene(new Group(label));
-		WritableImage img = new WritableImage(125, 125);
-		scene.snapshot(img);
-		player.getLabel().setImage(img);
-
-	}
-
-	/**
-	 * Generates an Image of an String
-	 * 
-	 * @param text
-	 *            text, which is in the Image
-	 * @return The generated Image
-	 */
-	public static WritableImage getImageOfString(String text) {
-		Label label = new Label(text);
-		label.setMinSize(125, 125);
-		label.setMaxSize(125, 125);
-		label.setPrefSize(125, 125);
-		label.setStyle("-fx-background-color: white; -fx-text-fill:black;");
-		label.setWrapText(true);
-		Scene scene = new Scene(new Group(label));
-		WritableImage img = new WritableImage(125, 125);
-		scene.snapshot(img);
-		return img;
-	}
-
+	
 	/**
 	 * Initialization of the graphical formation with the matching players.
 	 */
@@ -137,7 +96,9 @@ public class FormationController implements ImageUpdate {
 		ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
 		boolean found;
 		// Iteration durch alle Labels
+		int i = 0;
 		for (Node n : buffer) {
+			i ++;
 			int row;
 			int col;
 			try {
@@ -162,36 +123,78 @@ public class FormationController implements ImageUpdate {
 					break;
 
 				}
-				if (!found) {
-					for (Player pl : notPlayingPlayers) {
-
-						if (pl.getPosition().equals(position)) {
-							formationFrame.add((Node) pl.getLabel(), col, row);
-							formationFrame.getChildren().remove(n);
-							pl.setPlays(true);
-							notPlayingPlayers.remove(pl);
-							currentPlayers.add(pl);
-							found = true;
-							break;
-						}
+			}
+			if (!found) {
+				for (Player pl : notPlayingPlayers) {
+					if (pl.getPosition().equals(position)) {
+						formationFrame.add((Node) pl.getLabel(), col, row);
+						formationFrame.getChildren().remove(n);
+						pl.setPlays(true);
+						notPlayingPlayers.remove(pl);
+						currentPlayers.add(pl);
+						found = true;
+						break;
 					}
 				}
 			}
 		}
 	}
-	
 
-	public void createResizeListener() {
-		Scene mScene = formationFrame.getScene();
-		mScene.widthProperty().addListener(new ChangeListener<Number>() {
+	/**
+	 * Ganerates an Image of different properties from an Player. The Image will
+	 * setted in the PlayerLabel of the Player.
+	 * 
+	 * @param player
+	 */
+	public void generateImage(Player player) {
+		String text = player.getName() + "\n" + player.getPosition() + " Points: " + player.getPoints();
+		Label label = new Label(text);
+		label.setMinSize(125, 125);
+		label.setMaxSize(125, 125);
+		label.setPrefSize(125, 125);
+		label.setStyle("-fx-background-color: white; -fx-text-fill:black;");
+		label.setWrapText(true);
+		Scene scene = new Scene(new Group(label));
+		WritableImage img = new WritableImage(125, 125);
+		scene.snapshot(img);
+		player.getLabel().setImage(img);
+
+	}
+
+	/**
+	 * Generates an Image of an String
+	 * 
+	 * @param text
+	 *            text, which is in the Image
+	 * @return The generated Image
+	 */
+	public static WritableImage getImageOfString(String text) {
+		Label label = new Label(text);
+		label.setMinSize(125, 125);
+		label.setMaxSize(125, 125);
+		label.setPrefSize(125, 125);
+		label.setStyle("-fx-background-color: white; -fx-text-fill:black;");
+		label.setWrapText(true);
+		Scene scene = new Scene(new Group(label));
+		WritableImage img = new WritableImage(125, 125);
+		scene.snapshot(img);
+		return img;
+	}
+
+	public void createResizeListener(Scene scene) {
+		
+		height = scene.getHeight();
+		width = scene.getWidth();
+		resizeElements();
+		
+		scene.widthProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-				System.out.println("lol");
 				width = newSceneWidth.doubleValue();
 				resizeElements();
 			}
 		});
-		mScene.heightProperty().addListener(new ChangeListener<Number>() {
+		scene.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
 				height = newSceneHeight.doubleValue();
