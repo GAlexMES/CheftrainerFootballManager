@@ -1,9 +1,7 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.TimeoutException;
 
@@ -25,10 +23,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-import org.json.JSONObject;
-
 import de.szut.dqi12.cheftrainer.client.Controller;
-import de.szut.dqi12.cheftrainer.client.callables.UserAuthenticationACK;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
 import de.szut.dqi12.cheftrainer.client.listeners.EnterPressedListener;
@@ -36,14 +31,11 @@ import de.szut.dqi12.cheftrainer.client.servercommunication.ConnectionRefusedLis
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
-import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationMessage;
 
 /**
@@ -142,6 +134,7 @@ public class LoginController implements ControllerInterface {
 							"Something went wrong during your login",
 							"Please check your server details!",
 							AlertType.ERROR);
+					loginButton.setDisable(false);
 				}
 			} else {
 				String errorMessage = AlertUtils.WRONG_INPUTS;

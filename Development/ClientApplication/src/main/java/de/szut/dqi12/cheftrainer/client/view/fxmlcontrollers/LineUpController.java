@@ -5,12 +5,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -49,7 +56,12 @@ public class LineUpController implements ControllerInterface {
 	private FormationController fController;
 	private GridPane oldPane;
 
+	@FXML
+	private ChoiceBox formationBox;
+
 	private Manager tempSendingManager;
+	
+	private FormationFactory ff;
 
 	public static final String RESET_MANAGER = "Reset the managers.";
 
@@ -102,19 +114,39 @@ public class LineUpController implements ControllerInterface {
 		try {
 			Image image = new Image(getClass().getResourceAsStream("/images/football_field.png"));
 
-			BackgroundSize bs = new BackgroundSize(100, 0, true, false, true, false);
+			BackgroundSize bs = new BackgroundSize(100, 1000, true, true, false, true);
+			BackgroundImage bi = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, bs);
 
-			lineUpFrame.setBackground(new Background(new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, bs)));
+			lineUpFrame.setBackground(new Background(bi));
 
 			Session session = Controller.getInstance().getSession();
 			Community community = session.getCurrentCommunity();
 			int managerID = session.getCurrentManagerID();
 			Formation formation = community.getManager(managerID).getFormation();
-			changeFormation(formation);
+			initFormationChoiceBox();
+			formationBox.getSelectionModel().select(formation.getName());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
 
+	private void initFormationChoiceBox() {
+		ObservableList<Object> formationBoxOptions = FXCollections.observableArrayList();
+		ff = new FormationFactory();
+		List<Formation> formations = ff.getFormations();
+		formations.forEach(f -> formationBoxOptions.add(f.getName()));
+		formationBox.setItems(formationBoxOptions);
+		formationBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>(){
+			
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				String newFormation = (String) formationBox.getItems().get((int) newValue);
+				Formation f = ff.getFormation(newFormation);
+				changeFormation(f);
+				
+			}
+			
+		});
 	}
 
 	/**
@@ -137,14 +169,14 @@ public class LineUpController implements ControllerInterface {
 				lineUpFrame.getChildren().remove(oldPane);
 			}
 			lineUpFrame.add(newContentPane, 0, 0);
-			
+
 			i++;
-			
+
 			oldPane = newContentPane;
 
-//			if ( (i % 2) != 0 ) {
-//				changeFormation(formation);
-//			}
+			// if ( (i % 2) != 0 ) {
+			// changeFormation(formation);
+			// }
 			return true;
 
 		} catch (IOException e) {
@@ -165,7 +197,7 @@ public class LineUpController implements ControllerInterface {
 		Session s = Controller.getInstance().getSession();
 		int currentManagerID = s.getCurrentManagerID();
 		Manager manager = s.getCurrentCommunity().getManager(currentManagerID);
-		ArrayList<Player> guiLineUp = fController.getCurrentPlayers();
+		List<Player> guiLineUp = fController.getCurrentPlayers();
 		boolean formationChanged = guiLineUp.equals(manager.getLineUp(false));
 		if (!currentFormation.getName().equals(manager.getFormation().getName()) || !formationChanged) {
 			tempSendingManager = new Manager();
@@ -180,45 +212,6 @@ public class LineUpController implements ControllerInterface {
 		} else {
 			AlertUtils.createSimpleDialog("Nothing to save", "There are no changes!", "", AlertType.CONFIRMATION);
 		}
-	}
-
-	/**
-	 * Is called when the Button "change formation" is clicked. Opens a dialog
-	 * to choose a new Formation.
-	 */
-	@FXML
-	public void formationButtonClicked() {
-		GridPane dialog;
-		Stage dialogStage = new Stage();
-
-		dialog = new GridPane();
-		Label l;
-		int i = 0;
-		FormationFactory ff = new FormationFactory();
-		List<Formation> formations = ff.getFormations();
-		for (Formation formation : formations) {
-			l = new Label();
-			l.setGraphic(new ImageView(FormationController.getImageOfString(formation.getName())));
-			dialog.add(l, 0, i);
-			i++;
-			l.setOnMouseClicked(new EventHandler<Event>() {
-				@Override
-				public void handle(Event event) {
-					dialogStage.close();
-					// lineUpFrame.getChildren().clear();
-					changeFormation(formation);
-				}
-			});
-		}
-
-		dialogStage.setResizable(false);
-		dialogStage.setTitle("Formationen");
-		dialogStage.initModality(Modality.WINDOW_MODAL);
-		Scene scene = new Scene(dialog);
-
-		dialogStage.setScene(scene);
-		dialogStage.showAndWait();
-
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.beans.value.ChangeListener;
@@ -38,9 +39,10 @@ public class FormationController implements ImageUpdate {
 	@FXML
 	private GridPane formationFrame;
 
-	private ArrayList<Player> players;
-	private ArrayList<Player> currentPlayers;
-	private ArrayList<Player> notPlayingPlayers;
+	private List<Player> allPlayers;
+	private List<Player> currentPlayers;
+	private List<Player> notPlayingPlayers;
+	private List<Player> playingPlayers;
 
 	private Map<Integer, Image> imageUpdateStack;
 
@@ -48,12 +50,12 @@ public class FormationController implements ImageUpdate {
 
 	private double width = 0D;
 	private double height = 0D;
-	
+
 	public FormationController() {
-		players = new ArrayList<Player>();
+		allPlayers = new ArrayList<Player>();
 		imageUpdateStack = new HashMap<>();
 	}
-	
+
 	/**
 	 * Initialization of the graphical formation with the matching players.
 	 */
@@ -63,8 +65,9 @@ public class FormationController implements ImageUpdate {
 		notPlayingPlayers = new ArrayList<Player>();
 
 		currentPlayers = new ArrayList<Player>();
-		ArrayList<Player> playingPlayers = new ArrayList<Player>();
-		for (Player player : getAllPlayers()) {
+		playingPlayers = new ArrayList<Player>();
+		allPlayers = getAllPlayers();
+		for (Player player : allPlayers) {
 			if (player.isPlays()) {
 				playingPlayers.add(player);
 				currentPlayers.add(player);
@@ -74,17 +77,7 @@ public class FormationController implements ImageUpdate {
 			}
 		}
 		putImageToStack = true;
-		Image image;
-		for (Player player : getAllPlayers()) {
-			PlayerLabel l = new PlayerLabel();
-			l.setPlayer(player);
-			l.setPlayerId(player.getID());
-			l.setPosition(player.getPosition());
-			player.setLabel(l);
-			ImageController c = new ImageController(this);
-			image = c.getPicture(player);
-			player.getLabel().setImage(image);
-		}
+		allPlayers.forEach(p -> preparePlayerLabel(p));
 		putImageToStack = false;
 		checkForImageUpdate();
 
@@ -94,55 +87,57 @@ public class FormationController implements ImageUpdate {
 		}
 
 		ArrayList<Node> buffer = (ArrayList<Node>) copy.clone();
-		boolean found;
-		// Iteration durch alle Labels
-		int i = 0;
-		for (Node n : buffer) {
-			i ++;
-			int row;
-			int col;
-			try {
-				col = formationFrame.getColumnIndex(n);
-			} catch (Exception e) {
-				col = 0;
-			}
-			try {
-				row = formationFrame.getRowIndex(n);
-			} catch (NullPointerException e) {
-				row = 0;
-			}
-			String position = Position.getPositions().get(3 - row);
+		buffer.forEach(n -> findPlayerForGrid(n));
+	}
 
-			found = false;
-			for (Player p : playingPlayers) {
-				if (p.getPosition().equals(position)) {
-					formationFrame.add((Node) p.getLabel(), col, row);
-					formationFrame.getChildren().remove(n);
-					playingPlayers.remove(p);
-					found = true;
-					break;
+	private void findPlayerForGrid(Node n) {
+		int row;
+		int col;
+		try {
+			col = formationFrame.getColumnIndex(n);
+		} catch (Exception e) {
+			col = 0;
+		}
+		try {
+			row = formationFrame.getRowIndex(n);
+		} catch (NullPointerException e) {
+			row = 0;
+		}
+		String position = Position.getPositions().get(3 - row);
 
-				}
+		boolean found = false;
+
+		Player useablePlayer = findPlayerInList(playingPlayers, position);
+		if (useablePlayer == null) {
+			useablePlayer = findPlayerInList(notPlayingPlayers, position);
+			if (useablePlayer != null) {
+				useablePlayer.setPlays(true);
+				notPlayingPlayers.remove(useablePlayer);
+				currentPlayers.add(useablePlayer);
 			}
-			if (!found) {
-				for (Player pl : notPlayingPlayers) {
-					if (pl.getPosition().equals(position)) {
-						formationFrame.add((Node) pl.getLabel(), col, row);
-						formationFrame.getChildren().remove(n);
-						pl.setPlays(true);
-						notPlayingPlayers.remove(pl);
-						currentPlayers.add(pl);
-						found = true;
-						break;
-					}
-				}
-			}
+		} else {
+			playingPlayers.remove(useablePlayer);
+		}
+
+		if (useablePlayer != null) {
+			formationFrame.add((Node) useablePlayer.getLabel(), col, row);
+			formationFrame.getChildren().remove(n);
 		}
 	}
 
+	private Player findPlayerInList(List<Player> playerList, String position) {
+		Player retval = null;
+		for (Player p : playerList) {
+			if (p.getPosition().equals(position)) {
+				return p;
+			}
+		}
+		return retval;
+	}
+
 	/**
-	 * Ganerates an Image of different properties from an Player. The Image will
-	 * setted in the PlayerLabel of the Player.
+	 * Generates an Image of different properties from an Player. The Image will
+	 * set in the PlayerLabel of the Player.
 	 * 
 	 * @param player
 	 */
@@ -181,12 +176,23 @@ public class FormationController implements ImageUpdate {
 		return img;
 	}
 
+	private void preparePlayerLabel(Player player) {
+		PlayerLabel l = new PlayerLabel();
+		l.setPlayer(player);
+		l.setPlayerId(player.getID());
+		l.setPosition(player.getPosition());
+		player.setLabel(l);
+		ImageController c = new ImageController(this);
+		Image image = c.getPicture(player);
+		player.getLabel().setImage(image);
+	}
+
 	public void createResizeListener(Scene scene) {
-		
+
 		height = scene.getHeight();
 		width = scene.getWidth();
 		resizeElements();
-		
+
 		scene.widthProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
@@ -206,17 +212,16 @@ public class FormationController implements ImageUpdate {
 	private void resizeElements() {
 		double newSize;
 		if (height != 0D && width != 0D) {
-			if(height/7<width/7){
-				newSize = height/7;
+			if (height / 7 < width / 7) {
+				newSize = height / 7;
+			} else {
+				newSize = width / 7;
 			}
-			else{
-				newSize = width/7;
-			}
-			
+
 			for (Player p : currentPlayers) {
 				p.getLabel().setSize(newSize);
 			}
-			
+
 		}
 	}
 
@@ -224,7 +229,7 @@ public class FormationController implements ImageUpdate {
 	 * @return an Array of all Players of the current Manager, which are
 	 *         playing.
 	 */
-	public ArrayList<Player> getCurrentPlayers() {
+	public List<Player> getCurrentPlayers() {
 		currentPlayers = new ArrayList<Player>();
 		for (Node n : formationFrame.getChildren()) {
 			int id = ((PlayerLabel) n).getPlayerId();
@@ -247,27 +252,27 @@ public class FormationController implements ImageUpdate {
 	 * 
 	 * @return List of all Players
 	 */
-	public ArrayList<Player> getAllPlayers() {
-		players.clear();
+	public List<Player> getAllPlayers() {
+		allPlayers.clear();
 		Session session = Controller.getInstance().getSession();
 		Community currentCommunity = session.getCurrentCommunity();
 		int currentManagerID = session.getCurrentManagerID();
 		for (Player player : (ArrayList<Player>) currentCommunity.getManager(currentManagerID).getPlayers()) {
-			players.add(player);
+			allPlayers.add(player);
 		}
-		return players;
+		return allPlayers;
 	}
 
 	/**
 	 * @return An ArrayList of all Player of the current Manager, which are not
 	 *         playing.
 	 */
-	public ArrayList<Player> getNotPlayingPlayers() {
+	public List<Player> getNotPlayingPlayers() {
 		boolean found;
 		getCurrentPlayers();
 		getAllPlayers();
 		notPlayingPlayers = new ArrayList<Player>();
-		for (Player p : players) {
+		for (Player p : allPlayers) {
 			found = false;
 			for (Player pl : currentPlayers) {
 				if (pl == p) {

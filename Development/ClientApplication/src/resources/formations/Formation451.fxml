@@ -6,33 +6,50 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.PlayerLabel?>
 
-<GridPane fx:id="formationFrame" alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.FormationController">
-  <columnConstraints>
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-  </columnConstraints>
-  <rowConstraints>
-    <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-    <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-    <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-      <RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
-  </rowConstraints>
-   <children>
-      <PlayerLabel text="Keeper" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-      <PlayerLabel text="Verteitigung" GridPane.rowIndex="2" />
-      <PlayerLabel text="Verteidigung" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-      <PlayerLabel text="Verteidigung" GridPane.columnIndex="4" GridPane.rowIndex="2" />
-      <PlayerLabel text="Verteidigung" GridPane.columnIndex="6" GridPane.rowIndex="2" />
-      <PlayerLabel text="Mittelfeld" GridPane.rowIndex="1" />
-      <PlayerLabel text="Mittelfeld" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-      <PlayerLabel text="Mittelfeld" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-      <PlayerLabel text="Mittelfeld" GridPane.columnIndex="5" GridPane.rowIndex="1" />
-      <PlayerLabel text="Mittelfeld" GridPane.columnIndex="6" GridPane.rowIndex="1" />
-      <PlayerLabel text="Sturm" GridPane.columnIndex="3" />
-   </children>
+<GridPane fx:id="formationFrame" alignment="CENTER"
+	xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.FormationController">
+	<columnConstraints>
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+			prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+			prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+			prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+			prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+			prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+			prefWidth="100.0" />
+		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"
+			prefWidth="100.0" />
+	</columnConstraints>
+	<rowConstraints>
+		<RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+		<RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+		<RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+		<RowConstraints valignment="CENTER" vgrow="SOMETIMES" />
+	</rowConstraints>
+	<children>
+		<PlayerLabel text="Keeper" GridPane.columnIndex="3"
+			GridPane.rowIndex="3" />
+		<PlayerLabel text="Verteitigung" GridPane.rowIndex="2" />
+		<PlayerLabel text="Verteidigung" GridPane.columnIndex="2"
+			GridPane.rowIndex="2" />
+		<PlayerLabel text="Verteidigung" GridPane.columnIndex="4"
+			GridPane.rowIndex="2" />
+		<PlayerLabel text="Verteidigung" GridPane.columnIndex="6"
+			GridPane.rowIndex="2" />
+		<PlayerLabel text="Mittelfeld" GridPane.rowIndex="1" />
+		<PlayerLabel text="Mittelfeld" GridPane.columnIndex="1"
+			GridPane.rowIndex="1" />
+		<PlayerLabel text="Mittelfeld" GridPane.columnIndex="3"
+			GridPane.rowIndex="1" />
+		<PlayerLabel text="Mittelfeld" GridPane.columnIndex="5"
+			GridPane.rowIndex="1" />
+		<PlayerLabel text="Mittelfeld" GridPane.columnIndex="6"
+			GridPane.rowIndex="1" />
+		<PlayerLabel text="Sturm" GridPane.columnIndex="3" />
+	</children>
 </GridPane>
