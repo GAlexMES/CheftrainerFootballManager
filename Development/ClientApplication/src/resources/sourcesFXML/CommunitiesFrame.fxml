@@ -33,7 +33,7 @@
 		<AnchorPane GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
 			<ButtonBar>
 				<buttons>
-					<Button mnemonicParsing="false" onAction="#enterCommunity" prefHeight="25.0" text="Spielrunde beitreten" />
+					<Button mnemonicParsing="false" onAction="#enterCommunity" prefHeight="25.0" prefWidth="130.0" text="Spielrunde beitreten" />
 					<Button mnemonicParsing="false" onAction="#createCommunity" prefHeight="25.0" text="Spielrunde erstellen" />
 				</buttons>
 			</ButtonBar>

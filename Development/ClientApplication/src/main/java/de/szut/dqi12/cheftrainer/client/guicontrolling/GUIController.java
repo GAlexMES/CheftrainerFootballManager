@@ -3,7 +3,6 @@ package de.szut.dqi12.cheftrainer.client.guicontrolling;
 import java.io.IOException;
 import java.net.URL;
 
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LineUpController;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -26,6 +25,7 @@ public class GUIController {
 	private Stage currentDialogStage;
 	private ClassLoader classLoader;
 	private URL fxmlFile;
+	private ControllerInterface currentController;
 
 	/**
 	 * Constructor
@@ -103,7 +103,7 @@ public class GUIController {
 	 */
 	public void setContentFrameByPath(String path, boolean update) {
 		GridPane currentContentPane = null;
-		ControllerInterface controller = null;
+		currentController = null;
 		try {
 			currentContentLoader = new FXMLLoader();
 			fxmlFile = classLoader.getResource("sourcesFXML/" + path);
@@ -111,8 +111,10 @@ public class GUIController {
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 
 			try {
-				controller = ((ControllerInterface) currentContentLoader.getController());
-				controller.init();
+				currentController = ((ControllerInterface) currentContentLoader.getController());
+				double frameWidth = guiInitialator.getContentFrameWidth();
+				double frameHeight = guiInitialator.getRootlayout().getScene().getHeight();
+				currentController.init(frameWidth,frameHeight);
 			} catch (Exception e) {
 			}
 
@@ -130,8 +132,8 @@ public class GUIController {
 		} finally {
 			if (currentContentPane != null) {
 				Scene scene = currentContentPane.getScene();
-				if (scene != null && controller != null) {
-					controller.initializationFinihed(scene);
+				if (scene != null && currentController != null) {
+					currentController.initializationFinihed(scene);
 				}
 			}
 		}
@@ -160,6 +162,10 @@ public class GUIController {
 
 	public Stage getCurrentDialogStage() {
 		return this.currentDialogStage;
+	}
+	
+	public ControllerInterface getCurrentController(){
+		return currentController;
 	}
 
 	/**

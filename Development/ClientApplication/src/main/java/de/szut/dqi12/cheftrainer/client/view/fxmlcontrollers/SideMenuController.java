@@ -224,12 +224,15 @@ public class SideMenuController {
 		rLayout = guiInitilator.getRootlayout();
 		ObservableList<Node> buttonList = ((VBox) rLayout.lookup("#sideMenu"))
 				.getChildren();
+		
 		if (sideMenuFlag) {
 			collaps(buttonList);
 		} else {
 			expands(buttonList);
-
 		}
+		
+		double frameWidth =  GUIController.getInstance().getGUIInitialator().getContentFrameWidth();
+		GUIController.getInstance().getCurrentController().resize(frameWidth);
 	}
 
 	/**
@@ -286,13 +289,9 @@ public class SideMenuController {
 	}
 
 	public void updateWidthPercentage() {
-		double width = 0.0;
+		double width = getWidth();
 
-		if (sideMenuFlag) {
-			width = expandedWidth;
-		} else {
-			width = collapsedWidth;
-		}
+
 		rLayout.getColumnConstraints().get(0).setMinWidth(width);
 		rLayout.getColumnConstraints().get(1)
 				.setMaxWidth(rLayout.getWidth() - width);
@@ -324,6 +323,17 @@ public class SideMenuController {
 	// GETTER AND SETTER
 	public List<String> getSideMenuButtonTitles() {
 		return sideMenuButtonTitles;
+	}
+	
+	public double getWidth(){
+		double width;
+		if (sideMenuFlag) {
+			width = expandedWidth;
+		} else {
+			width = collapsedWidth;
+		}
+		
+		return width;
 	}
 
 }

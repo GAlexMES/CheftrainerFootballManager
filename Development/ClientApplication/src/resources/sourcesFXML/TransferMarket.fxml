@@ -34,7 +34,7 @@
 			<ButtonBar>
 				<buttons>
 					<Button mnemonicParsing="false" onAction="#showOffers" text="Angebote" />
-					<Button mnemonicParsing="false" onAction="#addPlayer" prefHeight="25.0" prefWidth="102.0" text="Spieler hinzufügen" />
+					<Button mnemonicParsing="false" onAction="#addPlayer" prefHeight="25.0" prefWidth="198.0" text="Spieler hinzufügen" />
 				</buttons>
 			</ButtonBar>
 		</AnchorPane>

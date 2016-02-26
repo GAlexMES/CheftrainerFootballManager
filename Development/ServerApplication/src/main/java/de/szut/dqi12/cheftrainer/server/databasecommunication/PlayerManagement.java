@@ -256,7 +256,7 @@ public class PlayerManagement extends SQLManagement {
 
 		for (Player p : manager.getPlayers()) {
 			int plays = p.isPlays() ? 1 : 0;
-			String updateQuery = "UPDATE Mannschaft " + "	SET Aufgestellt = " + plays + " WHERE Manager_ID = " + manager.getID() + " AND Spieler_ID = " + p.getID();
+			String updateQuery = "UPDATE Mannschaft " + "	SET Aufgestellt = " + plays + " WHERE Manager_ID = " + manager.getID() + " AND Spieler_ID = " + p.getSportalID();
 			sqlCon.sendQuery(updateQuery);
 		}
 

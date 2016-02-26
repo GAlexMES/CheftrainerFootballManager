@@ -289,7 +289,7 @@ public class LoginController implements ControllerInterface {
 	}
 
 	@Override
-	public void init() {
+	public void init(double width, double height) {
 		// NOT USED HERE
 	}
 
@@ -305,6 +305,12 @@ public class LoginController implements ControllerInterface {
 
 	@Override
 	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resize(double sizeDifferent) {
 		// TODO Auto-generated method stub
 		
 	}

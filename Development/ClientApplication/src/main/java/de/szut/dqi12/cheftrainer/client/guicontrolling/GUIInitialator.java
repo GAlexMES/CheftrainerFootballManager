@@ -172,6 +172,12 @@ public class GUIInitialator {
 			e.printStackTrace();
 		}
 	}
+	
+	public double getContentFrameWidth(){
+		double frameWidth = rLayout.getScene().getWidth();
+		double menuWidth = sideMenuController.getWidth();
+		return frameWidth-menuWidth;
+	}
 
 	// GETTER AND SETTER
 	public Stage getPrimaryStage() {

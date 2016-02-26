@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 
@@ -61,6 +62,7 @@ public class Controller {
 	 * @param evt
 	 */
 	public void resetApplication() {
+		UpdateUtils.reset();
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {

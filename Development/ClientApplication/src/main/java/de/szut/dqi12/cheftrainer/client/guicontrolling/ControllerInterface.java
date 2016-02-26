@@ -10,7 +10,7 @@ public interface ControllerInterface {
 	/**
 	 * Initialisation of graphical components
 	 */
-	public void init();
+	public void init(double width, double height);
 	/**
 	 * This method is called, when the enterbutton is pressed on the Component.
 	 * The main method of the component will call.
@@ -23,4 +23,6 @@ public interface ControllerInterface {
 	public void messageArrived(Boolean flag);
 	
 	public void initializationFinihed(Scene scene);
+	
+	public void resize(double sizeDifferent);
 }

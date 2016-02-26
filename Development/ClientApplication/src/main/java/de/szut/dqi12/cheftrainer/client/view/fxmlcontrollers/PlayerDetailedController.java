@@ -60,7 +60,7 @@ public class PlayerDetailedController implements ControllerInterface, ImageUpdat
 	}
 
 	@Override
-	public void init() {
+	public void init(double width, double height) {
 
 	}
 
@@ -82,6 +82,12 @@ public class PlayerDetailedController implements ControllerInterface, ImageUpdat
 
 	@Override
 	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resize(double sizeDifferent) {
 		// TODO Auto-generated method stub
 		
 	}

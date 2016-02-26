@@ -33,7 +33,7 @@ public class StatisticsController implements ControllerInterface {
 	 * gui-components
 	 */
 	@Override
-	public void init() {
+	public void init(double width, double height) {
 		FXMLLoader loader = new FXMLLoader();
 		ClassLoader classLoader = getClass().getClassLoader();
 		loader.setLocation(classLoader.getResource("sourcesFXML/BarChart.fxml"));
@@ -110,6 +110,12 @@ public class StatisticsController implements ControllerInterface {
 
 	@Override
 	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resize(double sizeDifferent) {
 		// TODO Auto-generated method stub
 		
 	}

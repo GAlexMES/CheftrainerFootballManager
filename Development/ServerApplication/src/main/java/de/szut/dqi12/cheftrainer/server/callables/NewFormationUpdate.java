@@ -40,7 +40,7 @@ public class NewFormationUpdate extends CallableAbstract {
 		if (checkedFormation) {
 			boolean noNewPlayers = noNewPlayers(dbPlayers, sendedManager.getPlayers());
 			if (noNewPlayers) {
-				boolean correctAlloocation = correctAllocation(sendedManager.getPlayers());
+				boolean correctAlloocation = correctAllocation(sendedManager.getLineUp(true));
 				if (correctAlloocation) {
 					DatabaseRequests.updateManager(sendedManager);
 					successful = true;
