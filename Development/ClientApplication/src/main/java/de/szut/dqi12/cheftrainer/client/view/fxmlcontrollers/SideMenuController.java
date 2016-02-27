@@ -224,14 +224,16 @@ public class SideMenuController {
 		rLayout = guiInitilator.getRootlayout();
 		ObservableList<Node> buttonList = ((VBox) rLayout.lookup("#sideMenu"))
 				.getChildren();
-		
+		double frameWidth = 0;
 		if (sideMenuFlag) {
 			collaps(buttonList);
+			frameWidth = 100;
 		} else {
 			expands(buttonList);
+			frameWidth=-100;
 		}
 		
-		double frameWidth =  GUIController.getInstance().getGUIInitialator().getContentFrameWidth();
+		//double frameWidth =  GUIController.getInstance().getGUIInitialator().getContentFrameWidth()-100;
 		GUIController.getInstance().getCurrentController().resize(frameWidth);
 	}
 

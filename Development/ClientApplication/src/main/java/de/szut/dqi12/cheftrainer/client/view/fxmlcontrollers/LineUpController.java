@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -81,6 +82,8 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 	private Image background;
 
 	private Stage changePlayerStage;
+	@FXML
+	private ButtonBar buttonBar;
 
 	public LineUpController() {
 		ControllerManager cm = ControllerManager.getInstance();
@@ -190,7 +193,7 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 		int listSize = retval.size();
 		for (int i = 0; listSize + i < size; i++) {
 			Player player = null;
-			for(Player p : notPlayingPlayers){
+			for (Player p : notPlayingPlayers) {
 				if (p.getPosition().equals(position) && retval.size() < size) {
 					retval.add(p);
 					player = p;
@@ -275,16 +278,16 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 	@Override
 	public void initializationFinihed(Scene scene) {
 		redrawFrame();
-		
+
 		scene.widthProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
-				double dif = oldSceneWidth.doubleValue() - newSceneWidth.doubleValue();
-				frameWidth = lineUpFrame.getWidth() + dif;
+				double dif = newSceneWidth.doubleValue() - oldSceneWidth.doubleValue();
+				frameWidth = frameWidth + dif;
 				redrawFrame();
 			}
 		});
-		
+
 		scene.heightProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
@@ -296,7 +299,9 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 
 	@Override
 	public void resize(double width) {
-		frameWidth = width;
+		frameWidth = frameWidth + width;
+		redrawFrame();
+		lineUpFrame.resize(frameHeight, frameWidth);
 		redrawFrame();
 	}
 
@@ -308,11 +313,12 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 
 	private void resizeElements() {
 		double newSize;
+		int factor = FormationFactory.mostPlayerOnPosition(currentFormation);
 		if (frameHeight != 0D && frameWidth != 0D) {
-			if (frameHeight / 7 < frameWidth / 7) {
+			if (frameHeight / 7 < frameWidth / factor) {
 				newSize = frameHeight / 7;
 			} else {
-				newSize = frameWidth / 7;
+				newSize = frameWidth / factor;
 			}
 			for (Player p : playingPlayers) {
 				p.getLabel().setSize(newSize);
@@ -335,8 +341,8 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 
 			for (int num = 0; num < pPlayers.size(); num++) {
 				Label l = pPlayers.get(num).getLabel();
-				double boxHeight = (formationBox.getHeight()==0.0)? 20.0:formationBox.getHeight();
-				
+				double boxHeight = (formationBox.getHeight() == 0.0) ? 20.0 : formationBox.getHeight();
+
 				double useableSpace = height - (2 * boxHeight);
 				double y = useableSpace - (labelHeight / 6) - ((i + 1) * labelHeight);
 				double x = ((num + 1) * width / (pPlayers.size() + 1)) - (l.getWidth() / 2);
@@ -351,9 +357,12 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 	}
 
 	private void resizeBackground(double width, double height) {
-		BackgroundSize bs = new BackgroundSize(width, height, false, false, false, false);
-		BackgroundImage bi = new BackgroundImage(background, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, bs);
-		lineUpFrame.setBackground(new Background(bi));
+		if (width > 0 && height > 0) {
+			BackgroundSize bs = new BackgroundSize(width, height, false, false, false, false);
+			BackgroundImage bi = new BackgroundImage(background, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, bs);
+			lineUpFrame.setBackground(new Background(bi));
+
+		}
 
 	}
 
