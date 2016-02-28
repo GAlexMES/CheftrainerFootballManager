@@ -32,8 +32,8 @@ import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewPlayerOnMarket
 
 public class AddPlayerToMarketController implements ImageUpdate {
 
-	public final String ADD_TO_MARKET = "add to market";
-	public final String REMOVE_FROM_MARKET = "remove from market";
+	public final String ADD_TO_MARKET = "hinzufügen";
+	public final String REMOVE_FROM_MARKET = "entfernen";
 
 	@FXML
 	TableView<MarketPlayer> playerTable;

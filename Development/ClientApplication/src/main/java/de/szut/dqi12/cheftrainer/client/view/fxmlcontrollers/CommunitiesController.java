@@ -68,7 +68,7 @@ public class CommunitiesController implements ControllerInterface{
 	@FXML
 	public void enterCommunity() {
 		try {
-			DialogUtils.showDialog("Enter Community!",
+			DialogUtils.showDialog("Spielrunde beitreten!",
 					"EnterCommunityDialog.fxml");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -82,7 +82,7 @@ public class CommunitiesController implements ControllerInterface{
 	@FXML
 	public void createCommunity() {
 		try {
-			DialogUtils.showDialog("Create Community!",
+			DialogUtils.showDialog("Spielrunde Erstellen!",
 					"CreateCommunityDialog.fxml");
 		} catch (Exception e) {
 			e.printStackTrace();

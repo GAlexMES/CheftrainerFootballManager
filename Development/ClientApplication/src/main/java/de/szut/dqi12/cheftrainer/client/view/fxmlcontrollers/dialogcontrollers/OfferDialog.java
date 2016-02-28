@@ -3,15 +3,18 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers;
 import java.util.List;
 
 
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
@@ -28,13 +31,13 @@ public class OfferDialog {
 		GridPane dialog = new GridPane();
 		Button but;
 		int index = 1;
-		dialog.add(new Label("player"), 0, 0);
-		dialog.add(new Label("price"), 1, 0);
-		dialog.add(new Label("action"), 2, 0);
+		dialog.add(new Label("Spieler"), 0, 0);
+		dialog.add(new Label("preis"), 1, 0);
+		dialog.add(new Label("Aktion"), 2, 0);
 		for (Transaction tr : transactions) {
 			tr.takeInformation(session);
 			if (tr.isOutgoing()) {
-				but = new Button("remove offer");
+				but = new Button("Gebot Ablehnen");
 				but.setOnAction(new EventHandler<ActionEvent>() {
 					@Override
 					public void handle(ActionEvent event) {
@@ -47,7 +50,7 @@ public class OfferDialog {
 					}
 				});
 			} else {
-				but = new Button("accept offer");
+				but = new Button("Gebot Annehmen");
 				but.setOnAction(new EventHandler<ActionEvent>() {
 
 					@Override
@@ -76,6 +79,8 @@ public class OfferDialog {
 		}
 
 		Stage dialogStage = new Stage();
+		Image icon = GUIController.getInstance().getGUIInitialator().getIcon();
+		dialogStage.getIcons().add(icon);
 		dialogStage.setResizable(false);
 		dialogStage.setTitle("offers");
 		dialogStage.initModality(Modality.WINDOW_MODAL);

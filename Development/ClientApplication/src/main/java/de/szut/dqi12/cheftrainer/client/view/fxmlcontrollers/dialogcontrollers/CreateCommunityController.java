@@ -60,7 +60,7 @@ public class CreateCommunityController {
 			passwordConfirmationField.setText("");
 			passwordField.setStyle("-fx-text-box-border: red;");
 			passwordConfirmationField.setStyle("-fx-text-box-border: red;");
-			errorList.add("Passwords are not the same");
+			errorList.add(AlertUtils.WRONG_PASSWORD);
 		}
 		
 		if (errorList.size() == 0) {
@@ -70,8 +70,8 @@ public class CreateCommunityController {
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			AlertUtils.createSimpleDialog("Creation failed",
-					"Something went wrong during the community creation!",
+			AlertUtils.createSimpleDialog(AlertUtils.ERROR,
+					AlertUtils.COMMUNITY_CREATION_ERROR,
 					errorMessage,
 					AlertType.ERROR);
 		}

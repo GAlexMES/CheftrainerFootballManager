@@ -38,9 +38,9 @@ public class PlayerDetailedController implements ControllerInterface, ImageUpdat
 		displayedPlayer = p;
 
 		playerNameText.setText("Name: " + p.getName());
-		playerBirthdayText.setText("Birth: " + p.getBirthdateString());
-		playerPointsText.setText("Points: " + p.getPoints());
-		playerWorthText.setText("Worth: " + p.getWorth() + "€");
+		playerBirthdayText.setText("Geburtstag: " + p.getBirthdateString());
+		playerPointsText.setText("Punkte: " + p.getPoints());
+		playerWorthText.setText("Wert: " + p.getWorth() + "€");
 
 		ImageController ic = new ImageController(this);
 		Image playerPic = ic.getPicture(p);

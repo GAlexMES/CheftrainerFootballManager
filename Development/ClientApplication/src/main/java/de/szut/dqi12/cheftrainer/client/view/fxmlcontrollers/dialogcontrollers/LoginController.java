@@ -121,7 +121,6 @@ public class LoginController implements ControllerInterface {
 	@FXML
 	public void login() {
 		if (!loginButton.isDisabled()){
-			System.out.println("button is not disabled");
 			TextField[] textFields = { loginField, passwordField, ipField,
 					portField };
 			List<String> errorList = DialogUtils.checkInputs(textFields);
@@ -130,9 +129,9 @@ public class LoginController implements ControllerInterface {
 				try {
 					doLogin();
 				} catch (IOException e) {
-					AlertUtils.createSimpleDialog("Login failed",
-							"Something went wrong during your login",
-							"Please check your server details!",
+					AlertUtils.createSimpleDialog(AlertUtils.ERROR,
+							AlertUtils.LOGIN_ERROR_DETAILS,
+							AlertUtils.CHECK_SERVER,
 							AlertType.ERROR);
 					loginButton.setDisable(false);
 				}
@@ -141,8 +140,8 @@ public class LoginController implements ControllerInterface {
 				for (String s : errorList) {
 					errorMessage += "\n " + s;
 				}
-				AlertUtils.createSimpleDialog("Login failed",
-						"Something went wrong during your login", errorMessage,
+				AlertUtils.createSimpleDialog(AlertUtils.ERROR,
+						AlertUtils.LOGIN_ERROR_DETAILS, errorMessage,
 						AlertType.ERROR);
 			}
 		}
@@ -232,7 +231,7 @@ public class LoginController implements ControllerInterface {
 
 			Stage dialogStage = new Stage();
 			dialogStage.setResizable(false);
-			dialogStage.setTitle("Registration Dialog");
+			dialogStage.setTitle(AlertUtils.REGISTRATION);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.initOwner(stage);
 			Scene scene = new Scene(page);
@@ -261,9 +260,9 @@ public class LoginController implements ControllerInterface {
 	public void showRegistrationDialog() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.initOwner(stage);
-		alert.setTitle("registration success");
-		alert.setHeaderText("Your registration was completed!");
-		alert.setContentText("We completed your registration. You can login now!");
+		alert.setTitle(AlertUtils.REGISTRATION);
+		alert.setHeaderText(AlertUtils.REGISTRATION_SUCCESS);
+		alert.setContentText(AlertUtils.REGISTRATION_SUCCESS_DETAILS);
 		alert.showAndWait();
 	}
 

@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.AddPlayerToMarketController;
@@ -58,9 +59,9 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	private boolean updateIsBlocked = false;
 
 	private ObservableList<MarketPlayer> tableObservable;
-	
+
 	private Stage addPlayerStage;
-	
+
 	/**
 	 * init() function, which comes from the {@link ControllerInterface}. It is
 	 * not used here.
@@ -69,10 +70,12 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	public void init(double width, double height) {
 	}
 
-	
 	/**
-	 * This functions loads the current {@link Market} from the {@link Session} and creates a {@link ObservableList} from it.
-	 * @return a new {@link ObservableList} with all {@link Player}s, which are on the current {@link Market}.
+	 * This functions loads the current {@link Market} from the {@link Session}
+	 * and creates a {@link ObservableList} from it.
+	 * 
+	 * @return a new {@link ObservableList} with all {@link Player}s, which are
+	 *         on the current {@link Market}.
 	 */
 	private ObservableList<MarketPlayer> getObservable() {
 		tableObservable = FXCollections.observableArrayList();
@@ -83,8 +86,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 		}
 		return tableObservable;
 	}
-	
-	
+
 	/**
 	 * This function is the initialize function of FXML. It is called from FXML,
 	 * when this view should be displayed. This function fetches the players,
@@ -161,6 +163,8 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("sourcesFXML/PlayerDetailedFrame.fxml"));
 			GridPane root = (GridPane) fxmlLoader.load();
 			Stage stage = new Stage();
+			Image icon = GUIController.getInstance().getGUIInitialator().getIcon();
+			stage.getIcons().add(icon);
 			stage.setTitle(selectedMarketPlayer.getPlayer().getName());
 			stage.setScene(new Scene(root));
 			PlayerDetailedController pdc = fxmlLoader.getController();
@@ -186,26 +190,29 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("dialogFXML/AddPlayerToTransfermarket.fxml"));
 			GridPane root = (GridPane) fxmlLoader.load();
-			AddPlayerToMarketController aptmc = ((AddPlayerToMarketController)fxmlLoader.getController());
+			AddPlayerToMarketController aptmc = ((AddPlayerToMarketController) fxmlLoader.getController());
 			aptmc.setTmc(this);
 			addPlayerStage = new Stage();
-			addPlayerStage.setTitle("Your Players");
+			Image icon = GUIController.getInstance().getGUIInitialator().getIcon();
+			addPlayerStage.getIcons().add(icon);
+			addPlayerStage.setTitle("Deine Spieler");
 			addPlayerStage.setScene(new Scene(root));
 			addPlayerStage.setResizable(true);
+			addPlayerStage.setHeight(300);
+			addPlayerStage.setWidth(450);
 			addPlayerStage.show();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
-	public void addPlayerToTable(MarketPlayer mp){
+
+	public void addPlayerToTable(MarketPlayer mp) {
 		tableObservable.add(mp);
 	}
-	
-	public void removePlayerFromTable(MarketPlayer mp){
+
+	public void removePlayerFromTable(MarketPlayer mp) {
 		tableObservable.remove(mp);
 	}
-	
 
 	/**
 	 * Is called when the Button "show offers" is called. Opens a dialog which
@@ -232,20 +239,18 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 	@Override
 	public void messageArrived(Boolean flag) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	public void initializationFinihed(Scene scene) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 
 	@Override
 	public void resize(double sizeDifferent) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

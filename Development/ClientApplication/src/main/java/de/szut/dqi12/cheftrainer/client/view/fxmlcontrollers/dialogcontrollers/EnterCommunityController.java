@@ -52,7 +52,7 @@ public class EnterCommunityController {
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			AlertUtils.createSimpleDialog("Erstellung fehlgeschlagen", "Etwas hat nicht funktioniert. Versuchen sie es erneut.", errorMessage, AlertType.ERROR);
+			AlertUtils.createSimpleDialog(AlertUtils.ERROR, AlertUtils.COMMUNITY_ENTRY_ERROR, errorMessage, AlertType.ERROR);
 		}
 	}
 

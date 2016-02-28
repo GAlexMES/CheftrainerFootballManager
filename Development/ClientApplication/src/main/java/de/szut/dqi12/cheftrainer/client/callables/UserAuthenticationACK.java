@@ -55,16 +55,19 @@ public class UserAuthenticationACK extends CallableAbstract {
 			guiController.showMainApplication();
 			UpdateUtils.getCommunityUpdate();
 		} else if (!uaaMessage.existsUser()) {
-			AlertUtils.createSimpleDialog("Login failed",
-					"Ther occured a problem during your login.",
-					AlertUtils.LOGIN_WRONG_USER, AlertType.ERROR);
+			createLoginFailedDialog();
+			
 		} else if (!uaaMessage.isPasswordCorrect()) {
-			AlertUtils.createSimpleDialog("Login failed",
-					"Ther occured a problem during your login.",
-					AlertUtils.LOGIN_WRONG_PASSWORD, AlertType.ERROR);
+			createLoginFailedDialog();
 		}
 		
 		ControllerManager.getInstance().onAction(LoginController.ON_ACTION_KEY);
+	}
+	
+	private void createLoginFailedDialog(){
+		AlertUtils.createSimpleDialog(AlertUtils.LOGIN_ERROR,
+				AlertUtils.LOGIN_ERROR_DETAILS,
+				AlertUtils.LOGIN_WRONG_USER, AlertType.ERROR);
 	}
 
 	/**
@@ -86,17 +89,17 @@ public class UserAuthenticationACK extends CallableAbstract {
 		else {
 			String errorMessage = "";
 			if (uaaMessage.existsUser()&& uaaMessage.existsEMail()) {
-				errorMessage = "Your E-Mail Adress and your user name are already in use.";
+				errorMessage = AlertUtils.USER_CREATION_EMAIL_USERNAME;
 			} else if (uaaMessage.existsUser()
 					&& !uaaMessage.existsEMail()) {
-				errorMessage = "Your user name is already in use. Please chose a other one.";
+				errorMessage = AlertUtils.USER_CREATION_USERNAME;
 			} else if (!uaaMessage.existsUser()&& uaaMessage.existsEMail()) {
-				errorMessage = "Your E-Mail is already in use. Do you already have an account?";
+				errorMessage = AlertUtils.USER_CREATION_EMAIL;
 			} else {
-				errorMessage = "A unknown error occured";
+				errorMessage = AlertUtils.UNKNOWN_ERROR;
 			}
-			AlertUtils.createSimpleDialog("Registration error",
-					"Something went wrong during your registration",
+			AlertUtils.createSimpleDialog(AlertUtils.ERROR,
+					AlertUtils.USER_REGISTRATION_ERROR,
 					errorMessage, AlertType.ERROR);
 		}
 		ControllerManager.getInstance().onAction(RegistrationController.ON_ACTION_KEY);

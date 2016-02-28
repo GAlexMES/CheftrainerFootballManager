@@ -145,7 +145,7 @@ public class RegistrationController implements ControllerInterface {
 				Thread.sleep(800);
 				sendRegistrationMessage();
 			} catch (IOException e1) {
-				AlertUtils.createSimpleDialog("Registration failed", "Something went wrong during your registration", "Please check your server details!", AlertType.ERROR);
+				AlertUtils.createSimpleDialog(AlertUtils.ERROR, AlertUtils.USER_REGISTRATION_ERROR, AlertUtils.CHECK_SERVER, AlertType.ERROR);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -154,7 +154,7 @@ public class RegistrationController implements ControllerInterface {
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			AlertUtils.createSimpleDialog("Registration failed", "Something went wrong during your registration", errorMessage, AlertType.ERROR);
+			AlertUtils.createSimpleDialog(AlertUtils.ERROR, AlertUtils.USER_REGISTRATION_ERROR, errorMessage, AlertType.ERROR);
 		}
 	}
 
@@ -174,7 +174,7 @@ public class RegistrationController implements ControllerInterface {
 			passwordConfirmationField.setText("");
 			passwordField.setStyle("-fx-text-box-border: red;");
 			passwordConfirmationField.setStyle("-fx-text-box-border: red;");
-			retval.add("Passwords are not the same");
+			retval.add(AlertUtils.WRONG_PASSWORD);
 		}
 		return retval;
 	}

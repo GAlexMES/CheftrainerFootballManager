@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -47,6 +48,8 @@ public class DialogUtils {
 		try {
 			dialog = (AnchorPane) dialogLoader.load();
 			Stage dialogStage = new Stage();
+			Image icon = GUIController.getInstance().getGUIInitialator().getIcon();
+			dialogStage.getIcons().add(icon);
 			dialogStage.setResizable(false);
 			dialogStage.setTitle(dialogTitle);
 			dialogStage.initModality(Modality.WINDOW_MODAL);

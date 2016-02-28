@@ -27,6 +27,8 @@ import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.AddPlayerToMarketController;
@@ -224,6 +226,8 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 			cfc.setLUP(this);
 			cfc.setSelectedPlayer(player, notPlayingPlayers);
 			changePlayerStage = new Stage();
+			Image icon = GUIController.getInstance().getGUIInitialator().getIcon();
+			changePlayerStage.getIcons().add(icon);
 			changePlayerStage.setTitle("Deine Spieler");
 			changePlayerStage.setScene(new Scene(root));
 			changePlayerStage.setWidth(300);
