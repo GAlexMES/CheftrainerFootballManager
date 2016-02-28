@@ -18,14 +18,15 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.listeners.EnterPressedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ConnectionRefusedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
@@ -230,6 +231,8 @@ public class LoginController implements ControllerInterface {
 			AnchorPane page = (AnchorPane) loader.load();
 
 			Stage dialogStage = new Stage();
+			Image icon = GUIController.getInstance().getGUIInitialator().getIcon();
+			dialogStage.getIcons().add(icon);
 			dialogStage.setResizable(false);
 			dialogStage.setTitle(AlertUtils.REGISTRATION);
 			dialogStage.initModality(Modality.WINDOW_MODAL);

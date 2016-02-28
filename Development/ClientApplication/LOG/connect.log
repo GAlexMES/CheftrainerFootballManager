@@ -2417,3 +2417,16 @@
 2016-02-28 23:26:11 INFO  MessageController:209 - The handshake was completed!
 2016-02-28 23:26:12 INFO  MessageController:147 - Server: A new message with the following ID arrived: UserAuthenticationACK
 2016-02-28 23:26:12 INFO  MessageController:147 - Server: A new message with the following ID arrived: UserCommunityList
+2016-02-28 23:32:23 INFO  MessageController:147 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-02-28 23:32:23 INFO  MessageController:147 - Server: A new message with the following ID arrived: HandshakeAck
+2016-02-28 23:32:23 INFO  MessageController:209 - The handshake was completed!
+2016-02-28 23:32:23 INFO  MessageController:147 - Server: A new message with the following ID arrived: UserAuthenticationACK
+2016-02-28 23:32:23 INFO  MessageController:147 - Server: A new message with the following ID arrived: UserCommunityList
+2016-02-28 23:32:36 INFO  MessageController:147 - Server: A new message with the following ID arrived: SaveFormationAck
+2016-02-28 23:35:11 INFO  MessageController:147 - Server: A new message with the following ID arrived: RSAPublicKey
+2016-02-28 23:35:12 INFO  MessageController:147 - Server: A new message with the following ID arrived: HandshakeAck
+2016-02-28 23:35:12 INFO  MessageController:209 - The handshake was completed!
+2016-02-28 23:35:12 INFO  MessageController:147 - Server: A new message with the following ID arrived: UserAuthenticationACK
+2016-02-28 23:35:12 INFO  MessageController:147 - Server: A new message with the following ID arrived: UserCommunityList
+2016-02-28 23:35:17 INFO  MessageController:147 - Server: A new message with the following ID arrived: CommunityAuthenticationAck
+2016-02-28 23:35:24 INFO  MessageController:147 - Server: A new message with the following ID arrived: SaveFormationAck

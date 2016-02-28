@@ -5,11 +5,14 @@ import java.io.StringWriter;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.stage.Stage;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 
 /**
  * This class provides constants for Alerts and a few method to simply create Alerts.
@@ -72,11 +75,13 @@ public static final String WRONG_INPUTS = "Bitte überprüfe die folgenden Einga
 	 */
 	public static void createSimpleDialog(String title, String header, String content, AlertType type) {
 		Platform.runLater(new Runnable() {
-
 			@Override
 			public void run() {
 				Alert alert = showAlert(title, header,
 						content, type);
+				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+				Image icon = GUIController.getInstance().getGUIInitialator().getIcon();
+				stage.getIcons().add(icon);
 				alert.showAndWait();
 			}
 		});
