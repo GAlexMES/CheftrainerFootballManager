@@ -32,6 +32,7 @@ public class UserManagement {
 	 * This method registers a new user to the database. But only if the username and the eMail doens't exist in the database.
 	 * @param newUser a User object of the new user
 	 * @return a HashMap with registry information.
+	 * @see /F0011/
 	 */
 
 	public HashMap<String, Boolean> register(User newUser) {
@@ -74,6 +75,7 @@ public class UserManagement {
 	/**
 	 * This method adds a new user to the database.
 	 * @param newUser
+	 * @see /F0011/
 	 */
 	private void addNewUserToDatabase(User newUser) {
 		String values = newUser.getAllForSQL();
@@ -86,6 +88,7 @@ public class UserManagement {
 	 * This method is called to log a user in. It compares the user name and the password.
 	 * @param user a User Object for the user, who wants to login
 	 * @return a HashMap with information about the existence of the username and the correct password.
+	 * @see /F0020/
 	 */
 	public HashMap<String, Boolean> login(User user) {
 		HashMap<String,Boolean> retval = new HashMap<String,Boolean>();

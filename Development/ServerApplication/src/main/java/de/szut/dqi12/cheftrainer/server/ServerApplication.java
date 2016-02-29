@@ -3,7 +3,7 @@ package de.szut.dqi12.cheftrainer.server;
 import org.apache.log4j.Logger;
 
 /**
- * Hello world!
+ * Main class of the Server Application.
  *
  */
 public class ServerApplication {
@@ -13,7 +13,7 @@ public class ServerApplication {
 	private final static Logger LOGGER = Logger.getLogger(ServerApplication.class);
 
 	/**
-	 * Main function of the application. Initialzies a few things.
+	 * Main function of the application. Initializes a few things.
 	 */
 	public static void main(String[] args) {
 		LOGGER.info("Server will start now!");

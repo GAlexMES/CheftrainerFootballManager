@@ -21,6 +21,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticatio
  * from the server to the client after a login or a registration.
  * 
  * @author Alexander Brennecke
+ * @see /F0011/ and /F0020/
  */
 public class UserAuthenticationACK extends CallableAbstract {
 

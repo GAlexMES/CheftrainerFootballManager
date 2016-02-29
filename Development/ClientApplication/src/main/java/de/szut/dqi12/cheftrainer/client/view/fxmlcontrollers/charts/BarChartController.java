@@ -28,6 +28,7 @@ public class BarChartController {
 		return chart;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void init() {
 
 		chart = (BarChart) barChart.getChildren().get(0);

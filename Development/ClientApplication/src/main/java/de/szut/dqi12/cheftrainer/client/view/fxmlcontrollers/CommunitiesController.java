@@ -8,6 +8,7 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 
@@ -15,7 +16,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
  * This is the controller for the CommunitiesFrame.
  * 
  * @author Robin Bley, Alexander Brennecke
- *
+ *	@see /F0060/
  */
 public class CommunitiesController implements ControllerInterface{
 
@@ -55,6 +56,11 @@ public class CommunitiesController implements ControllerInterface{
                 (observable, oldValue, newValue) -> communityPressed(newValue));
 	}
 	
+	/**
+	 * Is called, when the user click on an table entry. The selected {@link Community} will be set in the {@link Session}.
+	 * @param manager the pressed {@link Manager} in the table.
+	 * @see /F0061/
+	 */
 	private void communityPressed(Manager manager) {
 		Session session = Controller.getInstance().getSession();
 		session.setCurrentManager(manager);
@@ -64,6 +70,7 @@ public class CommunitiesController implements ControllerInterface{
 	/**
 	 * Is called, when the enter community button was pressed. It shows a the
 	 * EnterCommunityDialog.fxml
+	 * @see /F0040/
 	 */
 	@FXML
 	public void enterCommunity() {
@@ -78,6 +85,7 @@ public class CommunitiesController implements ControllerInterface{
 	/**
 	 * Is called, when the enter community button was pressed. It shows a the
 	 * CreateCommunityDialog.fxml
+	 * @see /F0012/
 	 */
 	@FXML
 	public void createCommunity() {

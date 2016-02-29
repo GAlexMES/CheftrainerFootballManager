@@ -11,6 +11,12 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.SaveOfferAckMessage;
 
+/**
+ * This class is used, when a {@link SaveOfferAckMessage} was send by the server.
+ * @author Alexander Brennecke
+ *
+ *@see /F0200/
+ */
 public class SaveOfferAck extends CallableAbstract {
 
 	@Override

@@ -24,6 +24,7 @@ public class LineChartController<Y, X> {
 	private ObservableList<XYChart.Series<String, Integer>> data;
 	private LineChart<String, Integer> chart;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void init() {
 
 		data = FXCollections.observableArrayList();
@@ -59,6 +60,7 @@ public class LineChartController<Y, X> {
 	 * Generates an graph and adds him to the global data.
 	 * @param data data of the graph.
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addSeries(HashMap<String, Integer> data) {
 		Series<String, Integer> series = new Series<String, Integer>();
 		for (String key : data.keySet()) {
@@ -76,6 +78,7 @@ public class LineChartController<Y, X> {
 	 * @param yValue value for y-axis
 	 * @param series Position of Series in ArrayList
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void addValue(String xValue, int yValue, int series) {
 
 		try {

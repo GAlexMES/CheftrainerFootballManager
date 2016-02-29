@@ -4,7 +4,7 @@
 
 	<groupId>de.szut.dqi12.cheftrainer</groupId>
 	<artifactId>CheftrainerFootballManager</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<name>CheftrainerFootballManager</name>
 	<url>https://github.com/GAlexMES/CheftrainerFootballManager</url>
@@ -27,7 +27,7 @@
 			<dependency>
 				<groupId>de.szut.dqi12.cheftrainer</groupId>
 				<artifactId>ConnectorLib</artifactId>
-				<version>0.0.9</version>
+				<version>1.0.0</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>

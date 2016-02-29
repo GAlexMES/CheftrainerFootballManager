@@ -8,9 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import org.json.JSONObject;
 import org.junit.AfterClass;
@@ -21,8 +19,6 @@ import org.mockito.Mockito;
 
 import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
@@ -34,7 +30,6 @@ import de.szut.dqi12.cheftrainer.server.callables.CommunityAuthentication;
 import de.szut.dqi12.cheftrainer.server.callables.UserAuthentication;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
-import de.szut.dqi12.cheftrainer.server.databasecommunication.PlayerManagement;
 import de.szut.dqi12.cheftrainer.server.test.utils.TestUtils;
 
 /**

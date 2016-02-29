@@ -28,7 +28,6 @@ import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
-import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.ChangeFormationController;
@@ -46,27 +45,23 @@ import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewFormationMessa
 /**
  * This is the controller for the gui-module LineUp
  * 
- * @author Robin
- *
+ * @author Robin and Alexander Brennecke
+ * @see /F0100/
  */
 public class LineUpController implements ControllerInterface, ImageUpdate {
 	@FXML
 	private GridPane lineUpFrame;
 
 	private Formation currentFormation;
-	// private FormationController fController;
-	// private GridPane oldPane;
 
 	@FXML
-	private ChoiceBox formationBox;
+	private ChoiceBox<Object> formationBox;
 
 	private Manager tempSendingManager;
 
 	private FormationFactory ff;
 
 	public static final String RESET_MANAGER = "Reset the managers.";
-
-	private int i = 0;
 
 	private double frameWidth = 0D;
 	private double frameHeight = 0D;
@@ -146,6 +141,7 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 	 * @param formation
 	 *            the new Formation
 	 * @return success or not
+	 * @see /F0140/
 	 */
 	public boolean changeFormation(Formation formation) {
 		Manager manager = Controller.getInstance().getSession().getCurrentManager();
@@ -217,6 +213,11 @@ public class LineUpController implements ControllerInterface, ImageUpdate {
 		l.setOnMouseClicked(e -> openChangeDialog(player));
 	}
 
+	/**
+	 * This function opens an dialog, where all {@link Player}s are displayed, who play on the same {@link Position} than the given {@link Player}
+	 * @param player the selected {@link Player}
+	 * @see /F0120/
+	 */
 	private void openChangeDialog(Player player) {
 		try {
 			FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("dialogFXML/ChangePlayerTable.fxml"));

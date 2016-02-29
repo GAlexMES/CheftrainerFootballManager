@@ -1,11 +1,6 @@
 package de.szut.dqi12.cheftrainer.client.callables;
 
-import java.util.ArrayList;
 import java.util.List;
-
-
-
-
 
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -89,31 +84,7 @@ public class UserCommunityList extends CallableAbstract {
 	 *            above.
 	 */
 	private void newList(UserCommunityListMessage uclMessage) {
-		String userName = mesController.getSession().getUser().getUserName();
 		List<Community> communities = uclMessage.getCommunityList();
 		Controller.getInstance().getSession().addCommunities(communities);
-	}
-
-	/**
-	 * This method creates a List>Community< out of a JSON Array. The JSON Array
-	 * should have all required data to create a community object with it.
-	 * 
-	 * @param communityList
-	 *            a JSONArray with communities inside it.
-	 * @param userName
-	 *            the UserName of the registered user.
-	 * @return a List with all Communities, that could be created with the
-	 *         information in the JSONArray.
-	 */
-	private List<Community> jsonArrayToCommnityList(JSONArray communityList, String userName) {
-		new ArrayList<>();
-		List<Community> retval = new ArrayList<>();
-		for (int i = 0; i < communityList.length(); i++) {
-			JSONObject communityJSON = new JSONObject(communityList.get(i).toString());
-			Community com = new Community(communityJSON);
-			com.findeUsersManager(userName);
-			retval.add(com);
-		}
-		return retval;
 	}
 }

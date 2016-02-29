@@ -252,6 +252,7 @@ public class CommunityManagement {
 	 * @param adminID
 	 *            the user ID of the user, that creates the community.
 	 * @return true = community was created.
+	 * @see /F0012/
 	 */
 	public boolean createNewCommunity(String name, String password, int adminID) {
 		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name + "'";
@@ -272,6 +273,7 @@ public class CommunityManagement {
 	 * @param adminID
 	 *            the user ID of the user, that creates the community.
 	 * @return true = {@link Community} was created.
+	 * @see /F0012/
 	 */
 	private boolean createCommunity(String name, String password, int adminID) {
 		String sqlQuery = "INSERT INTO Spielrunde (Name, Administrator_ID, Passwort) VALUES ( '" + name + "', '" + adminID + "', '" + password + "')";
@@ -290,6 +292,7 @@ public class CommunityManagement {
 	 *            the user ID of the user, that wants to join the community.
 	 * @return a HashMap with booleans, that describes, if the entering was
 	 *         successful.
+	 * @see /F0012/ and /F0040/
 	 */
 	public CommunityAutenticationAckMessage enterCommunity(String communityName, String communityPassword, int userID) {
 		CommunityAutenticationAckMessage caaMessage = new CommunityAutenticationAckMessage();
@@ -331,6 +334,7 @@ public class CommunityManagement {
 	 * @param userID
 	 *            the ID of the user, that wants to join the community.
 	 * @return true = manager was created successful.
+	 * @see /F0040/
 	 */
 	public boolean createNewManager(String communityName, int userID) {
 		try {
@@ -500,6 +504,7 @@ public class CommunityManagement {
 	 * @param place
 	 *            the new place of the manager
 	 * @throws SQLException
+	 * @see /L0040/
 	 */
 	private void updateManagerPlace(Integer managerID, int place) throws SQLException {
 		String sqlQuery = "UPDATE Manager Set Platz = ? where ID = ?";

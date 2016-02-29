@@ -11,6 +11,12 @@ import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.SaveFormationAckMessage;
 
+/**
+ * This class is used, when an SaveFormationAckMessage was send by the server.
+ * @author Alexander Brennecke
+ *
+ *	@see /F0140/
+ */
 public class SaveFormationAck extends CallableAbstract {
 
 	@Override

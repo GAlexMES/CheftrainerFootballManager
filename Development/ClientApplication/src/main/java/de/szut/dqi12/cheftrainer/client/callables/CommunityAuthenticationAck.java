@@ -14,7 +14,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAutentic
 /**
  * This class is called when a message with the id "CommunityAuthentificationAck" arrived.
  * @author Alexander Brennecke
- *
+ * @see /F0012/ and /F0040/
  */
 public class CommunityAuthenticationAck extends CallableAbstract {
 
