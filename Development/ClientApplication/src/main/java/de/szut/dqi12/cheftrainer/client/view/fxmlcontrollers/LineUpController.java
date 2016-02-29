@@ -31,7 +31,6 @@ import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIInitialator;
 import de.szut.dqi12.cheftrainer.client.images.ImageController;
 import de.szut.dqi12.cheftrainer.client.images.ImageUpdate;
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.AddPlayerToMarketController;
 import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.ChangeFormationController;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;

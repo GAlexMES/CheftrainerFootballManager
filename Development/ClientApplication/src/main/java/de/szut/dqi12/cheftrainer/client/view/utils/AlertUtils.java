@@ -59,8 +59,18 @@ public static final String WRONG_INPUTS = "Bitte überprüfe die folgenden Einga
 	public static final String COMMUNITY_ENTRY_ERROR = "Etwas hat nicht funktioniert. Versuchen sie es erneut.";
 	public static final String COMMUNITY_CREATION_ERROR ="Bei der Erstellung der Spielrunde hat etwas nicht funktioniert. Bitte versuche es erneut.";
 	
+	public static final String OFFER_ERROR = "Bei der Erstellung des Angebotes ist etwas schief gelaufen. Versuchen sie es erneut.";
+	public static final String OFFER_ERROR_TO_LESS ="Der Gebotene Preis muss mindestens so hoch sein, wie der Marktwert des Spielers.";
+	public static final String OFFER_ERROR_UNKNOWN ="Aus unbekannten Gründen konnte das Gebot nicht gespeichert werden. Versuchen sie es erneut.";
+	public static final String OFFER_SUCCESS ="Das Gebot wurde erfolgreich gespeichert.";
+	
+	public static final String NO_OFFERS_ERROR = "Du hast keine Gebote zum annehmen oder ablehnen.";	
+	public static final String NO_OFFERS_ERROR_DETAILS = "Du musst erst auf einen Spieler bieten um diesen Dialog zu sehene.";	
+	
 	public static final String UNKNOWN_ERROR = "Es ist ein Problem aufgetreten. Versuche es erneut.";
+	
 	public static final String ERROR = "Fehler!";
+	public static final String SUCCESS = "Erfolgreich!";
 	
 	/**
 	 * Shows a error alert with the given parameters. Can also be called from a

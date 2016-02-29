@@ -2,11 +2,10 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers;
 
 import java.util.List;
 
-
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -15,6 +14,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
+import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
@@ -28,12 +28,27 @@ public class OfferDialog {
 		Session session = Controller.getInstance().getSession();
 		Community con = session.getCurrentCommunity();
 		List<Transaction> transactions = con.getMarket().getTransactions();
+		if(transactions.size()==0){
+			showWarning();
+		}
+		else{
+			showDialog(transactions,session);
+		}
+
+	}
+
+	private void showWarning(){
+		AlertUtils.createSimpleDialog(AlertUtils.ERROR, AlertUtils.NO_OFFERS_ERROR, AlertUtils.NO_OFFERS_ERROR_DETAILS, AlertType.INFORMATION);
+	}
+	
+	private void showDialog(List<Transaction> transactions, Session session){
 		GridPane dialog = new GridPane();
 		Button but;
 		int index = 1;
 		dialog.add(new Label("Spieler"), 0, 0);
-		dialog.add(new Label("preis"), 1, 0);
+		dialog.add(new Label("Preis"), 1, 0);
 		dialog.add(new Label("Aktion"), 2, 0);
+		
 		for (Transaction tr : transactions) {
 			tr.takeInformation(session);
 			if (tr.isOutgoing()) {
@@ -60,18 +75,6 @@ public class OfferDialog {
 					}
 				});
 			}
-			// TODO: gebot ablehnen k?nnen
-			// else if(tr.isOutgoing()) {
-			// but = new Button("denie offer");
-			// but.setOnAction(new EventHandler<ActionEvent>() {
-			//
-			// @Override
-			// public void handle(ActionEvent event) {
-			//
-			// //sendAnswerOffer(tr, true, true);
-			// }
-			// });
-			// }
 			dialog.add(new Label(tr.getPlayer().getName()), 0, index);
 			dialog.add(new Label(String.valueOf(tr.getOfferedPrice())), 1, index);
 			dialog.add(but, 2, index);

@@ -12,6 +12,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewOfferMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewPlayerOnMarketMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.SaveOfferAckMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.TransactionMessage;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
@@ -55,7 +56,9 @@ public class TransferMarketUpdate extends CallableAbstract {
 	private void newOffer(JSONObject messageContent) {
 		NewOfferMessage noMessage = new NewOfferMessage(messageContent);
 		Transaction transaction = noMessage.getTransaction();
-		DatabaseRequests.addTransaction(transaction);
+		boolean successful = DatabaseRequests.addTransaction(transaction);
+		SaveOfferAckMessage soam = new SaveOfferAckMessage(successful);
+		mesController.sendMessage(soam);
 	}
 
 	/**

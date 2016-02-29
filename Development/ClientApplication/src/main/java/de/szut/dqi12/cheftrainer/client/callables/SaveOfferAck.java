@@ -5,29 +5,29 @@ import javafx.scene.control.Alert.AlertType;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
-import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.LineUpController;
+import de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.PlayerDetailedController;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
-import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.SaveFormationAckMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.SaveOfferAckMessage;
 
-public class SaveFormationAck extends CallableAbstract {
+public class SaveOfferAck extends CallableAbstract {
 
 	@Override
 	public void messageArrived(Message message) {
 		JSONObject saveFormationAck = new JSONObject(message.getMessageContent());
-		SaveFormationAckMessage sfaMessage = new SaveFormationAckMessage(saveFormationAck);
+		SaveOfferAckMessage sfaMessage = new SaveOfferAckMessage(saveFormationAck);
 		if(!sfaMessage.isSuccessful()){
-			AlertUtils.createSimpleDialog("Saved failed",
-					"Ther occured a problem!.",
-					AlertUtils.FORMATION_NOT_SAVED, AlertType.ERROR);
+			AlertUtils.createSimpleDialog(AlertUtils.ERROR,
+					AlertUtils.OFFER_ERROR,
+					AlertUtils.OFFER_ERROR_UNKNOWN, AlertType.ERROR);
 		}
 		else{
 			AlertUtils.createSimpleDialog(AlertUtils.SUCCESS,
-					"Everything is okay!.",
-					AlertUtils.FORMATION_SAVED, AlertType.CONFIRMATION);
+					AlertUtils.OFFER_SUCCESS,
+					AlertUtils.OFFER_SUCCESS, AlertType.CONFIRMATION);
 		}
 		
-		ControllerManager.getInstance().onAction(LineUpController.RESET_MANAGER,sfaMessage.isSuccessful());
+		ControllerManager.getInstance().onAction(PlayerDetailedController.ON_ACTION_KEY,sfaMessage.isSuccessful());
 	}
 }

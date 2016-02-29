@@ -114,7 +114,7 @@ public class GUIController {
 				currentController = ((ControllerInterface) currentContentLoader.getController());
 				double frameWidth = guiInitialator.getContentFrameWidth();
 				double frameHeight = guiInitialator.getRootlayout().getScene().getHeight();
-				currentController.init(frameWidth,frameHeight);
+				currentController.init(frameWidth, frameHeight);
 			} catch (Exception e) {
 			}
 
@@ -163,8 +163,8 @@ public class GUIController {
 	public Stage getCurrentDialogStage() {
 		return this.currentDialogStage;
 	}
-	
-	public ControllerInterface getCurrentController(){
+
+	public ControllerInterface getCurrentController() {
 		return currentController;
 	}
 
@@ -175,7 +175,9 @@ public class GUIController {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				currentDialogStage.close();
+				if (currentDialogStage != null) {
+					currentDialogStage.close();
+				}
 			}
 		});
 	}

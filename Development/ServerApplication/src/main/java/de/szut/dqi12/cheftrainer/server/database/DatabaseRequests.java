@@ -225,8 +225,8 @@ public class DatabaseRequests {
 		transfermarktManagement.putPlayerOnExchangeMarket(p,  communityID, ownerID);
 	}
 
-	public static void addTransaction(Transaction transaction) {
-		transfermarktManagement.addTransaction(transaction);
+	public static boolean addTransaction(Transaction transaction) {
+		return transfermarktManagement.addTransaction(transaction);
 	}
 	
 	public static void doTransactions(){

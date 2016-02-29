@@ -1,17 +1,16 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
-import org.json.JSONObject;
 
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextField;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
+import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
 import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewOfferMessage;
 
@@ -39,7 +38,7 @@ public class OfferPlayerController implements ControllerInterface {
 	}
 
 	private void showWarningDialog() {
-		// TODO Auto-generated method stub
+		AlertUtils.createSimpleDialog(AlertUtils.ERROR, AlertUtils.OFFER_ERROR, AlertUtils.OFFER_ERROR_TO_LESS, AlertType.ERROR);
 	}
 
 	/**

@@ -70,7 +70,7 @@ public class TransfermarketManagement {
 	 * This function adds a new Transaction to the database.
 	 * @param tr a {@link Transaction} object, where each parameter is set.
 	 */
-	public void addTransaction(Transaction tr) {
+	public boolean addTransaction(Transaction tr) {
 		boolean isOnMarket = isPlayerOnMarket(tr.getPlayerSportalID(), tr.getCommunityID());
 		if (isOnMarket) {
 			try {
@@ -85,10 +85,12 @@ public class TransfermarketManagement {
 				pStatement.executeUpdate();
 				LOGGER.info(manager_ID + " offered " + tr.getOfferedPrice() + "� for player " + tr.getPlayerSportalID());
 				sendTransactionsUpdate(tr.getCommunityID(), manager_ID);
+				return true;
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
+		return false;
 	}
 
 	/**

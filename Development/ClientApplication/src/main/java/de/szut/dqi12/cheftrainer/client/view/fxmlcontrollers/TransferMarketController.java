@@ -172,6 +172,7 @@ public class TransferMarketController implements ControllerInterface, ImageUpdat
 			pdc.showOffer();
 			stage.setResizable(false);
 			stage.show();
+			pdc.initializationFinihed(stage.getScene());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
