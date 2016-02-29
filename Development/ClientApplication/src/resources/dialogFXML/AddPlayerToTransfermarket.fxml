@@ -8,7 +8,7 @@
 <GridPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.AddPlayerToMarketController">
 	<columnConstraints>
-		<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+		<ColumnConstraints hgrow="ALWAYS" minWidth="10.0" />
 	</columnConstraints>
 	<rowConstraints>
 		<RowConstraints fillHeight="false" maxHeight="30.0"
@@ -21,10 +21,10 @@
 		<TableView fx:id="playerTable" GridPane.hgrow="ALWAYS"
 			GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS">
 			<columns>
-				<TableColumn fx:id="nameCol" prefWidth="-1.0" text="Player" />
-				<TableColumn fx:id="pointsCol" prefWidth="-1.0" text="Points" />
-				<TableColumn fx:id="worthCol" prefWidth="-1.0" text="Worth" />
-				<TableColumn fx:id="actionCol" prefWidth="-1.0" text="Action" />
+				<TableColumn fx:id="nameCol" prefWidth="40" text="Spieler" />
+				<TableColumn fx:id="pointsCol" prefWidth="20" text="Punkte" />
+				<TableColumn fx:id="worthCol" prefWidth="20" text="Wert" />
+				<TableColumn fx:id="actionCol" prefWidth="20" text="Aktion" />
 			</columns>
 			<columnResizePolicy>
 				<TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

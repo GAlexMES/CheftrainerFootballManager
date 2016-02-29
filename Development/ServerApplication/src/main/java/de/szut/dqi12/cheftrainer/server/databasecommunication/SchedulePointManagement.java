@@ -58,7 +58,7 @@ public class SchedulePointManagement extends SQLManagement {
 	 * This function uses the {@link ScheduleParser} to find to current season
 	 * of the bundesliga.
 	 * 
-	 * @return
+	 * @return 2015 for season 2015-2016
 	 */
 	public int getCurrentSeasonFromSportal() {
 		return scheduleParser.getCurrentSeason();
@@ -200,6 +200,12 @@ public class SchedulePointManagement extends SQLManagement {
 		return true;
 	}
 
+	/**
+	 * This function adds an new {@link Match} to the schedule.
+	 * @param m the {@link Match}, that should be added.
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
 	public void addMatch(Match m) throws SQLException, ParseException {
 		String sqlQuery = "INSERT INTO Spieltag ('Saison', 'Spieltag', 'Heim_Verein_ID','Gast_Verein_ID','Ergebnis','URL','Datum') VALUES (?,?,?,?,?,?,?);";
 		PreparedStatement preparedStatement = sqlCon.prepareStatement(sqlQuery);
@@ -236,7 +242,7 @@ public class SchedulePointManagement extends SQLManagement {
 	/**
 	 * This function searches in the database for the last match of a matchday.
 	 * @param matchday for example 14 for matchday 14
-	 * @return
+	 * @return the start {@link Date} of the last {@link Match} of the matchday
 	 */
 	public Date getLastMatchDate(int matchday) {
 		String sqlQuery = "SELECT max(Datum) FROM Spieltag WHERE Spieltag= " + matchday + " AND Ergebnis = '-1:-1'";

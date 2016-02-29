@@ -3,6 +3,8 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers;
 import java.util.List;
 import java.util.Map;
 
+
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,12 +28,12 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.MarketPlayer;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
-import de.szut.dqi12.cheftrainer.connectorlib.messagedummies.NewPlayerOnMarketMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewPlayerOnMarketMessage;
 
 public class AddPlayerToMarketController implements ImageUpdate {
 
-	public final String ADD_TO_MARKET = "add to market";
-	public final String REMOVE_FROM_MARKET = "remove from market";
+	public final String ADD_TO_MARKET = "hinzufügen";
+	public final String REMOVE_FROM_MARKET = "entfernen";
 
 	@FXML
 	TableView<MarketPlayer> playerTable;
@@ -115,7 +117,7 @@ public class AddPlayerToMarketController implements ImageUpdate {
 		playerTable.setItems(tableObservable);
 
 		pointsCol.setCellValueFactory(data -> data.getValue().getPoints());
-		worthCol.setCellValueFactory(data -> data.getValue().getWerth());
+		worthCol.setCellValueFactory(data -> data.getValue().getWorth());
 
 		actionCol.setCellValueFactory(new PropertyValueFactory<>("Player"));
 		actionCol.setCellFactory(params -> {

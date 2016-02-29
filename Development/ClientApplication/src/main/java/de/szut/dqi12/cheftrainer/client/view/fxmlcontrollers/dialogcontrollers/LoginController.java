@@ -1,10 +1,9 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -19,29 +18,26 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-
-import org.json.JSONObject;
-
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerManager;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 import de.szut.dqi12.cheftrainer.client.listeners.EnterPressedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ConnectionRefusedListener;
 import de.szut.dqi12.cheftrainer.client.servercommunication.ServerConnection;
 import de.szut.dqi12.cheftrainer.client.view.utils.AlertUtils;
 import de.szut.dqi12.cheftrainer.client.view.utils.DialogUtils;
-import de.szut.dqi12.cheftrainer.connectorlib.cipher.CipherFactory;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.Client;
 import de.szut.dqi12.cheftrainer.connectorlib.clientside.ClientProperties;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationMessage;
 
 /**
  * Controller class for the Login dialog, which is defined in the Login.fxml
@@ -126,7 +122,6 @@ public class LoginController implements ControllerInterface {
 	@FXML
 	public void login() {
 		if (!loginButton.isDisabled()){
-			System.out.println("button is not disabled");
 			TextField[] textFields = { loginField, passwordField, ipField,
 					portField };
 			List<String> errorList = DialogUtils.checkInputs(textFields);
@@ -135,18 +130,19 @@ public class LoginController implements ControllerInterface {
 				try {
 					doLogin();
 				} catch (IOException e) {
-					AlertUtils.createSimpleDialog("Login failed",
-							"Something went wrong during your login",
-							"Please check your server details!",
+					AlertUtils.createSimpleDialog(AlertUtils.ERROR,
+							AlertUtils.LOGIN_ERROR_DETAILS,
+							AlertUtils.CHECK_SERVER,
 							AlertType.ERROR);
+					loginButton.setDisable(false);
 				}
 			} else {
 				String errorMessage = AlertUtils.WRONG_INPUTS;
 				for (String s : errorList) {
 					errorMessage += "\n " + s;
 				}
-				AlertUtils.createSimpleDialog("Login failed",
-						"Something went wrong during your login", errorMessage,
+				AlertUtils.createSimpleDialog(AlertUtils.ERROR,
+						AlertUtils.LOGIN_ERROR_DETAILS, errorMessage,
 						AlertType.ERROR);
 			}
 		}
@@ -161,32 +157,28 @@ public class LoginController implements ControllerInterface {
 	 */
 	private void doLogin() throws IOException {
 		Client serverCon = createServerCon();
-		Message loginMessage = new Message(
-				ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
-		JSONObject loginInfo = new JSONObject();
-		loginInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.LOGIN);
-		loginInfo.put(MIDs.USERNAME, loginField.getText());
-		try {
-			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
-			loginInfo.put(MIDs.PASSWORD, passwordMD5);
-			loginMessage.setMessageContent(loginInfo);
-			Thread.sleep(1500);
-			serverCon.sendMessage(loginMessage);
+		
+		
+		User user = new User();
+		user.setUserName(loginField.getText());
+		user.setPassword(passwordField.getText());
+		
+		UserAuthenticationMessage uaMessage = new UserAuthenticationMessage();
+		uaMessage.setUser(user);
+		uaMessage.setAuthentificationType(MIDs.LOGIN);
+		
+		try{
+			serverCon.waitForConnect(10);
+			serverCon.sendMessage(uaMessage);
 
 			Session newSession = new Session();
 			newSession.setClientSocket(serverCon);
-			User user = new User();
-			user.setUserName(loginField.getText());
+			
 			newSession.setUser(user);
 			Controller.getInstance().setSession(newSession);
-		} catch (NoSuchAlgorithmException e) {
+		} catch (TimeoutException e) {
 			Alert alert = AlertUtils.createExceptionDialog(e);
 			alert.showAndWait();
-		} catch (UnsupportedEncodingException e) {
-			Alert alert = AlertUtils.createExceptionDialog(e);
-			alert.showAndWait();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -239,8 +231,10 @@ public class LoginController implements ControllerInterface {
 			AnchorPane page = (AnchorPane) loader.load();
 
 			Stage dialogStage = new Stage();
+			Image icon = GUIController.getInstance().getGUIInitialator().getIcon();
+			dialogStage.getIcons().add(icon);
 			dialogStage.setResizable(false);
-			dialogStage.setTitle("Registration Dialog");
+			dialogStage.setTitle(AlertUtils.REGISTRATION);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.initOwner(stage);
 			Scene scene = new Scene(page);
@@ -269,9 +263,9 @@ public class LoginController implements ControllerInterface {
 	public void showRegistrationDialog() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.initOwner(stage);
-		alert.setTitle("registration success");
-		alert.setHeaderText("Your registration was completed!");
-		alert.setContentText("We completed your registration. You can login now!");
+		alert.setTitle(AlertUtils.REGISTRATION);
+		alert.setHeaderText(AlertUtils.REGISTRATION_SUCCESS);
+		alert.setContentText(AlertUtils.REGISTRATION_SUCCESS_DETAILS);
 		alert.showAndWait();
 	}
 
@@ -297,7 +291,7 @@ public class LoginController implements ControllerInterface {
 	}
 
 	@Override
-	public void init() {
+	public void init(double width, double height) {
 		// NOT USED HERE
 	}
 
@@ -309,5 +303,17 @@ public class LoginController implements ControllerInterface {
 	@Override
 	public void messageArrived(Boolean flag) {
 		loginButton.setDisable(false);
+	}
+
+	@Override
+	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resize(double sizeDifferent) {
+		// TODO Auto-generated method stub
+		
 	}
 }

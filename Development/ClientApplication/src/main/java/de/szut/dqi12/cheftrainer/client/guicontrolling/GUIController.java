@@ -6,6 +6,7 @@ import java.net.URL;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -24,6 +25,7 @@ public class GUIController {
 	private Stage currentDialogStage;
 	private ClassLoader classLoader;
 	private URL fxmlFile;
+	private ControllerInterface currentController;
 
 	/**
 	 * Constructor
@@ -48,7 +50,7 @@ public class GUIController {
 	 * Should be used to initialize this class for singleton pattern.
 	 * 
 	 * @param primaryStage
-	 * @return
+	 * @return the only GUIController object
 	 */
 	public static GUIController getInstance(Stage primaryStage) {
 		if (instance == null) {
@@ -78,7 +80,6 @@ public class GUIController {
 				guiInitialator.getSideMenuController().expandColums();
 			}
 		});
-
 	}
 
 	/**
@@ -101,6 +102,8 @@ public class GUIController {
 	 *            root at de\szut\dqi12\cheftrainer\client</li>
 	 */
 	public void setContentFrameByPath(String path, boolean update) {
+		GridPane currentContentPane = null;
+		currentController = null;
 		try {
 			currentContentLoader = new FXMLLoader();
 			fxmlFile = classLoader.getResource("sourcesFXML/" + path);
@@ -108,24 +111,33 @@ public class GUIController {
 			GridPane newContentPane = (GridPane) currentContentLoader.load();
 
 			try {
-				((ControllerInterface) currentContentLoader.getController())
-						.init();
+				currentController = ((ControllerInterface) currentContentLoader.getController());
+				double frameWidth = guiInitialator.getContentFrameWidth();
+				double frameHeight = guiInitialator.getRootlayout().getScene().getHeight();
+				currentController.init(frameWidth, frameHeight);
 			} catch (Exception e) {
-
 			}
 
 			newContentPane.autosize();
 
 			if (update) {
-				GridPane currentContentPane = ((GridPane) guiInitialator
-						.getRootlayout());
+				currentContentPane = ((GridPane) guiInitialator.getRootlayout());
 				Node sideMenu = currentContentPane.getChildren().get(2);
 				currentContentPane.getChildren().removeAll(sideMenu);
 			}
 			guiInitialator.getRootlayout().add(newContentPane, 1, 0);
+
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (currentContentPane != null) {
+				Scene scene = currentContentPane.getScene();
+				if (scene != null && currentController != null) {
+					currentController.initializationFinihed(scene);
+				}
+			}
 		}
+
 	}
 
 	public void initController() {
@@ -152,15 +164,27 @@ public class GUIController {
 		return this.currentDialogStage;
 	}
 
+	public ControllerInterface getCurrentController() {
+		return currentController;
+	}
+
+	/**
+	 * Closes the Dialog, which is currently opend.
+	 */
 	public void closeCurrentDialog() {
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				currentDialogStage.close();
+				if (currentDialogStage != null) {
+					currentDialogStage.close();
+				}
 			}
 		});
 	}
 
+	/**
+	 * Enables the Buttons of the SideMenu.
+	 */
 	public void enableButtons() {
 		guiInitialator.getSideMenuController().triggerButtonClickable(true);
 	}

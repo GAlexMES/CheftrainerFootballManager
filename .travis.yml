@@ -5,5 +5,5 @@ env:
   - TEST_DIR=Development/ServerApplication
 branches:
   only:
-    - master
+    - Development
 script: cd $TEST_DIR && mvn clean install

@@ -14,15 +14,15 @@ import de.szut.dqi12.cheftrainer.client.view.utils.UpdateUtils;
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationAckMessage;
 
 /**
  * This class handles "UserAuthentificationACK" messages, which will be send
  * from the server to the client after a login or a registration.
  * 
  * @author Alexander Brennecke
- *
  */
-public class UserAuthentificationACK extends CallableAbstract {
+public class UserAuthenticationACK extends CallableAbstract {
 
 	/**
 	 * Is called from the message controller, when a new message with the id
@@ -32,14 +32,13 @@ public class UserAuthentificationACK extends CallableAbstract {
 		JSONObject authentificationAck = new JSONObject(
 				message.getMessageContent());
 
-		// Checks, if the message is a ACK for the registration or the login.
-		String mode = authentificationAck.getString(MIDs.MODE);
-		switch (mode) {
+		UserAuthenticationAckMessage uaaMessage= new UserAuthenticationAckMessage(authentificationAck);
+		switch (uaaMessage.getType()) {
 		case MIDs.REGISTRATION:
-			register(authentificationAck);
+			register(uaaMessage);
 			break;
 		case MIDs.LOGIN:
-			login(authentificationAck);
+			login(uaaMessage);
 			break;
 		}
 	}
@@ -49,25 +48,26 @@ public class UserAuthentificationACK extends CallableAbstract {
 	 * 
 	 * @param authentificationAck
 	 */
-	private void login(JSONObject authentificationAck) {
+	private void login(UserAuthenticationAckMessage uaaMessage) {
 		GUIController guiController = GUIController.getInstance();
-		if (authentificationAck.getBoolean(MIDs.USER_EXISTS)
-				&& authentificationAck.getBoolean(MIDs.PASSWORD)) {
-			Controller.getInstance().getSession()
-					.setUserID(authentificationAck.getInt(MIDs.USER_ID));
+		if (uaaMessage.existsUser()&& uaaMessage.isPasswordCorrect()) {
+			Controller.getInstance().getSession().setUserID(uaaMessage.getUserID());
 			guiController.showMainApplication();
 			UpdateUtils.getCommunityUpdate();
-		} else if (!authentificationAck.getBoolean(MIDs.USER_EXISTS)) {
-			AlertUtils.createSimpleDialog("Login failed",
-					"Ther occured a problem during your login.",
-					AlertUtils.LOGIN_WRONG_USER, AlertType.ERROR);
-		} else if (!authentificationAck.getBoolean(MIDs.PASSWORD)) {
-			AlertUtils.createSimpleDialog("Login failed",
-					"Ther occured a problem during your login.",
-					AlertUtils.LOGIN_WRONG_PASSWORD, AlertType.ERROR);
+		} else if (!uaaMessage.existsUser()) {
+			createLoginFailedDialog();
+			
+		} else if (!uaaMessage.isPasswordCorrect()) {
+			createLoginFailedDialog();
 		}
 		
 		ControllerManager.getInstance().onAction(LoginController.ON_ACTION_KEY);
+	}
+	
+	private void createLoginFailedDialog(){
+		AlertUtils.createSimpleDialog(AlertUtils.LOGIN_ERROR,
+				AlertUtils.LOGIN_ERROR_DETAILS,
+				AlertUtils.LOGIN_WRONG_USER, AlertType.ERROR);
 	}
 
 	/**
@@ -75,33 +75,31 @@ public class UserAuthentificationACK extends CallableAbstract {
 	 * 
 	 * @param authentificationAck
 	 */
-	private void register(JSONObject authentificationAck) {
+	private void register(UserAuthenticationAckMessage uaaMessage) {
 		RegistrationController regController = GUIController.getInstance()
 				.getGUIInitialator().getLoginController()
 				.getRegistrationController();
 		// when the registration was possible, the registration dialog will be
 		// closed.
-		if (authentificationAck.getBoolean(MIDs.AUTHENTIFICATE)) {
+		if (uaaMessage.isAuthentication()) {
 			regController.closeDialog();
 		}
 		// when the registration was not possible, a alert dialog shows a
 		// message.
 		else {
 			String errorMessage = "";
-			if (authentificationAck.getBoolean(MIDs.USER_EXISTS)
-					&& authentificationAck.getBoolean(MIDs.EMAIL_EXISTS)) {
-				errorMessage = "Your E-Mail Adress and your user name are already in use.";
-			} else if (authentificationAck.getBoolean(MIDs.USER_EXISTS)
-					&& !authentificationAck.getBoolean(MIDs.EMAIL_EXISTS)) {
-				errorMessage = "Your user name is already in use. Please chose a other one.";
-			} else if (!authentificationAck.getBoolean(MIDs.USER_EXISTS)
-					&& authentificationAck.getBoolean(MIDs.EMAIL_EXISTS)) {
-				errorMessage = "Your E-Mail is already in use. Do you already have an account?";
+			if (uaaMessage.existsUser()&& uaaMessage.existsEMail()) {
+				errorMessage = AlertUtils.USER_CREATION_EMAIL_USERNAME;
+			} else if (uaaMessage.existsUser()
+					&& !uaaMessage.existsEMail()) {
+				errorMessage = AlertUtils.USER_CREATION_USERNAME;
+			} else if (!uaaMessage.existsUser()&& uaaMessage.existsEMail()) {
+				errorMessage = AlertUtils.USER_CREATION_EMAIL;
 			} else {
-				errorMessage = "A unknown error occured";
+				errorMessage = AlertUtils.UNKNOWN_ERROR;
 			}
-			AlertUtils.createSimpleDialog("Registration error",
-					"Something went wrong during your registration",
+			AlertUtils.createSimpleDialog(AlertUtils.ERROR,
+					AlertUtils.USER_REGISTRATION_ERROR,
 					errorMessage, AlertType.ERROR);
 		}
 		ControllerManager.getInstance().onAction(RegistrationController.ON_ACTION_KEY);

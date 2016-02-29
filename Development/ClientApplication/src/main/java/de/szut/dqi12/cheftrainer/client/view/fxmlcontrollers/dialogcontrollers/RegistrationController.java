@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -36,6 +37,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.ClientToServer_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserAuthenticationMessage;
 
 /**
  * Controller for the registration dialog
@@ -107,9 +109,6 @@ public class RegistrationController implements ControllerInterface {
 		ControllerManager.getInstance().registerController(this, ON_ACTION_KEY);
 	}
 
-	public void setDialogStage(Stage dialogStage) {
-		this.dialogStage = dialogStage;
-	}
 
 	/**
 	 * triggers the frame size, to display the additional server information
@@ -146,7 +145,7 @@ public class RegistrationController implements ControllerInterface {
 				Thread.sleep(800);
 				sendRegistrationMessage();
 			} catch (IOException e1) {
-				AlertUtils.createSimpleDialog("Registration failed", "Something went wrong during your registration", "Please check your server details!", AlertType.ERROR);
+				AlertUtils.createSimpleDialog(AlertUtils.ERROR, AlertUtils.USER_REGISTRATION_ERROR, AlertUtils.CHECK_SERVER, AlertType.ERROR);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -155,7 +154,7 @@ public class RegistrationController implements ControllerInterface {
 			for (String s : errorList) {
 				errorMessage += "\n " + s;
 			}
-			AlertUtils.createSimpleDialog("Registration failed", "Something went wrong during your registration", errorMessage, AlertType.ERROR);
+			AlertUtils.createSimpleDialog(AlertUtils.ERROR, AlertUtils.USER_REGISTRATION_ERROR, errorMessage, AlertType.ERROR);
 		}
 	}
 
@@ -175,7 +174,7 @@ public class RegistrationController implements ControllerInterface {
 			passwordConfirmationField.setText("");
 			passwordField.setStyle("-fx-text-box-border: red;");
 			passwordConfirmationField.setStyle("-fx-text-box-border: red;");
-			retval.add("Passwords are not the same");
+			retval.add(AlertUtils.WRONG_PASSWORD);
 		}
 		return retval;
 	}
@@ -186,26 +185,18 @@ public class RegistrationController implements ControllerInterface {
 	 * @throws UnsupportedEncodingException
 	 */
 	private void sendRegistrationMessage() throws UnsupportedEncodingException {
-		Message registrationMessage = new Message(ClientToServer_MessageIDs.USER_AUTHENTIFICATION);
 
 		User user = new User();
 		user.seteMail(mailField.getText());
 		user.setFirstName(vornameField.getText());
 		user.setLastName(nachnameField.getText());
 		user.setUserName(loginField.getText());
+		user.setPassword(passwordField.getText());
 
-		try {
-			String passwordMD5 = CipherFactory.getMD5(passwordField.getText());
-			user.setPassword(passwordMD5);
-			JSONObject registrationInfo = user.toJSON();
-			registrationInfo.put(MIDs.AUTHENTIFICATION_TYPE, MIDs.REGISTRATION);
-			registrationMessage.setMessageContent(registrationInfo);
-			serverCon.sendMessage(registrationMessage);
-		} catch (NoSuchAlgorithmException e) {
-			Alert alert = AlertUtils.createExceptionDialog(e);
-			alert.showAndWait();
-		}
-		
+		UserAuthenticationMessage uaMessage = new UserAuthenticationMessage();
+		uaMessage.setUser(user);
+		uaMessage.setAuthentificationType(MIDs.REGISTRATION);
+		serverCon.sendMessage(uaMessage);
 
 	}
 
@@ -253,7 +244,7 @@ public class RegistrationController implements ControllerInterface {
 	}
 
 	@Override
-	public void init() {
+	public void init(double width, double height) {
 		// NOTHING TO DO HERE
 	}
 
@@ -270,5 +261,24 @@ public class RegistrationController implements ControllerInterface {
 	@Override
 	public void messageArrived(Boolean flag) {
 		registrationButton.setDisable(false);
+	}
+	
+	
+	public void setDialogStage(Stage dialogStage) {
+		this.dialogStage = dialogStage;
+	}
+
+
+	@Override
+	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void resize(double sizeDifferent) {
+		// TODO Auto-generated method stub
+		
 	}
 }

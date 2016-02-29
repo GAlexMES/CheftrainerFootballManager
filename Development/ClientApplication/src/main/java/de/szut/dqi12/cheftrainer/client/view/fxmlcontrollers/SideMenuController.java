@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -206,7 +207,8 @@ public class SideMenuController {
 	 */
 	@FXML
 	public void buttonPressed(ActionEvent evt) {
-		String sourceID = ((Button) evt.getSource()).getId();
+		Button button = (Button) evt.getSource();
+		String sourceID = button.getId();
 		String fxmlComponent = button_FXMLComponent.get(sourceID);
 		String fileName = fxmlComponent + ".fxml";
 		GUIController.getInstance().setContentFrameByName(fileName, true);
@@ -222,12 +224,17 @@ public class SideMenuController {
 		rLayout = guiInitilator.getRootlayout();
 		ObservableList<Node> buttonList = ((VBox) rLayout.lookup("#sideMenu"))
 				.getChildren();
+		double frameWidth = 0;
 		if (sideMenuFlag) {
 			collaps(buttonList);
+			frameWidth = 100;
 		} else {
 			expands(buttonList);
-
+			frameWidth=-100;
 		}
+		
+		//double frameWidth =  GUIController.getInstance().getGUIInitialator().getContentFrameWidth()-100;
+		GUIController.getInstance().getCurrentController().resize(frameWidth);
 	}
 
 	/**
@@ -284,13 +291,9 @@ public class SideMenuController {
 	}
 
 	public void updateWidthPercentage() {
-		double width = 0.0;
+		double width = getWidth();
 
-		if (sideMenuFlag) {
-			width = expandedWidth;
-		} else {
-			width = collapsedWidth;
-		}
+
 		rLayout.getColumnConstraints().get(0).setMinWidth(width);
 		rLayout.getColumnConstraints().get(1)
 				.setMaxWidth(rLayout.getWidth() - width);
@@ -322,6 +325,17 @@ public class SideMenuController {
 	// GETTER AND SETTER
 	public List<String> getSideMenuButtonTitles() {
 		return sideMenuButtonTitles;
+	}
+	
+	public double getWidth(){
+		double width;
+		if (sideMenuFlag) {
+			width = expandedWidth;
+		} else {
+			width = collapsedWidth;
+		}
+		
+		return width;
 	}
 
 }

@@ -9,22 +9,22 @@
 
 <AnchorPane fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.CreateCommunityController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="274.0" prefWidth="371.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Text layoutX="47.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Create a new community!" wrappingWidth="290.13671875">
+      <Text layoutX="47.0" layoutY="55.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Erstelle eine neue Spielrunde!" wrappingWidth="290.13671875">
          <font>
             <Font size="25.0" />
          </font>
       </Text>
-      <Text layoutX="39.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Community name:">
+      <Text layoutX="39.0" layoutY="105.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Spielrunden Name:">
          <font>
             <Font size="16.0" />
          </font>
       </Text>
-      <Text layoutX="12.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Community password:">
+      <Text layoutX="12.0" layoutY="158.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Spielrunden Passwort">
          <font>
             <Font size="16.0" />
          </font>
       </Text>
-      <Text layoutX="40.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="confirm password:">
+      <Text layoutX="40.0" layoutY="196.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Passwort wiederholen:">
          <font>
             <Font size="16.0" />
          </font>

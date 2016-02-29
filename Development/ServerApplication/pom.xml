@@ -55,29 +55,28 @@
 			<version>1.8.3</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-core</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>1.6.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<finalName>ServerApplication</finalName>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
-				<configuration>
-					<excludePackageNames>de.szut.dqi12.cheftrainer.connectorlib.*</excludePackageNames>
-					<show>public</show>
-					<nohelp>true</nohelp>
-					<tags>
-						<tag>
-							<name>custom.position</name>
-							<placement>a</placement>
-							<head>Belongs to position:</head>
-						</tag>
-					</tags>
-				</configuration>
-
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -92,7 +91,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.12.4</version>
 				<configuration>
-					<skipTests>true</skipTests>
+					<skipTests>false</skipTests>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -115,25 +114,4 @@
 			</resource>
 		</resources>
 	</build>
-
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
-				<configuration>
-					<show>public</show>
-					<nohelp>true</nohelp>
-					<tags>
-						<tag>
-							<name>custom.position</name>
-							<placement>a</placement>
-							<head>Belongs to position:</head>
-						</tag>
-					</tags>
-				</configuration>
-			</plugin>
-		</plugins>
-	</reporting>
 </project>

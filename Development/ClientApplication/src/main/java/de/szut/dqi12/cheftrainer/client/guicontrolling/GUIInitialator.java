@@ -11,6 +11,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -38,6 +39,7 @@ public class GUIInitialator {
 	private LoginController loginController;
 
 	private FXMLLoader currentFXMLLoader;
+	private Image icon;
 
 	private ClassLoader classLoader;
 	private URL fxmlFile;
@@ -53,8 +55,9 @@ public class GUIInitialator {
 		this.rStage.setMinWidth(500);
 		classLoader = getClass().getClassLoader();
 		currentFXMLLoader = new FXMLLoader();
+		icon = new Image(getClass().getResourceAsStream("/images/icon.png"));
 	}
-
+	
 	/**
 	 * Is called to close the application.
 	 */
@@ -98,6 +101,7 @@ public class GUIInitialator {
 			loginDialogStage.initModality(Modality.WINDOW_MODAL);
 			Scene scene = new Scene(loginLayout);
 			loginDialogStage.setScene(scene);
+			loginDialogStage.getIcons().add(icon);
 
 			// definition of the login controller
 			loginController = currentFXMLLoader.getController();
@@ -138,6 +142,7 @@ public class GUIInitialator {
 				}
 			});
 			mainApplicationStage.setScene(scene);
+			mainApplicationStage.getIcons().add(icon);
 			mainApplicationStage.show();
 			mainApplicationStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 	            @Override
@@ -172,10 +177,20 @@ public class GUIInitialator {
 			e.printStackTrace();
 		}
 	}
+	
+	public double getContentFrameWidth(){
+		double frameWidth = rLayout.getScene().getWidth();
+		double menuWidth = sideMenuController.getWidth();
+		return frameWidth-menuWidth;
+	}
 
 	// GETTER AND SETTER
 	public Stage getPrimaryStage() {
 		return rStage;
+	}
+	
+	public Image getIcon(){
+		return this.icon;
 	}
 
 	public Stage getMainApplicationStage() {

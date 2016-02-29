@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import de.szut.dqi12.cheftrainer.client.Controller;
 import de.szut.dqi12.cheftrainer.client.guicontrolling.ControllerInterface;
@@ -32,7 +33,7 @@ public class StatisticsController implements ControllerInterface {
 	 * gui-components
 	 */
 	@Override
-	public void init() {
+	public void init(double width, double height) {
 		FXMLLoader loader = new FXMLLoader();
 		ClassLoader classLoader = getClass().getClassLoader();
 		loader.setLocation(classLoader.getResource("sourcesFXML/BarChart.fxml"));
@@ -56,7 +57,7 @@ public class StatisticsController implements ControllerInterface {
 	}
 
 	/**
-	 * Fills the LineChart with data
+	 * Fills the LineChart with data. The data contains the history of the points matchday day of the current manager.
 	 */
 	@FXML
 	public void setLineChart() {
@@ -78,7 +79,7 @@ public class StatisticsController implements ControllerInterface {
 	}
 
 	/**
-	 * Fills the BarChart with data
+	 * Fills the BarChart with data. The data contains the points of every manager in the current cummunity.
 	 */
 	@FXML
 	public void setBarChart() {
@@ -89,6 +90,7 @@ public class StatisticsController implements ControllerInterface {
 		for (Manager m : managers) {
 			data.put(m.getName(), m.getPoints());
 		}
+		
 		barController.setData(data);
 		stats.getChildren().set(0, barController.getChart());
 
@@ -104,6 +106,18 @@ public class StatisticsController implements ControllerInterface {
 	public void messageArrived(Boolean flag) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resize(double sizeDifferent) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

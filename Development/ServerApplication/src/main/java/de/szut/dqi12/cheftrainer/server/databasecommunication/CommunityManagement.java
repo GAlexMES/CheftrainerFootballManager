@@ -19,7 +19,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAutenticationAckMessage;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 import de.szut.dqi12.cheftrainer.server.database.SQLConnection;
 import de.szut.dqi12.cheftrainer.server.logic.TeamGenerator;
@@ -192,7 +192,8 @@ public class CommunityManagement {
 					String managerName = rs.getString("Nutzername");
 					int points = rs.getInt("Punkte");
 					int place = rs.getInt("Platz");
-					Manager manager = new Manager(managerName, place, points, communityName);
+					Manager manager = new Manager(managerName, null, place, communityName);
+					manager.setPoints(points);
 					int defenders = rs.getInt("Anzahl_Abwehr");
 					int middfielders = rs.getInt("Anzahl_Mittelfeld");
 					int offensives = rs.getInt("Anzahl_Stuermer");
@@ -210,23 +211,27 @@ public class CommunityManagement {
 			List<Player> playerList = getTeam(m.getID());
 			Player[] playerArray = playerList.toArray(new Player[playerList.size()]);
 			m.addPlayer(playerArray);
-			Map<Integer,Integer> stats = getManagerStats(m.getID());
+			Map<Integer, Integer> stats = getManagerStats(m.getID());
 			m.setHistory(stats);
 		}
 		return retval;
 	}
-	
+
 	/**
-	 * This function collects the statistic from the database for the given manager and creates a {@link Map} from it.
-	 * @param managerID the ID of the manager
-	 * @return A Map, where the matchday is the key and the points are the value.
+	 * This function collects the statistic from the database for the given
+	 * manager and creates a {@link Map} from it.
+	 * 
+	 * @param managerID
+	 *            the ID of the manager
+	 * @return A Map, where the matchday is the key and the points are the
+	 *         value.
 	 */
-	private Map<Integer,Integer> getManagerStats(int managerID){
-		Map<Integer,Integer> retval = new HashMap<Integer, Integer>();
-		String sqlQuery = "SELECT * FROM Manager_Statistik WHERE Manager_ID = "+managerID;
+	private Map<Integer, Integer> getManagerStats(int managerID) {
+		Map<Integer, Integer> retval = new HashMap<Integer, Integer>();
+		String sqlQuery = "SELECT * FROM Manager_Statistik WHERE Manager_ID = " + managerID;
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		try {
-			while(rs.next()){
+			while (rs.next()) {
 				retval.put(rs.getInt("Spieltag"), rs.getInt("Punkte"));
 			}
 		} catch (SQLException e) {
@@ -246,7 +251,7 @@ public class CommunityManagement {
 	 *            the password of the new community
 	 * @param adminID
 	 *            the user ID of the user, that creates the community.
-	 * @return true = commmuniy was created.
+	 * @return true = community was created.
 	 */
 	public boolean createNewCommunity(String name, String password, int adminID) {
 		String sqlQuery = "SELECT Name FROM Spielrunde WHERE Name='" + name + "'";
@@ -266,7 +271,7 @@ public class CommunityManagement {
 	 *            the password of the new community
 	 * @param adminID
 	 *            the user ID of the user, that creates the community.
-	 * @return true = commmuniy was created.
+	 * @return true = {@link Community} was created.
 	 */
 	private boolean createCommunity(String name, String password, int adminID) {
 		String sqlQuery = "INSERT INTO Spielrunde (Name, Administrator_ID, Passwort) VALUES ( '" + name + "', '" + adminID + "', '" + password + "')";
@@ -286,24 +291,20 @@ public class CommunityManagement {
 	 * @return a HashMap with booleans, that describes, if the entering was
 	 *         successful.
 	 */
-	public HashMap<String, Boolean> enterCommunity(String communityName, String communityPassword, int userID) {
-		HashMap<String, Boolean> retval = new HashMap<String, Boolean>();
-		retval.put(MIDs.USER_EXISTS, false);
-		retval.put(MIDs.COMMUNITY_EXISTS, false);
-		retval.put(MIDs.CORRECT_PASSWORD, false);
-		retval.put(MIDs.MANAGER_CREATED, false);
+	public CommunityAutenticationAckMessage enterCommunity(String communityName, String communityPassword, int userID) {
+		CommunityAutenticationAckMessage caaMessage = new CommunityAutenticationAckMessage();
 		if (existCommunity(communityName)) {
-			retval.put(MIDs.COMMUNITY_EXISTS, true);
+			caaMessage.setCommunityExists(true);
 			if (checkPassword(communityPassword, communityName)) {
-				retval.put(MIDs.CORRECT_PASSWORD, true);
+				caaMessage.setCorrectPassword(true);
 				if (!existUserInCommunity(userID, communityName)) {
-					retval.put(MIDs.USER_EXISTS, true);
+					caaMessage.setUserExists(true);
 					boolean created = createNewManager(communityName, userID);
-					retval.put(MIDs.MANAGER_CREATED, created);
+					caaMessage.setManagerCreated(created);
 				}
 			}
 		}
-		return retval;
+		return caaMessage;
 	}
 
 	/**
@@ -341,16 +342,10 @@ public class CommunityManagement {
 			int managerID = DatabaseRequests.getManagerID(userID, communityID);
 			TeamGenerator tg = new TeamGenerator();
 			int teamWorth = tg.generateTeamForUser(managerID, communityID);
-			int budget = BUDGET;
 
 			int maxTeamWorth = (int) (TeamGenerator.TEAM_WORTH * (1 + TeamGenerator.TEAM_WORTH_TOLERANZ));
-			int minTeamWorth = (int) (TeamGenerator.TEAM_WORTH * (1 - TeamGenerator.TEAM_WORTH_TOLERANZ));
 
-			if (teamWorth > maxTeamWorth) {
-				budget = BUDGET - (maxTeamWorth - teamWorth);
-			} else if (teamWorth < minTeamWorth) {
-				budget = BUDGET + (minTeamWorth - teamWorth);
-			}
+			int budget = BUDGET + (maxTeamWorth - teamWorth);
 
 			sqlQuery = "UPDATE Manager SET Budget='" + budget + "'" + "WHERE ID=" + managerID;
 			sqlCon.sendQuery(sqlQuery);
@@ -454,59 +449,87 @@ public class CommunityManagement {
 		}
 	}
 
+	/**
+	 * This function selects all Community IDs from the database
+	 * 
+	 * @return a {@link List} of Integer values, where each value represents a
+	 *         ID
+	 * @throws SQLException
+	 */
 	private List<Integer> getAllCommunityIDs() throws SQLException {
 		String sqlQuery = "Select ID FROM Spielrunde";
 		ResultSet rs = sqlCon.sendQuery(sqlQuery);
 		return DatabaseUtils.getListFromResultSet(rs, "ID");
 	}
 
+	/**
+	 * This function updates the placement of all {@link Manager} in all
+	 * {@link Community}, which are saved in the database.
+	 */
 	public void updatePlacement() {
 		try {
 			List<Integer> communityIDs = getAllCommunityIDs();
 			for (int id : communityIDs) {
 				List<Integer[]> orderedManagers = getOrdererManagerIDs(id);
-				
 				int counter = 1;
 				int duplicatedCounter = 1;
 				int lastPoints = 0;
-				for(Integer[] manager : orderedManagers){
-					if(manager[1] == lastPoints){
-						updateManagerPlace(manager[0],counter-duplicatedCounter);
-						duplicatedCounter ++;
-					}
-					else{
-						updateManagerPlace(manager[0],counter);
+				for (Integer[] manager : orderedManagers) {
+					if (manager[1] == lastPoints) {
+						updateManagerPlace(manager[0], counter - duplicatedCounter);
+						duplicatedCounter++;
+					} else {
+						updateManagerPlace(manager[0], counter);
 						duplicatedCounter = 1;
 					}
-					
 					lastPoints = manager[1];
-					counter ++;
+					counter++;
 				}
-
 			}
 		} catch (SQLException sqe) {
 			sqe.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * This function creates a SQLQuery to update the {@link Manager} table with
+	 * the given place
+	 * 
+	 * @param managerID
+	 *            the ID of the {@link Manager}, who should be updated.
+	 * @param place
+	 *            the new place of the manager
+	 * @throws SQLException
+	 */
 	private void updateManagerPlace(Integer managerID, int place) throws SQLException {
-		String sqlQuery =  "UPDATE Manager Set Platz = ? where ID = ?";
+		String sqlQuery = "UPDATE Manager Set Platz = ? where ID = ?";
 		PreparedStatement pStatement = sqlCon.prepareStatement(sqlQuery);
-		pStatement.setInt(1,place);
+		pStatement.setInt(1, place);
 		pStatement.setInt(2, managerID);
 		pStatement.execute();
 	}
 
-	private List<Integer[]> getOrdererManagerIDs(int communityID) throws SQLException{
+	/**
+	 * This function creates a List of Integer Arrays. It searches in the
+	 * database for all {@link Manager}s in the given {@link Community} and
+	 * orders them by point.
+	 * 
+	 * @param communityID
+	 *            the ID of the {@link Community}
+	 * @return a {@link List} of Integer, where the first value is the ID of the
+	 *         {@link Manager} and the second value are the points.
+	 * @throws SQLException
+	 */
+	private List<Integer[]> getOrdererManagerIDs(int communityID) throws SQLException {
 		List<Integer[]> retval = new ArrayList<>();
 		String orderedPointsQuery = "Select Punkte, ID From Manager where Spielrunde_ID = ? ORDER BY Punkte DESC";
 		PreparedStatement pStatement = sqlCon.prepareStatement(orderedPointsQuery);
 		pStatement.setInt(1, communityID);
 		ResultSet rs = pStatement.executeQuery();
-		while(rs.next()){
+		while (rs.next()) {
 			int managerID = rs.getInt("ID");
 			int points = rs.getInt("Punkte");
-			Integer[] entry ={managerID,points};
+			Integer[] entry = { managerID, points };
 			retval.add(entry);
 		}
 		return retval;
