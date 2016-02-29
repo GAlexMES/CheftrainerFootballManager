@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
@@ -9,9 +10,9 @@
 
 <AnchorPane fx:id="mainPane" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="450.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers.dialogcontrollers.LoginController">
 	<children>
-		<Text layoutX="24.0" layoutY="128.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cheftrainer Football Manager" textAlignment="CENTER">
+		<Text layoutX="12.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cheftrainer " textAlignment="CENTER">
 			<font>
-				<Font size="31.0" />
+				<Font size="24.0" />
 			</font>
 		</Text>
 
@@ -65,5 +66,15 @@
             <Text layoutX="217.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Noch keinen Account? " />
          </children>
       </AnchorPane>
+      <ImageView fitHeight="132.0" fitWidth="200.0" layoutX="128.0" layoutY="48.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/icon.png" />
+         </image>
+      </ImageView>
+      <Text layoutX="249.0" layoutY="123.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Football Manager" wrappingWidth="200.99999597668648">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
 	</children>
 </AnchorPane>

@@ -163,6 +163,9 @@ public class SQLConnection {
 		return con.prepareStatement(sqlQuery);
 	}
 	
+	/**
+	 * This function closes the current statement. The class needs to be reinitialized to use the statement again.
+	 */
 	public void close(){
 		try {
 			statement.close();

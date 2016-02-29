@@ -7,7 +7,7 @@
 		<alwaysClickable>true</alwaysClickable>
 	</button>
 	<button position="1">
-		<text>Communities</text>
+		<text>Spielrunde</text>
 		<imageName>communities.png</imageName>
 		<triggerButton>false</triggerButton>
 		<logoutButton>false</logoutButton>

@@ -10,6 +10,8 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
+import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Formation;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Position;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
@@ -18,7 +20,7 @@ import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
  *  Generates a new random team for a user.
  * 
  * @author Alexander Brennecke
- * @custom.position /F0040/
+ * @see /F0040/
  */
 public class TeamGenerator {
 
@@ -81,6 +83,11 @@ public class TeamGenerator {
 		return teamWorth;
 	}
 
+	/**
+	 * This function checks if the given List of {@link Player} objects match to the selected {@link Formation}
+	 * @param playerList a list of 11 {@link Player} objects
+	 * @return true = it matches perfect, false otherwise
+	 */
 	public List<Player> matchPlayersInFormation(List<Player> playerList) {
 		for (Player p : playerList) {
 			String position = p.getPosition();
@@ -177,17 +184,9 @@ public class TeamGenerator {
 		boolean playerFound = false;
 		List<Integer> idList = new ArrayList<>();
 
-		while (!playerFound && idList.size() < heighestPlayerID - 1) {
+		while (!playerFound && idList.size() < heighestPlayerID - 1&&!breakFlag) {
+			noPlayerFoundCounter++;
 			Player newPlayer = getNewRandomPlayer(heighestPlayerID);
-
-			if (newPlayer == null) {
-				noPlayerFoundCounter++;
-				if (noPlayerFoundCounter >= 10) {
-					System.out.println("Could not find a better player. Team worth is: " + teamWorth);
-					breakFlag = true;
-					break;
-				}
-			}
 
 			if (newPlayer != null && !idList.contains(newPlayer.getSportalID())) {
 				idList.add(newPlayer.getSportalID());
@@ -207,6 +206,11 @@ public class TeamGenerator {
 						playerFound = true;
 					}
 				}
+			}
+			if (noPlayerFoundCounter >= 10) {
+				System.out.println("Could not find a better player. Team worth is: " + teamWorth);
+				breakFlag = true;
+				break;
 			}
 		}
 	}
@@ -247,9 +251,13 @@ public class TeamGenerator {
 		}
 	}
 
-	/*
+	/**
 	 * This function checks, if a player with the given id is already owned by
 	 * another player or is on the exchange market.
+	 * 
+	 * @param playerID the sportal ID of the {@link Player}
+	 * @param curCommunityID the ID of the {@link Community}
+	 * @return true = he is already owned, false otherwise
 	 */
 	public static boolean isPlayerInUse(int playerID, int curCommunityID) {
 		try {

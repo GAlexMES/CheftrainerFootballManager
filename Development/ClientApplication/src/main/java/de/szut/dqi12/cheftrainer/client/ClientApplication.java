@@ -20,6 +20,6 @@ public class ClientApplication extends Application {
 		Controller controller = Controller.getInstance();
 		controller.startApplication(primaryStage);
 	}
-
+	
 	
 }

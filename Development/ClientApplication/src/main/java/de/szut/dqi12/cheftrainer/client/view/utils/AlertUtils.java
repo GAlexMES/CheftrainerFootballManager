@@ -5,11 +5,14 @@ import java.io.StringWriter;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.stage.Stage;
+import de.szut.dqi12.cheftrainer.client.guicontrolling.GUIController;
 
 /**
  * This class provides constants for Alerts and a few method to simply create Alerts.
@@ -17,26 +20,57 @@ import javafx.scene.layout.Priority;
  *
  */
 public class AlertUtils {
-public static final String WRONG_INPUTS = "Please check ypur input for the following parameters: ";
+public static final String WRONG_INPUTS = "Bitte überprüfe die folgenden Eingaben: ";
 	
-	public static final String LOGIN_WRONG_USER = "Your username does not exist in our database. Please check your inputs or create a account.";
-	public static final String LOGIN_WRONG_PASSWORD = "Your password is wrong, or u use the wrong username. Pleas check your inputs!";
+	public static final String LOGIN_WRONG_USER = "Der eingegebene Nzuername existiert nicht. Bitte überprüfe deine Eingaben oder erstelle einen Account.";
+	public static final String LOGIN_WRONG_PASSWORD = "Dein Nutzername oder dein passwort ist falsch. Bitte überprüfe deine Eingaben!";
 
-	public static final String COMMUNITY_CREATION_TITLE = "Create a new community";
-	public static final String COMMUNITY_CREATION_WORKED_HEAD = "We created your community!";
-	public static final String COMMUNITY_CREATION_WORKED_NOT_HEAD = "We could not create your community!";
-	public static final String COMMUNITY_CREATION_WORKED_MESSAGE = "Give the community name and password to friends to play with them!";
-	public static final String COMMUNITY_CREATION_WORKED_NOT_MESSAGE = "Maybe your community name is already in use. Try a different one.";
+	public static final String COMMUNITY_CREATION_TITLE = "Erstelle eine neue Spielrunde";
+	public static final String COMMUNITY_CREATION_WORKED_HEAD = "Deine Spielrunde wurde erstellt!";
+	public static final String COMMUNITY_CREATION_WORKED_NOT_HEAD = "Deine Spielrunde konnte nicht erstellt werden!";
+	public static final String COMMUNITY_CREATION_WORKED_MESSAGE = "Gebe den Namen und das Passwort der Spielrunde deinen Freunden um mit ihnen zu Spielen!";
+	public static final String COMMUNITY_CREATION_WORKED_NOT_MESSAGE = "Der Spielrundenname existiert bereits. Versuche einen anderen.";
 	
-	public static final String COMMUNITY_ENTER_TITLE = "Enter a existing community";
-	public static final String COMMUNITY_ENTER_WORKED_HEAD = "You joined the community!";
-	public static final String COMMUNITY_ENTER_WORKED_NOT_HEAD = "Something went wrong. You could not join the community!";
-	public static final String COMMUNITY_ENTER_WORKED_MESSAGE = "You joind the community and we created a new manager and team for you. Good luck!";
-	public static final String COMMUNITY_ENTER_WRONG_AUTHENTIFICATION = "Your combination of community name and password does not exist.";
-	public static final String COMMUNITY_ENTER_ALREADY_EXIST = "You already play in this community. You can only have one team per community.";
+	public static final String COMMUNITY_ENTER_TITLE = "Tritt einer Spielrunde bei.";
+	public static final String COMMUNITY_ENTER_WORKED_HEAD = "Du bist einer Spielrunde beigetreten!";
+	public static final String COMMUNITY_ENTER_WORKED_NOT_HEAD = "Etwas hat nicht funktioniert. Du konntest der Spielrunde nicht beitreten!";
+	public static final String COMMUNITY_ENTER_WORKED_MESSAGE = "Du bist der Spielrunde beigetreten und wir haben einen neuen Manager und ein neues Team für dich erstellt. Viel Glück!";
+	public static final String COMMUNITY_ENTER_WRONG_AUTHENTIFICATION = "Der Spielrunden Name existiert nicht oder das Passwort ist falsch.";
+	public static final String COMMUNITY_ENTER_ALREADY_EXIST = "Du spielst bereits in dieser Spielrunde. Du kannst nur ein Team pro Spielrunde haben";
 	
-	public static final String FORMATION_SAVED = "The new formation was saved successful!";
-	public static final String FORMATION_NOT_SAVED = "The new formation was not saved! Something went wrong. Please try again.";
+	public static final String USER_CREATION_EMAIL_USERNAME = "Deine E-Mail oder dein Nutzername existieren bereits.";
+	public static final String USER_CREATION_USERNAME = "Dein Nutzername ist bereits in verwendung. Wähle einen anderen."; 
+	public static final String USER_CREATION_EMAIL = "Deine E-Mail existiert bereits. Hast du bereits einen Account?"; 
+	
+	public static final String LOGIN_ERROR = "Anmeldung fehlgeschlagen!";
+	public static final String LOGIN_ERROR_DETAILS ="Wärend deiner Anmeldung trat ein Problem auf. Versuche es erneut.";
+	
+	public static final String USER_REGISTRATION_ERROR = "Während deiner Registrierung ist etwas schief gelaufen. Versuche es erneut.";
+	public static final String FORMATION_SAVED = "Deine neue Aufstellung wurde gespeichert!";
+	public static final String FORMATION_NOT_SAVED = "Die neue Aufstellung konnte nicht gespeichert werden! Versuche es erneut!";
+	
+	public static final String REGISTRATION = "Registrierung!";
+	public static final String REGISTRATION_SUCCESS="Registrierung erfolgreich!";
+	public static final String REGISTRATION_SUCCESS_DETAILS =" Deine Registrierung war erfolgreich. Du kannst dich nun anmelden.";
+	
+	public static final String WRONG_PASSWORD  ="Bitte gebe gleiche Passwörter ein!";
+	public static final String CHECK_SERVER ="Bitte überprüfe die Server Einstellungen!";
+	
+	public static final String COMMUNITY_ENTRY_ERROR = "Etwas hat nicht funktioniert. Versuchen sie es erneut.";
+	public static final String COMMUNITY_CREATION_ERROR ="Bei der Erstellung der Spielrunde hat etwas nicht funktioniert. Bitte versuche es erneut.";
+	
+	public static final String OFFER_ERROR = "Bei der Erstellung des Angebotes ist etwas schief gelaufen. Versuchen sie es erneut.";
+	public static final String OFFER_ERROR_TO_LESS ="Der Gebotene Preis muss mindestens so hoch sein, wie der Marktwert des Spielers.";
+	public static final String OFFER_ERROR_UNKNOWN ="Aus unbekannten Gründen konnte das Gebot nicht gespeichert werden. Versuchen sie es erneut.";
+	public static final String OFFER_SUCCESS ="Das Gebot wurde erfolgreich gespeichert.";
+	
+	public static final String NO_OFFERS_ERROR = "Du hast keine Gebote zum annehmen oder ablehnen.";	
+	public static final String NO_OFFERS_ERROR_DETAILS = "Du musst erst auf einen Spieler bieten um diesen Dialog zu sehene.";	
+	
+	public static final String UNKNOWN_ERROR = "Es ist ein Problem aufgetreten. Versuche es erneut.";
+	
+	public static final String ERROR = "Fehler!";
+	public static final String SUCCESS = "Erfolgreich!";
 	
 	/**
 	 * Shows a error alert with the given parameters. Can also be called from a
@@ -51,11 +85,13 @@ public static final String WRONG_INPUTS = "Please check ypur input for the follo
 	 */
 	public static void createSimpleDialog(String title, String header, String content, AlertType type) {
 		Platform.runLater(new Runnable() {
-
 			@Override
 			public void run() {
 				Alert alert = showAlert(title, header,
 						content, type);
+				Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+				Image icon = GUIController.getInstance().getGUIInitialator().getIcon();
+				stage.getIcons().add(icon);
 				alert.showAndWait();
 			}
 		});

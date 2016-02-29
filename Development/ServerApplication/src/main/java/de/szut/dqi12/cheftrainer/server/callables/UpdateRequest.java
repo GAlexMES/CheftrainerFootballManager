@@ -1,16 +1,16 @@
 package de.szut.dqi12.cheftrainer.server.callables;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import de.szut.dqi12.cheftrainer.connectorlib.callables.CallableAbstract;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Community;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Session;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
-import de.szut.dqi12.cheftrainer.connectorlib.messageids.ServerToClient_MessageIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.UserCommunityListMessage;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
 /**
@@ -42,24 +42,20 @@ public class UpdateRequest extends CallableAbstract {
 	 * After that it creates a ACK message and sends it to the client.
 	 */
 	public void sendCommunityList(){
-		JSONArray communityListJSON = new JSONArray();
-		Message comminityMessage = new Message(
-				ServerToClient_MessageIDs.USER_COMMUNITY_LIST);
-		
 		Session s  = mesController.getSession();
 		int userID = s.getUserID();
+		
+		
 		List<Integer> communityIDs = DatabaseRequests.getCummunityIDsForUser(userID);
+		List<Community> communityList = new ArrayList<>();
 		for(Integer c : communityIDs){
 			Community community = DatabaseRequests.getCummunityForID(c);
-			JSONObject communityJSON = community.toJSON();
-			communityListJSON.put(communityJSON);
+			communityList.add(community);
 		}
 		
-		JSONObject jsonMessage = new JSONObject();
-		jsonMessage.put(MIDs.TYPE, MIDs.INIT);
-		jsonMessage.put(MIDs.INFORMATION,communityListJSON );
+		UserCommunityListMessage uclMessage = new UserCommunityListMessage(MIDs.INIT);
+		uclMessage.setCommunityList(communityList);
 		
-		comminityMessage.setMessageContent(jsonMessage.toString());
-		mesController.sendMessage(comminityMessage);
+		mesController.sendMessage(uclMessage);
 	}
 }

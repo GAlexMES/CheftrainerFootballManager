@@ -37,4 +37,8 @@ public class UpdateUtils {
 	public static void initUpdateReceived(){
 		init_update = true;
 	}
+	
+	public static void reset(){
+		init_update = false;
+	}
 }

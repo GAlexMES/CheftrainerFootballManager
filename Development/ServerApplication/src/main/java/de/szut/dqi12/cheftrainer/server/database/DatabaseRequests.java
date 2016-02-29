@@ -16,6 +16,7 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Match;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.User;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.CommunityAutenticationAckMessage;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.CommunityManagement;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.DatabaseUtils;
 import de.szut.dqi12.cheftrainer.server.databasecommunication.LogicManagement;
@@ -28,7 +29,7 @@ import de.szut.dqi12.cheftrainer.server.databasecommunication.UserManagement;
 
 /**
  * This class provides some Database utils. There is no Javadoc, because the
- * functions just forwarde to functions in the according *Management (e.g
+ * functions just forwards to functions in the according *Management (e.g
  * UserManagement) class.
  * 
  * @author Alexander Brennecke
@@ -104,7 +105,7 @@ public class DatabaseRequests {
 		return communityManagement.getManagers(communityID, communityName);
 	}
 
-	public static HashMap<String, Boolean> enterCommunity(String communityName, String communityPassword, int userID) {
+	public static CommunityAutenticationAckMessage enterCommunity(String communityName, String communityPassword, int userID) {
 		return communityManagement.enterCommunity(communityName, communityPassword, userID);
 	}
 
@@ -224,8 +225,8 @@ public class DatabaseRequests {
 		transfermarktManagement.putPlayerOnExchangeMarket(p,  communityID, ownerID);
 	}
 
-	public static void addTransaction(Transaction transaction) {
-		transfermarktManagement.addTransaction(transaction);
+	public static boolean addTransaction(Transaction transaction) {
+		return transfermarktManagement.addTransaction(transaction);
 	}
 	
 	public static void doTransactions(){

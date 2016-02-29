@@ -1,6 +1,7 @@
 package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import de.szut.dqi12.cheftrainer.client.Controller;
@@ -28,7 +29,7 @@ public class CommunitiesController implements ControllerInterface{
 	private TableColumn<Manager, String> rangColumn;
 		
 	@Override
-	public void init() {
+	public void init(double width, double height) {
 	}
 	
 	public CommunitiesController() {
@@ -67,7 +68,7 @@ public class CommunitiesController implements ControllerInterface{
 	@FXML
 	public void enterCommunity() {
 		try {
-			DialogUtils.showDialog("Enter Community!",
+			DialogUtils.showDialog("Spielrunde beitreten!",
 					"EnterCommunityDialog.fxml");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -81,7 +82,7 @@ public class CommunitiesController implements ControllerInterface{
 	@FXML
 	public void createCommunity() {
 		try {
-			DialogUtils.showDialog("Create Community!",
+			DialogUtils.showDialog("Spielrunde Erstellen!",
 					"CreateCommunityDialog.fxml");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -94,6 +95,18 @@ public class CommunitiesController implements ControllerInterface{
 
 	@Override
 	public void messageArrived(Boolean flag) {
+		
+	}
+
+	@Override
+	public void initializationFinihed(Scene scene) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void resize(double sizeDifferent) {
+		// TODO Auto-generated method stub
 		
 	}
 }

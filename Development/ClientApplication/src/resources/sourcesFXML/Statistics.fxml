@@ -17,17 +17,17 @@
    <children>
       <GridPane>
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+          <RowConstraints />
         </rowConstraints>
       </GridPane>
-      <AnchorPane GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
+      <AnchorPane maxHeight="20.0" GridPane.hgrow="NEVER" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
       	<ButtonBar>
          	<buttons>
-            	<Button mnemonicParsing="false" onAction="#setBarChart" text="Ranking" />
-            	<Button mnemonicParsing="false" onAction="#setLineChart" text="History" />
+            	<Button mnemonicParsing="false" onAction="#setBarChart" text="Platzierung" />
+            	<Button mnemonicParsing="false" onAction="#setLineChart" text="Verlauf" />
         	 </buttons>
       	</ButtonBar>
       </AnchorPane>

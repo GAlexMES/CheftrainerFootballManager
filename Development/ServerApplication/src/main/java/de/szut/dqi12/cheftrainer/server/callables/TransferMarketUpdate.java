@@ -8,9 +8,12 @@ import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Manager;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Market;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Player;
 import de.szut.dqi12.cheftrainer.connectorlib.dataexchange.Transaction;
-import de.szut.dqi12.cheftrainer.connectorlib.messagedummies.NewPlayerOnMarketMessage;
 import de.szut.dqi12.cheftrainer.connectorlib.messageids.MIDs;
 import de.szut.dqi12.cheftrainer.connectorlib.messages.Message;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewOfferMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.NewPlayerOnMarketMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.SaveOfferAckMessage;
+import de.szut.dqi12.cheftrainer.connectorlib.messagetemplates.TransactionMessage;
 import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
 
 /**
@@ -21,7 +24,7 @@ import de.szut.dqi12.cheftrainer.server.database.DatabaseRequests;
  * 
  * @author Alexander Brennecke
  *
- * @custom.position /F0230/ </br> /F2040/ </br> /F0260/
+ * @see /F0230/ </br> /F2040/ </br> /F0260/
  */
 public class TransferMarketUpdate extends CallableAbstract {
 
@@ -29,15 +32,16 @@ public class TransferMarketUpdate extends CallableAbstract {
 	public void messageArrived(Message message) {
 		JSONObject messageContent = new JSONObject(message.getMessageContent());
 		String type = messageContent.getString(MIDs.TYPE);
+		JSONObject information = messageContent.getJSONObject(MIDs.INFORMATION);
 		switch (type) {
 		case MIDs.NEW_OFFER:
-			newOffer(messageContent);
+			newOffer(information);
 			break;
 		case MIDs.TRANSACTION:
 			transaction(messageContent);
 			break;
 		case MIDs.NEW_MARKET_PLAYER:
-			newMarketPlayer(messageContent);
+			newMarketPlayer(information);
 		}
 	}
 
@@ -47,12 +51,14 @@ public class TransferMarketUpdate extends CallableAbstract {
 	 * 
 	 * @param messageContent
 	 *            the JSONObject, sended by the client.
-	 * @custom.position /F0230/
+	 * @see /F0230/
 	 */
 	private void newOffer(JSONObject messageContent) {
-		JSONObject information = messageContent.getJSONObject(MIDs.INFORMATION);
-		Transaction transaction = new Transaction(information);
-		DatabaseRequests.addTransaction(transaction);
+		NewOfferMessage noMessage = new NewOfferMessage(messageContent);
+		Transaction transaction = noMessage.getTransaction();
+		boolean successful = DatabaseRequests.addTransaction(transaction);
+		SaveOfferAckMessage soam = new SaveOfferAckMessage(successful);
+		mesController.sendMessage(soam);
 	}
 
 	/**
@@ -64,22 +70,18 @@ public class TransferMarketUpdate extends CallableAbstract {
 	 * @param messageContent
 	 *            the JSONObject, which was sended by the client, with all
 	 *            nested information to transfer a {@link Player}.
-	 * @custom.position /F0260/
+	 * @see /F0260/
 	 */
 	private void transaction(JSONObject messageContent) {
-		JSONObject information = messageContent.getJSONObject(MIDs.INFORMATION);
-		boolean accept = information.getBoolean(MIDs.ACCEPT);
-		boolean remove = information.getBoolean(MIDs.REMOVE);
-		Transaction tr = new Transaction(information.getJSONObject(MIDs.TRANSACTION));
+		TransactionMessage tMessage = new TransactionMessage(messageContent);
 
 		// Remove will be done in transferPlayer
-		if (accept) {
-			DatabaseRequests.transferPlayer(tr);
-		} else {
-			if (remove) {
-				DatabaseRequests.removeTransaction(tr);
-			}
+		if (tMessage.isAccept()) {
+			DatabaseRequests.transferPlayer(tMessage.getTransaction());
+		} else if (tMessage.isRemove()) {
+			DatabaseRequests.removeTransaction(tMessage.getTransaction());
 		}
+
 	}
 
 	/**
