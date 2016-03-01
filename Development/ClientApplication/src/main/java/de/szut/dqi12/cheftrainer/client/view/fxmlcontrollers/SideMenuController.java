@@ -2,7 +2,11 @@ package de.szut.dqi12.cheftrainer.client.view.fxmlcontrollers;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -81,8 +85,7 @@ public class SideMenuController {
 	private void generateButtons(VBox box) {
 		try {
 			// reads the sideMenuButtons.xml
-			Path buttonDefinitionFile = Paths.get(ClientApplication.class
-					.getResource("/definitions/sideMenuButtons.xml").toURI());
+			Path buttonDefinitionFile = getPathToResource("/definitions/sideMenuButtons.xml");
 
 			List<String> xmlLines = Files.readAllLines(buttonDefinitionFile);
 			List<Element> buttonList = parseXMLButtons(xmlLines);
@@ -113,6 +116,21 @@ public class SideMenuController {
 		}
 	}
 
+	private Path getPathToResource(String relativePath) throws IOException, URISyntaxException {
+		Path retval = null;
+		try {
+			retval = Paths.get(ClientApplication.class.getResource(relativePath).toURI());
+		} catch (FileSystemNotFoundException fsnfe) {
+			final URI uri = getClass().getResource(relativePath).toURI();
+			Map<String, String> env = new HashMap<>();
+			env.put("create", "true");
+			FileSystem zipfs = FileSystems.newFileSystem(uri, env);
+			retval = Paths.get(uri);
+		}
+		return retval;
+
+	}
+
 	/**
 	 * Generates a button from an xml source
 	 * 
@@ -127,9 +145,7 @@ public class SideMenuController {
 		// new button with the name as text
 		Button tempButton = new Button(buttonName);
 		// sets the button image with the source, defined in the xml
-		Image image = new Image(
-				ClientApplication.class.getResourceAsStream("/images/"
-						+ e.getChildText("imageName")));
+		Image image = new Image(ClientApplication.class.getResourceAsStream("/images/" + e.getChildText("imageName")));
 		tempButton.setGraphic(new ImageView(image));
 		// sets height and other properties of the button
 		tempButton.setPrefHeight(250.0);
@@ -221,18 +237,18 @@ public class SideMenuController {
 	@FXML
 	public void triggerSideMenu(ActionEvent evt) {
 		rLayout = guiInitilator.getRootlayout();
-		ObservableList<Node> buttonList = ((VBox) rLayout.lookup("#sideMenu"))
-				.getChildren();
+		ObservableList<Node> buttonList = ((VBox) rLayout.lookup("#sideMenu")).getChildren();
 		double frameWidth = 0;
 		if (sideMenuFlag) {
 			collaps(buttonList);
 			frameWidth = 100;
 		} else {
 			expands(buttonList);
-			frameWidth=-100;
+			frameWidth = -100;
 		}
-		
-		//double frameWidth =  GUIController.getInstance().getGUIInitialator().getContentFrameWidth()-100;
+
+		// double frameWidth =
+		// GUIController.getInstance().getGUIInitialator().getContentFrameWidth()-100;
 		GUIController.getInstance().getCurrentController().resize(frameWidth);
 	}
 
@@ -264,10 +280,8 @@ public class SideMenuController {
 		menuColoum.setMaxWidth(collapsedWidth);
 
 		ColumnConstraints contentColoum = rLayout.getColumnConstraints().get(1);
-		contentColoum.setPrefWidth(rLayout.getWidth()
-				- ((VBox) rLayout.lookup("#sideMenu")).getWidth());
-		contentColoum.setMinWidth(rLayout.getWidth()
-				- ((VBox) rLayout.lookup("#sideMenu")).getWidth());
+		contentColoum.setPrefWidth(rLayout.getWidth() - ((VBox) rLayout.lookup("#sideMenu")).getWidth());
+		contentColoum.setMinWidth(rLayout.getWidth() - ((VBox) rLayout.lookup("#sideMenu")).getWidth());
 	}
 
 	/**
@@ -292,10 +306,8 @@ public class SideMenuController {
 	public void updateWidthPercentage() {
 		double width = getWidth();
 
-
 		rLayout.getColumnConstraints().get(0).setMinWidth(width);
-		rLayout.getColumnConstraints().get(1)
-				.setMaxWidth(rLayout.getWidth() - width);
+		rLayout.getColumnConstraints().get(1).setMaxWidth(rLayout.getWidth() - width);
 	}
 
 	/**
@@ -312,28 +324,27 @@ public class SideMenuController {
 	}
 
 	public void triggerButtonClickable(boolean clickable) {
-		ObservableList<Node> buttonList = ((VBox) rLayout.lookup("#sideMenu"))
-				.getChildren();
-		for(Node n : buttonList){
-			if(!alwaysClickableButtons.contains(((Button)n).getText())){
-				((Button)n).setDisable(!clickable);
+		ObservableList<Node> buttonList = ((VBox) rLayout.lookup("#sideMenu")).getChildren();
+		for (Node n : buttonList) {
+			if (!alwaysClickableButtons.contains(((Button) n).getText())) {
+				((Button) n).setDisable(!clickable);
 			}
 		}
 	}
-	
+
 	// GETTER AND SETTER
 	public List<String> getSideMenuButtonTitles() {
 		return sideMenuButtonTitles;
 	}
-	
-	public double getWidth(){
+
+	public double getWidth() {
 		double width;
 		if (sideMenuFlag) {
 			width = expandedWidth;
 		} else {
 			width = collapsedWidth;
 		}
-		
+
 		return width;
 	}
 
